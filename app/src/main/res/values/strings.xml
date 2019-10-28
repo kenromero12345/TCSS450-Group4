@@ -1,3 +1,12 @@
 <resources>
     <string name="app_name">TCSS450-Group4</string>
+
+    <string name="register_firstName">First Name</string>
+    <string name="register_lastName">Last Name</string>
+    <string name="register_nickname">Nickname</string>
+    <string name="register_email">Email</string>
+    <string name="register_password">Password</string>
+    <string name="register_retypePassword">Retype Password</string>
+    <string name="register_cancel">Cancel</string>
+    <string name="register_register">Register</string>
 </resources>
