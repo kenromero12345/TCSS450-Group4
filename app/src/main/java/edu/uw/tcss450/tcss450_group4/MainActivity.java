@@ -3,7 +3,6 @@ package edu.uw.tcss450.tcss450_group4;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
-import android.util.Log;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -16,7 +15,7 @@ public class MainActivity extends AppCompatActivity {
         if(savedInstanceState == null) {
             if (findViewById(R.id.frame_main_container) != null) {
                 getSupportFragmentManager().beginTransaction()
-                        .add(R.id.frame_main_container, new Register())
+                        .add(R.id.frame_main_container, new RegisterFragment())
                         .commit();
             }
         }
