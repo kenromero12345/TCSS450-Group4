@@ -28,6 +28,9 @@ public class RegisterFragment extends Fragment {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_register, container, false);
         v.findViewById(R.id.register_register).setOnClickListener(view -> validRegister(v));
+        v.findViewById(R.id.register_cancel).setOnClickListener(view ->
+                Navigation.findNavController(getView())
+                        .navigate(R.id.action_registerFragment_to_loginFragment2));
         return v;
     }
 

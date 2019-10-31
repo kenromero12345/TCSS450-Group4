@@ -43,7 +43,10 @@ public class HomeActivity extends AppCompatActivity {
                 .setDrawerLayout(drawer)
                 .build();
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
-        navController.setGraph(R.navigation.mobile_navigation, getIntent().getExtras());
+
+        // Change to login??
+        navController.setGraph(R.navigation.login_navigation, getIntent().getExtras());
+//        navController.setGraph(R.navigation.mobile_navigation, getIntent().getExtras());
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
 

@@ -90,7 +90,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         Button button_register = (Button) view.findViewById(R.id.button_register);
-//        button_register.setOnClickListener(this::onClick);
+        button_register.setOnClickListener(this::onClick);
 
         Button button_login = (Button) view.findViewById(R.id.button_signin);
         button_login.setOnClickListener(this::onClick);
@@ -103,7 +103,9 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
                 attemptLogin(v.findViewById(R.id.button_signin));
                 break;
             case R.id.button_register:
-                // This is where you navigate to register fragment.
+                Log.d("DEBUG", "entered");
+                Navigation.findNavController(getView())
+                        .navigate(R.id.action_loginFragment2_to_registerFragment);
                 break;
         }
     }
@@ -175,10 +177,10 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
             boolean success = resultsJSON.getBoolean(getString(R.string.keys_json_login_success));
 
             if (success) {
-                LoginFragmentDirections.ActionLoginFragmentToHomeActivity homeActivity =
-                        LoginFragmentDirections.actionLoginFragmentToHomeActivity(mCrendentials);
-                homeActivity.setJwt(resultsJSON.getString(getString(R.string.keys_json_login_jwt)));
-                Navigation.findNavController(getView()).navigate(homeActivity);
+//                LoginFragmentDirections.ActionLoginFragmentToHomeActivity homeActivity =
+//                        LoginFragmentDirections.actionLoginFragmentToHomeActivity(mCrendentials);
+//                homeActivity.setJwt(resultsJSON.getString(getString(R.string.keys_json_login_jwt)));
+                Navigation.findNavController(getView()).navigate(R.id.action_loginFragment2_to_homeActivity2);
                 return;
             } else {
                 //Logiin was unsuccessful. Don't switch fragments and
