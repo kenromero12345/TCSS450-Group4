@@ -4,11 +4,24 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mobile_navigation"
     app:startDestination="@id/nav_home">
-
-
     <fragment
         android:id="@+id/nav_home"
-        android:name="edu.uw.tcss450.tcss450_group4.ui.home.HomeFragment"
+        android:name="edu.uw.tcss450.tcss450_group4.ui.HomeFragment"
         android:label="fragment_home"
         tools:layout="@layout/fragment_home" />
+    <fragment
+        android:id="@+id/nav_chat"
+        android:name="edu.uw.tcss450.tcss450_group4.ChatFragment"
+        android:label="fragment_chat"
+        tools:layout="@layout/fragment_chat" />
+    <fragment
+        android:id="@+id/nav_connections"
+        android:name="edu.uw.tcss450.tcss450_group4.ConnectionFragment"
+        android:label="fragment_connection"
+        tools:layout="@layout/fragment_connection" />
+    <fragment
+        android:id="@+id/nav_weather"
+        android:name="edu.uw.tcss450.tcss450_group4.WeatherFragment"
+        android:label="fragment_weather"
+        tools:layout="@layout/fragment_weather" />
 </navigation>

@@ -1,5 +1,17 @@
 <resources>
     <string name="app_name">TCSS450-Group4</string>
+
+    // register fragment ids
+    <string name="register_firstName">First Name</string>
+    <string name="register_lastName">Last Name</string>
+    <string name="register_nickname">Nickname</string>
+    <string name="register_email">Email</string>
+    <string name="register_password">Password</string>
+    <string name="register_retypePassword">Retype Password</string>
+    <string name="register_cancel">Cancel</string>
+    <string name="register_register">Register</string>
+
+    // test fragment id
     <string name="title_activity_home">HomeActivity</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
@@ -23,4 +35,12 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="menu_connections">Connections</string>
+    <string name="menu_weather">Weather</string>
+    <string name="menu_chat">Chat</string>
+
+
+    <string name="verify_textView">Verification Code Here</string>
+    <string name="verify_button">Verify</string>
+    <string name="verify_resend">Resend Code</string>
 </resources>
