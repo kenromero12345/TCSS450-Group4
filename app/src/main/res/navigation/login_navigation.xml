@@ -11,17 +11,12 @@
         android:label="fragment_register"
         tools:layout="@layout/fragment_register" >
         <action
-            android:id="@+id/action_registerFragment_to_testFragment"
-            app:destination="@id/testFragment" />
-        <action
             android:id="@+id/action_registerFragment_to_loginFragment2"
             app:destination="@id/loginFragment2" />
+        <action
+            android:id="@+id/action_registerFragment_to_verifyFragment"
+            app:destination="@id/verifyFragment" />
     </fragment>
-    <fragment
-        android:id="@+id/testFragment"
-        android:name="edu.uw.tcss450.tcss450_group4.TestFragment"
-        android:label="fragment_test"
-        tools:layout="@layout/fragment_test" />
     <fragment
         android:id="@+id/loginFragment2"
         android:name="edu.uw.tcss450.tcss450_group4.LoginFragment"
@@ -39,4 +34,9 @@
         android:name="edu.uw.tcss450.tcss450_group4.HomeActivity"
         android:label="activity_home"
         tools:layout="@layout/activity_home" />
+    <fragment
+        android:id="@+id/verifyFragment"
+        android:name="edu.uw.tcss450.tcss450_group4.VerifyFragment"
+        android:label="fragment_verify"
+        tools:layout="@layout/fragment_verify" />
 </navigation>

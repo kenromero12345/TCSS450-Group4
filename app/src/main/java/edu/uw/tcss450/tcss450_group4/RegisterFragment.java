@@ -109,7 +109,7 @@ public class RegisterFragment extends Fragment {
         if (firstNameError && lastNameError && nicknameError && emailError && passwordError) {
             Log.d("REGISTER", "It's valid");
             Navigation.findNavController(getView())
-                    .navigate(R.id.action_registerFragment_to_testFragment);
+                    .navigate(R.id.action_registerFragment_to_verifyFragment);
         }
     }
 
