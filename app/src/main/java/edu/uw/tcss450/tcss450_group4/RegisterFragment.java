@@ -1,8 +1,10 @@
 package edu.uw.tcss450.tcss450_group4;
 
+import android.content.Context;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -10,6 +12,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 
+/*
+    Register page that allows users to create an account.
+ */
 public class RegisterFragment extends Fragment {
 //    private OnFragmentInteractionListener mListener;
 
@@ -100,6 +105,8 @@ public class RegisterFragment extends Fragment {
         // If valid go to Verify page
         if (firstNameError && lastNameError && nicknameError && emailError && passwordError) {
             Log.d("REGISTER", "It's valid");
+            Navigation.findNavController(getView())
+                    .navigate(R.id.action_registerFragment_to_testFragment);
         }
     }
 
@@ -121,5 +128,6 @@ public class RegisterFragment extends Fragment {
 //    }
 //
 //    public interface OnFragmentInteractionListener {
+//        void onRegisterSuccess(String email);
 //    }
 }

@@ -10,14 +10,5 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        // For testing purposes only
-        if(savedInstanceState == null) {
-            if (findViewById(R.id.frame_main_container) != null) {
-                getSupportFragmentManager().beginTransaction()
-                        .add(R.id.frame_main_container, new RegisterFragment())
-                        .commit();
-            }
-        }
     }
 }
