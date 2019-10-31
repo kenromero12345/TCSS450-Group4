@@ -30,29 +30,15 @@
         app:layout_constraintVertical_bias="1.0" />
 
     <Button
-        android:id="@+id/verify_backButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="28dp"
-        android:layout_marginTop="424dp"
-        android:layout_marginBottom="19dp"
-        android:text="@string/verify_backButton"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/verify_textView" />
-
-    <Button
         android:id="@+id/verify_resend"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="40dp"
         android:layout_marginTop="427dp"
-        android:layout_marginEnd="35dp"
+        android:layout_marginEnd="172dp"
         android:layout_marginBottom="16dp"
         android:text="@string/verify_resend"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/verify_button"
-        app:layout_constraintStart_toEndOf="@+id/verify_backButton"
         app:layout_constraintTop_toBottomOf="@+id/verify_textView"
         app:layout_constraintVertical_bias="0.0" />
 

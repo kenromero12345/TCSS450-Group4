@@ -79,16 +79,9 @@ public class VerifyFragment extends Fragment {
         if (verify.matches("")){
             ((EditText) v.findViewById(R.id.verify_textView)).setError("Invalid Verify");
         } else {
-
+            mListener.onVerifySuccess();
         }
 
-    }
-
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
     }
 
     @Override
@@ -120,6 +113,6 @@ public class VerifyFragment extends Fragment {
      */
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
+        void onVerifySuccess();
     }
 }
