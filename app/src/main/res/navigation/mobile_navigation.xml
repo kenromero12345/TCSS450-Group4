@@ -23,5 +23,10 @@
         android:id="@+id/nav_weather"
         android:name="edu.uw.tcss450.tcss450_group4.WeatherFragment"
         android:label="fragment_weather"
-        tools:layout="@layout/fragment_weather" />
+        tools:layout="@layout/fragment_weather" >
+        <argument
+            android:name="weather"
+            app:argType="edu.uw.tcss450.tcss450_group4.model.Weather" />
+    </fragment>
+    <action android:id="@+id/action_global_nav_weather" app:destination="@id/nav_weather" />
 </navigation>

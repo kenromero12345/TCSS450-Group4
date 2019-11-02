@@ -1,0 +1,31 @@
+<resources tools:ignore="ExtraTranslation" xmlns:tools="http://schemas.android.com/tools">
+<!--    <string name="keys_shared_prefs">edu.uw.tcss450.challengeapp.PREFS</string>-->
+<!--    <string name="keys_prefs_username">username</string>-->
+<!--    <string name="keys_prefs_stay_logged_in">loggedIn</string>-->
+
+<!--    <string name="keys_json_login_success">success</string>-->
+<!--    <string name="keys_json_login_jwt">token</string>-->
+
+<!--    <string name="keys_json_blogs_response">response</string>-->
+<!--    <string name="keys_json_blogs_data">data</string>-->
+<!--    <string name="keys_json_blogs_pubdate">pubdate</string>-->
+<!--    <string name="keys_json_blogs_title">title</string>-->
+<!--    <string name="keys_json_blogs_teaser">teaser</string>-->
+<!--    <string name="keys_json_blogs_url">url</string>-->
+<!--    <string name="keys_json_register_success">success</string>-->
+<!--    <string name="keys_json_set_response">response</string>-->
+<!--    <string name="keys_json_set_data">data</string>-->
+
+<!--    <string name="keys_json_set_long_date">long_date</string>-->
+<!--    <string name="keys_json_set_location">location</string>-->
+<!--    <string name="keys_json_set_venue">venue</string>-->
+<!--    <string name="keys_json_set_list_data">setlistdata</string>-->
+<!--    <string name="keys_json_set_list_notes">setlistnotes</string>-->
+<!--    <string name="keys_json_set_url">url</string>-->
+
+<!--    <string name="key_blog_post_view">this is a key the text doesn’t matter</string>-->
+<!--    <string name="key_set_item_view">this is a key the text doesn’t matter also</string>-->
+    <string name="keys_weather_response">response</string>
+    <string name="keys_json_weather_data">data</string>
+    <string name="keys_weather">weather</string>
+</resources>
