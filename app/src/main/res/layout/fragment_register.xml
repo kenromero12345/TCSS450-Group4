@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:layout_margin="30dp"
     android:orientation="vertical"
-    tools:context=".RegisterFragment">
+    tools:context=".ui.RegisterFragment">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -82,19 +82,25 @@
 
         <Button
             android:id="@+id/register_cancel"
+            style="@style/Widget.AppCompat.Button.Borderless"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginRight="10dp"
+            android:layout_marginLeft="30dp"
+            android:layout_marginRight="40dp"
             android:layout_weight="1"
-            android:text="@string/register_cancel" />
+            android:text="@string/register_cancel"
+            android:textColor="@color/uwPurple" />
 
         <Button
             android:id="@+id/register_register"
+            style="@style/Widget.AppCompat.Button.Borderless"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
+            android:layout_marginLeft="40dp"
+            android:layout_marginRight="30dp"
             android:layout_weight="1"
-            android:text="@string/register_register" />
+            android:text="@string/register_register"
+            android:textColor="@color/uwPurple" />
     </LinearLayout>
 
 </LinearLayout>

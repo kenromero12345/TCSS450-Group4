@@ -1,6 +1,5 @@
-package edu.uw.tcss450.tcss450_group4;
+package edu.uw.tcss450.tcss450_group4.ui;
 
-import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -9,6 +8,8 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import edu.uw.tcss450.tcss450_group4.R;
 
 
 /**
