@@ -33,7 +33,12 @@
         android:id="@+id/nav_homeActivity"
         android:name="edu.uw.tcss450.tcss450_group4.HomeActivity"
         android:label="activity_home"
-        tools:layout="@layout/activity_home" />
+        tools:layout="@layout/activity_home" >
+        <argument
+            android:name="jwt"
+            app:argType="string"
+            android:defaultValue='""' />
+    </activity>
     <fragment
         android:id="@+id/nav_verify"
         android:name="edu.uw.tcss450.tcss450_group4.ui.VerifyFragment"

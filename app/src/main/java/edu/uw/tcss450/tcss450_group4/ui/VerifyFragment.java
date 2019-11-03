@@ -84,6 +84,7 @@ public class VerifyFragment extends Fragment {
             Navigation.findNavController(getView())
                     .navigate(R.id.action_nav_verify_to_nav_homeActivity);
             mListener.onVerifySuccess();
+            getActivity().finish();
         }
 
     }

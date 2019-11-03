@@ -1,5 +1,7 @@
 package edu.uw.tcss450.tcss450_group4;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -24,6 +26,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import edu.uw.tcss450.tcss450_group4.model.Weather;
+import edu.uw.tcss450.tcss450_group4.ui.WeatherFragmentDirections;
 import edu.uw.tcss450.tcss450_group4.utils.GetAsyncTask;
 
 import edu.uw.tcss450.tcss450_group4.R;
@@ -162,6 +165,13 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     private void logout() {
+        SharedPreferences prefs =
+                getSharedPreferences(
+                        getString(R.string.keys_shared_prefs),
+                        Context.MODE_PRIVATE);
+        //remove the saved credentials from StoredPrefs
+        prefs.edit().remove(getString(R.string.keys_prefs_password)).apply();
+        prefs.edit().remove(getString(R.string.keys_prefs_email)).apply();
 
         //close the app
         finishAndRemoveTask();
@@ -188,6 +198,4 @@ public class HomeActivity extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
-
-
 }
