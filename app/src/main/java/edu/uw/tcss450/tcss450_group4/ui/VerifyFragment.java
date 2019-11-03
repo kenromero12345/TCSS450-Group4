@@ -1,16 +1,18 @@
-package edu.uw.tcss450.tcss450_group4;
+package edu.uw.tcss450.tcss450_group4.ui;
 
 import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+
+import edu.uw.tcss450.tcss450_group4.R;
 
 
 /**
@@ -79,6 +81,8 @@ public class VerifyFragment extends Fragment {
         if (verify.matches("")){
             ((EditText) v.findViewById(R.id.verify_textView)).setError("Invalid Verify");
         } else {
+            Navigation.findNavController(getView())
+                    .navigate(R.id.action_nav_verify_to_nav_homeActivity);
             mListener.onVerifySuccess();
         }
 

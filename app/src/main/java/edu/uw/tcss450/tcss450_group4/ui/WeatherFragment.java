@@ -1,6 +1,5 @@
-package edu.uw.tcss450.tcss450_group4;
+package edu.uw.tcss450.tcss450_group4.ui;
 
-import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 

@@ -1,6 +1,6 @@
-package edu.uw.tcss450.tcss450_group4;
+package edu.uw.tcss450.tcss450_group4.ui;
 
-import android.graphics.Color;
+import android.app.Activity;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -9,18 +9,19 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import edu.uw.tcss450.tcss450_group4.R;
 import edu.uw.tcss450.tcss450_group4.model.Credentials;
 import edu.uw.tcss450.tcss450_group4.utils.SendPostAsyncTask;
 
@@ -80,6 +81,10 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_login, container, false);
+//        DisplayMetrics displayMetrics = new DisplayMetrics();
+//        ((Activity) getContext()).getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+//        int height = displayMetrics.heightPixels;
+//        int width = displayMetrics.widthPixels;
 //        int uwPurple = Color.rgb(51, 0, 111);
 //        Fragment loginFragment = (Fragment) getFragmentManager().findFragmentById(R.id.loginFragment);
 //        loginFragment.getView().setBackgroundColor(Color.RED);
@@ -105,7 +110,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
             case R.id.button_register:
                 Log.d("DEBUG", "entered");
                 Navigation.findNavController(getView())
-                        .navigate(R.id.action_loginFragment2_to_registerFragment);
+                        .navigate(R.id.action_nav_login_to_nav_register);
                 break;
         }
     }
@@ -180,10 +185,9 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
 //                LoginFragmentDirections.ActionLoginFragmentToHomeActivity homeActivity =
 //                        LoginFragmentDirections.actionLoginFragmentToHomeActivity(mCrendentials);
 //                homeActivity.setJwt(resultsJSON.getString(getString(R.string.keys_json_login_jwt)));
-                Navigation.findNavController(getView()).navigate(R.id.action_loginFragment2_to_homeActivity2);
+                Navigation.findNavController(getView()).navigate(R.id.action_nav_login_to_nav_homeActivity);
                 //Remove this Activity from the back stack. Do not allow back navigation to login
                 getActivity().finish();
-
                 return;
             } else {
                 //Logiin was unsuccessful. Don't switch fragments and

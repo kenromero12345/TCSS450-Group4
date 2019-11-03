@@ -26,6 +26,8 @@ import org.json.JSONObject;
 import edu.uw.tcss450.tcss450_group4.model.Weather;
 import edu.uw.tcss450.tcss450_group4.utils.GetAsyncTask;
 
+import edu.uw.tcss450.tcss450_group4.R;
+
 public class HomeActivity extends AppCompatActivity {
     private String mJwToken;
 
