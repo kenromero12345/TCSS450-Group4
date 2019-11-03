@@ -29,8 +29,6 @@ import edu.uw.tcss450.tcss450_group4.model.Weather;
 import edu.uw.tcss450.tcss450_group4.ui.WeatherFragmentDirections;
 import edu.uw.tcss450.tcss450_group4.utils.GetAsyncTask;
 
-import edu.uw.tcss450.tcss450_group4.R;
-
 public class HomeActivity extends AppCompatActivity {
     private String mJwToken;
 
@@ -80,7 +78,43 @@ public class HomeActivity extends AppCompatActivity {
                 || super.onSupportNavigateUp();
     }
 
-    private void handleBlogGetOnPostExecute(final String result) {
+    private boolean onNavigationSelected(final MenuItem menuItem) {
+        NavController navController =
+                Navigation.findNavController(this, R.id.nav_host_fragment);
+        switch (menuItem.getItemId()) {
+            case R.id.nav_home:
+                navController.navigate(R.id.nav_home);
+                break;
+            case R.id.nav_chat:
+                navController.navigate(R.id.nav_chat);
+                break;
+            case R.id.nav_connections:
+                navController.navigate(R.id.nav_connections);
+                break;
+            case R.id.nav_weather:
+                Uri uri = new Uri.Builder()
+                        .scheme("https")
+                        .appendPath(getString(R.string.ep_base_url))
+                        //TODO:below
+                        .appendPath(getString(R.string.ep_weather))
+//                        .appendPath(getString(R.string.ep_blog))
+//                        .appendPath(getString(R.string.ep_get))
+                        .build();
+
+                new GetAsyncTask.Builder(uri.toString())
+                        .onPostExecute(this::handleWeatherGetOnPostExecute)
+                        .addHeaderField("authorization", mJwToken) //add the JWT as a header
+                        .build().execute();
+                //TODO: remove below
+                navController.navigate(R.id.nav_weather);
+                break;
+        }
+        //Close the drawer
+        ((DrawerLayout) findViewById(R.id.drawer_layout)).closeDrawers();
+        return true;
+    }
+
+    private void handleWeatherGetOnPostExecute(final String result) {
         //parse JSON
 
         try {
@@ -91,7 +125,7 @@ public class HomeActivity extends AppCompatActivity {
                 if (response.has(getString(R.string.keys_json_weather_data))) {
                     JSONObject data = response.getJSONObject(
                             getString(R.string.keys_json_weather_data));
-                    //TODO: maybe change to builder and not send the JSONObject
+                    //TODO: data
                     Weather weather = new Weather(data);
 //                    JSONArray data = response.getJSONArray(
 //                            getString(R.string.keys_json_weather_data));
@@ -117,7 +151,7 @@ public class HomeActivity extends AppCompatActivity {
                     Navigation.findNavController(this, R.id.nav_host_fragment)
                             .navigate(directions);
                 } else {
-                    Log.e("ERROR!", "No data array");
+                    Log.e("ERROR!", "No data");
                 }
             } else {
                 Log.e("ERROR!", "No response");
@@ -127,41 +161,6 @@ public class HomeActivity extends AppCompatActivity {
             e.printStackTrace();
             Log.e("ERROR!", e.getMessage());
         }
-    }
-
-    private boolean onNavigationSelected(final MenuItem menuItem) {
-        NavController navController =
-                Navigation.findNavController(this, R.id.nav_host_fragment);
-        switch (menuItem.getItemId()) {
-            case R.id.nav_home:
-                navController.navigate(R.id.nav_home);
-                break;
-            case R.id.nav_chat:
-                navController.navigate(R.id.nav_chat);
-                break;
-            case R.id.nav_connections:
-                navController.navigate(R.id.nav_connections);
-                break;
-            case R.id.nav_weather:
-                Uri uri = new Uri.Builder()
-                        .scheme("https")
-                        .appendPath(getString(R.string.ep_base_url))
-                        //TODO:below
-//                        .appendPath(getString(R.string.ep_phish))
-//                        .appendPath(getString(R.string.ep_blog))
-//                        .appendPath(getString(R.string.ep_get))
-                        .build();
-
-                new GetAsyncTask.Builder(uri.toString())
-                        .onPostExecute(this::handleBlogGetOnPostExecute)
-                        .addHeaderField("authorization", mJwToken) //add the JWT as a header
-                        .build().execute();
-                navController.navigate(R.id.nav_weather);
-                break;
-        }
-        //Close the drawer
-        ((DrawerLayout) findViewById(R.id.drawer_layout)).closeDrawers();
-        return true;
     }
 
     private void logout() {

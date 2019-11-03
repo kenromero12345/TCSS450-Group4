@@ -7,11 +7,17 @@ import org.json.JSONObject;
 
 public class Weather implements Parcelable {
 
-    public Weather(JSONObject object)  {
 
+//    private final
+
+    //TODO:
+    public Weather(JSONObject data)  {
+        //data.getString(key)
+        //data.getString(getString(R.string.keys_json_))
     }
 
     protected Weather(Parcel in) {
+        //TODO:
 //        mPubDate = in.readString();
 //        mTitle = in.readString();
 //        mUrl = in.readString();
@@ -38,6 +44,7 @@ public class Weather implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        //TODO:
 //        dest.writeString(mPubDate);
 //        dest.writeString(mTitle);
 //        dest.writeString(mUrl);

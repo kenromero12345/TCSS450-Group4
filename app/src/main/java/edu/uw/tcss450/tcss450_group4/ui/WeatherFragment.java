@@ -44,7 +44,8 @@ public class WeatherFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        WeatherFragmentArgs.fromBundle(getArguments()).getWeather();
+        //TODO:
+//        WeatherFragmentArgs.fromBundle(getArguments()).getWeather();
 //        HomeActivityArgs.fromBundle(getArguments()).getWeather();
 //        if (getArguments() != null) {
 //            Weather weather = (Weather) getArguments().get(getString(R.string.keys_weather));
