@@ -16,7 +16,7 @@
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="nav_header_title">Charles Angels</string>
-    <string name="nav_header_subtitle"></string>    // get username value
+    <string name="nav_header_subtitle">TCSS 450 - Group 4</string>
     <string name="nav_header_desc">Navigation header</string>
     <string name="action_settings">Settings</string>
 
@@ -25,11 +25,11 @@
     <string name="menu_weather">Weather</string>
     <string name="menu_chat">Chat</string>
 
-    // login fragment ids
+    <!-- // login fragment ids
     <string name="edit_email">Email</string>
     <string name="edit_password">Password</string>
     <string name="register">Register</string>
-    <string name="sign_in">Sign In</string>
+    <string name="sign_in">Sign In</string> -->
 
 
     // verify fragment ids
@@ -38,4 +38,12 @@
     <string name="verify_resend">Resend Code</string>
 
     <string name="action_logout">Logout</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="edit_email">Email</string>
+    <string name="edit_password">Password</string>
+    <string name="register">REGISTER</string>
+    <string name="sign_in">SIGN IN</string>
+
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
