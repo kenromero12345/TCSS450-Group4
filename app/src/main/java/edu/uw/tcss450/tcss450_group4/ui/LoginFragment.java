@@ -282,7 +282,6 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
         JSONObject msg = credentials.asJSONObject();
 
         mCrendentials = credentials;
-
         //instantiate and execute the AsyncTask.
         //Feel free to add a handler for onPreExecution so that a progress bar
         //is displayed or maybe disable buttons.

@@ -38,6 +38,9 @@
             android:name="jwt"
             app:argType="string"
             android:defaultValue='""' />
+        <argument
+            android:name="credentials"
+            app:argType="edu.uw.tcss450.tcss450_group4.model.Credentials" />
     </activity>
     <fragment
         android:id="@+id/nav_verify"

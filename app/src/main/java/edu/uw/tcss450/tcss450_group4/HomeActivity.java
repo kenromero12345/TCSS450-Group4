@@ -35,6 +35,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import edu.uw.tcss450.tcss450_group4.model.Weather;
+import edu.uw.tcss450.tcss450_group4.ui.HomeFragment;
 import edu.uw.tcss450.tcss450_group4.ui.WeatherFragmentDirections;
 import edu.uw.tcss450.tcss450_group4.utils.GetAsyncTask;
 
@@ -72,8 +73,8 @@ public class HomeActivity extends AppCompatActivity {
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
         navController.setGraph(R.navigation.mobile_navigation, getIntent().getExtras());
-        HomeActivityArgs args = HomeActivityArgs.fromBundle(getIntent().getExtras());
-        mJwToken = args.getJwt();
+//        HomeFragmentArgs args = HomeActivityArgs.fromBundle(getIntent().getExtras());
+//        mJwToken = args.getJwt();
         navigationView.setNavigationItemSelectedListener(this::onNavigationSelected);
     }
 
