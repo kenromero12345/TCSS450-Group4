@@ -3,40 +3,44 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/login_navigation"
-    app:startDestination="@id/loginFragment2">
+    app:startDestination="@id/nav_login">
 
     <fragment
-        android:id="@+id/registerFragment"
-        android:name="edu.uw.tcss450.tcss450_group4.RegisterFragment"
+        android:id="@+id/nav_register"
+        android:name="edu.uw.tcss450.tcss450_group4.ui.RegisterFragment"
         android:label="fragment_register"
         tools:layout="@layout/fragment_register" >
         <action
-            android:id="@+id/action_registerFragment_to_loginFragment2"
-            app:destination="@id/loginFragment2" />
+            android:id="@+id/action_nav_register_to_nav_login"
+            app:destination="@id/nav_login" />
         <action
-            android:id="@+id/action_registerFragment_to_verifyFragment"
-            app:destination="@id/verifyFragment" />
+            android:id="@+id/action_nav_register_to_nav_verify"
+            app:destination="@id/nav_verify" />
     </fragment>
     <fragment
-        android:id="@+id/loginFragment2"
-        android:name="edu.uw.tcss450.tcss450_group4.LoginFragment"
+        android:id="@+id/nav_login"
+        android:name="edu.uw.tcss450.tcss450_group4.ui.LoginFragment"
         android:label="fragment_login"
         tools:layout="@layout/fragment_login" >
         <action
-            android:id="@+id/action_loginFragment2_to_registerFragment"
-            app:destination="@id/registerFragment" />
+            android:id="@+id/action_nav_login_to_nav_register"
+            app:destination="@id/nav_register" />
         <action
-            android:id="@+id/action_loginFragment2_to_homeActivity2"
-            app:destination="@id/homeActivity2" />
+            android:id="@+id/action_nav_login_to_nav_homeActivity"
+            app:destination="@id/nav_homeActivity" />
     </fragment>
     <activity
-        android:id="@+id/homeActivity2"
+        android:id="@+id/nav_homeActivity"
         android:name="edu.uw.tcss450.tcss450_group4.HomeActivity"
         android:label="activity_home"
         tools:layout="@layout/activity_home" />
     <fragment
-        android:id="@+id/verifyFragment"
-        android:name="edu.uw.tcss450.tcss450_group4.VerifyFragment"
+        android:id="@+id/nav_verify"
+        android:name="edu.uw.tcss450.tcss450_group4.ui.VerifyFragment"
         android:label="fragment_verify"
-        tools:layout="@layout/fragment_verify" />
+        tools:layout="@layout/fragment_verify" >
+        <action
+            android:id="@+id/action_nav_verify_to_nav_homeActivity"
+            app:destination="@id/nav_homeActivity" />
+    </fragment>
 </navigation>
