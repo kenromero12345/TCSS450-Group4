@@ -35,6 +35,9 @@
         android:label="activity_home"
         tools:layout="@layout/activity_home" >
         <argument
+            android:name="credentials"
+            app:argType="edu.uw.tcss450.tcss450_group4.model.Credentials" />
+        <argument
             android:name="jwt"
             app:argType="string"
             android:defaultValue='""' />
@@ -50,5 +53,12 @@
         <action
             android:id="@+id/action_nav_verify_to_nav_homeActivity"
             app:destination="@id/nav_homeActivity" />
+        <argument
+            android:name="credentials"
+            app:argType="edu.uw.tcss450.tcss450_group4.model.Credentials" />
+        <argument
+            android:name="jwt"
+            app:argType="string"
+            android:defaultValue='""' />
     </fragment>
 </navigation>

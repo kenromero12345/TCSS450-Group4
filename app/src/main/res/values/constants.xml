@@ -5,6 +5,9 @@
     <string name="keys_prefs_stay_logged_in">loggedIn</string>
     <string name="keys_json_login_success">success</string>
     <string name="keys_json_login_jwt">token</string>
+    <string name="keys_json_register_success">success</string>
+    <string name="keys_json_register_error">error</string>
+    <string name="keys_json_register_detail">detail</string>
     <string name="keys_weather_response">response</string>
     <string name="keys_json_weather">weather</string>
     <string name="keys_weather">weather</string>
