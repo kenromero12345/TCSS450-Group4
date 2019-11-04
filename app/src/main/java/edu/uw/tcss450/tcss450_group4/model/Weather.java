@@ -5,18 +5,24 @@ import android.os.Parcelable;
 
 import org.json.JSONObject;
 
+import edu.uw.tcss450.tcss450_group4.R;
+
 public class Weather implements Parcelable {
 
 
-//    private final
+    public String getDescription() {
+        return mDescription;
+    }
+
+    private final String mDescription;
 
     //TODO:
-    public Weather(JSONObject data)  {
-        //data.getString(key)
-        //data.getString(getString(R.string.keys_json_))
+    public Weather(String tDescription)  {
+        mDescription = tDescription;
     }
 
     protected Weather(Parcel in) {
+        mDescription = in.readString();
         //TODO:
 //        mPubDate = in.readString();
 //        mTitle = in.readString();
@@ -44,6 +50,7 @@ public class Weather implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(mDescription);
         //TODO:
 //        dest.writeString(mPubDate);
 //        dest.writeString(mTitle);

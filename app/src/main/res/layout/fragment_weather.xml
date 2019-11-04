@@ -9,7 +9,7 @@
 
     <!-- TODO: Update blank fragment layout -->
     <TextView
-        android:id="@+id/weather_currentLocation"
+        android:id="@+id/weather_currentLocationLongitude"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
@@ -18,12 +18,11 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/textView2"
+        android:id="@+id/weather_currentLocationLatitude"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="TextView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/weather_currentLocation" />
+        app:layout_constraintTop_toBottomOf="@+id/weather_currentLocationLongitude" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

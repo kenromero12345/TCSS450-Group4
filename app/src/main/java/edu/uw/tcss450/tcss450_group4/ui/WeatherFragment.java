@@ -1,5 +1,10 @@
 package edu.uw.tcss450.tcss450_group4.ui;
 
+import android.Manifest;
+import android.content.Context;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -8,6 +13,7 @@ import androidx.annotation.Nullable;
 import androidx.core.text.HtmlCompat;
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +21,8 @@ import android.widget.TextView;
 
 import edu.uw.tcss450.tcss450_group4.R;
 import edu.uw.tcss450.tcss450_group4.model.Weather;
+
+import static androidx.core.content.ContextCompat.getSystemService;
 
 
 ///**
@@ -26,6 +34,9 @@ import edu.uw.tcss450.tcss450_group4.model.Weather;
 // * create an instance of this fragment.
 // */
 public class WeatherFragment extends Fragment {
+    private static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
+    private Double mLongitude;
+    private Double mLatitude;
 //    // TODO: Rename parameter arguments, choose names that match
 //    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 //    private static final String ARG_PARAM1 = "param1";
@@ -58,6 +69,40 @@ public class WeatherFragment extends Fragment {
 //            TextView tvDetails = getActivity().findViewById(R.id.tv_blogPostTeaser);
 //            tvDetails.setText(HtmlCompat.fromHtml((blogPost.getTeaser()), HtmlCompat.FROM_HTML_MODE_LEGACY).toString());
 //        }
+        LocationManager lm = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+        if (getActivity().checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED
+                && getActivity().checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                    MY_PERMISSIONS_REQUEST_LOCATION);
+            // TODO: Consider calling
+            //    Activity#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for Activity#requestPermissions for more details.
+            return;
+        }
+        if (getActivity().checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED
+                && getActivity().checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            ((TextView) getActivity().findViewById(R.id.weather_currentLocationLongitude))
+                    .setText("Longitude: NULL");
+            ((TextView) getActivity().findViewById(R.id.weather_currentLocationLatitude))
+                    .setText("Latitude: NULL");
+        } else {
+            Location location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            mLongitude = location.getLongitude();
+            mLatitude = location.getLatitude();
+//            Log.d("long", " " + mLongitude);
+            ((TextView) getActivity().findViewById(R.id.weather_currentLocationLongitude))
+                    .setText("Longitude: " + mLongitude);
+            ((TextView) getActivity().findViewById(R.id.weather_currentLocationLatitude))
+                    .setText("Latitude: " + mLatitude);
+        }
     }
 
     //    /**

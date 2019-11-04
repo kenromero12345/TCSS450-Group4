@@ -4,23 +4,19 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
-
+import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.material.navigation.NavigationView;
-
-import androidx.drawerlayout.widget.DrawerLayout;
-
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-
-import android.view.Menu;
-import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -33,12 +29,14 @@ public class HomeActivity extends AppCompatActivity {
     private String mJwToken;
 
     private AppBarConfiguration mAppBarConfiguration;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
 //        FloatingActionButton fab = findViewById(R.id.fab);
 //        fab.setOnClickListener(new View.OnClickListener() {
 //            @Override
@@ -122,11 +120,12 @@ public class HomeActivity extends AppCompatActivity {
             if (root.has(getString(R.string.keys_weather_response))) {
                 JSONObject response = root.getJSONObject(
                         getString(R.string.keys_weather_response));
-                if (response.has(getString(R.string.keys_json_weather_data))) {
-                    JSONObject data = response.getJSONObject(
-                            getString(R.string.keys_json_weather_data));
+                if (response.has(getString(R.string.keys_json_weather))) {
+                    JSONObject weather = response.getJSONObject(
+                            getString(R.string.keys_json_weather));
                     //TODO: data
-                    Weather weather = new Weather(data);
+                    Weather weatherDescription
+                            = new Weather(getString(R.string.keys_json_weather_description));
 //                    JSONArray data = response.getJSONArray(
 //                            getString(R.string.keys_json_weather_data));
 //
@@ -146,7 +145,7 @@ public class HomeActivity extends AppCompatActivity {
 //                    }
 
                     MobileNavigationDirections.ActionGlobalNavWeather directions
-                            = WeatherFragmentDirections.actionGlobalNavWeather(weather);
+                            = WeatherFragmentDirections.actionGlobalNavWeather(weatherDescription);
 
                     Navigation.findNavController(this, R.id.nav_host_fragment)
                             .navigate(directions);
