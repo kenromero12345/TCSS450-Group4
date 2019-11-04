@@ -1,5 +1,6 @@
 package edu.uw.tcss450.tcss450_group4.ui;
 
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -10,14 +11,21 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.TextView;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import edu.uw.tcss450.tcss450_group4.R;
+import edu.uw.tcss450.tcss450_group4.model.Credentials;
+import edu.uw.tcss450.tcss450_group4.utils.SendPostAsyncTask;
 
 /*
     Register page that allows users to create an account.
  */
 public class RegisterFragment extends Fragment {
-//    private OnFragmentInteractionListener mListener;
+
+    private Credentials mCredentials;
 
     public RegisterFragment() {
         // Required empty public constructor
@@ -108,30 +116,88 @@ public class RegisterFragment extends Fragment {
         // TODO: Implement transition to verify page
         // If valid go to Verify page
         if (firstNameError && lastNameError && nicknameError && emailError && passwordError) {
+            Credentials credentials = new Credentials.Builder(emailStr, passwordStr)
+                    .addFirstName(firstNameStr)
+                    .addLastName(lastNameStr)
+                    .addUsername(nicknameStr)
+                    .build();
+            Uri uri = new Uri.Builder()
+                    .scheme("https")
+                    .appendPath(getString(R.string.ep_base_url))
+                    .appendPath(getString(R.string.ep_register))
+                    .build();
+            //build the JSONObject
+            JSONObject msg = credentials.asJSONObject();
+            mCredentials = credentials;
+            //instantiate and execute the AsyncTask.
+            new SendPostAsyncTask.Builder(uri.toString(), msg)
+                    .onPreExecute(this::handleRegisterOnPre)
+                    .onPostExecute(this::handleRegisterOnPost)
+                    .onCancelled(this::handleErrorsInTask)
+                    .build().execute();
+
+
             Log.d("REGISTER", "It's valid");
             Navigation.findNavController(getView())
                     .navigate(R.id.action_nav_register_to_nav_verify);
         }
     }
 
-//    @Override
-//    public void onAttach(Context context) {
-//        super.onAttach(context);
-//        if (context instanceof OnFragmentInteractionListener) {
-//            mListener = (OnFragmentInteractionListener) context;
-//        } else {
-//            throw new RuntimeException(context.toString()
-//                    + " must implement OnFragmentInteractionListener");
-//        }
-//    }
-//
-//    @Override
-//    public void onDetach() {
-//        super.onDetach();
-//        mListener = null;
-//    }
-//
-//    public interface OnFragmentInteractionListener {
-//        void onRegisterSuccess(String email);
-//    }
+    /**
+     * Handle errors that may occur during the AsyncTask.
+     * @param result the error message provide from the AsyncTask
+     */
+    private void handleErrorsInTask(String result) {
+        Log.e("ASYNC_TASK_ERROR", result);
+    }
+
+    /**
+     * Handle the setup of the UI before the HTTP call to the webservice.
+     */
+    private void handleRegisterOnPre() {
+        getActivity().findViewById(R.id.layout_register_wait).setVisibility(View.VISIBLE);
+    }
+
+    /**
+     * Handle onPostExecute of the AsynceTask. The result from our webservice is
+     * a JSON formatted String. Parse it for success or failure.
+     * @param result the JSON formatted String response from the web service
+     */
+    private void handleRegisterOnPost(String result) {
+        try {
+            JSONObject resultsJSON = new JSONObject(result);
+            boolean success =
+                    resultsJSON.getBoolean(
+                            getString(R.string.keys_json_register_success));
+            if (success) {
+                RegisterFragmentDirections.ActionNavRegisterToNavVerify homeActivity =
+                        RegisterFragmentDirections.actionNavRegisterToNavVerify(mCredentials);
+                String jwt = resultsJSON.getString(getString(R.string.keys_json_login_jwt));
+                homeActivity.setJwt(jwt);
+                Navigation.findNavController(getView()).navigate(homeActivity);
+                //Remove this Activity from the back stack. Do not allow back navigation to login
+                getActivity().finish();
+                return;
+            } else {
+                //Login was unsuccessful. Don’t switch fragments and
+                // inform the user
+                String detail = resultsJSON.getJSONObject(getString(R.string.keys_json_register_error))
+                        .getString(getString(R.string.keys_json_register_detail));
+                ((EditText) getView().findViewById(R.id.register_email))
+                        .setError(detail);
+            }
+            getActivity().findViewById(R.id.layout_register_wait)
+                    .setVisibility(View.GONE);
+        } catch (JSONException e) {
+            //It appears that the web service did not return a JSON formatted
+            //String or it did not have what we expected in it.
+            Log.e("JSON_PARSE_ERROR", result
+                    + System.lineSeparator()
+                    + e.getMessage());
+            getActivity().findViewById(R.id.layout_register_wait)
+                    .setVisibility(View.GONE);
+            ((TextView) getView().findViewById(R.id.register_email))
+                    .setError("Registration Unsuccessful");
+        }
+    }
 }

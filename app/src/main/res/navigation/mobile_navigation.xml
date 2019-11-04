@@ -29,4 +29,17 @@
             app:argType="edu.uw.tcss450.tcss450_group4.model.Weather" />
     </fragment>
     <action android:id="@+id/action_global_nav_weather" app:destination="@id/nav_weather" />
+    <activity
+        android:id="@+id/homeActivity"
+        android:name="edu.uw.tcss450.tcss450_group4.HomeActivity"
+        android:label="activity_home"
+        tools:layout="@layout/activity_home" >
+        <argument
+            android:name="credentials"
+            app:argType="edu.uw.tcss450.tcss450_group4.model.Credentials" />
+        <argument
+            android:name="jwt"
+            app:argType="string"
+            android:defaultValue='""' />
+    </activity>
 </navigation>

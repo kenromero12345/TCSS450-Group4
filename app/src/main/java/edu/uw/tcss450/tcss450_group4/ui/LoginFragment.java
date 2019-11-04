@@ -223,10 +223,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
                         LoginFragmentDirections.actionNavLoginToNavHomeActivity(mCrendentials);
                 homeActivity.setJwt(resultsJSON.getString(getString(R.string.keys_json_login_jwt)));
                 saveCredentials(mCrendentials);
-//                LoginFragmentDirections.ActionLoginFragmentToHomeActivity homeActivity =
-//                        LoginFragmentDirections.actionLoginFragmentToHomeActivity(mCrendentials);
-//                homeActivity.setJwt(resultsJSON.getString(getString(R.string.keys_json_login_jwt)));
-                Navigation.findNavController(getView()).navigate(R.id.action_nav_login_to_nav_homeActivity);
+                Navigation.findNavController(getView()).navigate(homeActivity);
                 //Remove this Activity from the back stack. Do not allow back navigation to login
                 getActivity().finish();
                 return;

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources tools:ignore="ExtraTranslation" xmlns:tools="http://schemas.android.com/tools">
-    <string name="ep_base_url">tcss450a19.herokuapp.com</string>
+    <string name="ep_base_url">charles-angels.herokuapp.com</string>
     <string name="ep_login">login</string>
     <string name="ep_phish">phish</string>
     <string name="ep_blog">blog</string>
