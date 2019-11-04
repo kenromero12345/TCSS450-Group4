@@ -176,8 +176,8 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
             boolean success = resultsJSON.getBoolean(getString(R.string.keys_json_login_success));
 
             if (success) {
-                LoginFragmentDirections.ActionLoginFragmentToHomeActivity homeActivity =
-                        LoginFragmentDirections.actionLoginFragmentToHomeActivity(mCrendentials);
+                LoginFragmentDirections.ActionNavLoginToNavHomeActivity homeActivity =
+                        LoginFragmentDirections.actionNavLoginToNavHomeActivity(mCrendentials);
                 homeActivity.setJwt(resultsJSON.getString(getString(R.string.keys_json_login_jwt)));
                 Navigation.findNavController(getView()).navigate(homeActivity);
                 return;
