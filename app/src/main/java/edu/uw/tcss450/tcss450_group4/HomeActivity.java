@@ -74,7 +74,7 @@ public class HomeActivity extends AppCompatActivity {
         NavigationUI.setupWithNavController(navigationView, navController);
         navController.setGraph(R.navigation.mobile_navigation, getIntent().getExtras());
 
-        HomeFragmentArgs args = HomeActivityArgs.fromBundle(getIntent().getExtras());
+        HomeActivityArgs args = HomeActivityArgs.fromBundle(getIntent().getExtras());
         mJwToken = args.getJwt();
         navigationView.setNavigationItemSelectedListener(this::onNavigationSelected);
     }
