@@ -3,26 +3,42 @@ package edu.uw.tcss450.tcss450_group4.ui;
 import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.text.HtmlCompat;
 import androidx.fragment.app.Fragment;
 
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
-import edu.uw.tcss450.tcss450_group4.R;
-import edu.uw.tcss450.tcss450_group4.model.Weather;
+import org.json.JSONException;
+import org.json.JSONObject;
 
-import static androidx.core.content.ContextCompat.getSystemService;
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.List;
+import java.util.Locale;
+
+import edu.uw.tcss450.tcss450_group4.R;
+import edu.uw.tcss450.tcss450_group4.model.NewWeather;
+import edu.uw.tcss450.tcss450_group4.utils.JSONWeatherParser;
+import edu.uw.tcss450.tcss450_group4.utils.WeatherHttpClient;
 
 
 ///**
@@ -35,8 +51,17 @@ import static androidx.core.content.ContextCompat.getSystemService;
 // */
 public class WeatherFragment extends Fragment {
     private static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
-    private Double mLongitude;
-    private Double mLatitude;
+    private double mLongitude;
+    private double mLatitude;
+    private TextView cityText;
+    private TextView condDescr;
+    private TextView temp;
+    private TextView press;
+    private TextView windSpeed;
+    private TextView windDeg;
+
+    private TextView hum;
+    private ImageView imgView;
 //    // TODO: Rename parameter arguments, choose names that match
 //    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 //    private static final String ARG_PARAM1 = "param1";
@@ -89,20 +114,72 @@ public class WeatherFragment extends Fragment {
                 != PackageManager.PERMISSION_GRANTED
                 && getActivity().checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
-            ((TextView) getActivity().findViewById(R.id.weather_currentLocationLongitude))
-                    .setText("Longitude: NULL");
-            ((TextView) getActivity().findViewById(R.id.weather_currentLocationLatitude))
-                    .setText("Latitude: NULL");
+//            ((TextView) getActivity().findViewById(R.id.weather_currentLocationLongitude))
+//                    .setText("Longitude: NULL");
+//            ((TextView) getActivity().findViewById(R.id.weather_currentLocationLatitude))
+//                    .setText("Latitude: NULL");
         } else {
-            Location location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-            mLongitude = location.getLongitude();
-            mLatitude = location.getLatitude();
+//            Location location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+//            mLongitude = location.getLongitude();
+//            mLatitude = location.getLatitude();
 //            Log.d("long", " " + mLongitude);
-            ((TextView) getActivity().findViewById(R.id.weather_currentLocationLongitude))
-                    .setText("Longitude: " + mLongitude);
-            ((TextView) getActivity().findViewById(R.id.weather_currentLocationLatitude))
-                    .setText("Latitude: " + mLatitude);
+//            ((TextView) getActivity().findViewById(R.id.weather_currentLocationLongitude))
+//                    .setText("Longitude: " + mLongitude);
+//            ((TextView) getActivity().findViewById(R.id.weather_currentLocationLatitude))
+//                    .setText("Latitude: " + mLatitude);
         }
+        Location location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        mLongitude = location.getLongitude();
+        mLatitude = location.getLatitude();
+        cityText = (TextView) getActivity().findViewById(R.id.cityText);
+        condDescr = (TextView) getActivity().findViewById(R.id.condDescr);
+        temp = (TextView) getActivity().findViewById(R.id.temp);
+        hum = (TextView) getActivity().findViewById(R.id.hum);
+        press = (TextView) getActivity().findViewById(R.id.press);
+        windSpeed = (TextView) getActivity().findViewById(R.id.windSpeed);
+        windDeg = (TextView) getActivity().findViewById(R.id.windDeg);
+        imgView = (ImageView) getActivity().findViewById(R.id.condIcon);
+//        getAddressFromLocation(location,null, null);
+
+        JSONWeatherTask task = new JSONWeatherTask();
+        String city = "London,UK";
+//        task.execute(new String[]{data});
+        task.execute(new String[]{"" + round(mLongitude, 2), "" + round(mLatitude, 2)});
+    }
+
+    public static void getAddressFromLocation(
+            final Location location, final Context context, final Handler handler) {
+//        Thread thread = new Thread() {
+//            @Override public void run() {
+                Geocoder geocoder = new Geocoder(context, Locale.getDefault());
+                String result = null;
+                try {
+                    List<Address> list = geocoder.getFromLocation(
+                            location.getLatitude(), location.getLongitude(), 1);
+                    if (list != null && list.size() > 0) {
+                        Address address = list.get(0);
+                        // sending back first address line and locality
+
+                        result = address.getAddressLine(0) + ", " + address.getLocality();
+                        Log.d("address1", result);
+                    }
+                } catch (IOException e) {
+                    Log.e("GEOFAIL", "Impossible to connect to Geocoder", e);
+                } finally {
+                    Message msg = Message.obtain();
+                    msg.setTarget(handler);
+                    if (result != null) {
+                        msg.what = 1;
+                        Bundle bundle = new Bundle();
+                        bundle.putString("address", result);
+                        msg.setData(bundle);
+                    } else
+                        msg.what = 0;
+                    msg.sendToTarget();
+                }
+//            }
+//        };
+//        thread.start();
     }
 
     //    /**
@@ -159,5 +236,72 @@ public class WeatherFragment extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+    }
+
+    private static JSONObject getObject(String tagName, JSONObject jObj) throws JSONException {
+        JSONObject subObj = jObj.getJSONObject(tagName);
+        return subObj;
+    }
+
+    private static String getString(String tagName, JSONObject jObj) throws JSONException {
+        return jObj.getString(tagName);
+    }
+
+    private static float getFloat(String tagName, JSONObject jObj) throws JSONException {
+        return (float) jObj.getDouble(tagName);
+    }
+
+    private static int getInt(String tagName, JSONObject jObj) throws JSONException {
+        return jObj.getInt(tagName);
+    }
+
+    private class JSONWeatherTask extends AsyncTask<String, Void, NewWeather> {
+
+        @Override
+        protected NewWeather doInBackground(String... params) {
+            NewWeather weather = new NewWeather();
+//            String longitude = ( (new WeatherHttpClient()).getWeatherData(params[0]));
+//            String latitude = ( (new WeatherHttpClient()).getWeatherData(params[1]));
+            String data = ((new WeatherHttpClient()).getWeatherData(params[0], params[1]));
+
+            try {
+                weather = JSONWeatherParser.getWeather(data);
+//                weather = JSONWeatherParser.getWeather(longitude, latitude);
+
+                // Let's retrieve the icon
+                weather.iconData = ((new WeatherHttpClient()).getImage(weather.currentCondition.getIcon()));
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+                return weather;
+
+            }
+
+        @Override
+        protected void onPostExecute(NewWeather weather) {
+            super.onPostExecute(weather);
+
+            if (weather.iconData != null && weather.iconData.length > 0) {
+                Bitmap img = BitmapFactory.decodeByteArray(weather.iconData, 0, weather.iconData.length);
+                imgView.setImageBitmap(img);
+            }
+
+            cityText.setText(weather.location.getCity() + "," + weather.location.getCountry());
+            condDescr.setText(weather.currentCondition.getCondition() + "(" + weather.currentCondition.getDescr() + ")");
+            temp.setText("" + Math.round((weather.temperature.getTemp() - 273.15)) + "�C");
+            hum.setText("" + weather.currentCondition.getHumidity() + "%");
+            press.setText("" + weather.currentCondition.getPressure() + " hPa");
+            windSpeed.setText("" + weather.wind.getSpeed() + " mps");
+            windDeg.setText("" + weather.wind.getDeg() + "�");
+        }
+    }
+
+    public static double round(double value, int places) {
+        if (places < 0) throw new IllegalArgumentException();
+
+        BigDecimal bd = BigDecimal.valueOf(value);
+        bd = bd.setScale(places, RoundingMode.HALF_UP);
+        return bd.doubleValue();
     }
 }
