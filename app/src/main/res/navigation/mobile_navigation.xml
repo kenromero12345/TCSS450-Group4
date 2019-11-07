@@ -27,6 +27,14 @@
         <argument
             android:name="weather"
             app:argType="edu.uw.tcss450.tcss450_group4.model.Weather" />
+        <argument
+            android:name="jwt"
+            app:argType="string"
+            android:defaultValue='""' />
+        <argument
+            android:name="email"
+            app:argType="string"
+            android:defaultValue='""' />
     </fragment>
     <action android:id="@+id/action_global_nav_weather" app:destination="@id/nav_weather" />
     <activity

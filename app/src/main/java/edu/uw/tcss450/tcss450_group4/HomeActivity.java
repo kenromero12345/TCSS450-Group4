@@ -1,14 +1,20 @@
 package edu.uw.tcss450.tcss450_group4;
+
+import android.Manifest;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationManager;
+import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
-
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -16,10 +22,19 @@ import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.material.navigation.NavigationView;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import edu.uw.tcss450.tcss450_group4.model.Weather;
+import edu.uw.tcss450.tcss450_group4.ui.WeatherFragmentDirections;
+import edu.uw.tcss450.tcss450_group4.utils.SendPostAsyncTask;
+
 public class HomeActivity extends AppCompatActivity {
     private static final String TAG = "WEATHER_FRAG";
+    private static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
     private String mJwToken;
-
+    private String mEmail;
     private AppBarConfiguration mAppBarConfiguration;
 
 
@@ -54,6 +69,7 @@ public class HomeActivity extends AppCompatActivity {
 
         HomeActivityArgs args = HomeActivityArgs.fromBundle(getIntent().getExtras());
         mJwToken = args.getJwt();
+        mEmail = args.getCredentials().getEmail();
         navigationView.setNavigationItemSelectedListener(this::onNavigationSelected);
     }
 
@@ -85,33 +101,7 @@ public class HomeActivity extends AppCompatActivity {
                 navController.navigate(R.id.nav_connections);
                 break;
             case R.id.nav_weather:
-
-                //                Uri uri = new Uri.Builder()
-//                        .scheme("https")
-//                        .appendPath(getString(R.string.ep_base_url))
-//                        //TODO:below
-//                        .appendPath(getString(R.string.ep_weather))
-////                        .appendPath(getString(R.string.ep_blog))
-////                        .appendPath(getString(R.string.ep_get))
-//                        .build();
-//
-////                Weather weather = new Weather("", 0, 0);
-////                JSONObject msg = weather.asJSONObject();
-//                JSONObject msg = new JSONObject();
-//                try {
-//                    msg.put("long", 0);
-//                    msg.put("lat", 0);
-//                } catch (JSONException e) {
-//                    Log.wtf("LONG/LAT", "Error creating JSON: " + e.getMessage());
-//                }
-//
-//                new SendPostAsyncTask.Builder(uri.toString(), msg)
-//                        .onPostExecute(this::handleWeatherGetOnPostExecute)
-//                        .onCancelled(error -> Log.e(TAG, error))
-//                        .addHeaderField("authorization", mJwToken) //add the JWT as a header
-//                        .build().execute();
-//                //TODO: remove below
-                navController.navigate(R.id.nav_weather);
+                gotoWeather();
                 break;
         }
         //Close the drawer
@@ -119,55 +109,149 @@ public class HomeActivity extends AppCompatActivity {
         return true;
     }
 
-//    private void handleWeatherGetOnPostExecute(final String result) {
-//        //parse JSON
-//
-//        try {
-//            JSONObject root = new JSONObject(result);
-//            if (root.has(getString(R.string.keys_weather_response))) {
-//                JSONObject response = root.getJSONObject(
-//                        getString(R.string.keys_weather_response));
-//                if (response.has(getString(R.string.keys_json_weather))) {
-//                    JSONObject weather = response.getJSONObject(
-//                            getString(R.string.keys_json_weather));
-//                    //TODO: data
-//                    Weather weatherDescription
-//                            = new Weather(getString(R.string.keys_json_weather_description));
-////                    JSONArray data = response.getJSONArray(
-////                            getString(R.string.keys_json_weather_data));
-////
-////                    BlogPost[] blogs = new BlogPost[data.length()];
-////                    for(int i = 0; i < data.length(); i++) {
-////                        JSONObject jsonBlog = data.getJSONObject(i);
-////                        blogs[i] = (new BlogPost.Builder(
-////                                jsonBlog.getString(
-////                                        getString(R.string.keys_json_blogs_pubdate)),
-////                                jsonBlog.getString(
-////                                        getString(R.string.keys_json_blogs_title)))
-////                                .addTeaser(jsonBlog.getString(
-////                                        getString(R.string.keys_json_blogs_teaser)))
-////                                .addUrl(jsonBlog.getString(
-////                                        getString(R.string.keys_json_blogs_url)))
-////                                .build());
-////                    }
-//
-//                    MobileNavigationDirections.ActionGlobalNavWeather directions
-//                            = WeatherFragmentDirections.actionGlobalNavWeather(weatherDescription);
-//
-//                    Navigation.findNavController(this, R.id.nav_host_fragment)
-//                            .navigate(directions);
-//                } else {
-//                    Log.e("ERROR!", "No data");
-//                }
-//            } else {
-//                Log.e("ERROR!", "No response");
-//            }
-//
-//        } catch (JSONException e) {
-//            e.printStackTrace();
-//            Log.e("ERROR!", e.getMessage());
-//        }
-//    }
+    private void gotoWeather() {
+        double longitude = 0;
+        double latitude = 0;
+
+        if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED
+                && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                    MY_PERMISSIONS_REQUEST_LOCATION);
+        }
+        if (!(checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED
+                && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED)) {
+            LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+            Location location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            longitude = location.getLongitude();
+            latitude = location.getLatitude();
+        }
+
+
+
+        Uri uri = new Uri.Builder()
+                .scheme("https")
+                .appendPath(getString(R.string.ep_base_url))
+                .appendPath(getString(R.string.ep_weather))
+                .appendPath(getString(R.string.ep_latLon))
+                .build();
+
+        JSONObject msg = new JSONObject();
+        try {
+            msg.put("lon",/* round(*/longitude/*,2)*/);
+            msg.put("lat",/* round(*/latitude/*,2)*/);
+        } catch (JSONException e) {
+            Log.wtf("LONG/LAT", "Error creating JSON: " + e.getMessage());
+        }
+
+        new SendPostAsyncTask.Builder(uri.toString(), msg)
+                .onPostExecute(this::handleWeatherGetOnPostExecute)
+                .onCancelled(error -> Log.e(TAG, error))
+                .addHeaderField("authorization", mJwToken) //add the JWT as a header
+                .build().execute();
+    }
+
+    private void handleWeatherGetOnPostExecute(final String result) {
+        try {
+            boolean hasWeather = false;
+            boolean hasMain = false;
+            boolean hasWind = false;
+            boolean hasCoord = false;
+            boolean hasSys = false;
+            boolean hasName = false;
+            JSONObject root = new JSONObject(result);
+            if (root.has(getString(R.string.keys_json_weather))) {
+                hasWeather = true;
+            } else {
+                Log.e("ERROR!", "No weather");
+            }
+            if (root.has(getString(R.string.keys_json_main))) {
+                hasMain = true;
+            } else {
+                Log.e("ERROR!", "No main");
+            }
+            if (root.has(getString(R.string.keys_json_wind))) {
+                hasWind = true;
+            } else {
+                Log.e("ERROR!", "No wind");
+            }
+            if (root.has(getString(R.string.keys_json_coord))) {
+                hasCoord = true;
+            } else {
+                Log.e("ERROR!", "No coord");
+            }
+            if (root.has(getString(R.string.keys_json_name))) {
+                hasName = true;
+            } else {
+                Log.e("ERROR!", "No name");
+            }
+            if (root.has(getString(R.string.keys_json_sys))) {
+                hasSys = true;
+            } else {
+                Log.e("ERROR!", "No sys");
+            }
+
+            if (hasCoord && hasMain && hasName && hasSys && hasWeather && hasWind) {
+                JSONArray weatherJArray = root.getJSONArray(
+                        getString(R.string.keys_json_weather));
+                JSONObject mainJObject = root.getJSONObject(
+                        getString(R.string.keys_json_main));
+                String nameString = root.getString(
+                        getString(R.string.keys_json_name));
+                JSONObject sysJObject = root.getJSONObject(
+                        getString(R.string.keys_json_sys));
+                JSONObject coordJObject = root.getJSONObject(
+                        getString(R.string.keys_json_coord));
+                JSONObject windJObject = root.getJSONObject(
+                        getString(R.string.keys_json_wind));
+
+                JSONObject weatherJObject = weatherJArray.getJSONObject(0);
+                Weather weather = new Weather(
+                    weatherJObject.getString(getString(
+                                R.string.keys_json_description))
+                        , weatherJObject.getString(getString(
+                                R.string.keys_json_icon))
+                        , coordJObject.getDouble(getString(
+                                R.string.keys_json_lon))
+                        , coordJObject.getDouble(getString(
+                                R.string.keys_json_lat))
+                        , mainJObject.getDouble(getString(
+                                R.string.keys_json_temp))
+                        ,  mainJObject.getInt(getString(
+                                R.string.keys_json_pressure))
+                        , mainJObject.getInt(getString(
+                                R.string.keys_json_humidity))
+                        , mainJObject.getDouble(getString(
+                                R.string.keys_json_temp_min))
+                        , mainJObject.getDouble(getString(
+                                R.string.keys_json_temp_max))
+                        , windJObject.getDouble(getString(
+                                R.string.keys_json_speed))
+                        , windJObject.getInt(getString(
+                                R.string.keys_json_deg))
+                        , nameString
+                        , sysJObject.getString(getString(
+                                R.string.keys_json_country))
+                        /*, mJwToken*/);
+
+                MobileNavigationDirections.ActionGlobalNavWeather directions
+                        = WeatherFragmentDirections.actionGlobalNavWeather(weather);
+                directions.setEmail(mEmail);
+                directions.setJwt(mJwToken);
+
+                Navigation.findNavController(this, R.id.nav_host_fragment)
+                        .navigate(directions);
+            }
+
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+            Log.e("ERROR!", e.getMessage());
+        }
+    }
 
     private void logout() {
         SharedPreferences prefs =
@@ -203,4 +287,12 @@ public class HomeActivity extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
+//    private static double round(double value, int places) {
+//        if (places < 0) throw new IllegalArgumentException();
+//
+//        BigDecimal bd = BigDecimal.valueOf(value);
+//        bd = bd.setScale(places, RoundingMode.HALF_UP);
+//        return bd.doubleValue();
+//    }
 }

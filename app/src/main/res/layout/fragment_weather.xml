@@ -1,39 +1,3 @@
-<!--<?xml version="1.0" encoding="utf-8"?>-->
-<!--<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"-->
-<!--    xmlns:app="http://schemas.android.com/apk/res-auto"-->
-<!--    xmlns:tools="http://schemas.android.com/tools"-->
-<!--    android:id="@+id/weather_"-->
-<!--    android:layout_width="match_parent"-->
-<!--    android:layout_height="match_parent"-->
-<!--    tools:context=".ui.WeatherFragment">-->
-
-<!--    &lt;!&ndash; TODO: Update blank fragment layout &ndash;&gt;-->
-<!--    <TextView-->
-<!--        android:id="@+id/weather_currentLocationLongitude"-->
-<!--        android:layout_width="0dp"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        app:layout_constraintEnd_toEndOf="parent"-->
-<!--        app:layout_constraintHorizontal_bias="0.0"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:layout_constraintTop_toTopOf="parent" />-->
-
-<!--    <TextView-->
-<!--        android:id="@+id/weather_currentLocationLatitude"-->
-<!--        android:layout_width="0dp"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        app:layout_constraintEnd_toEndOf="parent"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:layout_constraintTop_toBottomOf="@+id/weather_currentLocationLongitude" />-->
-
-<!--    <TextView-->
-<!--        android:id="@+id/weather_currentLocationDescription"-->
-<!--        android:layout_width="0dp"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        app:layout_constraintEnd_toEndOf="parent"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:layout_constraintTop_toBottomOf="@+id/weather_currentLocationLatitude" />-->
-
-<!--</androidx.constraintlayout.widget.ConstraintLayout>-->
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -44,48 +8,58 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".MainActivity" >
 
+<!--    <Button-->
+<!--        android:id="@+id/weather_button3"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_alignParentEnd="true"-->
+<!--        android:layout_alignParentBottom="true"-->
+<!--        android:layout_marginEnd="0dp"-->
+<!--        android:layout_marginBottom="0dp"-->
+<!--        android:text="@string/lonLat" />-->
+
     <TextView
-        android:id="@+id/cityText"
+        android:id="@+id/weather_cityCountry"
         style="?android:attr/textAppearanceMedium"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true" />
 
     <ImageView
-        android:id="@+id/condIcon"
+        android:id="@+id/weather_conditionIcon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
-        android:layout_below="@id/cityText" />
+        android:layout_below="@id/weather_cityCountry" />
 
     <TextView
-        android:id="@+id/condDescr"
+        android:id="@+id/weather_conditonDescription"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/condIcon"
-        android:layout_alignLeft="@id/condIcon"
+        android:layout_below="@id/weather_conditionIcon"
+        android:layout_alignLeft="@id/weather_conditionIcon"
         />
 
     <TextView
-        android:id="@+id/temp"
+        android:id="@+id/weather_temperature"
         style="@style/tempStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="12dp"
-        android:layout_alignBaseline="@id/condDescr"
-        android:layout_toRightOf="@id/condDescr"/>
+        android:layout_alignBaseline="@id/weather_conditonDescription"
+        android:layout_toRightOf="@id/weather_conditonDescription"/>
 
     <TextView
         android:id="@+id/pressLab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
-        android:layout_below="@id/condDescr"
+        android:layout_below="@id/weather_conditonDescription"
         android:text="Pressure"
         android:layout_marginTop="15dp" />
 
     <TextView
-        android:id="@+id/press"
+        android:id="@+id/weather_pressure"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignBaseline="@id/pressLab"
@@ -101,7 +75,7 @@
         android:text="Humidity" />
 
     <TextView
-        android:id="@+id/hum"
+        android:id="@+id/weather_humidity"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignBaseline="@id/humLab"
@@ -118,7 +92,7 @@
         android:text="Wind" />
 
     <TextView
-        android:id="@+id/windSpeed"
+        android:id="@+id/weather_windSpeed"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignBaseline="@id/windLab"
@@ -127,12 +101,94 @@
         style="@style/valData" />
 
     <TextView
-        android:id="@+id/windDeg"
+        android:id="@+id/weather_windDegree"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignBaseline="@id/windLab"
-        android:layout_toRightOf="@id/windSpeed"
+        android:layout_toRightOf="@id/weather_windSpeed"
         android:layout_marginLeft="4dp"
         style="@style/valData"/>
+
+    <Button
+        android:id="@+id/weather_zipButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="0dp"
+        android:text="@string/button_get" />
+
+    <EditText
+        android:id="@+id/weather_zipEditText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/weather_zipButton"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="0dp"
+        android:layout_marginBottom="0dp"
+        android:ems="10"
+        android:hint="@string/edit_zip_code"
+        android:inputType="textPersonName" />
+
+    <Button
+        android:id="@+id/weather_saveButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginEnd="0dp"
+        android:layout_marginBottom="0dp"
+        android:text="@string/button_save" />
+
+    <Button
+        android:id="@+id/weather_savedButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/weather_saveButton"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="0dp"
+        android:layout_marginEnd="0dp"
+        android:layout_marginBottom="0dp"
+        android:text="@string/button_getSaved" />
+
+    <Switch
+        android:id="@+id/switch1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/weather_cityCountry"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="250dp"
+        android:layout_marginTop="0dp"
+        android:layout_marginEnd="0dp"
+        android:layout_toEndOf="@+id/weather_temperature"
+        android:text="C/F" />
+
+    <!--    <EditText-->
+<!--        android:id="@+id/editText2"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_above="@+id/weather_zipEditText"-->
+<!--        android:layout_alignParentStart="true"-->
+<!--        android:layout_alignParentEnd="true"-->
+<!--        android:layout_marginStart="0dp"-->
+<!--        android:layout_marginEnd="0dp"-->
+<!--        android:layout_marginBottom="10dp"-->
+<!--        android:ems="10"-->
+<!--        android:hint="@string/keys_json_lat"-->
+<!--        android:inputType="textPersonName" />-->
+
+<!--    <EditText-->
+<!--        android:id="@+id/editText3"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_above="@+id/editText2"-->
+<!--        android:layout_alignParentStart="true"-->
+<!--        android:layout_alignParentEnd="true"-->
+<!--        android:layout_marginStart="0dp"-->
+<!--        android:layout_marginEnd="0dp"-->
+<!--        android:layout_marginBottom="10dp"-->
+<!--        android:ems="10"-->
+<!--        android:hint="@string/keys_json_lon"-->
+<!--        android:inputType="textPersonName" />-->
 
 </RelativeLayout>

@@ -1,44 +1,34 @@
 package edu.uw.tcss450.tcss450_group4.ui;
 
-import android.Manifest;
-import android.content.Context;
-import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.location.Address;
-import android.location.Geocoder;
-import android.location.Location;
-import android.location.LocationManager;
+import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import android.os.Handler;
-import android.os.Message;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
+import com.squareup.picasso.Picasso;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.List;
-import java.util.Locale;
+import java.util.Objects;
 
 import edu.uw.tcss450.tcss450_group4.R;
-import edu.uw.tcss450.tcss450_group4.model.NewWeather;
-import edu.uw.tcss450.tcss450_group4.utils.JSONWeatherParser;
-import edu.uw.tcss450.tcss450_group4.utils.WeatherHttpClient;
+import edu.uw.tcss450.tcss450_group4.model.Weather;
+import edu.uw.tcss450.tcss450_group4.utils.GetAsyncTask;
+import edu.uw.tcss450.tcss450_group4.utils.SendPostAsyncTask;
 
 
 ///**
@@ -50,165 +40,174 @@ import edu.uw.tcss450.tcss450_group4.utils.WeatherHttpClient;
 // * create an instance of this fragment.
 // */
 public class WeatherFragment extends Fragment {
-    private static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
-    private double mLongitude;
-    private double mLatitude;
-    private TextView cityText;
-    private TextView condDescr;
-    private TextView temp;
-    private TextView press;
-    private TextView windSpeed;
-    private TextView windDeg;
+    private static final String TAG = "WEATHER_FRAG";
+    private Weather mWeather;
+    private View mView;
+    private String mSendUrl;
+    private String mEmail;
+    private String mJwToken;
 
-    private TextView hum;
-    private ImageView imgView;
-//    // TODO: Rename parameter arguments, choose names that match
-//    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-//    private static final String ARG_PARAM1 = "param1";
-//    private static final String ARG_PARAM2 = "param2";
-//
-//    // TODO: Rename and change types of parameters
-//    private String mParam1;
-//    private String mParam2;
-//
-//    private OnFragmentInteractionListener mListener;
-
-    public WeatherFragment() {
-        // Required empty public constructor
+    /**
+     *
+     */
+    @Override
+    public void onStart() {
+        super.onStart();
+        mSendUrl = new Uri.Builder()
+                .scheme("https")
+                .appendPath(getString(R.string.ep_base_url))
+                .appendPath(getString(R.string.ep_weather))
+                .appendPath(getString(R.string.ep_send))
+                .build()
+                .toString();
     }
 
+    /**
+     *
+     * @param view
+     * @param savedInstanceState
+     */
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        //TODO:
-//        WeatherFragmentArgs.fromBundle(getArguments()).getWeather();
-//        HomeActivityArgs.fromBundle(getArguments()).getWeather();
-//        if (getArguments() != null) {
-//            Weather weather = (Weather) getArguments().get(getString(R.string.keys_weather));
-//            BlogPost blogPost = (BlogPost) getArguments().get(getString(R.string.key_blog_post_view));
-//            //Log.d("Click Student", student.name);
-//            TextView tvId = getActivity().findViewById(R.id.tv_blogPostTitle);
-//            tvId.setText(blogPost.getTitle());
-//            TextView tvName = getActivity().findViewById(R.id.tv_blogPostDate);
-//            tvName.setText(blogPost.getPubDate());
-//            TextView tvDetails = getActivity().findViewById(R.id.tv_blogPostTeaser);
-//            tvDetails.setText(HtmlCompat.fromHtml((blogPost.getTeaser()), HtmlCompat.FROM_HTML_MODE_LEGACY).toString());
-//        }
-        LocationManager lm = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
-        if (getActivity().checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED
-                && getActivity().checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                    MY_PERMISSIONS_REQUEST_LOCATION);
-            // TODO: Consider calling
-            //    Activity#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for Activity#requestPermissions for more details.
-            return;
+        WeatherFragmentArgs args = null;
+        if (getArguments() != null) {
+            args = WeatherFragmentArgs.fromBundle(getArguments());
         }
-        if (getActivity().checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED
-                && getActivity().checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
-//            ((TextView) getActivity().findViewById(R.id.weather_currentLocationLongitude))
-//                    .setText("Longitude: NULL");
-//            ((TextView) getActivity().findViewById(R.id.weather_currentLocationLatitude))
-//                    .setText("Latitude: NULL");
-        } else {
-//            Location location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-//            mLongitude = location.getLongitude();
-//            mLatitude = location.getLatitude();
-//            Log.d("long", " " + mLongitude);
-//            ((TextView) getActivity().findViewById(R.id.weather_currentLocationLongitude))
-//                    .setText("Longitude: " + mLongitude);
-//            ((TextView) getActivity().findViewById(R.id.weather_currentLocationLatitude))
-//                    .setText("Latitude: " + mLatitude);
+        if (args != null) {
+            mWeather = args.getWeather();
+            mEmail = args.getEmail();
+            mJwToken = args.getJwt();
         }
-        Location location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-        mLongitude = location.getLongitude();
-        mLatitude = location.getLatitude();
-        cityText = (TextView) getActivity().findViewById(R.id.cityText);
-        condDescr = (TextView) getActivity().findViewById(R.id.condDescr);
-        temp = (TextView) getActivity().findViewById(R.id.temp);
-        hum = (TextView) getActivity().findViewById(R.id.hum);
-        press = (TextView) getActivity().findViewById(R.id.press);
-        windSpeed = (TextView) getActivity().findViewById(R.id.windSpeed);
-        windDeg = (TextView) getActivity().findViewById(R.id.windDeg);
-        imgView = (ImageView) getActivity().findViewById(R.id.condIcon);
-//        getAddressFromLocation(location,null, null);
+        mView = view;
 
-        JSONWeatherTask task = new JSONWeatherTask();
-        String city = "London,UK";
-//        task.execute(new String[]{data});
-        task.execute(new String[]{"" + round(mLongitude, 2), "" + round(mLatitude, 2)});
+        setWeather(view);
+
+        ((Button) view.findViewById(R.id.weather_zipButton)).setOnClickListener(e -> attemptGetWeatherZip());
+        ((Button) view.findViewById(R.id.weather_saveButton)).setOnClickListener(e -> attemptSaveWeather());
+        ((Button) view.findViewById(R.id.weather_savedButton)).setOnClickListener(e -> gotoSavedWeatherRecyclerView());
     }
 
-    public static void getAddressFromLocation(
-            final Location location, final Context context, final Handler handler) {
-//        Thread thread = new Thread() {
-//            @Override public void run() {
-                Geocoder geocoder = new Geocoder(context, Locale.getDefault());
-                String result = null;
-                try {
-                    List<Address> list = geocoder.getFromLocation(
-                            location.getLatitude(), location.getLongitude(), 1);
-                    if (list != null && list.size() > 0) {
-                        Address address = list.get(0);
-                        // sending back first address line and locality
-
-                        result = address.getAddressLine(0) + ", " + address.getLocality();
-                        Log.d("address1", result);
-                    }
-                } catch (IOException e) {
-                    Log.e("GEOFAIL", "Impossible to connect to Geocoder", e);
-                } finally {
-                    Message msg = Message.obtain();
-                    msg.setTarget(handler);
-                    if (result != null) {
-                        msg.what = 1;
-                        Bundle bundle = new Bundle();
-                        bundle.putString("address", result);
-                        msg.setData(bundle);
-                    } else
-                        msg.what = 0;
-                    msg.sendToTarget();
-                }
-//            }
-//        };
-//        thread.start();
+    private String attemptGetZip(double tLat, double tLon) {
+        return "";
     }
 
-    //    /**
-//     * Use this factory method to create a new instance of
-//     * this fragment using the provided parameters.
-//     *
-//     * @param param1 Parameter 1.
-//     * @param param2 Parameter 2.
-//     * @return A new instance of fragment WeatherFragment.
-//     */
-//    // TODO: Rename and change types and number of parameters
-//    public static WeatherFragment newInstance(String param1, String param2) {
-//        WeatherFragment fragment = new WeatherFragment();
-//        Bundle args = new Bundle();
-//        args.putString(ARG_PARAM1, param1);
-//        args.putString(ARG_PARAM2, param2);
-//        fragment.setArguments(args);
-//        return fragment;
-//    }
+    /**
+     *
+     */
+    private void attemptSaveWeather() {
+        JSONObject msg = new JSONObject();
 
+        try {
+            msg.put("email", mEmail);
+            msg.put("city", mWeather.getCity());
+            msg.put("country", mWeather.getCountry());
+            msg.put("lat", mWeather.getLat());
+            msg.put("lon", mWeather.getLon());
+            msg.put("zip", attemptGetZip(mWeather.getLat(), mWeather.getLon()));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        new SendPostAsyncTask.Builder(mSendUrl, msg)
+                .onPostExecute(this::endOfSendWeatherTask)
+                .onCancelled(error -> Log.e(TAG, error))
+                .addHeaderField("authorization", mJwToken) //add the JWT as a header
+                .build().execute();
+    }
+
+    private void endOfSendWeatherTask(final String result) {
+        try {
+            //This is the result from the web service
+            JSONObject res = new JSONObject(result);
+
+            if(res.has("success")  && res.getBoolean("success")) {
+                //TODO: alert dialog not saved
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     *
+     */
+    private void gotoSavedWeatherRecyclerView() {
+        Uri uri = new Uri.Builder()
+                .scheme("https")
+                .appendPath(getString(R.string.ep_base_url))
+                .appendPath(getString(R.string.ep_weather))
+                .appendPath(getString(R.string.ep_get))
+                .build();
+
+        new GetAsyncTask.Builder(uri.toString())
+                .onPostExecute(this::handleWeathersGetOnPostExecute)
+                .addHeaderField("authorization", mJwToken) //add the JWT as a header
+                .build().execute();
+    }
+
+    /**
+     *
+     */
+    private void attemptGetWeatherZip() {
+        boolean success = true;
+        EditText et = (EditText) mView.findViewById(R.id.weather_zipEditText);
+        String zip = et.getText().toString().trim();
+
+        if (zip.equals("")) {
+            success = false;
+            et.setError("empty!!");
+        }
+
+        if (success) {
+            getWeatherZip();
+        }
+    }
+
+    /**
+     *
+     * @param view
+     */
+    @SuppressLint("SetTextI18n")
+    private void setWeather(@NonNull View view) {
+        TextView cityText = cityText = (TextView) view.findViewById(R.id.weather_cityCountry);
+        TextView condDescr = condDescr = (TextView) view.findViewById(R.id.weather_conditonDescription);;
+        TextView temp = (TextView) view.findViewById(R.id.weather_temperature);;
+        TextView hum = (TextView) view.findViewById(R.id.weather_humidity);;
+        TextView press = (TextView) view.findViewById(R.id.weather_pressure);;
+        TextView windSpeed = (TextView) view.findViewById(R.id.weather_windSpeed);
+        TextView windDeg = (TextView) view.findViewById(R.id.weather_windDegree);
+        ImageView imgView = (ImageView) view.findViewById(R.id.weather_conditionIcon);
+
+        cityText.setText(mWeather.getCity() + ", " + mWeather.getCountry());
+        condDescr.setText(mWeather.getDescription());
+        temp.setText("" + Math.round((mWeather.getTemp() - 273.15)) + "�C");
+        hum.setText("" + mWeather.getHumidity() + "%");
+        press.setText("" + mWeather.getPressure() + " hPa");
+        windSpeed.setText("" + mWeather.getSpeed() + " mps");
+        windDeg.setText("" + mWeather.getDeg() + "�");
+        String IMG_URL = "http://openweathermap.org/img/wn/";
+        String IMG_URL_BIG = "@2x";
+        String IMG_URL_END = ".png";
+        Picasso.get().load(IMG_URL + mWeather.getIcon() + IMG_URL_BIG + IMG_URL_END).into(imgView);
+    }
+
+    /**
+     *
+     * @param savedInstanceState
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-//            mParam1 = getArguments().getString(ARG_PARAM1);
-//            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
 
+    /**
+     *
+     * @param inflater
+     * @param container
+     * @param savedInstanceState
+     * @return
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -216,92 +215,173 @@ public class WeatherFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_weather, container, false);
     }
 
-//    // TODO: Rename method, update argument and hook method into UI event
-//    public void onButtonPressed(Uri uri) {
-//        if (mListener != null) {
-//            mListener.onFragmentInteraction(uri);
-//        }
-//    }
+    /**
+     *
+     */
+    private void getWeatherZip() {
+        String zip = ((EditText)mView.findViewById(R.id.weather_zipEditText)).getText().toString().trim();
+
+        Uri uri = new Uri.Builder()
+                .scheme("https")
+                .appendPath(getString(R.string.ep_base_url))
+                .appendPath(getString(R.string.ep_weather))
+                .appendPath(getString(R.string.ep_zip))
+                .build();
+
+        JSONObject msg = new JSONObject();
+        try {
+            msg.put("zip",/* round(*/zip/*,2)*/);
+        } catch (JSONException e) {
+            Log.wtf("LONG/LAT", "Error creating JSON: " + e.getMessage());
+        }
+
+        new SendPostAsyncTask.Builder(uri.toString(), msg)
+                .onPostExecute(this::handleWeatherGetOnPostExecute)
+                .onCancelled(error -> Log.e(TAG, error))
+                .addHeaderField("authorization", mJwToken) //add the JWT as a header
+                .build().execute();
+    }
 
     /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
+     *
      */
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
-    }
+    private void getWeatherLatLon() {
+        double longitude = 0;
+        double latitude = 0;
+        //TODO: get long lat
 
-    private static JSONObject getObject(String tagName, JSONObject jObj) throws JSONException {
-        JSONObject subObj = jObj.getJSONObject(tagName);
-        return subObj;
-    }
+        Uri uri = new Uri.Builder()
+                .scheme("https")
+                .appendPath(getString(R.string.ep_base_url))
+                .appendPath(getString(R.string.ep_weather))
+                .appendPath(getString(R.string.ep_latLon))
+                .build();
 
-    private static String getString(String tagName, JSONObject jObj) throws JSONException {
-        return jObj.getString(tagName);
-    }
-
-    private static float getFloat(String tagName, JSONObject jObj) throws JSONException {
-        return (float) jObj.getDouble(tagName);
-    }
-
-    private static int getInt(String tagName, JSONObject jObj) throws JSONException {
-        return jObj.getInt(tagName);
-    }
-
-    private class JSONWeatherTask extends AsyncTask<String, Void, NewWeather> {
-
-        @Override
-        protected NewWeather doInBackground(String... params) {
-            NewWeather weather = new NewWeather();
-//            String longitude = ( (new WeatherHttpClient()).getWeatherData(params[0]));
-//            String latitude = ( (new WeatherHttpClient()).getWeatherData(params[1]));
-            String data = ((new WeatherHttpClient()).getWeatherData(params[0], params[1]));
-
-            try {
-                weather = JSONWeatherParser.getWeather(data);
-//                weather = JSONWeatherParser.getWeather(longitude, latitude);
-
-                // Let's retrieve the icon
-                weather.iconData = ((new WeatherHttpClient()).getImage(weather.currentCondition.getIcon()));
-
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-                return weather;
-
-            }
-
-        @Override
-        protected void onPostExecute(NewWeather weather) {
-            super.onPostExecute(weather);
-
-            if (weather.iconData != null && weather.iconData.length > 0) {
-                Bitmap img = BitmapFactory.decodeByteArray(weather.iconData, 0, weather.iconData.length);
-                imgView.setImageBitmap(img);
-            }
-
-            cityText.setText(weather.location.getCity() + "," + weather.location.getCountry());
-            condDescr.setText(weather.currentCondition.getCondition() + "(" + weather.currentCondition.getDescr() + ")");
-            temp.setText("" + Math.round((weather.temperature.getTemp() - 273.15)) + "�C");
-            hum.setText("" + weather.currentCondition.getHumidity() + "%");
-            press.setText("" + weather.currentCondition.getPressure() + " hPa");
-            windSpeed.setText("" + weather.wind.getSpeed() + " mps");
-            windDeg.setText("" + weather.wind.getDeg() + "�");
+        JSONObject msg = new JSONObject();
+        try {
+            msg.put("lon",/* round(*/longitude/*,2)*/);
+            msg.put("lat",/* round(*/latitude/*,2)*/);
+        } catch (JSONException e) {
+            Log.wtf("LONG/LAT", "Error creating JSON: " + e.getMessage());
         }
+
+        new SendPostAsyncTask.Builder(uri.toString(), msg)
+                .onPostExecute(this::handleWeatherGetOnPostExecute)
+                .onCancelled(error -> Log.e(TAG, error))
+                .addHeaderField("authorization", mJwToken) //add the JWT as a header
+                .build().execute();
     }
 
-    public static double round(double value, int places) {
-        if (places < 0) throw new IllegalArgumentException();
+    /**
+     *
+     * @param result
+     */
+    private void handleWeathersGetOnPostExecute(final String result) {
 
-        BigDecimal bd = BigDecimal.valueOf(value);
-        bd = bd.setScale(places, RoundingMode.HALF_UP);
-        return bd.doubleValue();
+    }
+
+    /**
+     *
+     * @param result
+     */
+    private void handleWeatherGetOnPostExecute(final String result) {
+        try {
+            boolean hasWeather = false;
+            boolean hasMain = false;
+            boolean hasWind = false;
+            boolean hasCoord = false;
+            boolean hasSys = false;
+            boolean hasName = false;
+            JSONObject root = new JSONObject(result);
+            if (root.has(getString(R.string.keys_json_weather))) {
+                hasWeather = true;
+            } else {
+                Log.e("ERROR!", "No weather");
+            }
+            if (root.has(getString(R.string.keys_json_main))) {
+                hasMain = true;
+            } else {
+                Log.e("ERROR!", "No main");
+            }
+            if (root.has(getString(R.string.keys_json_wind))) {
+                hasWind = true;
+            } else {
+                Log.e("ERROR!", "No wind");
+            }
+            if (root.has(getString(R.string.keys_json_coord))) {
+                hasCoord = true;
+            } else {
+                Log.e("ERROR!", "No coord");
+            }
+            if (root.has(getString(R.string.keys_json_name))) {
+                hasName = true;
+            } else {
+                Log.e("ERROR!", "No name");
+            }
+            if (root.has(getString(R.string.keys_json_sys))) {
+                hasSys = true;
+            } else {
+                Log.e("ERROR!", "No sys");
+            }
+
+            if (hasCoord && hasMain && hasName && hasSys && hasWeather && hasWind) {
+                JSONArray weatherJArray = root.getJSONArray(
+                        getString(R.string.keys_json_weather));
+                JSONObject mainJObject = root.getJSONObject(
+                        getString(R.string.keys_json_main));
+                String nameString = root.getString(
+                        getString(R.string.keys_json_name));
+                JSONObject sysJObject = root.getJSONObject(
+                        getString(R.string.keys_json_sys));
+                JSONObject coordJObject = root.getJSONObject(
+                        getString(R.string.keys_json_coord));
+                JSONObject windJObject = root.getJSONObject(
+                        getString(R.string.keys_json_wind));
+
+                JSONObject weatherJObject = weatherJArray.getJSONObject(0);
+
+                mWeather = new Weather(
+                        weatherJObject.getString(getString(
+                                R.string.keys_json_description))
+                        , weatherJObject.getString(getString(
+                        R.string.keys_json_icon))
+                        , coordJObject.getDouble(getString(
+                        R.string.keys_json_lon))
+                        , coordJObject.getDouble(getString(
+                        R.string.keys_json_lat))
+                        , mainJObject.getDouble(getString(
+                        R.string.keys_json_temp))
+                        ,  mainJObject.getInt(getString(
+                        R.string.keys_json_pressure))
+                        , mainJObject.getInt(getString(
+                        R.string.keys_json_humidity))
+                        , mainJObject.getDouble(getString(
+                        R.string.keys_json_temp_min))
+                        , mainJObject.getDouble(getString(
+                        R.string.keys_json_temp_max))
+                        , windJObject.getDouble(getString(
+                        R.string.keys_json_speed))
+                        , windJObject.getInt(getString(
+                        R.string.keys_json_deg))
+                        , nameString
+                        , sysJObject.getString(getString(
+                        R.string.keys_json_country))
+                        /*, mWeather.getJwt()*/);
+
+                setWeather(mView);
+
+            } else {
+                AlertDialog alertDialog = new AlertDialog.Builder(getActivity()).create();
+                alertDialog.setTitle("Alert");
+                alertDialog.setMessage("Not a valid zip code");
+                alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                        (dialog, which) -> dialog.dismiss());
+                alertDialog.show();
+            }
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+            Log.e("ERROR!", Objects.requireNonNull(e.getMessage()));
+        }
     }
 }
