@@ -130,8 +130,6 @@ public class HomeActivity extends AppCompatActivity {
             latitude = location.getLatitude();
         }
 
-
-
         Uri uri = new Uri.Builder()
                 .scheme("https")
                 .appendPath(getString(R.string.ep_base_url))

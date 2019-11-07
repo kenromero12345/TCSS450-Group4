@@ -49,21 +49,6 @@ public class WeatherFragment extends Fragment {
 
     /**
      *
-     */
-//    @Override
-//    public void onStart() {
-//        super.onStart();
-//        mSendUrl = new Uri.Builder()
-//                .scheme("https")
-//                .appendPath(getString(R.string.ep_base_url))
-//                .appendPath(getString(R.string.ep_weather))
-//                .appendPath(getString(R.string.ep_send))
-//                .build()
-//                .toString();
-//    }
-
-    /**
-     *
      * @param view
      * @param savedInstanceState
      */
@@ -166,12 +151,12 @@ public class WeatherFragment extends Fragment {
      */
     private void attemptGetWeatherZip() {
         boolean success = true;
-        EditText et = (EditText) mView.findViewById(R.id.weather_zipEditText);
-        String zip = et.getText().toString().trim();
+            EditText et = (EditText) mView.findViewById(R.id.weather_zipEditText);
+            String zip = et.getText().toString().trim();
 
-        if (zip.equals("")) {
-            success = false;
-            et.setError("empty!!");
+            if (zip.equals("")) {
+                success = false;
+                et.setError("empty!!");
         }
 
         if (success) {
@@ -252,7 +237,8 @@ public class WeatherFragment extends Fragment {
 
         new SendPostAsyncTask.Builder(uri.toString(), msg)
                 .onPostExecute(this::handleWeatherGetOnPostExecute)
-                .onCancelled(error -> /*Log.e(TAG, error)*/ alert("save unsuccessful"))
+                .onCancelled(error -> /*((EditText) mView.findViewById(R.id.weather_zipEditText)
+                        ).setError("empty!!")*/Log.e(TAG, error)/*alert("save unsuccessful")*/)
                 .addHeaderField("authorization", mJwToken) //add the JWT as a header
                 .build().execute();
     }
@@ -292,7 +278,8 @@ public class WeatherFragment extends Fragment {
      * @param result
      */
     private void handleWeathersGetOnPostExecute(final String result) {
-
+//        Log.d("GETSAVED", "success");
+        alert("saved weathers");
     }
 
     /**
@@ -386,7 +373,9 @@ public class WeatherFragment extends Fragment {
                 setWeather(mView);
 
             } else {
-                alert("Not a valid zip code");
+//                alert("Not a valid zip code");
+                ((EditText) mView.findViewById(R.id.weather_zipEditText))
+                    .setError("Not a valid zip code");
             }
 
         } catch (JSONException e) {
