@@ -43,24 +43,24 @@ public class WeatherFragment extends Fragment {
     private static final String TAG = "WEATHER_FRAG";
     private Weather mWeather;
     private View mView;
-    private String mSendUrl;
+//    private String mSendUrl;
     private String mEmail;
     private String mJwToken;
 
     /**
      *
      */
-    @Override
-    public void onStart() {
-        super.onStart();
-        mSendUrl = new Uri.Builder()
-                .scheme("https")
-                .appendPath(getString(R.string.ep_base_url))
-                .appendPath(getString(R.string.ep_weather))
-                .appendPath(getString(R.string.ep_send))
-                .build()
-                .toString();
-    }
+//    @Override
+//    public void onStart() {
+//        super.onStart();
+//        mSendUrl = new Uri.Builder()
+//                .scheme("https")
+//                .appendPath(getString(R.string.ep_base_url))
+//                .appendPath(getString(R.string.ep_weather))
+//                .appendPath(getString(R.string.ep_send))
+//                .build()
+//                .toString();
+//    }
 
     /**
      *
@@ -109,7 +109,14 @@ public class WeatherFragment extends Fragment {
             e.printStackTrace();
         }
 
-        new SendPostAsyncTask.Builder(mSendUrl, msg)
+        Uri uri = new Uri.Builder()
+                .scheme("https")
+                .appendPath(getString(R.string.ep_base_url))
+                .appendPath(getString(R.string.ep_weather))
+                .appendPath(getString(R.string.ep_send))
+                .build();
+
+        new SendPostAsyncTask.Builder(uri.toString(), msg)
                 .onPostExecute(this::endOfSendWeatherTask)
                 .onCancelled(error -> Log.e(TAG, error))
                 .addHeaderField("authorization", mJwToken) //add the JWT as a header
@@ -122,7 +129,7 @@ public class WeatherFragment extends Fragment {
             JSONObject res = new JSONObject(result);
 
             if(res.has("success")  && res.getBoolean("success")) {
-                //TODO: alert dialog not saved
+                alert("save unsuccessful");
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -140,7 +147,15 @@ public class WeatherFragment extends Fragment {
                 .appendPath(getString(R.string.ep_get))
                 .build();
 
-        new GetAsyncTask.Builder(uri.toString())
+        JSONObject msg = new JSONObject();
+
+        try {
+            msg.put("email", mEmail);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        new SendPostAsyncTask.Builder(uri.toString(), msg)
                 .onPostExecute(this::handleWeathersGetOnPostExecute)
                 .addHeaderField("authorization", mJwToken) //add the JWT as a header
                 .build().execute();
@@ -237,7 +252,7 @@ public class WeatherFragment extends Fragment {
 
         new SendPostAsyncTask.Builder(uri.toString(), msg)
                 .onPostExecute(this::handleWeatherGetOnPostExecute)
-                .onCancelled(error -> Log.e(TAG, error))
+                .onCancelled(error -> /*Log.e(TAG, error)*/ alert("save unsuccessful"))
                 .addHeaderField("authorization", mJwToken) //add the JWT as a header
                 .build().execute();
     }
@@ -371,17 +386,21 @@ public class WeatherFragment extends Fragment {
                 setWeather(mView);
 
             } else {
-                AlertDialog alertDialog = new AlertDialog.Builder(getActivity()).create();
-                alertDialog.setTitle("Alert");
-                alertDialog.setMessage("Not a valid zip code");
-                alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
-                        (dialog, which) -> dialog.dismiss());
-                alertDialog.show();
+                alert("Not a valid zip code");
             }
 
         } catch (JSONException e) {
             e.printStackTrace();
             Log.e("ERROR!", Objects.requireNonNull(e.getMessage()));
         }
+    }
+
+    public void alert(String tS) {
+        AlertDialog alertDialog = new AlertDialog.Builder(getActivity()).create();
+        alertDialog.setTitle("Alert");
+        alertDialog.setMessage(tS);
+        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                (dialog, which) -> dialog.dismiss());
+        alertDialog.show();
     }
 }
