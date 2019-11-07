@@ -1,4 +1,5 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -23,91 +24,123 @@
         style="?android:attr/textAppearanceMedium"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true" />
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="0dp" />
 
     <ImageView
         android:id="@+id/weather_conditionIcon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/weather_cityCountry"
+        android:layout_alignParentStart="true"
         android:layout_alignParentLeft="true"
-        android:layout_below="@id/weather_cityCountry" />
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="0dp" />
 
     <TextView
         android:id="@+id/weather_conditonDescription"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/weather_conditionIcon"
+        android:layout_below="@+id/weather_cityCountry"
         android:layout_alignLeft="@id/weather_conditionIcon"
-        />
+        android:layout_marginStart="0dp"
+        android:layout_marginLeft="0dp"
+        android:layout_marginTop="0dp"
+        android:layout_toEndOf="@+id/weather_conditionIcon" />
 
     <TextView
         android:id="@+id/weather_temperature"
         style="@style/tempStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="12dp"
+        android:layout_below="@+id/weather_cityCountry"
         android:layout_alignBaseline="@id/weather_conditonDescription"
-        android:layout_toRightOf="@id/weather_conditonDescription"/>
+        android:layout_marginStart="0dp"
+        android:layout_marginLeft="0dp"
+        android:layout_marginTop="0dp"
+        android:layout_toEndOf="@+id/weather_conditonDescription"
+        android:layout_toRightOf="@id/weather_conditonDescription"
+        android:textColor="@color/uwPurple" />
 
     <TextView
         android:id="@+id/pressLab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
         android:layout_below="@id/weather_conditonDescription"
-        android:text="Pressure"
-        android:layout_marginTop="15dp" />
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="0dp"
+        android:text="Pressure" />
 
     <TextView
         android:id="@+id/weather_pressure"
+        style="@style/valData"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignBaseline="@id/pressLab"
+        android:layout_marginStart="0dp"
+        android:layout_marginLeft="0dp"
+        android:layout_toEndOf="@+id/pressLab"
         android:layout_toRightOf="@id/pressLab"
-        style="@style/valData"/>
+        android:textColor="@color/uwGold" />
 
     <TextView
         android:id="@+id/humLab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
         android:layout_below="@id/pressLab"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_marginStart="0dp"
         android:text="Humidity" />
 
     <TextView
         android:id="@+id/weather_humidity"
+        style="@style/valData"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignBaseline="@id/humLab"
+        android:layout_marginStart="0dp"
+        android:layout_marginLeft="0dp"
+        android:layout_toEndOf="@+id/humLab"
         android:layout_toRightOf="@id/humLab"
-        android:layout_marginLeft="4dp"
-        style="@style/valData"/>
+        android:textColor="@color/uwGold" />
 
     <TextView
         android:id="@+id/windLab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
         android:layout_below="@id/humLab"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_marginStart="0dp"
         android:text="Wind" />
 
     <TextView
         android:id="@+id/weather_windSpeed"
+        style="@style/valData"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignBaseline="@id/windLab"
+        android:layout_marginStart="4dp"
+        android:layout_marginLeft="0dp"
+        android:layout_toEndOf="@+id/windLab"
         android:layout_toRightOf="@id/windLab"
-        android:layout_marginLeft="4dp"
-        style="@style/valData" />
+        android:textColor="@color/uwGold" />
 
     <TextView
         android:id="@+id/weather_windDegree"
+        style="@style/valData"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignBaseline="@id/windLab"
+        android:layout_marginStart="4dp"
+        android:layout_marginLeft="0dp"
+        android:layout_toEndOf="@+id/weather_windSpeed"
         android:layout_toRightOf="@id/weather_windSpeed"
-        android:layout_marginLeft="4dp"
-        style="@style/valData"/>
+        android:textColor="@color/uwGold" />
 
     <Button
         android:id="@+id/weather_zipButton"
@@ -120,12 +153,14 @@
 
     <EditText
         android:id="@+id/weather_zipEditText"
-        android:layout_width="wrap_content"
+        android:layout_width="202dp"
         android:layout_height="wrap_content"
         android:layout_above="@+id/weather_zipButton"
         android:layout_alignParentStart="true"
         android:layout_marginStart="0dp"
+        android:layout_marginEnd="10dp"
         android:layout_marginBottom="0dp"
+        android:layout_toStartOf="@+id/weather_savedButton"
         android:ems="10"
         android:hint="@string/edit_zip_code"
         android:inputType="textPersonName" />
@@ -157,10 +192,8 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/weather_cityCountry"
         android:layout_alignParentEnd="true"
-        android:layout_marginStart="250dp"
         android:layout_marginTop="0dp"
         android:layout_marginEnd="0dp"
-        android:layout_toEndOf="@+id/weather_temperature"
         android:text="C/F" />
 
     <!--    <EditText-->

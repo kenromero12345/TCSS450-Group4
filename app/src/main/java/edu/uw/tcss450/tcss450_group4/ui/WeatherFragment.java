@@ -182,11 +182,11 @@ public class WeatherFragment extends Fragment {
 
         cityText.setText(mWeather.getCity() + ", " + mWeather.getCountry());
         condDescr.setText(mWeather.getDescription());
-        temp.setText("" + Math.round((mWeather.getTemp() - 273.15)) + "�C");
+        temp.setText("" + Math.round((mWeather.getTemp() - 273.15)) + (char) 0x00B0 + "C");
         hum.setText("" + mWeather.getHumidity() + "%");
         press.setText("" + mWeather.getPressure() + " hPa");
         windSpeed.setText("" + mWeather.getSpeed() + " mps");
-        windDeg.setText("" + mWeather.getDeg() + "�");
+        windDeg.setText("" + mWeather.getDeg() + (char) 0x00B0);
         String IMG_URL = "http://openweathermap.org/img/wn/";
         String IMG_URL_BIG = "@2x";
         String IMG_URL_END = ".png";
@@ -280,6 +280,7 @@ public class WeatherFragment extends Fragment {
      */
     private void handleWeathersGetOnPostExecute(final String result) {
 //        Log.d("GETSAVED", "success");
+        Log.d(TAG, result);
         alert("saved weathers");
     }
 
