@@ -34,11 +34,12 @@
 
 
     // verify fragment ids
-    <string name="verify_textView">Verification Code Here</string>
+    <string name="verify_textView">Verification Code</string>
     <string name="verify_button">Verify</string>
     <string name="verify_resend">Resend Code</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="edit_chat_hint">Write a message</string>
+    <string name="action_logout">Logout</string>
 </resources>

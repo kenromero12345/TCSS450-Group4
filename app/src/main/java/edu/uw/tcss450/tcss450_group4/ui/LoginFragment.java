@@ -1,6 +1,8 @@
 package edu.uw.tcss450.tcss450_group4.ui;
 
 import android.app.Activity;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -68,6 +70,35 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
     }
 
     @Override
+    public void onStart() {
+        super.onStart();
+
+        SharedPreferences prefs =
+                getActivity().getSharedPreferences(
+                        getString(R.string.keys_shared_prefs),
+                        Context.MODE_PRIVATE);
+        //retrieve the stored credentials from SharedPrefs
+        if (prefs.contains(getString(R.string.keys_prefs_email)) &&
+                prefs.contains(getString(R.string.keys_prefs_password))) {
+
+            final String email = prefs.getString(getString(R.string.keys_prefs_email), "");
+            final String password = prefs.getString(getString(R.string.keys_prefs_password), "");
+            //Load the two login EditTexts with the credentials found in SharedPrefs
+            EditText emailEdit = getActivity().findViewById(R.id.editText_email);
+            emailEdit.setText(email);
+            EditText passwordEdit = getActivity().findViewById(R.id.editText_password);
+            passwordEdit.setText(password);
+
+            doLogin(new Credentials.Builder(
+                    emailEdit.getText().toString(),
+                    passwordEdit.getText().toString())
+                    .build());
+
+        }
+    }
+
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
@@ -131,27 +162,33 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
             editTxtPasword.setError("Field must not be empty.");
         }
         if (!hasError) {
-            Credentials credentials = new Credentials.Builder(editTxtEmail.getText().toString(),
+
+            doLogin(new Credentials.Builder(
+                    editTxtEmail.getText().toString(),
                     editTxtPasword.getText().toString())
-                    .build();
-            //build the web service URL
-            Uri uri = new Uri.Builder()
-                    .scheme("https")
-                    .appendPath(getString(R.string.ep_base_url))
-                    .appendPath(getString(R.string.ep_login))
-                    .build();
+                    .build());
 
-            //build the JSONObject
-            JSONObject msg = credentials.asJSONObject();
-
-            mCrendentials = credentials;
-
-            //instantiate and execute the AsyncTask.
-            new SendPostAsyncTask.Builder(uri.toString(), msg)
-                    .onPreExecute(this::handleLoginOnPre)
-                    .onPostExecute(this::handleLoginOnPost)
-                    .onCancelled(this::handleErrorsInTask)
-                    .build().execute();
+//            Credentials credentials = new Credentials.Builder(editTxtEmail.getText().toString(),
+//                    editTxtPasword.getText().toString())
+//                    .build();
+//            //build the web service URL
+//            Uri uri = new Uri.Builder()
+//                    .scheme("https")
+//                    .appendPath(getString(R.string.ep_base_url))
+//                    .appendPath(getString(R.string.ep_login))
+//                    .build();
+//
+//            //build the JSONObject
+//            JSONObject msg = credentials.asJSONObject();
+//
+//            mCrendentials = credentials;
+//
+//            //instantiate and execute the AsyncTask.
+//            new SendPostAsyncTask.Builder(uri.toString(), msg)
+//                    .onPreExecute(this::handleLoginOnPre)
+//                    .onPostExecute(this::handleLoginOnPost)
+//                    .onCancelled(this::handleErrorsInTask)
+//                    .build().execute();
         }
     }
 
@@ -182,16 +219,31 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
             boolean success = resultsJSON.getBoolean(getString(R.string.keys_json_login_success));
 
             if (success) {
+
                 LoginFragmentDirections.ActionNavLoginToNavHomeActivity homeActivity =
                         LoginFragmentDirections.actionNavLoginToNavHomeActivity(mCrendentials);
+                homeActivity.setMemberId(resultsJSON.getInt(getString(R.string.keys_json_login_memberId)));
                 homeActivity.setJwt(resultsJSON.getString(getString(R.string.keys_json_login_jwt)));
-                Navigation.findNavController(getView()).navigate(R.id.action_nav_login_to_nav_homeActivity);
-                return;
+                saveCredentials(mCrendentials);
+                Navigation.findNavController(getView()).navigate(homeActivity);
+                //Remove this Activity from the back stack. Do not allow back navigation to login
+                getActivity().finish();
             } else {
-                //Logiin was unsuccessful. Don't switch fragments and
-                //inform the user
-                ((TextView) getView().findViewById(R.id.editText_email))
-                        .setError("Login Unsuccessful");
+                String error = resultsJSON.getString(getString(R.string.keys_json_error));
+                Log.d("COW", error);
+                if (error.equals("not verified")) {
+                    LoginFragmentDirections.ActionNavLoginToNavVerify verifyFragment =
+                            LoginFragmentDirections.actionNavLoginToNavVerify(mCrendentials);
+                    verifyFragment.setJwt(resultsJSON.getString(getString(R.string.keys_json_login_jwt)));
+                    Navigation.findNavController(getView()).navigate(verifyFragment);
+                    //Remove this Activity from the back stack. Do not allow back navigation to login
+//                    getActivity().finish();
+                } else {
+                    //Logiin was unsuccessful. Don't switch fragments and
+                    //inform the user
+                    ((TextView) getView().findViewById(R.id.editText_email))
+                            .setError("Login Unsuccessful");
+                }
             }
             getActivity().findViewById(R.id.layout_login_wait)
                     .setVisibility(View.GONE);
@@ -219,4 +271,38 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
+
+    private void saveCredentials(final Credentials credentials) {
+        SharedPreferences prefs =
+                getActivity().getSharedPreferences(
+                        getString(R.string.keys_shared_prefs),
+                        Context.MODE_PRIVATE);
+        //Store the credentials in SharedPrefs
+        prefs.edit().putString(getString(R.string.keys_prefs_email), credentials.getEmail()).apply();
+        prefs.edit().putString(getString(R.string.keys_prefs_password), credentials.getPassword()).apply();
+    }
+
+    private void doLogin(Credentials credentials) {
+        //build the web service URL
+        Uri uri = new Uri.Builder()
+                .scheme("https")
+                .appendPath(getString(R.string.ep_base_url))
+                .appendPath(getString(R.string.ep_login))
+                .build();
+
+        //build the JSONObject
+        JSONObject msg = credentials.asJSONObject();
+
+        mCrendentials = credentials;
+
+        //instantiate and execute the AsyncTask.
+        //Feel free to add a handler for onPreExecution so that a progress bar
+        //is displayed or maybe disable buttons.
+        new SendPostAsyncTask.Builder(uri.toString(), msg)
+                .onPreExecute(this::handleLoginOnPre)
+                .onPostExecute(this::handleLoginOnPost)
+                .onCancelled(this::handleErrorsInTask)
+                .build().execute();
+    }
+
 }

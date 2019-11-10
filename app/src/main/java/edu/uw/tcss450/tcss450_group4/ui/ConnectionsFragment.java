@@ -15,12 +15,12 @@ import edu.uw.tcss450.tcss450_group4.R;
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link ConnectionFragment.OnFragmentInteractionListener} interface
+ * {@link ConnectionsFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link ConnectionFragment#newInstance} factory method to
+ * Use the {@link ConnectionsFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class ConnectionFragment extends Fragment {
+public class ConnectionsFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -32,7 +32,7 @@ public class ConnectionFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
-    public ConnectionFragment() {
+    public ConnectionsFragment() {
         // Required empty public constructor
     }
 
@@ -42,11 +42,11 @@ public class ConnectionFragment extends Fragment {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment ConnectionFragment.
+     * @return A new instance of fragment ConnectionsFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static ConnectionFragment newInstance(String param1, String param2) {
-        ConnectionFragment fragment = new ConnectionFragment();
+    public static ConnectionsFragment newInstance(String param1, String param2) {
+        ConnectionsFragment fragment = new ConnectionsFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
