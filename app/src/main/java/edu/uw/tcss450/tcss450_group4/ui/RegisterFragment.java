@@ -137,9 +137,7 @@ public class RegisterFragment extends Fragment {
                     .build().execute();
 
 
-            Log.d("REGISTER", "It's valid");
-            Navigation.findNavController(getView())
-                    .navigate(R.id.action_nav_register_to_nav_verify);
+
         }
     }
 
@@ -176,8 +174,8 @@ public class RegisterFragment extends Fragment {
                 homeActivity.setJwt(jwt);
                 Navigation.findNavController(getView()).navigate(homeActivity);
                 //Remove this Activity from the back stack. Do not allow back navigation to login
-                getActivity().finish();
-                return;
+//                getActivity().finish();
+//                return;
             } else {
                 //Login was unsuccessful. Don’t switch fragments and
                 // inform the user
