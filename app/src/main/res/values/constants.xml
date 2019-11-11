@@ -29,5 +29,17 @@
     <string name="keys_json_temp_max">temp_max</string>
     <string name="keys_json_speed">speed</string>
     <string name="keys_json_deg">deg</string>
+    <string name="keys_json_long">long</string>
+    <string name="keys_json_nickname">nickname</string>
     <string name="keys_json_country">country</string>
+    <string name="key_weather_view">weather key</string>
+    <string name="keys_json_messages">messages</string>
+    <string name="keys_json_data">data</string>
+    <string name="keys_json_pres">pres</string>
+    <string name="keys_json_rh">pres</string>
+    <string name="keys_json_max_temp">max_temp</string>
+    <string name="keys_json_min_temp">min_temp</string>
+    <string name="keys_json_hourly">hourly</string>
+    <string name="keys_json_temperature">temperature</string>
+<!--    <string name="keys_json_currentl">currently</string>-->
 </resources>

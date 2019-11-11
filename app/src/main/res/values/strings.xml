@@ -38,9 +38,15 @@
     <string name="sign_in">SIGN IN</string>
 
     <string name="edit_zip_code">zip code</string>
-    <string name="button_get">get weather</string>
+    <string name="button_get">get</string>
     <string name="button_save">save weather</string>
-    <string name="button_getSaved">get saved weather</string>
+    <string name="button_getSaved">saved</string>
     <string name="lonLat">Lon/Lat</string>
+    <string name="forecast24hour">24-Hour Forecast</string>
+    <string name="forecast10day">10-Day Forecast</string>
+    <string name="weather_aM">AM</string>
+    <string name="weather_pM">PM</string>
+    <string name="formatString">{0}{1}</string>
+
 
 </resources>

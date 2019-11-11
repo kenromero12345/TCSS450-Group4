@@ -2,39 +2,41 @@ package edu.uw.tcss450.tcss450_group4.model;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.util.Log;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.Serializable;
 
 public class Weather implements Serializable, Parcelable {
 
-
+    //TODO:low temp
+    //TODO:high temp
     public String getDescription() {
         return mDescription;
     }
 
-    private final String mDescription;
+    private String mDescription;
+    private String mMain;
+
+    public String getMain() {
+        return mMain;
+    }
 
     public String getIcon() {
         return mIcon;
     }
 
     private final String mIcon;
-    private final double mLon;
-    private final double mLat;
-    private final double mTemp;
-    private final int mPressure;
-    private final int mHumidity;
-    private final double mTemp_min;
-    private final double mTemp_max;
-    private final double mSpeed;
-    private final int mDeg;
+    private double mLon;
+    private double mLat;
+    private double mTemp;
+    private int mPressure;
+    private int mHumidity;
+    private double mTemp_min;
+    private double mTemp_max;
+    private double mSpeed;
+    private double mDeg;
 //    private final long mTimezone;
-    private final String mCity;
-    private final String mCountry;
+    private String mCity;
+    private String mCountry;
 
 //    public String getJwt() {
 //        return mJwt;
@@ -62,8 +64,8 @@ public class Weather implements Serializable, Parcelable {
     //TODO:
     public Weather(String tDescription, String tIcon, double tLon, double tLat, double tTemp
             , int tPressure, int tHumidity, double tTemp_min
-            , double tTemp_max, double tSpeed, int tDeg, /*long tTimezone,*/ String tCity
-            , String tCountry/*, String tSunrise, String tSunset*//* , String tJwt*/)  {
+            , double tTemp_max, double tSpeed, /*long tTimezone,*/ String tCity
+            /*, String tSunrise, String tSunset*//* , String tJwt*/)  {
         mDescription = tDescription;
         mIcon = tIcon;
         mLon = tLon;
@@ -74,18 +76,35 @@ public class Weather implements Serializable, Parcelable {
         mTemp_min = tTemp_min;
         mTemp_max = tTemp_max;
         mSpeed = tSpeed;
-        mDeg = tDeg;
 //        mTimezone = tTimezone;
         mCity = tCity;
-        mCountry = tCountry;
+//        mMain = tMain;
 //        mSunrise = tSunrise;
 //        mSunset = tSunset;
 //        mJwt = tJwt;
     }
 
+    public Weather(String tIcon, double tTemp) {
+        mIcon = tIcon;
+        mTemp = tTemp;
+    }
+    public void setTemp(double tTemp) {
+        mTemp = tTemp;
+    }
+    public void setMain(String tMain) {
+        mMain = tMain;
+    }
 
+    public void setCountry(String tCountry) {
+        mCountry = tCountry;
+    }
+
+    public void setDeg(double tDeg) {
+        mDeg = tDeg;
+    }
 
     protected Weather(Parcel in) {
+        mMain = in.readString();
         mDescription = in.readString();
         mIcon = in.readString();
         mLon = in.readDouble();
@@ -96,7 +115,7 @@ public class Weather implements Serializable, Parcelable {
         mTemp_min = in.readDouble();
         mTemp_max = in.readDouble();
         mSpeed = in.readDouble();
-        mDeg = in.readInt();
+        mDeg = in.readDouble();
 //        mTimezone = in.readLong();
         mCity = in.readString();
         mCountry = in.readString();
@@ -136,7 +155,7 @@ public class Weather implements Serializable, Parcelable {
         dest.writeString(mIcon);
         dest.writeString(mCity);
         dest.writeString(mCountry);
-        dest.writeInt(mDeg);
+        dest.writeDouble(mDeg);
         dest.writeInt(mHumidity);
         dest.writeDouble(mLat);
         dest.writeDouble(mLon);
@@ -145,15 +164,10 @@ public class Weather implements Serializable, Parcelable {
         dest.writeDouble(mTemp);
         dest.writeDouble(mTemp_max);
         dest.writeDouble(mTemp_min);
+        dest.writeString(mMain);
 //        dest.writeString(mJwt);
 //        dest.writeFloat(mLongitude);
 //        dest.writeFloat(mLatitude);
-        //TODO:
-//        dest.writeString(mPubDate);
-//        dest.writeString(mTitle);
-//        dest.writeString(mUrl);
-//        dest.writeString(mTeaser);
-//        dest.writeString(mAuthor);
     }
 
     public double getLon() {
@@ -210,27 +224,5 @@ public class Weather implements Serializable, Parcelable {
 
 //    public String getSunset() {
 //        return mSunset;
-//    }
-
-//    /**
-//     * Get all of the fields in a single JSON object. Note, if no values were provided for the
-//     * optional fields via the Builder, the JSON object will include the empty string for those
-//     * fields.
-//     *
-//     * Keys: username, password, first, last, email
-//     *
-//     * @return all of the fields in a single JSON object
-//     */
-//    public JSONObject asJSONObject() {
-//        //build the JSONObject
-//        JSONObject msg = new JSONObject();
-//        try {
-//            msg.put("description", getDescription());
-////            msg.put("long", mLongitude);
-////            msg.put("lat", mLongitude);
-//        } catch (JSONException e) {
-//            Log.wtf("CREDENTIALS", "Error creating JSON: " + e.getMessage());
-//        }
-//        return msg;
 //    }
 }

@@ -13,4 +13,6 @@
     <string name="ep_latLon">latLon</string>
     <string name="ep_zip">zip</string>
     <string name="ep_send">send</string>
+    <string name="ep_10d">10d</string>
+    <string name="ep_24h">24h</string>
 </resources>
