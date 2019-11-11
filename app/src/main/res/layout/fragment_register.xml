@@ -27,6 +27,7 @@
                 android:id="@+id/register_firstName"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
+                android:layout_marginEnd="10dp"
                 android:layout_weight="1"
                 android:ems="10"
                 android:hint="@string/register_firstName"
@@ -58,7 +59,7 @@
             android:layout_marginTop="20dp"
             android:ems="10"
             android:hint="@string/register_email"
-            android:inputType="textPersonName" />
+            android:inputType="textEmailAddress"/>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -70,6 +71,7 @@
                 android:id="@+id/register_password"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginEnd="10dp"
                 android:layout_weight="1"
                 android:ems="10"
                 android:hint="@string/register_password"
@@ -85,20 +87,17 @@
                 android:inputType="textPassword" />
         </LinearLayout>
 
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:orientation="horizontal">
+            android:layout_marginTop="10dp">
 
             <Button
                 android:id="@+id/register_cancel"
                 style="@style/Widget.AppCompat.Button.Borderless"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="30dp"
-                android:layout_marginRight="40dp"
-                android:layout_weight="1"
+                android:layout_marginStart="30dp"
                 android:text="@string/register_cancel"
                 android:textColor="@color/uwPurple" />
 
@@ -107,12 +106,11 @@
                 style="@style/Widget.AppCompat.Button.Borderless"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="40dp"
-                android:layout_marginRight="30dp"
-                android:layout_weight="1"
+                android:layout_alignParentEnd="true"
+                android:layout_marginEnd="30dp"
                 android:text="@string/register_register"
                 android:textColor="@color/uwPurple" />
-        </LinearLayout>
+        </RelativeLayout>
 
     </LinearLayout>
 

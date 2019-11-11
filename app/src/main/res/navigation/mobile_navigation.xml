@@ -41,5 +41,9 @@
             android:name="jwt"
             app:argType="string"
             android:defaultValue='""' />
+        <argument
+            android:name="memberId"
+            app:argType="integer"
+            android:defaultValue="-1" />
     </activity>
 </navigation>

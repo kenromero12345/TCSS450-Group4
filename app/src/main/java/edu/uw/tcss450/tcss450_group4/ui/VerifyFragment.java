@@ -104,6 +104,7 @@ public class VerifyFragment extends Fragment {
                 ((EditText) getView().findViewById(R.id.verify_textView))
                         .setError("Verification Unsuccessful");
             }
+            getActivity().findViewById(R.id.verify_resendCode).setVisibility(View.VISIBLE);
             getActivity().findViewById(R.id.verify_resend).setEnabled(true);
             getActivity().findViewById(R.id.verify_button).setEnabled(true);
         } catch (JSONException e) {
@@ -112,6 +113,7 @@ public class VerifyFragment extends Fragment {
             Log.e("JSON_PARSE_ERROR", result
                     + System.lineSeparator()
                     + e.getMessage());
+            getActivity().findViewById(R.id.verify_resendCode).setVisibility(View.VISIBLE);
             getActivity().findViewById(R.id.verify_resend).setEnabled(true);
             getActivity().findViewById(R.id.verify_button).setEnabled(true);
             ((TextView) getView().findViewById(R.id.verify_textView))
@@ -120,6 +122,7 @@ public class VerifyFragment extends Fragment {
     }
 
     private void handleResendOnPre() {
+        getActivity().findViewById(R.id.verify_resendCode).setVisibility(View.INVISIBLE);
         getActivity().findViewById(R.id.verify_resend).setEnabled(false);
         getActivity().findViewById(R.id.verify_button).setEnabled(false);
     }
