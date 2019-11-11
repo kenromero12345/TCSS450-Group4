@@ -10,7 +10,6 @@ import android.widget.TextView;
 import edu.uw.tcss450.tcss450_group4.R;
 import edu.uw.tcss450.tcss450_group4.model.ConnectionItem;
 import edu.uw.tcss450.tcss450_group4.ui.ConnectionGUIFragment.OnListFragmentInteractionListener;
-import edu.uw.tcss450.tcss450_group4.ui.dummy.DummyContent.connection;
 
 import java.util.List;
 

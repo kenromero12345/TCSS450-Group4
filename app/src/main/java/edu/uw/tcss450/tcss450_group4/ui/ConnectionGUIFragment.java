@@ -21,8 +21,6 @@ import java.util.List;
 
 import edu.uw.tcss450.tcss450_group4.R;
 import edu.uw.tcss450.tcss450_group4.model.ConnectionItem;
-import edu.uw.tcss450.tcss450_group4.ui.dummy.DummyContent;
-import edu.uw.tcss450.tcss450_group4.ui.dummy.DummyContent.connection;
 
 /**
  * A fragment representing a list of Items.
