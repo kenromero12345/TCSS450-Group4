@@ -12,6 +12,6 @@
     <string name="ep_setlists">setlists</string>
     <string name="ep_recent">recent</string>
     <string name="ep_weather">weather</string>
-    <string name="ep_connection">connection</string>
+    <string name="ep_connection">connections</string>
     <string name="ep_getall">getAll</string>
 </resources>

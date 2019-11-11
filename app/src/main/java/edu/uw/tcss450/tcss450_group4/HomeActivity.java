@@ -162,36 +162,36 @@ public class HomeActivity extends AppCompatActivity {
     private void handleConnectionOnPostExecute(final String result) {
         //parse JSON
         try {
+            boolean hasConnection = false;
             JSONObject root = new JSONObject(result);
-            JSONArray connectionJArray = root.getJSONArray(
-                    getString(R.string.keys_json_connection_connections));
-            ConnectionItem[] conItem = new ConnectionItem[connectionJArray.length()];
-            for(int i = 0; i < connectionJArray.length(); i++){
-                JSONObject jsonConnection = connectionJArray.getJSONObject(i);
-                conItem[i] = new ConnectionItem(
-                        jsonConnection.getInt(
-                                getString(R.string.keys_json_connection_memeberid))
-                        , jsonConnection.getString(
-                        getString(R.string.keys_json_connection_firstname))
-                        , jsonConnection.getString(
-                        getString(R.string.keys_json_connection_lastname))
-                        ,jsonConnection.getString(
-                        getString(R.string.keys_json_connection_username)));
+            if (root.has(getString(R.string.keys_json_connection_connections))){
+                hasConnection = true;
+            } else {
+                Log.e("ERROR!", "No connection");
             }
 
-            MobileNavigationDirections.ActionGlobalNavConnectionGUI directions
-                    = ConnectionGUIFragmentDirections.actionGlobalNavConnectionGUI(conItem);
+            if (hasConnection){
+                JSONArray connectionJArray = root.getJSONArray(
+                        getString(R.string.keys_json_connection_connections));
+                ConnectionItem[] conItem = new ConnectionItem[connectionJArray.length()];
+                for(int i = 0; i < connectionJArray.length(); i++){
+                    JSONObject jsonConnection = connectionJArray.getJSONObject(i);
+                    conItem[i] = new ConnectionItem(
+                            jsonConnection.getInt(
+                                    getString(R.string.keys_json_connection_memeberid))
+                            , jsonConnection.getString(
+                            getString(R.string.keys_json_connection_firstname))
+                            , jsonConnection.getString(
+                            getString(R.string.keys_json_connection_lastname))
+                            ,jsonConnection.getString(
+                            getString(R.string.keys_json_connection_username)));
+                }
 
+                MobileNavigationDirections.ActionGlobalNavConnectionGUI directions
+                        = ConnectionGUIFragmentDirections.actionGlobalNavConnectionGUI(conItem);
+                directions.setJwt(mJwToken);
 
-
-
-
-
-
-
-
-
-
+            }
 
 
         } catch (JSONException e) {
