@@ -22,5 +22,15 @@
     <string name="keys_prefs_email">traffic_light_wont_let_me_through</string>
     <string name="keys_prefs_password">see_the_city_see_the_zoo</string>
 
+
+
+    <string name="keys_json_connection_response">response</string>
+    <string name="keys_json_connection_data">data</string>
+    <string name="keys_json_connection_memeberid">memeberid</string>
+    <string name="keys_json_connection_lastname">lastname</string>
+    <string name="keys_json_connection_firstname">firstname</string>
+    <string name="keys_json_connection_username">username</string>
+    <string name="keys_json_connection_connections">connections</string>
+
     <string name="keys_json_error">error</string>
 </resources>

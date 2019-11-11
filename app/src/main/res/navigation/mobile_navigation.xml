@@ -47,7 +47,7 @@
         android:label="fragment_connectiongui_list"
         tools:layout="@layout/fragment_connectiongui_list" >
         <argument
-            android:name="connection"
+            android:name="connectionitems"
             app:argType="edu.uw.tcss450.tcss450_group4.model.ConnectionItem[]" />
     </fragment><action android:id="@+id/action_global_nav_connectionGUI" app:destination="@id/nav_connectionGUI"/>
 </navigation>

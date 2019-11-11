@@ -7,12 +7,26 @@ import java.io.Serializable;
 
 public class ConnectionItem implements Serializable, Parcelable {
 
-    private final String mName;
-    private final String mUserName;
+
+
+
+    private final int mContactId;
+    private final String mContactName;
+    private final String mContactLastName;
+    private final String mContactUserName;
+
+    public ConnectionItem(int tContactId, String tContactName, String tContactLastName, String tContactUsername){
+        mContactId = tContactId;
+        mContactName = tContactName;
+        mContactLastName = tContactLastName;
+        mContactUserName = tContactUsername;
+    }
 
     protected ConnectionItem(Parcel in) {
-        mName = in.readString();
-        mUserName = in.readString();
+        mContactId = in.readInt();
+        mContactName = in.readString();
+        mContactLastName = in.readString();
+        mContactUserName = in.readString();
     }
 
     public static final Creator<ConnectionItem> CREATOR = new Creator<ConnectionItem>() {
@@ -36,35 +50,41 @@ public class ConnectionItem implements Serializable, Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(mName);
-        dest.writeString(mUserName);
+        dest.writeInt(mContactId);
+        dest.writeString(mContactName);
+        dest.writeString(mContactLastName);
+        dest.writeString(mContactUserName);
     }
 
-    public static class Builder {
-        private String mName = "";
-        private String mUserName = "";
+//    public static class Builder {
+//        private String mName = "";
+//        private String mUserName = "";
+//
+//        public Builder(String name, String userName){
+//            mName = name;
+//            mUserName = userName;
+//        }
+//
+//        public ConnectionItem build() {return new ConnectionItem(this); }
+//
+//
+//    }
 
-        public Builder(String name, String userName){
-            mName = name;
-            mUserName = userName;
-        }
+//    private ConnectionItem(final ConnectionItem.Builder builder){
+//        this.mName = builder.mName;
+//        this.mUserName = builder.mUserName;
+//    }
 
-        public ConnectionItem build() {return new ConnectionItem(this); }
-
-
-    }
-
-    private ConnectionItem(final ConnectionItem.Builder builder){
-        this.mName = builder.mName;
-        this.mUserName = builder.mUserName;
-    }
+    public int getmContactId() { return mContactId; }
 
     public String getFirstName(){
-        return mName;
+        return mContactName;
     }
 
     public String getUserName(){
-        return mUserName;
+        return mContactLastName;
     }
+
+    public String getmContactUserName() { return mContactUserName; }
 }
 
