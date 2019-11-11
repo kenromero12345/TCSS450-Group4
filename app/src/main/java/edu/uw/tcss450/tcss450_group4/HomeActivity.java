@@ -36,6 +36,8 @@ import edu.uw.tcss450.tcss450_group4.utils.GetAsyncTask;
 public class HomeActivity extends AppCompatActivity {
     private String mJwToken;
 
+    private int mMemberId;
+
     private AppBarConfiguration mAppBarConfiguration;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,6 +67,7 @@ public class HomeActivity extends AppCompatActivity {
         navController.setGraph(R.navigation.mobile_navigation, getIntent().getExtras());
         HomeActivityArgs args = HomeActivityArgs.fromBundle(getIntent().getExtras());
         mJwToken = args.getJwt();
+        mMemberId = args.getMemberId();
         navigationView.setNavigationItemSelectedListener(this::onNavigationSelected);
     }
 

@@ -34,9 +34,10 @@
 
 
     // verify fragment ids
-    <string name="verify_textView">Verification Code Here</string>
+    <string name="verify_textView">Verification Code</string>
     <string name="verify_button">Verify</string>
     <string name="verify_resend">Resend Code</string>
+    <string name="verify_resendCode">Code successfully emailed</string>
 
     <string name="action_logout">Logout</string>
 

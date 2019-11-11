@@ -219,19 +219,31 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
             boolean success = resultsJSON.getBoolean(getString(R.string.keys_json_login_success));
 
             if (success) {
+
                 LoginFragmentDirections.ActionNavLoginToNavHomeActivity homeActivity =
                         LoginFragmentDirections.actionNavLoginToNavHomeActivity(mCrendentials);
+                homeActivity.setMemberId(resultsJSON.getInt(getString(R.string.keys_json_login_memberId)));
                 homeActivity.setJwt(resultsJSON.getString(getString(R.string.keys_json_login_jwt)));
                 saveCredentials(mCrendentials);
                 Navigation.findNavController(getView()).navigate(homeActivity);
                 //Remove this Activity from the back stack. Do not allow back navigation to login
                 getActivity().finish();
-                return;
             } else {
-                //Logiin was unsuccessful. Don't switch fragments and
-                //inform the user
-                ((TextView) getView().findViewById(R.id.editText_email))
-                        .setError("Login Unsuccessful");
+                String error = resultsJSON.getString(getString(R.string.keys_json_error));
+                Log.d("COW", error);
+                if (error.equals("not verified")) {
+                    LoginFragmentDirections.ActionNavLoginToNavVerify verifyFragment =
+                            LoginFragmentDirections.actionNavLoginToNavVerify(mCrendentials);
+                    verifyFragment.setJwt(resultsJSON.getString(getString(R.string.keys_json_login_jwt)));
+                    Navigation.findNavController(getView()).navigate(verifyFragment);
+                    //Remove this Activity from the back stack. Do not allow back navigation to login
+//                    getActivity().finish();
+                } else {
+                    //Logiin was unsuccessful. Don't switch fragments and
+                    //inform the user
+                    ((TextView) getView().findViewById(R.id.editText_email))
+                            .setError("Login Unsuccessful");
+                }
             }
             getActivity().findViewById(R.id.layout_login_wait)
                     .setVisibility(View.GONE);
