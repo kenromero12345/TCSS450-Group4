@@ -82,7 +82,6 @@ public class HomeActivity extends AppCompatActivity {
     }
 
 
-
     @Override
     public boolean onSupportNavigateUp() {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
@@ -178,7 +177,7 @@ public class HomeActivity extends AppCompatActivity {
                     JSONObject jsonConnection = connectionJArray.getJSONObject(i);
                     conItem[i] = new ConnectionItem(
                             jsonConnection.getInt(
-                                    getString(R.string.keys_json_connection_memeberid))
+                                    getString(R.string.keys_json_connection_memberid))
                             , jsonConnection.getString(
                             getString(R.string.keys_json_connection_firstname))
                             , jsonConnection.getString(
@@ -190,6 +189,9 @@ public class HomeActivity extends AppCompatActivity {
                 MobileNavigationDirections.ActionGlobalNavConnectionGUI directions
                         = ConnectionGUIFragmentDirections.actionGlobalNavConnectionGUI(conItem);
                 directions.setJwt(mJwToken);
+
+                Navigation.findNavController(this, R.id.nav_host_fragment)
+                        .navigate(directions);
 
             }
 

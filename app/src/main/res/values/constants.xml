@@ -26,7 +26,7 @@
 
     <string name="keys_json_connection_response">response</string>
     <string name="keys_json_connection_data">data</string>
-    <string name="keys_json_connection_memeberid">memeberid</string>
+    <string name="keys_json_connection_memberid">memberid</string>
     <string name="keys_json_connection_lastname">lastname</string>
     <string name="keys_json_connection_firstname">firstname</string>
     <string name="keys_json_connection_username">username</string>

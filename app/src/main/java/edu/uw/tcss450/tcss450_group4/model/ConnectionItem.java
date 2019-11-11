@@ -8,8 +8,6 @@ import java.io.Serializable;
 public class ConnectionItem implements Serializable, Parcelable {
 
 
-
-
     private final int mContactId;
     private final String mContactName;
     private final String mContactLastName;
@@ -75,16 +73,16 @@ public class ConnectionItem implements Serializable, Parcelable {
 //        this.mUserName = builder.mUserName;
 //    }
 
-    public int getmContactId() { return mContactId; }
+    public int getContactId() { return mContactId; }
 
     public String getFirstName(){
         return mContactName;
     }
 
-    public String getUserName(){
+    public String getLastName(){
         return mContactLastName;
     }
 
-    public String getmContactUserName() { return mContactUserName; }
+    public String getContactUserName() { return mContactUserName; }
 }
 
