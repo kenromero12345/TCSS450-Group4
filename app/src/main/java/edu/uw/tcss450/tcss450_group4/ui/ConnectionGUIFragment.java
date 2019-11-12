@@ -76,10 +76,19 @@ public class ConnectionGUIFragment extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            recyclerView.setAdapter(new MyConnectionGUIRecyclerViewAdapter(mConnection, mListener));
+            recyclerView.setAdapter(new MyConnectionGUIRecyclerViewAdapter(mConnection, this::displayConnection));
         }
         return view;
     }
+
+    private void displayConnection(ConnectionItem theConnection) {
+
+        final Bundle args = new Bundle();
+        args.putSerializable(getString(R.string.keys_connection_view), theConnection);
+        Navigation.findNavController(getView())
+                .navigate(R.id.action_nav_connectionGUI_to_viewConnectionFragment, args);
+    }
+
 
 
 //    @Override

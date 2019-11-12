@@ -281,7 +281,7 @@ public class HomeActivity extends AppCompatActivity {
                 .build();
         JSONObject msgBody = new JSONObject();
         try{
-            msgBody.put("memberId", mMemberId);
+            msgBody.put("memberId", 3);
         } catch (JSONException e) {
             Log.wtf("MEMBERID", "Error creating JSON: " + e.getMessage());
 
