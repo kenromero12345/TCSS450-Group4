@@ -31,6 +31,7 @@
     <string name="keys_json_connection_firstname">firstname</string>
     <string name="keys_json_connection_username">username</string>
     <string name="keys_json_connection_connections">connections</string>
+    <string name="keys_connection_view">connectionview</string>
 
     <string name="keys_json_error">error</string>
 </resources>

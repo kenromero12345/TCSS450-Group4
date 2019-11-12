@@ -8,20 +8,22 @@ import java.io.Serializable;
 public class ConnectionItem implements Serializable, Parcelable {
 
 
-    private final int mContactId;
+    private final String mContactId;
     private final String mContactName;
     private final String mContactLastName;
     private final String mContactUserName;
 
     public ConnectionItem(int tContactId, String tContactName, String tContactLastName, String tContactUsername){
-        mContactId = tContactId;
+        mContactId = Integer.toString(tContactId);
         mContactName = tContactName;
         mContactLastName = tContactLastName;
         mContactUserName = tContactUsername;
     }
 
+
+
     protected ConnectionItem(Parcel in) {
-        mContactId = in.readInt();
+        mContactId = in.readString();
         mContactName = in.readString();
         mContactLastName = in.readString();
         mContactUserName = in.readString();
@@ -48,7 +50,7 @@ public class ConnectionItem implements Serializable, Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeInt(mContactId);
+        dest.writeString(mContactId);
         dest.writeString(mContactName);
         dest.writeString(mContactLastName);
         dest.writeString(mContactUserName);
@@ -73,7 +75,7 @@ public class ConnectionItem implements Serializable, Parcelable {
 //        this.mUserName = builder.mUserName;
 //    }
 
-    public int getContactId() { return mContactId; }
+    public String getContactId() { return mContactId; }
 
     public String getFirstName(){
         return mContactName;
@@ -84,5 +86,6 @@ public class ConnectionItem implements Serializable, Parcelable {
     }
 
     public String getContactUserName() { return mContactUserName; }
+
 }
 

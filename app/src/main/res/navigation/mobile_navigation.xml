@@ -53,5 +53,13 @@
             android:name="jwt"
             app:argType="string"
             android:defaultValue='""' />
+        <action
+            android:id="@+id/action_nav_connectionGUI_to_viewConnectionFragment"
+            app:destination="@id/viewConnectionFragment" />
     </fragment><action android:id="@+id/action_global_nav_connectionGUI" app:destination="@id/nav_connectionGUI"/>
+    <fragment
+        android:id="@+id/viewConnectionFragment"
+        android:name="edu.uw.tcss450.tcss450_group4.ui.ViewConnectionFragment"
+        android:label="fragment_view_connection"
+        tools:layout="@layout/fragment_view_connection" />
 </navigation>

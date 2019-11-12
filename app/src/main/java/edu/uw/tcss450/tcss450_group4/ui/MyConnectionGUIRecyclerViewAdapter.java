@@ -11,13 +11,14 @@ import edu.uw.tcss450.tcss450_group4.R;
 import edu.uw.tcss450.tcss450_group4.model.ConnectionItem;
 import edu.uw.tcss450.tcss450_group4.ui.ConnectionGUIFragment.OnListFragmentInteractionListener;
 
+
 import java.util.List;
 
-/**
- * {@link RecyclerView.Adapter} that can display a {@link connection} and makes a call to the
- * specified {@link OnListFragmentInteractionListener}.
- * TODO: Replace the implementation with code for your data type.
- */
+///**
+// * {@link RecyclerView.Adapter} that can display a {@link connection} and makes a call to the
+// * specified {@link OnListFragmentInteractionListener}.
+// * TODO: Replace the implementation with code for your data type.
+// */
 public class MyConnectionGUIRecyclerViewAdapter extends RecyclerView.Adapter<MyConnectionGUIRecyclerViewAdapter.ViewHolder> {
 
     private final List<ConnectionItem> mValues;
@@ -38,10 +39,11 @@ public class MyConnectionGUIRecyclerViewAdapter extends RecyclerView.Adapter<MyC
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mItem = mValues.get(position);
-        holder.contactid.setText("1");
-        holder.name.setText(mValues.get(position).getFirstName());
-        holder.lastname.setText(mValues.get(position).getLastName());
-        holder.userName.setText(mValues.get(position).getContactUserName());
+        holder.contactid.setText("ID: " + mValues.get(position).getContactId());
+        holder.name.setText("Name: " + mValues.get(position).getFirstName()
+        + " " + mValues.get(position).getLastName());
+//        holder.lastname.setText("Last Name: " + mValues.get(position).getLastName());
+        holder.userName.setText("Username: " + mValues.get(position).getContactUserName());
 //        holder.mNae.setText(mValues.get(position).id);
 //        holder.mContentView.setText(mValues.get(position).name);
 
