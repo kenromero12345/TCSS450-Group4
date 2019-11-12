@@ -126,19 +126,5 @@
             app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <ImageView
-        android:id="@+id/charles_image"
-        android:layout_width="200dp"
-        android:layout_height="200dp"
-        android:layout_marginStart="141dp"
-        android:layout_marginTop="59dp"
-        android:layout_marginEnd="142dp"
-        android:scaleType="fitXY"
-        android:src="@drawable/charles_angels_icon_rounded"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:src="@tools:sample/avatars" />
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>
