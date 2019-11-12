@@ -67,7 +67,7 @@ public class MyChatRecyclerViewAdapter extends RecyclerView.Adapter<MyChatRecycl
             super(view);
             mView = view;
             mChatName = (TextView) view.findViewById(R.id.txt_ChatName);
-            mMostRecentMessage = (TextView) view.findViewById(R.id.txt_mostRecentMessage);
+            mMostRecentMessage = (TextView) view.findViewById(R.id.txt_ChatName);
         }
 
         @Override

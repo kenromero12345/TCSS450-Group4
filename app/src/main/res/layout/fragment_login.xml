@@ -66,6 +66,7 @@
         android:autofillHints=""
         android:ems="10"
         android:textColorHint="@color/uwGold"
+        android:backgroundTint="@color/uwGold"
         android:textColor="@color/uwGold"
         android:hint="@string/edit_password"
         android:inputType="textPassword"
@@ -94,7 +95,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="40dp"
             android:text="@string/register"
-            android:textColor="@color/uwPurple" />
+            android:textColor="@color/uwGold" />
 
         <Button
             android:id="@+id/button_signin"
@@ -104,7 +105,7 @@
             android:layout_alignParentEnd="true"
             android:layout_marginEnd="40dp"
             android:text="@string/sign_in"
-            android:textColor="@color/uwPurple" />
+            android:textColor="@color/uwGold" />
     </RelativeLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
