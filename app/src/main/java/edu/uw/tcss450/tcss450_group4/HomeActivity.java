@@ -3,6 +3,7 @@ package edu.uw.tcss450.tcss450_group4;
 import android.Manifest;
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -104,7 +105,7 @@ public class HomeActivity extends AppCompatActivity {
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         mAppBarConfiguration = new AppBarConfiguration.Builder(
-                id.nav_home, id.nav_connections, id.nav_chat, id.nav_weather)
+                id.nav_home, id.nav_connections, id.nav_chat, id.nav_weather, id.nav_logout)
                 .setDrawerLayout(drawer)
                 .build();
         NavController navController = Navigation.findNavController(this
@@ -156,6 +157,9 @@ public class HomeActivity extends AppCompatActivity {
                     checkLocationPermission();
                 }
                 break;
+            case id.nav_logout:
+                logout();
+
         }
         //Close the drawer
         ((DrawerLayout) findViewById(id.drawer_layout)).closeDrawers();
@@ -512,13 +516,13 @@ public class HomeActivity extends AppCompatActivity {
         prefs.edit().remove(getString(keys_prefs_email)).apply();
 
         //close the app
-        finishAndRemoveTask();
+        //finishAndRemoveTask();
 
         //or close this activity and bring back the Login
-        //Intent i = new Intent(this, MainActivity.class);
-        //startActivity(i);
+        Intent i = new Intent(this, MainActivity.class);
+        startActivity(i);
         //End this Activity and remove it from the Activity back stack.
-        //finish();
+        finish();
     }
 
     @Override

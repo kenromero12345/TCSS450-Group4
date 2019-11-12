@@ -24,6 +24,7 @@
     <string name="menu_connections">Connections</string>
     <string name="menu_weather">Weather</string>
     <string name="menu_chat">Chat</string>
+    <string name="menu_logout">Logout</string>
 
     // verify fragment ids
     <string name="verify_textView">Verification Code Here</string>
@@ -44,8 +45,6 @@
     <string name="lonLat">Lon/Lat</string>
     <string name="forecast24hour">24-Hour Forecast</string>
     <string name="forecast10day">10-Day Forecast</string>
-    <string name="weather_aM">AM</string>
-    <string name="weather_pM">PM</string>
     <string name="formatString">{0}{1}</string>
     <string name="title_activity_maps">Map</string>
 
