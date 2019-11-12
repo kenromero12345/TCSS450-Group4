@@ -3,6 +3,7 @@
     <string name="ep_base_url">charles-angels.herokuapp.com</string>
 <!--    <string name="ep_base_url">localhost:5000</string>-->
     <string name="ep_login">login</string>
+
 <!--    <string name="ep_phish">phish</string>-->
 <!--    <string name="ep_blog">blog</string>-->
     <string name="ep_get">get</string>
@@ -15,4 +16,16 @@
     <string name="ep_send">send</string>
     <string name="ep_10d">10d</string>
     <string name="ep_24h">24h</string>
+
+    <string name="ep_register">register</string>
+    <string name="ep_verify">verify</string>
+    <string name="ep_resend">resend</string>
+    <string name="ep_confirm">confirm</string>
+    <string name="ep_phish">phish</string>
+    <string name="ep_blog">blog</string>
+    <string name="ep_get">get</string>
+    <string name="ep_setlists">setlists</string>
+    <string name="ep_recent">recent</string>
+    <string name="ep_connection">connections</string>
+    <string name="ep_getall">getAll</string>
 </resources>

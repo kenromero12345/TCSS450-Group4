@@ -27,13 +27,24 @@ import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.material.navigation.NavigationView;
 
+import androidx.drawerlayout.widget.DrawerLayout;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+
+import android.view.Menu;
+import android.util.Log;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.Objects;
+import java.sql.Connection;
 
+import edu.uw.tcss450.tcss450_group4.model.ConnectionItem;
 import edu.uw.tcss450.tcss450_group4.model.Weather;
+import edu.uw.tcss450.tcss450_group4.ui.ConnectionGUIFragment;
+import edu.uw.tcss450.tcss450_group4.ui.ConnectionGUIFragmentDirections;
 import edu.uw.tcss450.tcss450_group4.ui.WeatherFragmentDirections;
 import edu.uw.tcss450.tcss450_group4.utils.SendPostAsyncTask;
 
@@ -76,7 +87,13 @@ public class HomeActivity extends AppCompatActivity {
 //    private static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
     private static final String TAG = "WEATHER_FRAG";
     private String mJwToken;
+
     private String mEmail;
+
+
+    private int mMemberId;
+
+
     private AppBarConfiguration mAppBarConfiguration;
     private Weather mWeather;
     private Weather[] mWeathers10d;
@@ -113,13 +130,17 @@ public class HomeActivity extends AppCompatActivity {
         NavigationUI.setupActionBarWithNavController(this, navController
                 , mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
+
+
         navController.setGraph(navigation.mobile_navigation, getIntent().getExtras());
 
         if (getIntent().getExtras() != null) {
             HomeActivityArgs args = HomeActivityArgs.fromBundle(getIntent().getExtras());
             mJwToken = args.getJwt();
             mEmail = args.getCredentials().getEmail();
+            mMemberId = args.getMemberId();
         }
+
         navigationView.setNavigationItemSelectedListener(this::onNavigationSelected);
     }
 
@@ -129,6 +150,7 @@ public class HomeActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.home, menu);
         return true;
     }
+
 
     @Override
     public boolean onSupportNavigateUp() {
@@ -148,8 +170,19 @@ public class HomeActivity extends AppCompatActivity {
             case id.nav_chat:
                 navController.navigate(id.nav_chat);
                 break;
-            case id.nav_connections:
-                navController.navigate(id.nav_connections);
+            case R.id.nav_connectionGUI:
+                gotoConnection();
+//                Uri uriC = new Uri.Builder()
+//                        .scheme("https")
+//                        .appendPath(getString(R.string.ep_base_url))
+//                        .appendPath(getString(R.string.ep_connection))
+//                        .appendPath(getString(R.string.ep_getall))
+//                        .build();
+//                new GetAsyncTask.Builder(uriC.toString())
+//                        .onPostExecute(this::handleConnectionOnPostExecute)
+//                        .addHeaderField("authorization", mJwToken) //add the JWT as a header
+//                        .build().execute();
+//                navController.navigate(R.id.nav_connectionGUI);
                 break;
             case id.nav_weather:
                 NavController nc = Navigation.findNavController(this, id.nav_host_fragment);
@@ -165,6 +198,7 @@ public class HomeActivity extends AppCompatActivity {
         ((DrawerLayout) findViewById(id.drawer_layout)).closeDrawers();
         return true;
     }
+
 
     private void checkLocationPermission() {
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
@@ -184,9 +218,117 @@ public class HomeActivity extends AppCompatActivity {
         }
     }
 
+    private void gotoConnection() {
+        Uri uriConnection = new Uri.Builder()
+                .scheme("https")
+                .appendPath(getString(R.string.ep_base_url))
+                .appendPath(getString(R.string.ep_connection))
+                .appendPath(getString(R.string.ep_getall))
+                .build();
+        JSONObject msgBody = new JSONObject();
+        try{
+            msgBody.put("memberId", mMemberId);
+        } catch (JSONException e) {
+            Log.wtf("MEMBERID", "Error creating JSON: " + e.getMessage());
+
+        }
+        new SendPostAsyncTask.Builder(uriConnection.toString(), msgBody)
+                .onPostExecute(this::handleConnectionOnPostExecute)
+                .onCancelled(error -> Log.e("CONNECTION FRAG", error))
+                .addHeaderField("authorization", mJwToken)  //add the JWT as header
+                .build().execute();
+
+    }
+
+    private void handleConnectionOnPostExecute(final String result) {
+        //parse JSON
+        try {
+            boolean hasConnection = false;
+            JSONObject root = new JSONObject(result);
+            if (root.has(getString(R.string.keys_json_connection_connections))){
+                hasConnection = true;
+            } else {
+                Log.e("ERROR!", "No connection");
+            }
+
+            if (hasConnection){
+                JSONArray connectionJArray = root.getJSONArray(
+                        getString(R.string.keys_json_connection_connections));
+                ConnectionItem[] conItem = new ConnectionItem[connectionJArray.length()];
+                for(int i = 0; i < connectionJArray.length(); i++){
+                    JSONObject jsonConnection = connectionJArray.getJSONObject(i);
+                    conItem[i] = new ConnectionItem(
+                            jsonConnection.getInt(
+                                    getString(R.string.keys_json_connection_memberid))
+                            , jsonConnection.getString(
+                            getString(R.string.keys_json_connection_firstname))
+                            , jsonConnection.getString(
+                            getString(R.string.keys_json_connection_lastname))
+                            ,jsonConnection.getString(
+                            getString(R.string.keys_json_connection_username)));
+                }
+
+                MobileNavigationDirections.ActionGlobalNavConnectionGUI directions
+                        = ConnectionGUIFragmentDirections.actionGlobalNavConnectionGUI(conItem);
+                directions.setJwt(mJwToken);
+
+                Navigation.findNavController(this, R.id.nav_host_fragment)
+                        .navigate(directions);
+
+            }
+
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+//        JSONArray connectionJArray = root.getJSONArray();
+//        try {
+//            JSONObject root = new JSONObject(result);
+//            if (root.has(getString(R.string.keys_json_connection_response))) {
+//                JSONObject response = root.getJSONObject(
+//                        getString(R.string.keys_json_connection_response));
+//                if (response.has(getString(R.string.keys_json_connection_data))) {
+//                    JSONArray data = response.getJSONArray(
+//                            getString(R.string.keys_json_connection_data));
+//                    ConnectionItem[] connection = new ConnectionItem[data.length()];
+//                    for(int i = 0; i < data.length(); i++) {
+//                        JSONObject jsonConnection = data.getJSONObject(i);
+//
+//                        connection[i] = (new ConnectionItem.Builder(
+//                                jsonConnection.getString(
+//                                        getString(R.string.keys_json_connection_firstname)),
+//                                jsonConnection.getString(
+//                                        getString(R.string.keys_json_connection_username)))
+//                                .build());
+//                    }
+//                    MobileNavigationDirections.ActionGlobalNavConnectionGUI directionsC
+//                            = ConnectionGUIFragmentDirections.actionGlobalNavConnectionGUI(connection);
+//                    Navigation.findNavController(this, R.id.nav_host_fragment)
+//                            .navigate(directionsC);
+
+//                    MobileNavigationDirections.ActionGlobalNavWeather directions
+//                            = WeatherFragmentDirections.actionGlobalNavWeather(weather);
+//
+//                    Navigation.findNavController(this, R.id.nav_host_fragment)
+//                            .navigate(directions);
+//                } else {
+//                    Log.e("ERROR!", "No data array");
+//                }
+//            } else {
+//                Log.e("ERROR!", "No response");
+//            }
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//            Log.e("ERROR!", e.getMessage());
+//        }
+    }
+
+
     private void gotoWeather(Location location) {
         double longitude = location.getLongitude();
         double latitude = location.getLatitude();
+
 
 //        if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION)
 //                != PackageManager.PERMISSION_GRANTED
