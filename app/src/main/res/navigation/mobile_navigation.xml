@@ -17,7 +17,7 @@
     <fragment
         android:id="@+id/nav_weather"
         android:name="edu.uw.tcss450.tcss450_group4.ui.WeatherFragment"
-        android:label="fragment_weather"
+        android:label="Weather"
         tools:layout="@layout/fragment_weather" >
         <argument
             android:name="jwt"
@@ -62,7 +62,7 @@
 
         android:id="@+id/nav_locations"
         android:name="edu.uw.tcss450.tcss450_group4.ui.LocationsFragment"
-        android:label="fragment_locations_list"
+        android:label="Saved Locations"
         tools:layout="@layout/fragment_locations_list" >
         <argument
             android:name="locations"
@@ -77,7 +77,7 @@
     <fragment
         android:id="@+id/nav_map"
         android:name="edu.uw.tcss450.tcss450_group4.ui.MapFragment"
-        android:label="fragment_map"
+        android:label="Map"
         tools:layout="@layout/fragment_map" >
         <action
             android:id="@+id/action_nav_map_to_nav_weather"
