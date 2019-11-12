@@ -81,6 +81,8 @@ import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_wind;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_prefs_email;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_prefs_password;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_shared_prefs;
+import edu.uw.tcss450.tcss450_group4.model.Chat;
+import edu.uw.tcss450.tcss450_group4.ui.ChatFragmentDirections;
 
 public class HomeActivity extends AppCompatActivity {
     // A constant int for the permissions request code. Must be a 16 bit number
@@ -168,8 +170,23 @@ public class HomeActivity extends AppCompatActivity {
             case id.nav_home:
                 navController.navigate(id.nav_home);
                 break;
-            case id.nav_chat:
-                navController.navigate(id.nav_chat);
+            case R.id.nav_chat_list:
+                JSONObject memberId = new JSONObject();
+                try {
+                    memberId.put("memberId", mMemberId);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                Uri uriChats = new Uri.Builder()
+                        .scheme("https")
+                        .appendPath(getString(R.string.ep_base_url))
+                        .appendPath(getString(R.string.ep_chats))
+                        .build();
+                new SendPostAsyncTask.Builder(uriChats.toString(), memberId)
+                        .onPostExecute(this::handleChatsGetOnPostExecute)
+                        .onCancelled(this::handleErrorsInTask)
+                        .build().execute();
+//                navController.navigate(R.id.nav_chat_list);
                 break;
             case R.id.nav_connectionGUI:
                 gotoConnection();
@@ -200,6 +217,42 @@ public class HomeActivity extends AppCompatActivity {
         return true;
     }
 
+    private void handleErrorsInTask(final String result) {
+        Log.e("ASYNC_TASK_ERROR", result);
+    }
+
+
+    private void handleChatsGetOnPostExecute(final String result) {
+        try {
+            JSONObject root = new JSONObject(result);
+            if (root.has("success") && root.getBoolean("success")) {
+                JSONArray data = root.getJSONArray("names");
+//                if (response.has(getString(R.string.keys_json_chats_data))) {
+//                    JSONArray data = response.getJSONArray(getString(R.string.keys_json_chats_data));
+                Chat[] chats = new Chat[data.length()];
+                for (int i = 0; i < data.length(); i++) {
+                    JSONObject jsonChatLists = data.getJSONObject(i);
+
+                    chats[i] = (new Chat.Builder(jsonChatLists.getString("chatid"),
+                            jsonChatLists.getString("name"))
+                            .build());
+                }
+                MobileNavigationDirections.ActionGlobalNavChatList directions
+                        = ChatFragmentDirections.actionGlobalNavChatList(chats);
+                Navigation.findNavController(this, R.id.nav_host_fragment)
+                        .navigate(directions);
+//                }    else {
+//                    Log.e("ERROR!", "No data array");
+//                }
+            } else {
+                Log.e("ERROR!", "No response");
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();;
+            Log.e("ERROR!", e.getMessage());
+        }
+    }
+        //parse JSON
 
     private void checkLocationPermission() {
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);

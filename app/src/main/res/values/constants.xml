@@ -68,5 +68,8 @@
     <string name="keys_json_connection_connections">connections</string>
 
     <string name="keys_json_error">error</string>
-
+    <string name="keys_json_chats_response">response</string>
+    <string name="keys_json_chats_data">data</string>
+    <string name="keys_json_chats_chatid">ChatID</string>
+    <string name="keys_json_chats_name">Name</string>
 </resources>

@@ -3,8 +3,23 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+    android:background="@color/uwPurple"
     android:layout_height="match_parent"
     tools:context=".ui.LoginFragment">
+
+    <ImageView
+        android:id="@+id/charles_image"
+        android:layout_width="250dp"
+        android:layout_height="250dp"
+        android:layout_marginStart="141dp"
+        android:layout_marginTop="80dp"
+        android:layout_marginEnd="142dp"
+        android:scaleType="fitXY"
+        android:src="@drawable/charles_angels_icon"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:src="@tools:sample/avatars" />
 
     <TextView
         android:id="@+id/text_group4_label"
@@ -15,6 +30,7 @@
         android:layout_marginEnd="140dp"
         android:text="@string/app_name"
         android:textSize="30sp"
+        android:textColor="@color/uwGold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -24,11 +40,17 @@
         android:layout_width="372dp"
         android:layout_height="45dp"
         android:layout_marginStart="20dp"
-        android:layout_marginTop="76dp"
+        android:layout_marginTop="40dp"
+        android:layout_marginEnd="20dp"
         android:autofillHints=""
         android:ems="10"
         android:hint="@string/edit_email"
+        android:textColorHint="@color/uwGold"
+        android:textColor="@color/uwGold"
+        android:backgroundTint="@color/uwGold"
         android:inputType="textEmailAddress"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/text_group4_label"
         tools:targetApi="o" />
@@ -42,21 +64,26 @@
         android:layout_marginEnd="20dp"
         android:autofillHints=""
         android:ems="10"
+        android:textColorHint="@color/uwGold"
+        android:textColor="@color/uwGold"
         android:hint="@string/edit_password"
         android:inputType="textPassword"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/editText_email"
+        app:layout_constraintVertical_bias="0.0"
         tools:targetApi="o" />
 
     <RelativeLayout
         android:id="@+id/relativeLayout"
         android:layout_width="match_parent"
         android:layout_height="48dp"
-        android:layout_marginBottom="30dp"
+        android:layout_marginBottom="60dp"
         android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent">
 
         <Button
@@ -77,7 +104,6 @@
             android:layout_marginEnd="40dp"
             android:text="@string/sign_in"
             android:textColor="@color/uwPurple" />
-
     </RelativeLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
