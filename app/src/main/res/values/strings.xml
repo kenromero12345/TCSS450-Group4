@@ -47,6 +47,7 @@
     <string name="weather_aM">AM</string>
     <string name="weather_pM">PM</string>
     <string name="formatString">{0}{1}</string>
+    <string name="title_activity_maps">Map</string>
 
 
 </resources>

@@ -1223,7 +1223,7 @@
         android:layout_height="wrap_content"
         android:layout_alignTop="@+id/weather_conditionIcon"
         android:layout_marginStart="3dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="8dp"
         android:layout_toEndOf="@+id/weather_conditionIcon" />
 
     <ImageView
@@ -1715,7 +1715,8 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/layout_weather_wait"
         android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
+        android:layout_marginEnd="20dp"
+        android:layout_toStartOf="@+id/weather_getSavedWeathersButton"
         android:clickable="true"
         app:backgroundTint="@color/uwMetallicGold"
         app:srcCompat="@drawable/ic_location_searching_black_24dp" />

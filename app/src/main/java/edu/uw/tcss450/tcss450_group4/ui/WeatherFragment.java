@@ -134,12 +134,17 @@ public class WeatherFragment extends Fragment {
         setWeather();
         mView.findViewById(weather_getZipButton).setOnLongClickListener(v ->
                 setSnackbar("Get the current weather condition and forecasts of the zip"));
+        mView.findViewById(weather_getZipButton).setOnClickListener(v -> attemptGetWeatherZip());
+
         mView.findViewById(weather_saveButton).setOnLongClickListener(v ->
                 setSnackbar("Save the current location"));
+        mView.findViewById(weather_saveButton).setOnClickListener(v -> attemptSaveWeather());
 //        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 //            mView.findViewById(weather_saveButton)
 //                    .setTooltipText("Save Weather");
 //        }
+        mView.findViewById(weather_getSavedWeathersButton).setOnClickListener(v ->
+                gotoSavedWeatherRecyclerView());
         mView.findViewById(weather_getSavedWeathersButton).setOnLongClickListener(v ->
                 setSnackbar("Get the list of saved locations"));
 //        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -148,11 +153,17 @@ public class WeatherFragment extends Fragment {
 //        }
         mView.findViewById(weather_temperatureSwitch).setOnClickListener(e -> switchTemperature());
         mView.findViewById(weather_forecastSwitch).setOnClickListener(e -> switchForecast());
-        mView.findViewById(weather_getLocationButton).setOnClickListener(e -> switchForecast());
+        mView.findViewById(weather_getLocationButton).setOnClickListener(e -> gotoMap());
         mView.findViewById(weather_getLocationButton).setOnLongClickListener(v ->
-                setSnackbar("Get the current weather condition and forecasts of the chosen location"));
+                setSnackbar("Get the current weather condition and forecasts from the chosen location"));
         setHours();
         setDays();
+    }
+
+    private void gotoMap() {
+        WeatherFragmentDirections.ActionNavWeatherToNavMap action =
+                WeatherFragmentDirections.actionNavWeatherToNavMap(mEmail, mJwToken);
+        Navigation.findNavController(Objects.requireNonNull(getView())).navigate(action);
     }
 
     private boolean setSnackbar(String tString) {
@@ -1037,9 +1048,8 @@ public class WeatherFragment extends Fragment {
             }
 
             WeatherFragmentDirections.ActionNavWeatherToNavLocations action =
-                    WeatherFragmentDirections.actionNavWeatherToNavLocations(locations);
-            action.setJwt(mJwToken);
-            action.setEmail(mEmail);
+                    WeatherFragmentDirections.actionNavWeatherToNavLocations(
+                            locations, mEmail, mJwToken);
             Navigation.findNavController(Objects.requireNonNull(getView())).navigate(action);
 //            final Bundle args = new Bundle();
 //            args.putSerializable(getString(R.string.key_blog_post_view), theBlogPost);

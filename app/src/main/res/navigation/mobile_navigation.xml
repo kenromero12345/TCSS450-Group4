@@ -26,12 +26,10 @@
         tools:layout="@layout/fragment_weather" >
         <argument
             android:name="jwt"
-            app:argType="string"
-            android:defaultValue='""' />
+            app:argType="string" />
         <argument
             android:name="email"
-            app:argType="string"
-            android:defaultValue='""' />
+            app:argType="string" />
         <action
             android:id="@+id/action_nav_weather_to_nav_locations"
             app:destination="@+id/nav_locations" />
@@ -43,6 +41,9 @@
             app:argType="edu.uw.tcss450.tcss450_group4.model.Weather[]" />
         <argument android:name="weathers24h"
             app:argType="edu.uw.tcss450.tcss450_group4.model.Weather[]" />
+        <action
+            android:id="@+id/action_nav_weather_to_nav_map"
+            app:destination="@id/nav_map" />
     </fragment>
     <action android:id="@+id/action_global_nav_weather" app:destination="@id/nav_weather" />
     <activity
@@ -68,11 +69,24 @@
             app:argType="edu.uw.tcss450.tcss450_group4.model.Location[]" />
         <argument
             android:name="email"
-            app:argType="string"
-            android:defaultValue='""' />
+            app:argType="string" />
         <argument
             android:name="jwt"
-            app:argType="string"
-            android:defaultValue='""' />
+            app:argType="string" />
+    </fragment>
+    <fragment
+        android:id="@+id/nav_map"
+        android:name="edu.uw.tcss450.tcss450_group4.ui.MapFragment"
+        android:label="fragment_map"
+        tools:layout="@layout/fragment_map" >
+        <action
+            android:id="@+id/action_nav_map_to_nav_weather"
+            app:destination="@id/nav_weather" />
+        <argument
+            android:name="email"
+            app:argType="string" />
+        <argument
+            android:name="jwt"
+            app:argType="string" />
     </fragment>
 </navigation>

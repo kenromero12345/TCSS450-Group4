@@ -1,19 +1,24 @@
 package edu.uw.tcss450.tcss450_group4.ui;
 
+
 import android.app.AlertDialog;
-import android.content.Context;
+import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -21,111 +26,129 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Objects;
 
 import edu.uw.tcss450.tcss450_group4.MobileNavigationDirections;
 import edu.uw.tcss450.tcss450_group4.R;
-import edu.uw.tcss450.tcss450_group4.model.Location;
+import edu.uw.tcss450.tcss450_group4.model.LocationViewModel;
 import edu.uw.tcss450.tcss450_group4.model.Weather;
 import edu.uw.tcss450.tcss450_group4.utils.SendPostAsyncTask;
 
-import static edu.uw.tcss450.tcss450_group4.R.*;
-import static edu.uw.tcss450.tcss450_group4.R.string.*;
+import static edu.uw.tcss450.tcss450_group4.R.string.ep_10d;
+import static edu.uw.tcss450.tcss450_group4.R.string.ep_24h;
+import static edu.uw.tcss450.tcss450_group4.R.string.ep_base_url;
+import static edu.uw.tcss450.tcss450_group4.R.string.ep_latLon;
+import static edu.uw.tcss450.tcss450_group4.R.string.ep_weather;
+import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_coord;
+import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_country;
+import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_data;
+import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_deg;
+import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_description;
+import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_hourly;
+import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_humidity;
+import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_icon;
+import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_lat;
+import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_lon;
+import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_main;
+import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_name;
+import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_pressure;
+import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_speed;
+import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_sys;
+import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_temp;
+import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_temp_max;
+import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_temp_min;
+import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_temperature;
+import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_weather;
+import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_wind;
 
 /**
- * A fragment representing a list of Items.
- * <p/>
- * Activities containing this fragment MUST implement the {@link OnListFragmentInteractionListener}
- * interface.
+ * A simple {@link Fragment} subclass.
  */
-public class LocationsFragment extends Fragment {
-    private static final String TAG = "WEATHER_FRAG";
-    private List<Location> mLocations;
+public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleMap.OnMapClickListener {
+    private GoogleMap mMap;
     private String mEmail;
     private String mJwToken;
     private Weather mWeather;
     private Weather[] mWeathers10d;
+    private static final String TAG = "WEATHER_FRAG";
 
-    // TODO: Customize parameter argument names
-    private static final String ARG_COLUMN_COUNT = "column-count";
-    // TODO: Customize parameters
-    private int mColumnCount = 1;
-
-    /**
-     * Mandatory empty constructor for the fragment manager to instantiate the
-     * fragment (e.g. upon screen orientation changes).
-     */
-    public LocationsFragment() {
-    }
-
-    // TODO: Customize parameter initialization
-    @SuppressWarnings("unused")
-    public static LocationsFragment newInstance(int columnCount) {
-        LocationsFragment fragment = new LocationsFragment();
-        Bundle args = new Bundle();
-        args.putInt(ARG_COLUMN_COUNT, columnCount);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
-//    @Override
-//    public void onCreate(Bundle savedInstanceState) {
-//        super.onCreate(savedInstanceState);
-//
-//        if (getArguments() != null) {
-//            mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
-//        }
-//    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        View view = inflater.inflate(layout.fragment_locations_list, container
-                , false);
-
-        // Set the adapter
-        if (view instanceof RecyclerView) {
-            Context context = view.getContext();
-            RecyclerView recyclerView = (RecyclerView) view;
-            if (mColumnCount <= 1) {
-                recyclerView.setLayoutManager(new LinearLayoutManager(context));
-            } else {
-                recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
-            }
-            recyclerView.setAdapter(new MyLocationsRecyclerViewAdapter(mLocations
-                    , this::displayWeather));
-        }
-        return view;
+    public MapFragment() {
+        // Required empty public constructor
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        LocationsFragmentArgs args = LocationsFragmentArgs.fromBundle(
+        MapFragmentArgs args = MapFragmentArgs.fromBundle(
                 getArguments() != null ? getArguments() : null);
-        mLocations = new ArrayList<>(Arrays.asList(args.getLocations()));
         mEmail =  args.getEmail();
         mJwToken = args.getJwt();
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p/>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnListFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onListFragmentInteraction(Location item);
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        Log.d("map", "start");
+        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
+        SupportMapFragment mapFragment =
+                (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
+        //add this fragment as the OnMapReadyCallback -> See onMapReady()
+        Objects.requireNonNull(mapFragment).getMapAsync(this);
     }
 
-    private void displayWeather(final Location tLocation) {
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        mMap = googleMap;
+
+        //Go grab a reference to the ViewModel.
+        LocationViewModel model =  LocationViewModel.getFactory().create(LocationViewModel.class);
+        Location l = model.getCurrentLocation().getValue();
+
+        // Add a marker in the current device location and move the camera
+        LatLng current = new LatLng(Objects.requireNonNull(l).getLatitude(), l.getLongitude());
+        mMap.addMarker(new MarkerOptions().position(current).title("Current Location"));
+        //Zoom levels are from 2.0f (zoomed out) to 21.f (zoomed in)
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(current, 15.0f));
+
+        //Add a observer to the ViewModel. MainActivity is listening to changes to the device
+        //location. It reports those changes to the ViewModel. This is an observer on
+        //the ViewModel and will act on those changes.
+        model.getCurrentLocation().observe(this, location -> {
+            final LatLng c = new LatLng(location.getLatitude(), location.getLongitude());
+            //Zoom levels are from 2.0f (zoomed out) to 21.f (zoomed in)
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(c, 15.0f));
+        });
+
+        mMap.setOnMapClickListener(this);
+    }
+
+    @Override
+    public void onMapClick(LatLng latLng) {
+        Log.d("LAT/LONG", latLng.toString());
+//        Marker marker = mMap.addMarker(new MarkerOptions()
+//                .position(latLng)
+//                .title("New Marker"));
+        AlertDialog alertDialog = new AlertDialog.Builder(getActivity()).create();
+        alertDialog.setTitle("Alert");
+        alertDialog.setMessage("Do you want to get the location's weather?");
+        alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "NO",
+                (dialog, which) -> {
+                    dialog.dismiss();
+                });
+        alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "YES",
+                (dialog, which) -> {
+                    //TODO
+                    displayWeather(latLng.latitude, latLng.longitude);
+                    dialog.dismiss();
+                });
+        alertDialog.show();
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 18.0f));
+
+    }
+
+    private void displayWeather(double tLat, double tLon) {
         Uri uri = new Uri.Builder()
                 .scheme("https")
                 .appendPath(getString(ep_base_url))
@@ -151,8 +174,8 @@ public class LocationsFragment extends Fragment {
 
         JSONObject msg = new JSONObject();
         try {
-            msg.put("lon", tLocation.getLon());
-            msg.put("lat", tLocation.getLat());
+            msg.put("lon", tLon);
+            msg.put("lat", tLat);
         } catch (JSONException e) {
             Log.wtf("LONG/LAT", "Error creating JSON: " + e.getMessage());
         }
@@ -204,7 +227,7 @@ public class LocationsFragment extends Fragment {
 
                 MobileNavigationDirections.ActionGlobalNavWeather directions
                         = WeatherFragmentDirections.actionGlobalNavWeather(mJwToken, mEmail,
-                                mWeather, mWeathers10d, weathers);
+                        mWeather, mWeathers10d, weathers);
 
                 Navigation.findNavController(Objects.requireNonNull(getView()))
                         .navigate(directions);
@@ -243,7 +266,7 @@ public class LocationsFragment extends Fragment {
                             getString(keys_json_weather));
                     Weather weather = new Weather(weatherJObject.getString(getString(keys_json_icon))
                             , dataJSONObject.getDouble(
-                                    getString(keys_json_temp)) +  273.15 );
+                            getString(keys_json_temp)) +  273.15 );
                     weathers[i] = weather;
                 }
                 mWeathers10d = weathers;
@@ -432,5 +455,3 @@ public class LocationsFragment extends Fragment {
         return "c04d"; //sleet, cloudy, wind     would just be here
     }
 }
-
-

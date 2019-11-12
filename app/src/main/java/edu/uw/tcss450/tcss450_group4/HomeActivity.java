@@ -298,10 +298,8 @@ public class HomeActivity extends AppCompatActivity {
                 }
 
                 MobileNavigationDirections.ActionGlobalNavWeather directions
-                        = WeatherFragmentDirections.actionGlobalNavWeather(
+                        = WeatherFragmentDirections.actionGlobalNavWeather(mJwToken, mEmail,
                                 mWeather, mWeathers10d, weathers);
-                directions.setEmail(mEmail);
-                directions.setJwt(mJwToken);
 
                 Navigation.findNavController(this, id.nav_host_fragment)
                         .navigate(directions);
