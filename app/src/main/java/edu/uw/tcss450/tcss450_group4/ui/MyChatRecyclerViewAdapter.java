@@ -8,22 +8,21 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import edu.uw.tcss450.tcss450_group4.R;
+import edu.uw.tcss450.tcss450_group4.model.Chat;
 import edu.uw.tcss450.tcss450_group4.ui.ChatFragment.OnListFragmentInteractionListener;
-import edu.uw.tcss450.tcss450_group4.ui.dummy.DummyContent.DummyItem;
-
 import java.util.List;
 
 /**
- * {@link RecyclerView.Adapter} that can display a {@link DummyItem} and makes a call to the
+ * {@link RecyclerView.Adapter} that can display a {@link Chat} and makes a call to the
  * specified {@link OnListFragmentInteractionListener}.
  * TODO: Replace the implementation with code for your data type.
  */
 public class MyChatRecyclerViewAdapter extends RecyclerView.Adapter<MyChatRecyclerViewAdapter.ViewHolder> {
 
-    private final List<DummyItem> mValues;
+    private final List<Chat> mValues;
     private final OnListFragmentInteractionListener mListener;
 
-    public MyChatRecyclerViewAdapter(List<DummyItem> items, OnListFragmentInteractionListener listener) {
+    public MyChatRecyclerViewAdapter(List<Chat> items, OnListFragmentInteractionListener listener) {
         mValues = items;
         mListener = listener;
     }
@@ -38,8 +37,8 @@ public class MyChatRecyclerViewAdapter extends RecyclerView.Adapter<MyChatRecycl
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mItem = mValues.get(position);
-        holder.mIdView.setText(mValues.get(position).id);
-        holder.mContentView.setText(mValues.get(position).content);
+        holder.mChatName.setText(mValues.get(position).getChatName());
+        holder.mMostRecentMessage.setText(mValues.get(position).getMostRecentMessage());
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -60,20 +59,20 @@ public class MyChatRecyclerViewAdapter extends RecyclerView.Adapter<MyChatRecycl
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
-        public final TextView mIdView;
-        public final TextView mContentView;
-        public DummyItem mItem;
+        public final TextView mChatName;
+        public final TextView mMostRecentMessage;
+        public Chat mItem;
 
         public ViewHolder(View view) {
             super(view);
             mView = view;
-            mIdView = (TextView) view.findViewById(R.id.editText);
-            mContentView = (TextView) view.findViewById(R.id.content);
+            mChatName = (TextView) view.findViewById(R.id.txt_ChatName);
+            mMostRecentMessage = (TextView) view.findViewById(R.id.txt_mostRecentMessage);
         }
 
         @Override
         public String toString() {
-            return super.toString() + " '" + mContentView.getText() + "'";
+            return super.toString() + " '" + mMostRecentMessage.getText() + "'";
         }
     }
 }

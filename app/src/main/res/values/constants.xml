@@ -23,4 +23,8 @@
     <string name="keys_prefs_password">see_the_city_see_the_zoo</string>
 
     <string name="keys_json_error">error</string>
+    <string name="keys_json_chats_response">response</string>
+    <string name="keys_json_chats_data">data</string>
+    <string name="keys_json_chats_chatid">ChatID</string>
+    <string name="keys_json_chats_name">Name</string>
 </resources>

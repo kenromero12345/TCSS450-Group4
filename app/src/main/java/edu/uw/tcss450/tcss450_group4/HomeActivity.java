@@ -22,10 +22,13 @@ import androidx.appcompat.widget.Toolbar;
 import android.view.Menu;
 import android.util.Log;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import edu.uw.tcss450.tcss450_group4.model.Chat;
 import edu.uw.tcss450.tcss450_group4.model.Weather;
+import edu.uw.tcss450.tcss450_group4.ui.ChatFragmentDirections;
 import edu.uw.tcss450.tcss450_group4.ui.WeatherFragmentDirections;
 import edu.uw.tcss450.tcss450_group4.utils.GetAsyncTask;
 
@@ -54,7 +57,7 @@ public class HomeActivity extends AppCompatActivity {
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         mAppBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.nav_home, R.id.nav_connections, R.id.nav_chat, R.id.nav_weather)
+                R.id.nav_home, R.id.nav_connections, R.id.nav_chat_list, R.id.nav_weather)
                 .setDrawerLayout(drawer)
                 .build();
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
@@ -88,8 +91,17 @@ public class HomeActivity extends AppCompatActivity {
             case R.id.nav_home:
                 navController.navigate(R.id.nav_home);
                 break;
-            case R.id.nav_chat:
-                navController.navigate(R.id.nav_chat);
+            case R.id.nav_chat_list:
+                Uri uriChats = new Uri.Builder()
+                        .scheme("https")
+                        .appendPath(getString(R.string.ep_base_url))
+                        .appendPath(getString(R.string.ep_chats))
+                        .build();
+                new GetAsyncTask.Builder(uriChats.toString())
+                        .onPostExecute(this::handleChatsGetOnPostExecute)
+                        .addHeaderField("authorization", mJwToken)
+                        .build().execute();
+                navController.navigate(R.id.nav_chat_list);
                 break;
             case R.id.nav_connections:
                 navController.navigate(R.id.nav_connections);
@@ -115,6 +127,37 @@ public class HomeActivity extends AppCompatActivity {
         //Close the drawer
         ((DrawerLayout) findViewById(R.id.drawer_layout)).closeDrawers();
         return true;
+    }
+
+    private void handleChatsGetOnPostExecute(final String result) {
+        try {
+            JSONObject root = new JSONObject(result);
+            if (root.has(getString(R.string.keys_json_chats_response))) {
+                JSONObject response = root.getJSONObject(getString(R.string.keys_json_chats_response));
+                if (response.has(getString(R.string.keys_json_chats_data))) {
+                    JSONArray data = response.getJSONArray(getString(R.string.keys_json_chats_data));
+                    Chat[] chats = new Chat[data.length()];
+                    for (int i = 0; i < data.length(); i++) {
+                        JSONObject jsonChatLists = data.getJSONObject(i);
+
+                        chats[i] = (new Chat.Builder(jsonChatLists.getString(getString(R.string.keys_json_chats_chatid)),
+                                jsonChatLists.getString(getString(R.string.keys_json_chats_name)))
+                                .build());
+                    }
+                MobileNavigationDirections.ActionGlobalNavChatList directions
+                        = ChatFragmentDirections.actionGlobalNavChatList(chats);
+                    Navigation.findNavController(this, R.id.nav_host_fragment)
+                            .navigate(directions);
+                } else {
+                    Log.e("ERROR!", "No data array");
+                }
+            } else {
+                Log.e("ERROR!", "No response");
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();;
+            Log.e("ERROR!", e.getMessage());
+        }
     }
 
     private void handleWeatherGetOnPostExecute(final String result) {

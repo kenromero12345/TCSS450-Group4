@@ -13,9 +13,10 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import edu.uw.tcss450.tcss450_group4.R;
-import edu.uw.tcss450.tcss450_group4.ui.dummy.DummyContent;
-import edu.uw.tcss450.tcss450_group4.ui.dummy.DummyContent.DummyItem;
-
+import edu.uw.tcss450.tcss450_group4.model.Chat;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -31,6 +32,7 @@ public class ChatFragment extends Fragment {
     // TODO: Customize parameters
     private int mColumnCount = 1;
     private OnListFragmentInteractionListener mListener;
+    private List<Chat> mChats;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -53,15 +55,14 @@ public class ChatFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (getArguments() != null) {
-            mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
-        }
+        ChatFragmentArgs args = ChatFragmentArgs.fromBundle(getArguments());
+        mChats = new ArrayList<>(Arrays.asList(args.getChats()));
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_chat, container, false);
+        View view = inflater.inflate(R.layout.fragment_chat_list, container, false);
 
         // Set the adapter
         if (view instanceof RecyclerView) {
@@ -72,10 +73,11 @@ public class ChatFragment extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            recyclerView.setAdapter(new MyChatRecyclerViewAdapter(DummyContent.ITEMS, mListener));
+            recyclerView.setAdapter(new MyChatRecyclerViewAdapter(mChats, mListener));
         }
         return view;
     }
+
 
     /**
      * This interface must be implemented by activities that contain this
@@ -89,6 +91,6 @@ public class ChatFragment extends Fragment {
      */
     public interface OnListFragmentInteractionListener {
         // TODO: Update argument type and name
-        void onListFragmentInteraction(DummyItem item);
+        void onListFragmentInteraction(Chat item);
     }
 }

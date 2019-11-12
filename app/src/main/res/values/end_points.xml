@@ -12,4 +12,5 @@
     <string name="ep_setlists">setlists</string>
     <string name="ep_recent">recent</string>
     <string name="ep_weather">weather</string>
+    <string name="ep_chats">chats</string>
 </resources>

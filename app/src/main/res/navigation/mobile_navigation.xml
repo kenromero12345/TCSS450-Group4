@@ -10,11 +10,6 @@
         android:label="fragment_home"
         tools:layout="@layout/fragment_home" />
     <fragment
-        android:id="@+id/nav_chat"
-        android:name="edu.uw.tcss450.tcss450_group4.ui.ChatFragment"
-        android:label="fragment_chat"
-        tools:layout="@layout/fragment_chat" />
-    <fragment
         android:id="@+id/nav_connections"
         android:name="edu.uw.tcss450.tcss450_group4.ui.ConnectionsFragment"
         android:label="fragment_connection"
@@ -46,4 +41,24 @@
             app:argType="integer"
             android:defaultValue="-1" />
     </activity>
+    <fragment
+        android:id="@+id/nav_chat_list"
+        android:name="edu.uw.tcss450.tcss450_group4.ui.ChatFragment"
+        android:label="fragment_chat_list"
+        tools:layout="@layout/fragment_chat_list" >
+        <action
+            android:id="@+id/action_nav_chat_list_to_nav_view_chat"
+            app:destination="@id/nav_view_chat" />
+        <argument
+            android:name="chats"
+            app:argType="edu.uw.tcss450.tcss450_group4.model.Chat[]" />
+    </fragment>
+    <fragment
+        android:id="@+id/nav_view_chat"
+        android:name="edu.uw.tcss450.tcss450_group4.ui.ViewChatFragment"
+        android:label="fragment_view_chat"
+        tools:layout="@layout/fragment_view_chat" />
+    <action
+        android:id="@+id/action_global_nav_chat_list"
+        app:destination="@id/nav_chat_list" />
 </navigation>
