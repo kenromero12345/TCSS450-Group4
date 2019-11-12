@@ -31,6 +31,7 @@ import edu.uw.tcss450.tcss450_group4.model.Weather;
 import edu.uw.tcss450.tcss450_group4.ui.ChatFragmentDirections;
 import edu.uw.tcss450.tcss450_group4.ui.WeatherFragmentDirections;
 import edu.uw.tcss450.tcss450_group4.utils.GetAsyncTask;
+import edu.uw.tcss450.tcss450_group4.utils.SendPostAsyncTask;
 
 public class HomeActivity extends AppCompatActivity {
     private String mJwToken;
@@ -92,14 +93,20 @@ public class HomeActivity extends AppCompatActivity {
                 navController.navigate(R.id.nav_home);
                 break;
             case R.id.nav_chat_list:
+                JSONObject memberId = new JSONObject();
+                try {
+                    memberId.put("memberId", mMemberId);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
                 Uri uriChats = new Uri.Builder()
                         .scheme("https")
                         .appendPath(getString(R.string.ep_base_url))
                         .appendPath(getString(R.string.ep_chats))
                         .build();
-                new GetAsyncTask.Builder(uriChats.toString())
+                new SendPostAsyncTask.Builder(uriChats.toString(), memberId)
                         .onPostExecute(this::handleChatsGetOnPostExecute)
-                        .addHeaderField("authorization", mJwToken)
+                        .onCancelled(this::handleErrorsInTask)
                         .build().execute();
 //                navController.navigate(R.id.nav_chat_list);
                 break;
@@ -128,6 +135,11 @@ public class HomeActivity extends AppCompatActivity {
         ((DrawerLayout) findViewById(R.id.drawer_layout)).closeDrawers();
         return true;
     }
+
+    private void handleErrorsInTask(final String result) {
+        Log.e("ASYNC_TASK_ERROR", result);
+    }
+
 
     private void handleChatsGetOnPostExecute(final String result) {
         try {

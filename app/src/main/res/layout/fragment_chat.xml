@@ -30,4 +30,5 @@
                 android:textAppearance="?attr/textAppearanceListItem" />
         </LinearLayout>
     </androidx.cardview.widget.CardView>
+
 </LinearLayout>
