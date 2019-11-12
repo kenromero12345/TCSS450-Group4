@@ -101,7 +101,7 @@ public class HomeActivity extends AppCompatActivity {
                         .onPostExecute(this::handleChatsGetOnPostExecute)
                         .addHeaderField("authorization", mJwToken)
                         .build().execute();
-                navController.navigate(R.id.nav_chat_list);
+//                navController.navigate(R.id.nav_chat_list);
                 break;
             case R.id.nav_connections:
                 navController.navigate(R.id.nav_connections);
@@ -132,25 +132,25 @@ public class HomeActivity extends AppCompatActivity {
     private void handleChatsGetOnPostExecute(final String result) {
         try {
             JSONObject root = new JSONObject(result);
-            if (root.has(getString(R.string.keys_json_chats_response))) {
-                JSONObject response = root.getJSONObject(getString(R.string.keys_json_chats_response));
-                if (response.has(getString(R.string.keys_json_chats_data))) {
-                    JSONArray data = response.getJSONArray(getString(R.string.keys_json_chats_data));
-                    Chat[] chats = new Chat[data.length()];
-                    for (int i = 0; i < data.length(); i++) {
-                        JSONObject jsonChatLists = data.getJSONObject(i);
+            if (root.has("success") && root.getBoolean("success")) {
+                JSONArray data = root.getJSONArray("names");
+//                if (response.has(getString(R.string.keys_json_chats_data))) {
+//                    JSONArray data = response.getJSONArray(getString(R.string.keys_json_chats_data));
+                Chat[] chats = new Chat[data.length()];
+                for (int i = 0; i < data.length(); i++) {
+                    JSONObject jsonChatLists = data.getJSONObject(i);
 
-                        chats[i] = (new Chat.Builder(jsonChatLists.getString(getString(R.string.keys_json_chats_chatid)),
-                                jsonChatLists.getString(getString(R.string.keys_json_chats_name)))
-                                .build());
-                    }
+                    chats[i] = (new Chat.Builder(jsonChatLists.getString("chatid"),
+                            jsonChatLists.getString("name"))
+                            .build());
+                }
                 MobileNavigationDirections.ActionGlobalNavChatList directions
                         = ChatFragmentDirections.actionGlobalNavChatList(chats);
-                    Navigation.findNavController(this, R.id.nav_host_fragment)
-                            .navigate(directions);
-                } else {
-                    Log.e("ERROR!", "No data array");
-                }
+                Navigation.findNavController(this, R.id.nav_host_fragment)
+                        .navigate(directions);
+//                }    else {
+//                    Log.e("ERROR!", "No data array");
+//                }
             } else {
                 Log.e("ERROR!", "No response");
             }
