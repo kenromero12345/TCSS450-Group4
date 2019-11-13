@@ -107,6 +107,7 @@ public class HomeActivity extends AppCompatActivity {
                 new SendPostAsyncTask.Builder(uriChats.toString(), memberId)
                         .onPostExecute(this::handleChatsGetOnPostExecute)
                         .onCancelled(this::handleErrorsInTask)
+                        .addHeaderField("authorization", mJwToken)
                         .build().execute();
 //                navController.navigate(R.id.nav_chat_list);
                 break;
@@ -145,7 +146,7 @@ public class HomeActivity extends AppCompatActivity {
         try {
             JSONObject root = new JSONObject(result);
             if (root.has("success") && root.getBoolean("success")) {
-                JSONArray data = root.getJSONArray("names");
+                JSONArray data = root.getJSONArray(getString(R.string.keys_json_chats_data));
 //                if (response.has(getString(R.string.keys_json_chats_data))) {
 //                    JSONArray data = response.getJSONArray(getString(R.string.keys_json_chats_data));
                 Chat[] chats = new Chat[data.length()];
