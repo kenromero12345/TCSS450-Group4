@@ -33,6 +33,7 @@ public class ViewConnectionFragment extends Fragment implements View.OnClickList
 
     private String mJwToken;
     private int mMemberId;
+    private ConnectionItem mConnectionItem;
 
 
     public ViewConnectionFragment() {
@@ -56,15 +57,16 @@ public class ViewConnectionFragment extends Fragment implements View.OnClickList
 //            BlogPost blogPost = (BlogPost) getArguments().getSerializable(getString(R.string.blog_key));
             mJwToken = getArguments().getString("jwt");
             mMemberId = getArguments().getInt("memberid");
-            ConnectionItem connectionItem = (ConnectionItem)
+            mConnectionItem= (ConnectionItem)
                     getArguments().get(getString(R.string.keys_connection_view));
 
+
             ((TextView) getActivity().findViewById(R.id.fullName))
-                    .setText("ID: " + connectionItem.getContactId());
+                    .setText("Name: " + mConnectionItem.getFirstName() + " " + mConnectionItem.getLastName());
             ((TextView) getActivity().findViewById(R.id.fullID))
-                    .setText("Name: " + connectionItem.getFirstName() + " " + connectionItem.getLastName());
+                    .setText("ID: " + mConnectionItem.getContactId()) ;
             ((TextView) getActivity().findViewById(R.id.fullUsername))
-                    .setText("Username : " + connectionItem.getContactUserName());
+                    .setText("Username : " + mConnectionItem.getContactUserName());
         }
     }
 
@@ -115,7 +117,7 @@ public class ViewConnectionFragment extends Fragment implements View.OnClickList
         JSONObject msgBody = new JSONObject();
         try{
             msgBody.put("memberIdUser", mMemberId);
-            msgBody.put("memberIdOther", R.id.fullID);
+            msgBody.put("memberIdOther", mConnectionItem.getContactId());
         } catch (JSONException e) {
             Log.wtf("MEMBERID", "Error creating JSON: " + e.getMessage());
 
@@ -133,7 +135,114 @@ public class ViewConnectionFragment extends Fragment implements View.OnClickList
 
     private void handleRemoveOnPostExecute(String result) {
 
+        Uri uriConnection = new Uri.Builder()
+                .scheme("https")
+                .appendPath(getString(R.string.ep_base_url))
+                .appendPath(getString(R.string.ep_connection))
+                .appendPath(getString(R.string.ep_getall))
+                .build();
+        JSONObject msgBody = new JSONObject();
+        try{
+            msgBody.put("memberId", mMemberId);
+        } catch (JSONException e) {
+            Log.wtf("MEMBERID", "Error creating JSON: " + e.getMessage());
+
+        }
+        new SendPostAsyncTask.Builder(uriConnection.toString(), msgBody)
+                .onPostExecute(this::handleConnectionOnPostExecute)
+                .onCancelled(error -> Log.e("CONNECTION FRAG", error))
+                .addHeaderField("authorization", mJwToken)  //add the JWT as header
+                .build().execute();
+
     }
+
+
+
+    private void handleConnectionOnPostExecute(final String result) {
+        //parse JSON
+        try {
+            boolean hasConnection = false;
+            JSONObject root = new JSONObject(result);
+            if (root.has(getString(R.string.keys_json_connection_connections))){
+                hasConnection = true;
+            } else {
+                Log.e("ERROR!", "No connection");
+            }
+
+            if (hasConnection){
+                JSONArray connectionJArray = root.getJSONArray(
+                        getString(R.string.keys_json_connection_connections));
+                ConnectionItem[] conItem = new ConnectionItem[connectionJArray.length()];
+                for(int i = 0; i < connectionJArray.length(); i++){
+                    JSONObject jsonConnection = connectionJArray.getJSONObject(i);
+                    conItem[i] = new ConnectionItem(
+                            jsonConnection.getInt(
+                                    getString(R.string.keys_json_connection_memberid))
+                            , jsonConnection.getString(
+                            getString(R.string.keys_json_connection_firstname))
+                            , jsonConnection.getString(
+                            getString(R.string.keys_json_connection_lastname))
+                            ,jsonConnection.getString(
+                            getString(R.string.keys_json_connection_username)));
+                }
+
+                MobileNavigationDirections.ActionGlobalNavConnectionGUI directions
+                        = ConnectionGUIFragmentDirections.actionGlobalNavConnectionGUI(conItem);
+                directions.setJwt(mJwToken);
+                directions.setMemberid(mMemberId);
+
+                Navigation.findNavController(getActivity(), R.id.nav_host_fragment)
+                        .navigate(directions);
+
+            }
+
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+//        JSONArray connectionJArray = root.getJSONArray();
+//        try {
+//            JSONObject root = new JSONObject(result);
+//            if (root.has(getString(R.string.keys_json_connection_response))) {
+//                JSONObject response = root.getJSONObject(
+//                        getString(R.string.keys_json_connection_response));
+//                if (response.has(getString(R.string.keys_json_connection_data))) {
+//                    JSONArray data = response.getJSONArray(
+//                            getString(R.string.keys_json_connection_data));
+//                    ConnectionItem[] connection = new ConnectionItem[data.length()];
+//                    for(int i = 0; i < data.length(); i++) {
+//                        JSONObject jsonConnection = data.getJSONObject(i);
+//
+//                        connection[i] = (new ConnectionItem.Builder(
+//                                jsonConnection.getString(
+//                                        getString(R.string.keys_json_connection_firstname)),
+//                                jsonConnection.getString(
+//                                        getString(R.string.keys_json_connection_username)))
+//                                .build());
+//                    }
+//                    MobileNavigationDirections.ActionGlobalNavConnectionGUI directionsC
+//                            = ConnectionGUIFragmentDirections.actionGlobalNavConnectionGUI(connection);
+//                    Navigation.findNavController(this, R.id.nav_host_fragment)
+//                            .navigate(directionsC);
+
+//                    MobileNavigationDirections.ActionGlobalNavWeather directions
+//                            = WeatherFragmentDirections.actionGlobalNavWeather(weather);
+//
+//                    Navigation.findNavController(this, R.id.nav_host_fragment)
+//                            .navigate(directions);
+//                } else {
+//                    Log.e("ERROR!", "No data array");
+//                }
+//            } else {
+//                Log.e("ERROR!", "No response");
+//            }
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//            Log.e("ERROR!", e.getMessage());
+//        }
+    }
+
 
 
 }

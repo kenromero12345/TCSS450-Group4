@@ -70,8 +70,5 @@
             android:name="jwt"
             app:argType="string"
             android:defaultValue='""' />
-        <action
-            android:id="@+id/action_viewConnectionFragment_to_nav_connectionGUI"
-            app:destination="@id/nav_connectionGUI" />
     </fragment><action android:id="@+id/action_global_viewConnectionFragment" app:destination="@id/viewConnectionFragment"/>
 </navigation>
