@@ -39,8 +39,9 @@ public class MyChatRecyclerViewAdapter extends RecyclerView.Adapter<MyChatRecycl
         holder.mItem = mValues.get(position);
         holder.mChatName.setText(mValues.get(position).getChatName());
         holder.mMostRecentMessage.setText(mValues.get(position).getMostRecentMessage());
-
+        holder.mTimeStamp.setText(mValues.get(position).getTimeStamp());
         holder.mView.setOnClickListener(new View.OnClickListener() {
+
             @Override
             public void onClick(View v) {
                 if (null != mListener) {
@@ -61,18 +62,20 @@ public class MyChatRecyclerViewAdapter extends RecyclerView.Adapter<MyChatRecycl
         public final View mView;
         public final TextView mChatName;
         public final TextView mMostRecentMessage;
+        public final TextView mTimeStamp;
         public Chat mItem;
 
         public ViewHolder(View view) {
             super(view);
             mView = view;
             mChatName = (TextView) view.findViewById(R.id.txt_ChatName);
-            mMostRecentMessage = (TextView) view.findViewById(R.id.txt_ChatName);
+            mMostRecentMessage = (TextView) view.findViewById(R.id.txt_mostRecentMessage);
+            mTimeStamp = (TextView) view.findViewById(R.id.txt_TimeStamp);
         }
 
         @Override
         public String toString() {
-            return super.toString() + " '" + mMostRecentMessage.getText() + "'";
+            return super.toString() + mMostRecentMessage.getText() + " '" + mTimeStamp.getText() + "'";
         }
     }
 }

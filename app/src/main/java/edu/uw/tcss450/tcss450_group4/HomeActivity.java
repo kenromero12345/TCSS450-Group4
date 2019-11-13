@@ -26,6 +26,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import edu.uw.tcss450.tcss450_group4.model.Chat;
 import edu.uw.tcss450.tcss450_group4.model.Weather;
 import edu.uw.tcss450.tcss450_group4.ui.ChatFragmentDirections;
@@ -153,9 +158,20 @@ public class HomeActivity extends AppCompatActivity {
                 for (int i = 0; i < data.length(); i++) {
                     JSONObject jsonChatLists = data.getJSONObject(i);
 
-                    chats[i] = (new Chat.Builder(jsonChatLists.getString("chatid"),
-                            jsonChatLists.getString("name"))
-                            .build());
+                    String recentMessage = jsonChatLists.getString("message");
+                    if (recentMessage != "null") {
+                        chats[i] = (new Chat.Builder(jsonChatLists.getString("chatid"),
+                                jsonChatLists.getString("name"),
+                                jsonChatLists.getString("message"),
+                                convertTimeStampToDate(jsonChatLists.getString("timestamp")))
+                                .build());
+                    } else {
+                        chats[i] = (new Chat.Builder(jsonChatLists.getString("chatid"),
+                                jsonChatLists.getString("name"),
+                                "",
+                                "")
+                                .build());
+                    }
                 }
                 MobileNavigationDirections.ActionGlobalNavChatList directions
                         = ChatFragmentDirections.actionGlobalNavChatList(chats);
@@ -173,6 +189,16 @@ public class HomeActivity extends AppCompatActivity {
         }
     }
 
+    private String convertTimeStampToDate(String timestamp) {
+        Date date = new Date();
+        DateFormat format = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss a");
+        try {
+            date = format.parse(timestamp);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return date.toString();
+    }
     private void handleWeatherGetOnPostExecute(final String result) {
         //parse JSON
 
