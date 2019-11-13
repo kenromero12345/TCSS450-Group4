@@ -123,6 +123,18 @@ public class SendPostAsyncTask extends AsyncTask<Void, String, String> {
             return this;
         }
 
+
+        /**
+         * Add a Key/Value pair to be set in the Header of the HTTP request.
+         * @param key the key of the pair
+         * @param value the vaue of the pair
+         * @return
+         */
+        public Builder addHeaderField(final String key, final String value) {
+            headers.put(key, value);
+            return this;
+        }
+
         /**
          * Add a Key/Value pair to be set in the Header of the HTTP request.
          * @param key the key of the pair
