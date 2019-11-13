@@ -6,7 +6,9 @@ import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -60,6 +62,7 @@ import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_temp_min;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_temperature;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_weather;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_wind;
+import static edu.uw.tcss450.tcss450_group4.model.WeatherHelper.getNewIcon;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -70,10 +73,17 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
     private String mJwToken;
     private Weather mWeather;
     private Weather[] mWeathers10d;
+    private LatLng mLatLng;
     private static final String TAG = "WEATHER_FRAG";
 
     public MapFragment() {
         // Required empty public constructor
+    }
+
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.fragment_map, container, false);
     }
 
     @Override
@@ -84,6 +94,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
                 getArguments() != null ? getArguments() : null);
         mEmail =  args.getEmail();
         mJwToken = args.getJwt();
+        mLatLng = args.getLatLng();
     }
 
 
@@ -102,15 +113,15 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-        //Go grab a reference to the ViewModel.
+//        //Go grab a reference to the ViewModel.
         LocationViewModel model =  LocationViewModel.getFactory().create(LocationViewModel.class);
-        Location l = model.getCurrentLocation().getValue();
+//        Location l = model.getCurrentLocation().getValue();
 
         // Add a marker in the current device location and move the camera
-        LatLng current = new LatLng(Objects.requireNonNull(l).getLatitude(), l.getLongitude());
-        mMap.addMarker(new MarkerOptions().position(current).title("Current Location"));
+//        LatLng current = new LatLng(l.getLatitude(), l.getLongitude());
+        mMap.addMarker(new MarkerOptions().position(mLatLng).title("Current Location"));
         //Zoom levels are from 2.0f (zoomed out) to 21.f (zoomed in)
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(current, 15.0f));
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mLatLng, 15.0f));
 
         //Add a observer to the ViewModel. MainActivity is listening to changes to the device
         //location. It reports those changes to the ViewModel. This is an observer on
@@ -400,58 +411,5 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
             e.printStackTrace();
             Log.e("ERROR!", e.getMessage());
         }
-    }
-
-    private String getNewIcon(String tIcon){
-        switch (tIcon) {
-            case "01d":
-            case "clear-day":
-                return "c01d";
-            case "01n":
-            case "clear-night":
-                return "c01n";
-            case "02d":
-            case "partly-cloudy-day":
-            case "03d":
-                return "c02d";
-            case "02n":
-            case "partly-cloudy-night":
-            case "03n":
-                return "c02n";
-            case "04d":
-                return "c03d";
-            case "04n":
-                return "c03n";
-            case "09d":
-                return "r05d";
-            case "09n":
-                return "r05n";
-            case "10d":
-            case "rain":
-            case "10n":
-                return "r02d";
-            case "thunderstorm":
-            case "11d":
-                return "t04d";
-            case "11n":
-                return "t04n";
-            case "13d":
-            case "snow":
-            case "hail":
-                return "s02d";
-            case "13n":
-                return "s02n";
-            case "50d":
-                return "a01d";
-            case "50n":
-                return "a01n";
-            case "sleet":
-                /* || tIcon == "wind"*/
-
-                return "s05d";
-            case "fog":
-                return "50d";
-        }
-        return "c04d"; //sleet, cloudy, wind     would just be here
     }
 }

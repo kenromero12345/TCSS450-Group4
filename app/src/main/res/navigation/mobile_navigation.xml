@@ -8,7 +8,11 @@
         android:id="@+id/nav_home"
         android:name="edu.uw.tcss450.tcss450_group4.ui.HomeFragment"
         android:label="fragment_home"
-        tools:layout="@layout/fragment_home" />
+        tools:layout="@layout/fragment_home" >
+        <argument
+            android:name="weather"
+            app:argType="edu.uw.tcss450.tcss450_group4.model.Weather" />
+    </fragment>
     <fragment
         android:id="@+id/nav_chat"
         android:name="edu.uw.tcss450.tcss450_group4.ui.ChatFragment"
@@ -94,6 +98,9 @@
         <argument
             android:name="jwt"
             app:argType="string" />
+        <argument
+            android:name="latLng"
+            app:argType="com.google.android.gms.maps.model.LatLng" />
     </fragment>
 
 
@@ -142,4 +149,5 @@
         android:name="edu.uw.tcss450.tcss450_group4.ui.ViewConnectionFragment"
         android:label="fragment_view_connection"
         tools:layout="@layout/fragment_view_connection" />
+    <action android:id="@+id/action_global_nav_home" app:destination="@id/nav_home" />
 </navigation>

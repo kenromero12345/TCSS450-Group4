@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.graphics.Typeface;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -21,6 +20,7 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.material.snackbar.Snackbar;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
@@ -40,11 +40,9 @@ import edu.uw.tcss450.tcss450_group4.utils.SendPostAsyncTask;
 
 import static android.graphics.Color.BLACK;
 import static edu.uw.tcss450.tcss450_group4.R.color.redviolet;
-import static edu.uw.tcss450.tcss450_group4.R.color.uwMetallicGold;
 import static edu.uw.tcss450.tcss450_group4.R.color.uwPurple;
 import static edu.uw.tcss450.tcss450_group4.R.id.*;
 import static edu.uw.tcss450.tcss450_group4.R.layout;
-import static edu.uw.tcss450.tcss450_group4.R.string.button_getSaved;
 import static edu.uw.tcss450.tcss450_group4.R.string.ep_10d;
 import static edu.uw.tcss450.tcss450_group4.R.string.ep_24h;
 import static edu.uw.tcss450.tcss450_group4.R.string.ep_base_url;
@@ -76,6 +74,10 @@ import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_temp_min;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_temperature;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_weather;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_wind;
+import static edu.uw.tcss450.tcss450_group4.model.WeatherHelper.getImgUrl;
+import static edu.uw.tcss450.tcss450_group4.model.WeatherHelper.getNewIcon;
+import static edu.uw.tcss450.tcss450_group4.model.WeatherHelper.tempFromKelvinToCelsiusString;
+import static edu.uw.tcss450.tcss450_group4.model.WeatherHelper.tempFromKelvinToFarenheitString;
 
 ///**
 // * A simple {@link Fragment} subclass.
@@ -162,7 +164,7 @@ public class WeatherFragment extends Fragment {
 
     private void gotoMap() {
         WeatherFragmentDirections.ActionNavWeatherToNavMap action =
-                WeatherFragmentDirections.actionNavWeatherToNavMap(mEmail, mJwToken);
+                WeatherFragmentDirections.actionNavWeatherToNavMap(mEmail, mJwToken, new LatLng(mWeather.getLat(), mWeather.getLon()));
         Navigation.findNavController(Objects.requireNonNull(getView())).navigate(action);
     }
 
@@ -495,16 +497,6 @@ public class WeatherFragment extends Fragment {
         tempDay8.setText(tempFromKelvinToFarenheitString(mWeathers10d[7].getTemp()));
         tempDay9.setText(tempFromKelvinToFarenheitString(mWeathers10d[8].getTemp()));
         tempDay10.setText(tempFromKelvinToFarenheitString(mWeathers10d[9].getTemp()));
-    }
-
-    private String tempFromKelvinToFarenheitString(double tTemp) {
-        return String.valueOf(Math.round(((tTemp - 273.15) * 9 / 5) + 32)) +
-                DEGREE + "F";
-    }
-
-    private String tempFromKelvinToCelsiusString(double tTemp) {
-        return String.valueOf(Math.round(tTemp - 273.15)) +
-                DEGREE + "C";
     }
 
     //TODO
@@ -842,13 +834,13 @@ public class WeatherFragment extends Fragment {
                 });
     }
 
-    private String getImgUrl(String tIcon) {
-        if (tIcon.equals("50d")) {
-            return "http://openweathermap.org/img/wn/" + tIcon + "@2x.png";
-        } else {
-            return "https://www.weatherbit.io/static/img/icons/" + tIcon + ".png";
-        }
-    }
+//    private String getImgUrl(String tIcon) {
+//        if (tIcon.equals("50d")) {
+//            return "http://openweathermap.org/img/wn/" + tIcon + "@2x.png";
+//        } else {
+//            return "https://www.weatherbit.io/static/img/icons/" + tIcon + ".png";
+//        }
+//    }
 
     /**
      *
@@ -1179,58 +1171,5 @@ public class WeatherFragment extends Fragment {
         alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
                 (dialog, which) -> dialog.dismiss());
         alertDialog.show();
-    }
-
-    private String getNewIcon(String tIcon){
-        switch (tIcon) {
-            case "01d":
-            case "clear-day":
-                return "c01d";
-            case "01n":
-            case "clear-night":
-                return "c01n";
-            case "02d":
-            case "partly-cloudy-day":
-            case "03d":
-                return "c02d";
-            case "02n":
-            case "partly-cloudy-night":
-            case "03n":
-                return "c02n";
-            case "04d":
-                return "c03d";
-            case "04n":
-                return "c03n";
-            case "09d":
-                return "r05d";
-            case "09n":
-                return "r05n";
-            case "10d":
-            case "rain":
-            case "10n":
-                return "r02d";
-            case "thunderstorm":
-            case "11d":
-                return "t04d";
-            case "11n":
-                return "t04n";
-            case "13d":
-            case "snow":
-            case "hail":
-                return "s02d";
-            case "13n":
-                return "s02n";
-            case "50d":
-                return "a01d";
-            case "50n":
-                return "a01n";
-            case "sleet":
-                /* || tIcon == "wind"*/
-
-                return "s05d";
-            case "fog":
-                return "50d";
-        }
-        return "c04d"; //sleet, cloudy, wind     would just be here
     }
 }

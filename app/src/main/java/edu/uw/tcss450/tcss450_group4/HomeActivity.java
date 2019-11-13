@@ -27,29 +27,21 @@ import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.material.navigation.NavigationView;
 
-import androidx.drawerlayout.widget.DrawerLayout;
-
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-
-import android.view.Menu;
-import android.util.Log;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.sql.Connection;
 import java.util.Objects;
 
 import edu.uw.tcss450.tcss450_group4.model.ConnectionItem;
 import edu.uw.tcss450.tcss450_group4.model.Weather;
-import edu.uw.tcss450.tcss450_group4.ui.ConnectionGUIFragment;
 import edu.uw.tcss450.tcss450_group4.ui.ConnectionGUIFragmentDirections;
+import edu.uw.tcss450.tcss450_group4.ui.HomeFragment;
 import edu.uw.tcss450.tcss450_group4.ui.WeatherFragmentDirections;
 import edu.uw.tcss450.tcss450_group4.utils.SendPostAsyncTask;
 
 import static edu.uw.tcss450.tcss450_group4.R.id;
+import static edu.uw.tcss450.tcss450_group4.R.id.*;
 import static edu.uw.tcss450.tcss450_group4.R.layout;
 import static edu.uw.tcss450.tcss450_group4.R.navigation;
 import static edu.uw.tcss450.tcss450_group4.R.string.ep_10d;
@@ -87,53 +79,41 @@ import edu.uw.tcss450.tcss450_group4.ui.ChatFragmentDirections;
 public class HomeActivity extends AppCompatActivity {
     // A constant int for the permissions request code. Must be a 16 bit number
     private static final int MY_PERMISSIONS_LOCATIONS = 8414;
-//    private static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
     private static final String TAG = "WEATHER_FRAG";
     private String mJwToken;
-
     private String mEmail;
-
-
     private int mMemberId;
-
-
     private AppBarConfiguration mAppBarConfiguration;
     private Weather mWeather;
     private Weather[] mWeathers10d;
+    private Weather[] mWeathers24h;
     //Use a FusedLocationProviderClient to request the location
     private FusedLocationProviderClient mFusedLocationClient;
+    private Location mLocations;
+
 
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        checkLocationPermission();
         setContentView(layout.activity_home);
         Toolbar toolbar = findViewById(id.toolbar);
         setSupportActionBar(toolbar);
-
-//        FloatingActionButton fab = findViewById(R.id.fab);
-//        fab.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-//                        .setAction("Action", null).show();
-//            }
-//        });
-        DrawerLayout drawer = findViewById(id.drawer_layout);
-        NavigationView navigationView = findViewById(id.nav_view);
+        DrawerLayout drawer = findViewById(drawer_layout);
+        NavigationView navigationView = findViewById(nav_view);
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         mAppBarConfiguration = new AppBarConfiguration.Builder(
-                id.nav_home, id.nav_connectionGUI, id.nav_chat, id.nav_weather, id.nav_logout)
+                nav_home, nav_connectionGUI, nav_chat, nav_weather, nav_logout)
                 .setDrawerLayout(drawer)
                 .build();
         NavController navController = Navigation.findNavController(this
-                , id.nav_host_fragment);
+                , nav_host_fragment);
         NavigationUI.setupActionBarWithNavController(this, navController
                 , mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
-
 
         navController.setGraph(navigation.mobile_navigation, getIntent().getExtras());
 
@@ -143,7 +123,6 @@ public class HomeActivity extends AppCompatActivity {
             mEmail = args.getCredentials().getEmail();
             mMemberId = args.getMemberId();
         }
-
         navigationView.setNavigationItemSelectedListener(this::onNavigationSelected);
     }
 
@@ -158,19 +137,27 @@ public class HomeActivity extends AppCompatActivity {
     @Override
     public boolean onSupportNavigateUp() {
         NavController navController = Navigation.findNavController(this
-                , id.nav_host_fragment);
+                , nav_host_fragment);
         return NavigationUI.navigateUp(navController, mAppBarConfiguration)
                 || super.onSupportNavigateUp();
     }
 
     private boolean onNavigationSelected(final MenuItem menuItem) {
         NavController navController =
-                Navigation.findNavController(this, id.nav_host_fragment);
+                Navigation.findNavController(this, nav_host_fragment);
         switch (menuItem.getItemId()) {
-            case id.nav_home:
-                navController.navigate(id.nav_home);
+            case nav_home:
+                //TODO
+                if (navController.getCurrentDestination().getId() != nav_home) {
+                    if (mWeather != null) {
+                        MobileNavigationDirections.ActionGlobalNavHome directions
+                                = WeatherFragmentDirections.actionGlobalNavHome(
+                                mWeather);
+                        navController.navigate(directions);
+                    }
+                }
                 break;
-            case R.id.nav_chat_list:
+            case nav_chat_list:
                 JSONObject memberId = new JSONObject();
                 try {
                     memberId.put("memberId", mMemberId);
@@ -188,32 +175,24 @@ public class HomeActivity extends AppCompatActivity {
                         .build().execute();
 //                navController.navigate(R.id.nav_chat_list);
                 break;
-            case R.id.nav_connectionGUI:
+            case nav_connectionGUI:
                 gotoConnection();
-//                Uri uriC = new Uri.Builder()
-//                        .scheme("https")
-//                        .appendPath(getString(R.string.ep_base_url))
-//                        .appendPath(getString(R.string.ep_connection))
-//                        .appendPath(getString(R.string.ep_getall))
-//                        .build();
-//                new GetAsyncTask.Builder(uriC.toString())
-//                        .onPostExecute(this::handleConnectionOnPostExecute)
-//                        .addHeaderField("authorization", mJwToken) //add the JWT as a header
-//                        .build().execute();
-//                navController.navigate(R.id.nav_connectionGUI);
                 break;
-            case id.nav_weather:
-                NavController nc = Navigation.findNavController(this, id.nav_host_fragment);
-                if (nc.getCurrentDestination().getId() != id.nav_weather) {
-                    checkLocationPermission();
+            case nav_weather:
+                if (navController.getCurrentDestination().getId() != nav_weather) {
+                    MobileNavigationDirections.ActionGlobalNavWeather directions2
+                            = WeatherFragmentDirections.actionGlobalNavWeather(mJwToken, mEmail,
+                            mWeather, mWeathers10d, mWeathers24h);
+
+                    navController.navigate(directions2);
                 }
                 break;
-            case id.nav_logout:
+            case nav_logout:
                 logout();
 
         }
         //Close the drawer
-        ((DrawerLayout) findViewById(id.drawer_layout)).closeDrawers();
+        ((DrawerLayout) findViewById(drawer_layout)).closeDrawers();
         return true;
     }
 
@@ -239,7 +218,7 @@ public class HomeActivity extends AppCompatActivity {
                 }
                 MobileNavigationDirections.ActionGlobalNavChatList directions
                         = ChatFragmentDirections.actionGlobalNavChatList(chats);
-                Navigation.findNavController(this, R.id.nav_host_fragment)
+                Navigation.findNavController(this, nav_host_fragment)
                         .navigate(directions);
 //                }    else {
 //                    Log.e("ERROR!", "No data array");
@@ -266,6 +245,7 @@ public class HomeActivity extends AppCompatActivity {
                     new String[]{Manifest.permission.ACCESS_COARSE_LOCATION
                             , Manifest.permission.ACCESS_FINE_LOCATION},
                     MY_PERMISSIONS_LOCATIONS);
+
         } else {
             //The user has already allowed the use of Locations. Get the current location.
             requestLocation();
@@ -326,7 +306,7 @@ public class HomeActivity extends AppCompatActivity {
                         = ConnectionGUIFragmentDirections.actionGlobalNavConnectionGUI(conItem);
                 directions.setJwt(mJwToken);
 
-                Navigation.findNavController(this, R.id.nav_host_fragment)
+                Navigation.findNavController(this, nav_host_fragment)
                         .navigate(directions);
 
             }
@@ -378,10 +358,39 @@ public class HomeActivity extends AppCompatActivity {
 //        }
     }
 
-
-    private void gotoWeather(Location location) {
+    private void gotoHome(Location location) {
         double longitude = location.getLongitude();
         double latitude = location.getLatitude();
+
+        Uri uri = new Uri.Builder()
+                .scheme("https")
+                .appendPath(getString(ep_base_url))
+                .appendPath(getString(ep_weather))
+                .appendPath(getString(ep_latLon))
+                .build();
+
+        JSONObject msg = new JSONObject();
+        try {
+            msg.put("lon", longitude);
+            msg.put("lat", latitude);
+        } catch (JSONException e) {
+            Log.wtf("LONG/LAT", "Error creating JSON: " + e.getMessage());
+        }
+
+        new SendPostAsyncTask.Builder(uri.toString(), msg)
+                .onPostExecute(this::handleWeatherGetOnPostExecute)
+                .onCancelled(error -> Log.e(TAG, error))
+                .addHeaderField("authorization", mJwToken) //add the JWT as a header
+                .build().execute();
+    }
+
+
+    private void getWeather(Location location) {
+        double longitude = location.getLongitude();
+        double latitude = location.getLatitude();
+
+
+
 
 
 //        if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION)
@@ -497,12 +506,8 @@ public class HomeActivity extends AppCompatActivity {
                     Log.d("weather" + i, "" + weather.getTemp());
                 }
 
-                MobileNavigationDirections.ActionGlobalNavWeather directions
-                        = WeatherFragmentDirections.actionGlobalNavWeather(mJwToken, mEmail,
-                                mWeather, mWeathers10d, weathers);
+                mWeathers24h = weathers;
 
-                Navigation.findNavController(this, id.nav_host_fragment)
-                        .navigate(directions);
             } else {
                 alert("Can't load current 24-h forecast");
             }
@@ -729,7 +734,7 @@ public class HomeActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_logout) {
+        if (id == action_logout) {
             logout();
             return true;
         }
@@ -756,11 +761,24 @@ public class HomeActivity extends AppCompatActivity {
 
                 //Shut down the app. In production release, you would let the user
                 //know why the app is shutting down...maybe ask for permission again?
-                finishAndRemoveTask();
-                //TODO find out from instructor what to do here
-            }
-//                return;
 
+                AlertDialog alertDialog = new AlertDialog.Builder(this).create();
+                alertDialog.setTitle("Alert");
+                alertDialog.setMessage("You can't use the app without your location." +
+                        "Do you want to give us your location?" +
+                        "If you say no, the app will close.");//TODO
+                alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "NO",
+                        (dialog, which) -> {
+                            dialog.dismiss();
+                            finishAndRemoveTask();
+                        });
+                alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "YES",
+                        (dialog, which) -> {
+                            dialog.dismiss();
+                            onRequestPermissionsResult(requestCode, permissions, grantResults);
+                        });
+                alertDialog.show();
+            }
             // other 'case' lines to check for other
             // permissions this app might request
         }
@@ -773,13 +791,20 @@ public class HomeActivity extends AppCompatActivity {
                 != PackageManager.PERMISSION_GRANTED) {
 
             Log.d("REQUEST LOCATION", "User did NOT allow permission to request location!");
+
+            //TODO
+            finishAndRemoveTask();
         } else {
             mFusedLocationClient.getLastLocation()
                     .addOnSuccessListener(this, location -> {
                         // Got last known location. In some rare situations this can be null.
                         if (location != null) {
                             Log.d("LOCATION", location.toString());
-                            gotoWeather(location);
+                            if (mLocations == null || mLocations.getLatitude() == location.getLatitude()
+                                    && mLocations.getLongitude() == location.getLongitude()) {
+                                mLocations = location;
+                                getWeather(location);
+                            }
                         }
                     });
         }

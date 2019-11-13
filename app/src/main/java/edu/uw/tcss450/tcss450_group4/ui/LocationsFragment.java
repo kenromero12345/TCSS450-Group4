@@ -28,10 +28,12 @@ import edu.uw.tcss450.tcss450_group4.MobileNavigationDirections;
 import edu.uw.tcss450.tcss450_group4.R;
 import edu.uw.tcss450.tcss450_group4.model.Location;
 import edu.uw.tcss450.tcss450_group4.model.Weather;
+import edu.uw.tcss450.tcss450_group4.model.WeatherHelper;
 import edu.uw.tcss450.tcss450_group4.utils.SendPostAsyncTask;
 
 import static edu.uw.tcss450.tcss450_group4.R.*;
 import static edu.uw.tcss450.tcss450_group4.R.string.*;
+import static edu.uw.tcss450.tcss450_group4.model.WeatherHelper.getNewIcon;
 
 /**
  * A fragment representing a list of Items.
@@ -357,13 +359,6 @@ public class LocationsFragment extends Fragment {
 
                 mWeather = weather;
 
-//                MobileNavigationDirections.ActionGlobalNavWeather directions
-//                        = WeatherFragmentDirections.actionGlobalNavWeather(weather);
-//                directions.setEmail(mEmail);
-//                directions.setJwt(mJwToken);
-//
-//                Navigation.findNavController(getView())
-//                        .navigate(directions);
             } else {
                 AlertDialog alertDialog = new AlertDialog.Builder(getActivity()).create();
                 alertDialog.setTitle("Alert");
@@ -377,59 +372,6 @@ public class LocationsFragment extends Fragment {
             e.printStackTrace();
             Log.e("ERROR!", e.getMessage());
         }
-    }
-
-    private String getNewIcon(String tIcon){
-        switch (tIcon) {
-            case "01d":
-            case "clear-day":
-                return "c01d";
-            case "01n":
-            case "clear-night":
-                return "c01n";
-            case "02d":
-            case "partly-cloudy-day":
-            case "03d":
-                return "c02d";
-            case "02n":
-            case "partly-cloudy-night":
-            case "03n":
-                return "c02n";
-            case "04d":
-                return "c03d";
-            case "04n":
-                return "c03n";
-            case "09d":
-                return "r05d";
-            case "09n":
-                return "r05n";
-            case "10d":
-            case "rain":
-            case "10n":
-                return "r02d";
-            case "thunderstorm":
-            case "11d":
-                return "t04d";
-            case "11n":
-                return "t04n";
-            case "13d":
-            case "snow":
-            case "hail":
-                return "s02d";
-            case "13n":
-                return "s02n";
-            case "50d":
-                return "a01d";
-            case "50n":
-                return "a01n";
-            case "sleet":
-                /* || tIcon == "wind"*/
-
-                return "s05d";
-            case "fog":
-                return "50d";
-        }
-        return "c04d"; //sleet, cloudy, wind     would just be here
     }
 }
 

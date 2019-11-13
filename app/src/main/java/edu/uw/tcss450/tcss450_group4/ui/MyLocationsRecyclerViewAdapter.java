@@ -34,10 +34,10 @@ public class MyLocationsRecyclerViewAdapter extends RecyclerView.Adapter<MyLocat
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mItem = mValues.get(position);
         holder.mNicknameView.setText(mValues.get(position).getName());
-        holder.mLatLonView.setText(mValues.get(position).getLat() + " | " + mValues.get(position).getLon());
-        if (mValues.get(position).getZip() != -1) {
-            holder.mZipView.setText(mValues.get(position).getZip());
-        }
+//        holder.mLatLonView.setText(mValues.get(position).getLat() + " | " + mValues.get(position).getLon());
+//        if (mValues.get(position).getZip() != -1) {
+//            holder.mZipView.setText(mValues.get(position).getZip());
+//        }
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -58,16 +58,16 @@ public class MyLocationsRecyclerViewAdapter extends RecyclerView.Adapter<MyLocat
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
         public final TextView mNicknameView;
-        public final TextView mLatLonView;
-        public final TextView mZipView;
+//        public final TextView mLatLonView;
+//        public final TextView mZipView;
         public Location mItem;
 
         public ViewHolder(View view) {
             super(view);
             mView = view;
             mNicknameView = (TextView) view.findViewById(R.id.weather_nickname);
-            mLatLonView = (TextView) view.findViewById(R.id.weather_latLon);
-            mZipView = (TextView) view.findViewById(R.id.weather_zip);
+//            mLatLonView = (TextView) view.findViewById(R.id.weather_latLon);
+//            mZipView = (TextView) view.findViewById(R.id.weather_zip);
         }
 
         @Override
