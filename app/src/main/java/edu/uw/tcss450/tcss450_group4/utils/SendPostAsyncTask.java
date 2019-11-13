@@ -121,6 +121,7 @@ public class SendPostAsyncTask extends AsyncTask<Void, String, String> {
             return this;
         }
 
+
         /**
          * Add a Key/Value pair to be set in the Header of the HTTP request.
          * @param key the key of the pair
@@ -180,7 +181,6 @@ public class SendPostAsyncTask extends AsyncTask<Void, String, String> {
             for (final String key: mHeaders.keySet()) {
                 urlConnection.setRequestProperty(key, mHeaders.get(key));
             }
-
 
             urlConnection.setDoOutput(true);
             OutputStreamWriter wr = new OutputStreamWriter(urlConnection.getOutputStream());

@@ -66,6 +66,7 @@
         android:autofillHints=""
         android:ems="10"
         android:textColorHint="@color/uwGold"
+        android:backgroundTint="@color/uwGold"
         android:textColor="@color/uwGold"
         android:hint="@string/edit_password"
         android:inputType="textPassword"
