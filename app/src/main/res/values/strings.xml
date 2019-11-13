@@ -51,6 +51,6 @@
     <string name="forecast10day">10-Day Forecast</string>
     <string name="formatString">{0}{1}</string>
     <string name="title_activity_maps">Map</string>
-
+    <string name="button_create_chat">+</string>
 
 </resources>

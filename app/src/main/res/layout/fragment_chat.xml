@@ -35,17 +35,18 @@
 
                 <TextView
                     android:id="@+id/txt_mostRecentMessage"
-                    android:layout_width="wrap_content"
+                    android:layout_width="250dp"
                     android:layout_height="wrap_content"
                     android:textColor="@color/uwGold"
                     android:ellipsize="end"
+                    android:textSize="20dp"
                     android:maxLines="1"
                     android:layout_margin="@dimen/text_margin"
                     android:textAppearance="?attr/textAppearanceListItem" />
 
                 <TextView
                     android:id="@+id/txt_TimeStamp"
-                    android:layout_width="wrap_content"
+                    android:layout_width="100dp"
                     android:layout_height="wrap_content"
                     android:layout_margin="@dimen/text_margin"
                     android:maxLines="1"

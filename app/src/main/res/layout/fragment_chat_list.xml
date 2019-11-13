@@ -11,7 +11,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="1dp"
-        android:text="Button"
+        android:text="@string/button_create_chat"
+        android:textSize="30dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -20,7 +21,7 @@
         android:name="edu.uw.tcss450.tcss450_group4.ui.ChatFragment"
         android:layout_width="353dp"
         android:layout_height="723dp"
-        android:layout_marginStart="28dp"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="20dp"
         app:layoutManager="LinearLayoutManager"
         app:layout_constraintStart_toStartOf="parent"

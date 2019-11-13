@@ -128,8 +128,8 @@
   <fragment
         android:id="@+id/nav_chat_list"
         android:name="edu.uw.tcss450.tcss450_group4.ui.ChatFragment"
-        android:label="fragment_chat_list"
-        tools:layout="@layout/fragment_chat_list" >
+        android:label="Chats"
+        tools:layout="@layout/fragment_chat_list">
         <action
             android:id="@+id/action_nav_chat_list_to_nav_view_chat"
             app:destination="@id/nav_view_chat" />
