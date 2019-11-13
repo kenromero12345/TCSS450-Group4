@@ -76,7 +76,7 @@ public class ChatFragment extends Fragment {
         // Set the adapter
         if (rv instanceof RecyclerView) {
             Context context = rv.getContext();
-            RecyclerView recyclerView = (RecyclerView) rv;
+            RecyclerView recyclerView = rv;
             if (mColumnCount <= 1) {
                 recyclerView.setLayoutManager(new LinearLayoutManager(context));
             } else {

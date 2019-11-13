@@ -129,7 +129,7 @@ public class LocationsFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         LocationsFragmentArgs args = LocationsFragmentArgs.fromBundle(
-                getArguments() != null ? getArguments() : null);
+                getArguments());
         mLocations = new ArrayList<>(Arrays.asList(args.getLocations()));
         mEmail =  args.getEmail();
         mJwToken = args.getJwt();

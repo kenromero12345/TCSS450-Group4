@@ -106,9 +106,6 @@ public class WeatherFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        view.findViewById(layout_weather_wait).setVisibility(View.VISIBLE);
-        view.findViewById(weather_saveButton).setVisibility(View.INVISIBLE);
-        view.findViewById(weather_temperatureSwitch).setVisibility(View.INVISIBLE);
         initialization(view);
         setComponents();
     }
@@ -131,10 +128,13 @@ public class WeatherFragment extends Fragment {
         mView = view;
     }
 
-    private void setComponents() {        
+    private void setComponents() {
+        mView.findViewById(layout_weather_wait).setVisibility(View.VISIBLE);
+        mView.findViewById(weather_saveButton).setVisibility(View.INVISIBLE);
+        mView.findViewById(weather_temperatureSwitch).setVisibility(View.INVISIBLE);
         setWeather();
         mView.findViewById(weather_getZipButton).setOnLongClickListener(v ->
-                setSnackbar("Get the current weather condition and forecasts of the given zip"));
+                setSnackbar("Get the current weather condition and forecasts of the given zip code"));
         mView.findViewById(weather_getZipButton).setOnClickListener(v -> attemptGetWeatherZip());
 
         mView.findViewById(weather_saveButton).setOnLongClickListener(v ->
@@ -792,18 +792,13 @@ public class WeatherFragment extends Fragment {
 
                     @Override
                     public void onError(Exception e) {
-
+                        mView.findViewById(layout_weather_wait).setVisibility(View.GONE);
+                        mView.findViewById(weather_saveButton).setVisibility(View.VISIBLE);
+                        mView.findViewById(weather_temperatureSwitch).setVisibility(View.VISIBLE);
+                        alert("There are some images that were not able to load", getContext());
                     }
                 });
     }
-
-//    private String getImgUrl(String tIcon) {
-//        if (tIcon.equals("50d")) {
-//            return "http://openweathermap.org/img/wn/" + tIcon + "@2x.png";
-//        } else {
-//            return "https://www.weatherbit.io/static/img/icons/" + tIcon + ".png";
-//        }
-//    }
 
     /**
      *

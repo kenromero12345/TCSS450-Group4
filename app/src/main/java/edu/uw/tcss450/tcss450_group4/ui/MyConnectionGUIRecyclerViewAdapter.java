@@ -75,10 +75,10 @@ public class MyConnectionGUIRecyclerViewAdapter extends RecyclerView.Adapter<MyC
         public ViewHolder(View view) {
             super(view);
             mView = view;
-            contactid = (TextView) view.findViewById(R.id.connection_memberid);
-            lastname = (TextView) view.findViewById(R.id.connection_lastname);
-            name = (TextView) view.findViewById(R.id.connection_firstname);
-            userName = (TextView) view.findViewById(R.id.connection_username);
+            contactid = view.findViewById(R.id.connection_memberid);
+            lastname = view.findViewById(R.id.connection_lastname);
+            name = view.findViewById(R.id.connection_firstname);
+            userName = view.findViewById(R.id.connection_username);
         }
 
         @Override

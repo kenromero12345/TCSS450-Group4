@@ -80,7 +80,7 @@ public class PushReceiver extends BroadcastReceiver {
             Pushy.setNotificationChannel(builder, context);
 
             // Get an instance of the NotificationManager service
-            NotificationManager notificationManager = (NotificationManager) context.getSystemService(context.NOTIFICATION_SERVICE);
+            NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 
             // Build the notification and display it
             notificationManager.notify(1, builder.build());

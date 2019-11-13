@@ -65,7 +65,7 @@ public class MyLocationsRecyclerViewAdapter extends RecyclerView.Adapter<MyLocat
         public ViewHolder(View view) {
             super(view);
             mView = view;
-            mNicknameView = (TextView) view.findViewById(R.id.weather_nickname);
+            mNicknameView = view.findViewById(R.id.weather_nickname);
 //            mLatLonView = (TextView) view.findViewById(R.id.weather_latLon);
 //            mZipView = (TextView) view.findViewById(R.id.weather_zip);
         }

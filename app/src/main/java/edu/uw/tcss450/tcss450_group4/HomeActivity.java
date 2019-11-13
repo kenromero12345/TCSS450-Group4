@@ -220,7 +220,7 @@ public class HomeActivity extends AppCompatActivity {
 
                     Log.d("LOCATION UPDATE!", location.toString());
                 }
-            };
+            }
         };
         createLocationRequest();
     }
@@ -356,7 +356,7 @@ public class HomeActivity extends AppCompatActivity {
                 Log.e("ERROR!", "No response");
             }
         } catch (JSONException e) {
-            e.printStackTrace();;
+            e.printStackTrace();
             Log.e("ERROR!", e.getMessage());
         }
     }
