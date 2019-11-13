@@ -267,8 +267,7 @@ public class HomeActivity extends AppCompatActivity {
                 if(Objects.requireNonNull(navController.getCurrentDestination()).getId() != nav_weather) {
                     if (mWeather != null) {
                         MobileNavigationDirections.ActionGlobalNavHome directions
-                                = WeatherFragmentDirections.actionGlobalNavHome(
-                        );
+                                = WeatherFragmentDirections.actionGlobalNavHome();
                         directions.setWeather(mWeather);
                         navController.navigate(directions);
                     }

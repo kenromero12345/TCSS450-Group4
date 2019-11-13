@@ -157,5 +157,5 @@
             app:argType="string"
             android:defaultValue='""' />
     </fragment>
-    <action android:id="@+id/action_global_viewConnectionFragment" app:destination="@id/viewConnectionFragment"/>
+    <action android:id="@+id/action_global_viewConnectionFragment" app:destination="@id/viewConnectionFragment"/><action android:id="@+id/action_global_nav_home" app:destination="@id/nav_home"/>
 </navigation>
