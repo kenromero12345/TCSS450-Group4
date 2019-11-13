@@ -118,6 +118,10 @@
         <action
             android:id="@+id/action_nav_connectionGUI_to_viewConnectionFragment"
             app:destination="@id/viewConnectionFragment" />
+        <argument
+            android:name="memberid"
+            app:argType="integer"
+            android:defaultValue="0" />
     </fragment><action android:id="@+id/action_global_nav_connectionGUI" app:destination="@id/nav_connectionGUI"/>
 
 
@@ -147,6 +151,11 @@
         android:id="@+id/viewConnectionFragment"
         android:name="edu.uw.tcss450.tcss450_group4.ui.ViewConnectionFragment"
         android:label="fragment_view_connection"
-        tools:layout="@layout/fragment_view_connection" />
-    <action android:id="@+id/action_global_nav_home" app:destination="@id/nav_home" />
+        tools:layout="@layout/fragment_view_connection" >
+        <argument
+            android:name="jwt"
+            app:argType="string"
+            android:defaultValue='""' />
+    </fragment>
+    <action android:id="@+id/action_global_viewConnectionFragment" app:destination="@id/viewConnectionFragment"/>
 </navigation>

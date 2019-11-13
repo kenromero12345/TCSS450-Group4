@@ -1,23 +1,76 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<androidx.recyclerview.widget.RecyclerView
+<androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/list"
-    android:name="edu.uw.tcss450.tcss450_group4.ui.ConnectionGUIFragment"
-    android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_alignParentStart="true"
-    android:layout_alignParentTop="true"
-    android:layout_alignParentBottom="true"
-    android:layout_marginStart="7dp"
-    android:layout_marginLeft="16dp"
-    android:layout_marginTop="3dp"
-    android:layout_marginRight="16dp"
-    android:layout_marginBottom="0dp"
-    app:layoutManager="LinearLayoutManager"
-    tools:context=".ui.ConnectionGUIFragment"
-    tools:listitem="@layout/fragment_connectiongui">
+    android:layout_width="wrap_content">
 
-</androidx.recyclerview.widget.RecyclerView>
+
+    <Button
+        android:id="@+id/connectionRequest"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="7dp"
+        android:text="View Request"
+        app:layout_constraintEnd_toStartOf="@+id/connectionAdd"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/connectionAdd"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Add Connection"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/connectionSent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:text="Sent Requests"
+        app:layout_constraintEnd_toStartOf="@+id/connectionRequest"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/list"
+        android:name="edu.uw.tcss450.tcss450_group4.ui.ConnectionGUIFragment"
+        android:layout_width="353dp"
+        android:layout_height="701dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="28dp"
+        android:layout_marginTop="16dp"
+        app:layoutManager="LinearLayoutManager"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/connectionRequest"
+        tools:context=".ui.ConnectionGUIFragment"
+        tools:listitem="@layout/fragment_connectiongui">
+
+    </androidx.recyclerview.widget.RecyclerView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+
+<!--<androidx.recyclerview.widget.RecyclerView-->
+<!--    xmlns:android="http://schemas.android.com/apk/res/android"-->
+<!--    xmlns:app="http://schemas.android.com/apk/res-auto"-->
+<!--    xmlns:tools="http://schemas.android.com/tools"-->
+<!--    android:id="@+id/list"-->
+<!--    android:name="edu.uw.tcss450.tcss450_group4.ui.ConnectionGUIFragment"-->
+<!--    android:layout_width="wrap_content"-->
+<!--    android:layout_height="wrap_content"-->
+<!--    android:layout_alignParentStart="true"-->
+<!--    android:layout_alignParentTop="true"-->
+<!--    android:layout_alignParentBottom="true"-->
+<!--    android:layout_marginStart="7dp"-->
+<!--    android:layout_marginLeft="16dp"-->
+<!--    android:layout_marginTop="3dp"-->
+<!--    android:layout_marginRight="16dp"-->
+<!--    android:layout_marginBottom="0dp"-->
+<!--    app:layoutManager="LinearLayoutManager"-->
+<!--    tools:context=".ui.ConnectionGUIFragment"-->
+<!--    tools:listitem="@layout/fragment_connectiongui">-->
+
+<!--</androidx.recyclerview.widget.RecyclerView>-->

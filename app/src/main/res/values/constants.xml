@@ -67,6 +67,8 @@
     <string name="keys_json_connection_username">username</string>
     <string name="keys_json_connection_connections">connections</string>
     <string name="keys_connection_view">connectionview</string>
+    <string name="keys_connection_jwt">jwt</string>
+    <string name="keys_connection_item">jwt</string>
 
     <string name="keys_json_error">error</string>
     <string name="keys_json_chats_response">response</string>
