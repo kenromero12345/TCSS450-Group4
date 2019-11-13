@@ -191,13 +191,20 @@ public class HomeActivity extends AppCompatActivity {
 
     private String convertTimeStampToDate(String timestamp) {
         Date date = new Date();
-        DateFormat format = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss a");
+        String a = "";
+        //Date showTime = new Date();
+        //Date showDate = new Date();
+        DateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+        DateFormat timeFormat = new SimpleDateFormat("HH:mm");
+        //DateFormat dateFormat = new SimpleDateFormat("MM-dd");
         try {
             date = format.parse(timestamp);
+            a = timeFormat.format(date.getTime());
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        return date.toString();
+
+        return a;
     }
     private void handleWeatherGetOnPostExecute(final String result) {
         //parse JSON
