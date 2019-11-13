@@ -123,7 +123,6 @@ public class WeatherFragment extends Fragment {
             mWeathers10d = args.getWeathers10d();
             mWeathers24h = args.getWeathers24h();
             mWeathers24h[0].setTemp(mWeather.getTemp());
-
         }
         mView = view;
     }
