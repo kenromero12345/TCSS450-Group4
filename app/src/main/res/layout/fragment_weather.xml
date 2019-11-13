@@ -494,7 +494,7 @@
             <ImageView
 
                 android:id="@+id/weather_Hour19Img"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:srcCompat="@drawable/ic_menu_manage" />
 
@@ -531,7 +531,7 @@
             <ImageView
 
                 android:id="@+id/weather_Hour20Img"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="0dp"
                 android:layout_marginTop="0dp"
@@ -574,7 +574,7 @@
             <ImageView
 
                 android:id="@+id/weather_Hour21Img"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="0dp"
                 android:layout_marginTop="0dp"
@@ -618,7 +618,7 @@
             <ImageView
 
                 android:id="@+id/weather_Hour22Img"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="0dp"
                 android:layout_marginTop="0dp"
@@ -661,7 +661,7 @@
             <ImageView
 
                 android:id="@+id/weather_Hour23Img"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="0dp"
                 android:layout_marginTop="0dp"
@@ -701,7 +701,7 @@
             <ImageView
 
                 android:id="@+id/weather_Hour24Img"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
                 app:srcCompat="@drawable/ic_menu_manage" />
@@ -737,14 +737,14 @@
 
                 android:id="@+id/weather_hour13"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:text="TextView"
                 android:textAlignment="center" />
 
             <ImageView
 
                 android:id="@+id/weather_Hour13Img"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:srcCompat="@drawable/ic_menu_manage" />
 
@@ -771,7 +771,7 @@
 
                 android:id="@+id/weather_hour14"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_marginStart="0dp"
                 android:layout_marginTop="0dp"
                 android:layout_marginEnd="0dp"
@@ -781,7 +781,7 @@
             <ImageView
 
                 android:id="@+id/weather_Hour14Img"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="0dp"
                 android:layout_marginTop="0dp"
@@ -814,7 +814,7 @@
 
                 android:id="@+id/weather_hour15"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_marginStart="0dp"
                 android:layout_marginTop="0dp"
                 android:layout_marginEnd="0dp"
@@ -824,7 +824,7 @@
             <ImageView
 
                 android:id="@+id/weather_Hour15Img"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="0dp"
                 android:layout_marginTop="0dp"
@@ -858,7 +858,7 @@
 
                 android:id="@+id/weather_hour16"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_marginStart="0dp"
                 android:layout_marginTop="0dp"
                 android:layout_marginEnd="0dp"
@@ -868,7 +868,7 @@
             <ImageView
 
                 android:id="@+id/weather_Hour16Img"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="0dp"
                 android:layout_marginTop="0dp"
@@ -902,7 +902,7 @@
 
                 android:id="@+id/weather_hour17"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_marginTop="0dp"
                 android:layout_marginEnd="0dp"
                 android:text="TextView"
@@ -911,7 +911,7 @@
             <ImageView
 
                 android:id="@+id/weather_Hour17Img"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="0dp"
                 android:layout_marginTop="0dp"
@@ -944,14 +944,14 @@
 
                 android:id="@+id/weather_hour18"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:text="TextView"
                 android:textAlignment="center" />
 
             <ImageView
 
                 android:id="@+id/weather_Hour18Img"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
                 app:srcCompat="@drawable/ic_menu_manage" />
@@ -987,14 +987,14 @@
 
                 android:id="@+id/weather_hour7"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:text="TextView"
                 android:textAlignment="center" />
 
             <ImageView
 
                 android:id="@+id/weather_Hour7Img"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:srcCompat="@drawable/ic_menu_manage" />
 
@@ -1002,7 +1002,7 @@
 
                 android:id="@+id/weather_hour7Temp"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:text="TextView"
                 android:textAlignment="center" />
         </LinearLayout>
@@ -1020,8 +1020,8 @@
             <TextView
 
                 android:id="@+id/weather_hour8"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:layout_marginStart="0dp"
                 android:layout_marginTop="0dp"
                 android:layout_marginEnd="0dp"
@@ -1031,7 +1031,7 @@
             <ImageView
 
                 android:id="@+id/weather_Hour8Img"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="0dp"
                 android:layout_marginTop="0dp"
@@ -1041,8 +1041,8 @@
             <TextView
 
                 android:id="@+id/weather_hour8Temp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:layout_marginTop="0dp"
                 android:layout_marginEnd="0dp"
                 android:text="TextView"
@@ -1063,8 +1063,8 @@
             <TextView
 
                 android:id="@+id/weather_hour9"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:layout_marginStart="0dp"
                 android:layout_marginTop="0dp"
                 android:layout_marginEnd="0dp"
@@ -1074,7 +1074,7 @@
             <ImageView
 
                 android:id="@+id/weather_Hour9Img"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="0dp"
                 android:layout_marginTop="0dp"
@@ -1085,7 +1085,7 @@
 
                 android:id="@+id/weather_hour9Temp"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_marginStart="0dp"
                 android:layout_marginTop="0dp"
                 android:layout_marginEnd="0dp"
@@ -1107,8 +1107,8 @@
             <TextView
 
                 android:id="@+id/weather_hour10"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:layout_marginStart="0dp"
                 android:layout_marginTop="0dp"
                 android:layout_marginEnd="0dp"
@@ -1118,7 +1118,7 @@
             <ImageView
 
                 android:id="@+id/weather_Hour10Img"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="0dp"
                 android:layout_marginTop="0dp"
@@ -1129,7 +1129,7 @@
 
                 android:id="@+id/weather_hour10Temp"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_marginStart="0dp"
                 android:layout_marginTop="0dp"
                 android:layout_marginEnd="0dp"
@@ -1151,8 +1151,8 @@
             <TextView
 
                 android:id="@+id/weather_hour11"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:layout_marginTop="0dp"
                 android:layout_marginEnd="0dp"
                 android:text="TextView"
@@ -1161,7 +1161,7 @@
             <ImageView
 
                 android:id="@+id/weather_Hour11Img"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="0dp"
                 android:layout_marginTop="0dp"
@@ -1171,8 +1171,8 @@
             <TextView
 
                 android:id="@+id/weather_hour11Temp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:layout_marginTop="0dp"
                 android:layout_marginEnd="0dp"
                 android:text="TextView"
@@ -1194,14 +1194,14 @@
 
                 android:id="@+id/weather_hour12"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:text="TextView"
                 android:textAlignment="center" />
 
             <ImageView
 
                 android:id="@+id/weather_Hour12Img"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
                 app:srcCompat="@drawable/ic_menu_manage" />
@@ -1210,7 +1210,7 @@
 
                 android:id="@+id/weather_hour12Temp"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:text="TextView"
                 android:textAlignment="center" />
         </LinearLayout>
@@ -1472,14 +1472,14 @@
 
                 android:id="@+id/weather_hour1"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:text="TextView"
                 android:textAlignment="center" />
 
             <ImageView
 
                 android:id="@+id/weather_Hour1Img"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:srcCompat="@drawable/ic_menu_manage" />
 
@@ -1487,7 +1487,7 @@
 
                 android:id="@+id/weather_hour1Temp"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:text="TextView"
                 android:textAlignment="center" />
         </LinearLayout>
@@ -1505,8 +1505,8 @@
             <TextView
 
                 android:id="@+id/weather_hour2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:layout_marginStart="0dp"
                 android:layout_marginTop="0dp"
                 android:layout_marginEnd="0dp"
@@ -1516,7 +1516,7 @@
             <ImageView
 
                 android:id="@+id/weather_Hour2Img"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="0dp"
                 android:layout_marginTop="0dp"
@@ -1526,8 +1526,8 @@
             <TextView
 
                 android:id="@+id/weather_hour2Temp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:layout_marginTop="0dp"
                 android:layout_marginEnd="0dp"
                 android:text="TextView"
@@ -1548,8 +1548,8 @@
             <TextView
 
                 android:id="@+id/weather_hour3"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:layout_marginStart="0dp"
                 android:layout_marginTop="0dp"
                 android:layout_marginEnd="0dp"
@@ -1559,7 +1559,7 @@
             <ImageView
 
                 android:id="@+id/weather_Hour3Img"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="0dp"
                 android:layout_marginTop="0dp"
@@ -1570,7 +1570,7 @@
 
                 android:id="@+id/weather_hour3Temp"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_marginStart="0dp"
                 android:layout_marginTop="0dp"
                 android:layout_marginEnd="0dp"
@@ -1592,8 +1592,8 @@
             <TextView
 
                 android:id="@+id/weather_hour4"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:layout_marginStart="0dp"
                 android:layout_marginTop="0dp"
                 android:layout_marginEnd="0dp"
@@ -1603,7 +1603,7 @@
             <ImageView
 
                 android:id="@+id/weather_Hour4Img"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="0dp"
                 android:layout_marginTop="0dp"
@@ -1614,7 +1614,7 @@
 
                 android:id="@+id/weather_hour4Temp"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_marginStart="0dp"
                 android:layout_marginTop="0dp"
                 android:layout_marginEnd="0dp"
@@ -1636,8 +1636,8 @@
             <TextView
 
                 android:id="@+id/weather_hour5"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:layout_marginTop="0dp"
                 android:layout_marginEnd="0dp"
                 android:text="TextView"
@@ -1646,7 +1646,7 @@
             <ImageView
 
                 android:id="@+id/weather_Hour5Img"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="0dp"
                 android:layout_marginTop="0dp"
@@ -1656,8 +1656,8 @@
             <TextView
 
                 android:id="@+id/weather_hour5Temp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:layout_marginTop="0dp"
                 android:layout_marginEnd="0dp"
                 android:text="TextView"
@@ -1675,18 +1675,20 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
+
             <TextView
 
                 android:id="@+id/weather_hour6"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:text="TextView"
                 android:textAlignment="center" />
+
 
             <ImageView
 
                 android:id="@+id/weather_Hour6Img"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
                 app:srcCompat="@drawable/ic_menu_manage" />
@@ -1694,7 +1696,7 @@
             <TextView
                 android:id="@+id/weather_hour6Temp"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:text="TextView"
                 android:textAlignment="center" />
         </LinearLayout>
