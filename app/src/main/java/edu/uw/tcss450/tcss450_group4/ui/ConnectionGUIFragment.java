@@ -32,7 +32,7 @@ import edu.uw.tcss450.tcss450_group4.model.ConnectionItem;
  */
 public class ConnectionGUIFragment extends Fragment {
 
-    private List<ConnectionItem> mConnection;
+    private List<ConnectionItem> mConnectionItem;
     private String mJwToken;
     private int mMemberId;
 
@@ -65,7 +65,7 @@ public class ConnectionGUIFragment extends Fragment {
         ConnectionGUIFragmentArgs args = ConnectionGUIFragmentArgs.fromBundle(getArguments());
         mJwToken = args.getJwt();
         mMemberId = args.getMemberid();
-        mConnection = new ArrayList<>(Arrays.asList(args.getConnectionitems()));
+        mConnectionItem = new ArrayList<>(Arrays.asList(args.getConnectionitems()));
     }
 
     @Override
@@ -91,7 +91,7 @@ public class ConnectionGUIFragment extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            recyclerView.setAdapter(new MyConnectionGUIRecyclerViewAdapter(mConnection, this::displayConnection));
+            recyclerView.setAdapter(new MyConnectionGUIRecyclerViewAdapter(mConnectionItem, this::displayConnection));
         }
     }
 
