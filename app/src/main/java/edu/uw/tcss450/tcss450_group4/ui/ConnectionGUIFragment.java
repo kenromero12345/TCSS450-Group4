@@ -3,6 +3,8 @@ package edu.uw.tcss450.tcss450_group4.ui;
 import android.content.Context;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -31,6 +33,8 @@ import edu.uw.tcss450.tcss450_group4.model.ConnectionItem;
 public class ConnectionGUIFragment extends Fragment {
 
     private List<ConnectionItem> mConnection;
+    private String mJwToken;
+    private int mMemberId;
 
     // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
@@ -59,6 +63,8 @@ public class ConnectionGUIFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ConnectionGUIFragmentArgs args = ConnectionGUIFragmentArgs.fromBundle(getArguments());
+        mJwToken = args.getJwt();
+        mMemberId = args.getMemberid();
         mConnection = new ArrayList<>(Arrays.asList(args.getConnectionitems()));
     }
 
@@ -68,9 +74,18 @@ public class ConnectionGUIFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_connectiongui_list, container, false);
 
         // Set the adapter
-        if (view instanceof RecyclerView) {
-            Context context = view.getContext();
-            RecyclerView recyclerView = (RecyclerView) view;
+
+        return view;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        RecyclerView rv = view.findViewById(R.id.list);
+        if (rv instanceof RecyclerView ) {
+            Context context = rv.getContext();
+            RecyclerView recyclerView = (RecyclerView) rv;
             if (mColumnCount <= 1) {
                 recyclerView.setLayoutManager(new LinearLayoutManager(context));
             } else {
@@ -78,13 +93,14 @@ public class ConnectionGUIFragment extends Fragment {
             }
             recyclerView.setAdapter(new MyConnectionGUIRecyclerViewAdapter(mConnection, this::displayConnection));
         }
-        return view;
     }
 
     private void displayConnection(ConnectionItem theConnection) {
 
         final Bundle args = new Bundle();
         args.putSerializable(getString(R.string.keys_connection_view), theConnection);
+        args.putString("jwt", mJwToken);
+        args.putInt("memberid", mMemberId);
         Navigation.findNavController(getView())
                 .navigate(R.id.action_nav_connectionGUI_to_viewConnectionFragment, args);
     }

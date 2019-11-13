@@ -145,7 +145,7 @@ public class HomeActivity extends AppCompatActivity {
                 .build();
         JSONObject msgBody = new JSONObject();
         try{
-            msgBody.put("memberId", 3);
+            msgBody.put("memberId", mMemberId);
         } catch (JSONException e) {
             Log.wtf("MEMBERID", "Error creating JSON: " + e.getMessage());
 
@@ -189,6 +189,7 @@ public class HomeActivity extends AppCompatActivity {
                 MobileNavigationDirections.ActionGlobalNavConnectionGUI directions
                         = ConnectionGUIFragmentDirections.actionGlobalNavConnectionGUI(conItem);
                 directions.setJwt(mJwToken);
+                directions.setMemberid(mMemberId);
 
                 Navigation.findNavController(this, R.id.nav_host_fragment)
                         .navigate(directions);
