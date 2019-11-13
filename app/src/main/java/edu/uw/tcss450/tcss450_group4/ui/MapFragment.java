@@ -26,8 +26,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Objects;
 
 import edu.uw.tcss450.tcss450_group4.MobileNavigationDirections;
@@ -73,7 +71,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
     private String mJwToken;
     private Weather mWeather;
     private Weather[] mWeathers10d;
-    private LatLng mLatLng;
     private static final String TAG = "WEATHER_FRAG";
 
     public MapFragment() {
@@ -91,7 +88,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
         super.onCreate(savedInstanceState);
 
         MapFragmentArgs args = MapFragmentArgs.fromBundle(
-                getArguments() != null ? getArguments() : null);
+                Objects.requireNonNull(getArguments()));
         mEmail =  args.getEmail();
         mJwToken = args.getJwt();
 //        mLatLng = args.getLatLng();
@@ -106,7 +103,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
         SupportMapFragment mapFragment =
                 (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
         //add this fragment as the OnMapReadyCallback -> See onMapReady()
-        mapFragment.getMapAsync(this);
+        Objects.requireNonNull(mapFragment).getMapAsync(this);
     }
 
     @Override
@@ -120,7 +117,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 //        Log.d("lat", "" +  l.getLatitude());
 
         // Add a marker in the current device location and move the camera
-        LatLng current = new LatLng(l.getLatitude(), l.getLongitude());
+        LatLng current = new LatLng(Objects.requireNonNull(l).getLatitude(), l.getLongitude());
         mMap.addMarker(new MarkerOptions().position(current).title("Current Location"));
         //Zoom levels are from 2.0f (zoomed out) to 21.f (zoomed in)
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(current, 15.0f));
@@ -146,16 +143,13 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
         AlertDialog alertDialog = new AlertDialog.Builder(getActivity()).create();
         alertDialog.setTitle("Alert");
         alertDialog.setMessage("Do you want to get the location's weather?");
-        alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "NO",
-                (dialog, which) -> {
-                    dialog.dismiss();
-                });
         alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "YES",
                 (dialog, which) -> {
-                    //TODO
                     displayWeather(latLng.latitude, latLng.longitude);
                     dialog.dismiss();
                 });
+        alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "NO",
+                (dialog, which) -> dialog.dismiss());
         alertDialog.show();
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 18.0f));
 
@@ -254,7 +248,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
             }
         } catch (JSONException e) {
             e.printStackTrace();
-            Log.e("ERROR!", e.getMessage());
+            Log.e("ERROR!", Objects.requireNonNull(e.getMessage()));
         }
     }
 
@@ -294,7 +288,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 
         } catch (JSONException e) {
             e.printStackTrace();
-            Log.e("ERROR!", e.getMessage());
+            Log.e("ERROR!", Objects.requireNonNull(e.getMessage()));
         }
     }
 
@@ -411,7 +405,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 
         } catch (JSONException e) {
             e.printStackTrace();
-            Log.e("ERROR!", e.getMessage());
+            Log.e("ERROR!", Objects.requireNonNull(e.getMessage()));
         }
     }
 }

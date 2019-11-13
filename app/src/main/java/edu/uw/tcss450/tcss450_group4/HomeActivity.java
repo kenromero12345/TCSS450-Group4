@@ -24,6 +24,9 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.material.navigation.NavigationView;
 
@@ -33,15 +36,26 @@ import org.json.JSONObject;
 
 import java.util.Objects;
 
+import edu.uw.tcss450.tcss450_group4.model.Chat;
 import edu.uw.tcss450.tcss450_group4.model.ConnectionItem;
+import edu.uw.tcss450.tcss450_group4.model.LocationViewModel;
 import edu.uw.tcss450.tcss450_group4.model.Weather;
+import edu.uw.tcss450.tcss450_group4.ui.ChatFragmentDirections;
 import edu.uw.tcss450.tcss450_group4.ui.ConnectionGUIFragmentDirections;
-import edu.uw.tcss450.tcss450_group4.ui.HomeFragment;
 import edu.uw.tcss450.tcss450_group4.ui.WeatherFragmentDirections;
 import edu.uw.tcss450.tcss450_group4.utils.SendPostAsyncTask;
 
 import static edu.uw.tcss450.tcss450_group4.R.id;
-import static edu.uw.tcss450.tcss450_group4.R.id.*;
+import static edu.uw.tcss450.tcss450_group4.R.id.action_logout;
+import static edu.uw.tcss450.tcss450_group4.R.id.drawer_layout;
+import static edu.uw.tcss450.tcss450_group4.R.id.nav_chat;
+import static edu.uw.tcss450.tcss450_group4.R.id.nav_chat_list;
+import static edu.uw.tcss450.tcss450_group4.R.id.nav_connectionGUI;
+import static edu.uw.tcss450.tcss450_group4.R.id.nav_home;
+import static edu.uw.tcss450.tcss450_group4.R.id.nav_host_fragment;
+import static edu.uw.tcss450.tcss450_group4.R.id.nav_logout;
+import static edu.uw.tcss450.tcss450_group4.R.id.nav_view;
+import static edu.uw.tcss450.tcss450_group4.R.id.nav_weather;
 import static edu.uw.tcss450.tcss450_group4.R.layout;
 import static edu.uw.tcss450.tcss450_group4.R.navigation;
 import static edu.uw.tcss450.tcss450_group4.R.string.ep_10d;
@@ -76,9 +90,6 @@ import static edu.uw.tcss450.tcss450_group4.R.string.keys_shared_prefs;
 import static edu.uw.tcss450.tcss450_group4.model.WeatherHelper.alert;
 import static edu.uw.tcss450.tcss450_group4.model.WeatherHelper.getNewIcon;
 
-import edu.uw.tcss450.tcss450_group4.model.Chat;
-import edu.uw.tcss450.tcss450_group4.ui.ChatFragmentDirections;
-
 public class HomeActivity extends AppCompatActivity {
     // A constant int for the permissions request code. Must be a 16 bit number
     private static final int MY_PERMISSIONS_LOCATIONS = 8414;
@@ -93,6 +104,59 @@ public class HomeActivity extends AppCompatActivity {
     //Use a FusedLocationProviderClient to request the location
     private FusedLocationProviderClient mFusedLocationClient;
     private Location mLocations;
+    private LocationRequest mLocationRequest;
+//    private View mView;
+    /**
+     * The desired interval for location updates. Inexact. Updates may be more or less frequent.
+     */
+    public static final long UPDATE_INTERVAL_IN_MILLISECONDS = 3600000;
+
+    /**
+     * The fastest rate for active location updates. Exact. Updates will never be more frequent
+     * than this value.
+     */
+    public static final long FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS =
+            UPDATE_INTERVAL_IN_MILLISECONDS / 2;
+
+    /**
+     * Requests location updates from the FusedLocationApi.
+     */
+    private void startLocationUpdates() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED) {
+
+            mFusedLocationClient.requestLocationUpdates(mLocationRequest,
+                    mLocationCallback,
+                    null /* Looper */);
+        }
+    }
+
+        /**
+     * Removes location updates from the FusedLocationApi.
+     */
+    private void stopLocationUpdates() {
+        // It is a good practice to remove location requests when the activity is in a paused or
+        // stopped state. Doing so helps battery performance and is especially
+        // recommended in applications that request frequent location updates.
+        mFusedLocationClient.removeLocationUpdates(mLocationCallback);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        startLocationUpdates();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        stopLocationUpdates();
+    }
+
+    // Will use this call back to decide what to do when a location change is detected
+    private LocationCallback mLocationCallback;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -113,13 +177,19 @@ public class HomeActivity extends AppCompatActivity {
                 , nav_host_fragment);
         NavigationUI.setupActionBarWithNavController(this, navController
                 , mAppBarConfiguration);
-        NavigationUI.setupWithNavController(navigationView, navController);
+
 
 //        getIntent().getExtras().putString("Weather", "");
 //        Bundle bundle = new Bundle();
-//        getIntent().getExtras().putString("String", "String text");
-//        navController.setGraph(navigation.mobile_navigation, getIntent().getExtras());
+//        bundle.putParcelable("weather", weather);
+////        getIntent().getExtras().putString("String", "String text");
 
+//        navController.setGraph(navigation.mobile_navigation, getIntent().getExtras());
+//        Bundle bundle = new Bundle();
+//        bundle.putDouble(getString(keys_json_lat), location.getLatitude());
+//        bundle.putDouble(getString(keys_json_lon), location.getLongitude());
+        navController.setGraph(navigation.mobile_navigation, getIntent().getExtras());
+        NavigationUI.setupWithNavController(navigationView, navController);
         if (getIntent().getExtras() != null) {
             HomeActivityArgs args = HomeActivityArgs.fromBundle(getIntent().getExtras());
             mJwToken = args.getJwt();
@@ -127,6 +197,44 @@ public class HomeActivity extends AppCompatActivity {
             mMemberId = args.getMemberId();
         }
         navigationView.setNavigationItemSelectedListener(this::onNavigationSelected);
+
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+        mLocationCallback = new LocationCallback() {
+            @Override
+            public void onLocationResult(LocationResult locationResult) {
+                if (locationResult == null) {
+                    return;
+                }
+                for (Location location : locationResult.getLocations()) {
+                    // Use the ViewModel's factory method to gain access to the ViewModel
+                    LocationViewModel model =
+                            LocationViewModel.getFactory().create(LocationViewModel.class);
+                    model.changeLocation(location);
+
+                    Log.d("LOCATION UPDATE!", location.toString());
+                }
+            };
+        };
+        createLocationRequest();
+    }
+
+    /**
+     * Create and configure a Location Request used when retrieving location updates
+     */
+    private void createLocationRequest() {
+        mLocationRequest = LocationRequest.create();
+
+        // Sets the desired interval for active location updates. This interval is
+        // inexact. You may not receive updates at all if no location sources are available, or
+        // you may receive them slower than requested. You may also receive updates faster than
+        // requested if other applications are requesting location at a faster interval.
+        mLocationRequest.setInterval(UPDATE_INTERVAL_IN_MILLISECONDS);
+
+        // Sets the fastest rate for active location updates. This interval is exact, and your
+        // application will never receive updates faster than this value.
+        mLocationRequest.setFastestInterval(FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS);
+
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
     }
 
     @Override
@@ -149,15 +257,16 @@ public class HomeActivity extends AppCompatActivity {
                 Navigation.findNavController(this, nav_host_fragment);
         switch (menuItem.getItemId()) {
             case nav_home:
-                //TODO
-                if (navController.getCurrentDestination().getId() != nav_home) {
+                if(Objects.requireNonNull(navController.getCurrentDestination()).getId() != nav_weather) {
                     if (mWeather != null) {
                         MobileNavigationDirections.ActionGlobalNavHome directions
                                 = WeatherFragmentDirections.actionGlobalNavHome(
-                                mWeather);
+                        );
+                        directions.setWeather(mWeather);
                         navController.navigate(directions);
                     }
                 }
+
                 break;
             case nav_chat_list:
                 JSONObject memberId = new JSONObject();
@@ -181,7 +290,7 @@ public class HomeActivity extends AppCompatActivity {
                 gotoConnection();
                 break;
             case nav_weather:
-                if (navController.getCurrentDestination().getId() != nav_weather) {
+                if (Objects.requireNonNull(navController.getCurrentDestination()).getId() != nav_weather) {
                     MobileNavigationDirections.ActionGlobalNavWeather directions2
                             = WeatherFragmentDirections.actionGlobalNavWeather(mJwToken, mEmail,
                             mWeather, mWeathers10d, mWeathers24h);
@@ -535,8 +644,12 @@ public class HomeActivity extends AppCompatActivity {
                     weather.setMain(weatherJObject.getString(getString(keys_json_main)));
                 }
                 mWeather = weather;
+                MobileNavigationDirections.ActionGlobalNavHome directions
+                        = WeatherFragmentDirections.actionGlobalNavHome();
+                directions.setWeather(mWeather);
+                Navigation.findNavController(this,  nav_host_fragment).navigate(directions);
             } else {
-                alert("can't load current weather", this);
+                alert("Can't load current weather", this);
             }
 
 
@@ -663,5 +776,4 @@ public class HomeActivity extends AppCompatActivity {
                     });
         }
     }
-
 }

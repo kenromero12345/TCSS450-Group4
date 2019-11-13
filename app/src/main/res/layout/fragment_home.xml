@@ -200,7 +200,8 @@
         android:layout_marginStart="4dp"
         android:layout_marginTop="-5dp"
         android:layout_marginBottom="0dp"
-        android:layout_toEndOf="@+id/weather_temperature" />
+        android:layout_toEndOf="@+id/weather_temperature"
+        android:visibility="invisible" />
 
     <!--    <EditText-->
     <!--        android:id="@+id/editText2"-->

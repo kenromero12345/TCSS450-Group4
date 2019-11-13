@@ -2,13 +2,6 @@ package edu.uw.tcss450.tcss450_group4.ui;
 
 
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
-import androidx.fragment.app.Fragment;
-
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,35 +9,34 @@ import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
+
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
 import java.util.Objects;
 
-import edu.uw.tcss450.tcss450_group4.HomeActivityArgs;
 import edu.uw.tcss450.tcss450_group4.R;
 import edu.uw.tcss450.tcss450_group4.model.Weather;
-import edu.uw.tcss450.tcss450_group4.model.WeatherHelper;
 
+import static edu.uw.tcss450.tcss450_group4.R.color.redviolet;
+import static edu.uw.tcss450.tcss450_group4.R.color.uwPurple;
 import static edu.uw.tcss450.tcss450_group4.R.id.layout_weather_wait;
 import static edu.uw.tcss450.tcss450_group4.R.id.weather_cityCountry;
 import static edu.uw.tcss450.tcss450_group4.R.id.weather_conditionIcon;
 import static edu.uw.tcss450.tcss450_group4.R.id.weather_conditonDescription;
-import static edu.uw.tcss450.tcss450_group4.R.id.weather_forecastSwitch;
-import static edu.uw.tcss450.tcss450_group4.R.id.weather_getLocationButton;
-import static edu.uw.tcss450.tcss450_group4.R.id.weather_getSavedWeathersButton;
-import static edu.uw.tcss450.tcss450_group4.R.id.weather_getZipButton;
 import static edu.uw.tcss450.tcss450_group4.R.id.weather_humidity;
 import static edu.uw.tcss450.tcss450_group4.R.id.weather_pressure;
-import static edu.uw.tcss450.tcss450_group4.R.id.weather_saveButton;
 import static edu.uw.tcss450.tcss450_group4.R.id.weather_temperature;
 import static edu.uw.tcss450.tcss450_group4.R.id.weather_temperatureSwitch;
 import static edu.uw.tcss450.tcss450_group4.R.id.weather_windDegree;
 import static edu.uw.tcss450.tcss450_group4.R.id.weather_windSpeed;
-import static edu.uw.tcss450.tcss450_group4.model.WeatherHelper.*;
-import static edu.uw.tcss450.tcss450_group4.R.color.redviolet;
-import static edu.uw.tcss450.tcss450_group4.R.color.uwMetallicGold;
-import static edu.uw.tcss450.tcss450_group4.R.color.uwPurple;
+import static edu.uw.tcss450.tcss450_group4.model.WeatherHelper.getImgUrl;
+import static edu.uw.tcss450.tcss450_group4.model.WeatherHelper.tempFromKelvinToCelsiusString;
+import static edu.uw.tcss450.tcss450_group4.model.WeatherHelper.tempFromKelvinToFarenheitString;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -74,23 +66,18 @@ public class HomeFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-//        view.findViewById(layout_weather_wait).setVisibility(View.VISIBLE);
+        view.findViewById(layout_weather_wait).setVisibility(View.VISIBLE);
+        view.findViewById(weather_temperatureSwitch).setVisibility(View.INVISIBLE);
         initialization(view);
     }
 
     private void initialization(@NonNull View view) {
         mView = view;
-        HomeActivityArgs args = HomeActivityArgs.fromBundle(getArguments());
-        String s = getArguments().getString("String");
-//        setComponents();
-//        HomeFragmentArgs args = null;
-//        if (getArguments() != null) {
-////            args = HomeFragmentArgs.fromBundle(getArguments());
-//        }
-//        if (args != null) {
-//            mWeather = args.getWeather();
-////        setComponents();
-//        }
+        HomeFragmentArgs args = HomeFragmentArgs.fromBundle(Objects.requireNonNull(getArguments()));
+        mWeather = Objects.requireNonNull(args).getWeather();
+        if (mWeather != null) {
+            setComponents();
+        }
     }
 
     private void setComponents() {
@@ -120,6 +107,7 @@ public class HomeFragment extends Fragment {
                     @Override
                     public void onSuccess() {
                         mView.findViewById(layout_weather_wait).setVisibility(View.GONE);
+                        mView.findViewById(weather_temperatureSwitch).setVisibility(View.VISIBLE);
                     }
 
                     @Override

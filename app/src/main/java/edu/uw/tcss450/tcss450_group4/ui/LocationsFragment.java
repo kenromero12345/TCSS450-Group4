@@ -25,14 +25,37 @@ import java.util.List;
 import java.util.Objects;
 
 import edu.uw.tcss450.tcss450_group4.MobileNavigationDirections;
-import edu.uw.tcss450.tcss450_group4.R;
 import edu.uw.tcss450.tcss450_group4.model.Location;
 import edu.uw.tcss450.tcss450_group4.model.Weather;
-import edu.uw.tcss450.tcss450_group4.model.WeatherHelper;
 import edu.uw.tcss450.tcss450_group4.utils.SendPostAsyncTask;
 
-import static edu.uw.tcss450.tcss450_group4.R.*;
-import static edu.uw.tcss450.tcss450_group4.R.string.*;
+import static edu.uw.tcss450.tcss450_group4.R.layout;
+import static edu.uw.tcss450.tcss450_group4.R.string.ep_10d;
+import static edu.uw.tcss450.tcss450_group4.R.string.ep_24h;
+import static edu.uw.tcss450.tcss450_group4.R.string.ep_base_url;
+import static edu.uw.tcss450.tcss450_group4.R.string.ep_latLon;
+import static edu.uw.tcss450.tcss450_group4.R.string.ep_weather;
+import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_coord;
+import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_country;
+import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_data;
+import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_deg;
+import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_description;
+import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_hourly;
+import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_humidity;
+import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_icon;
+import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_lat;
+import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_lon;
+import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_main;
+import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_name;
+import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_pressure;
+import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_speed;
+import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_sys;
+import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_temp;
+import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_temp_max;
+import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_temp_min;
+import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_temperature;
+import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_weather;
+import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_wind;
 import static edu.uw.tcss450.tcss450_group4.model.WeatherHelper.getNewIcon;
 
 /**
