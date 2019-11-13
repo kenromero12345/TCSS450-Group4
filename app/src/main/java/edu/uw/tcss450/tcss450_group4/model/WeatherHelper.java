@@ -1,5 +1,8 @@
 package edu.uw.tcss450.tcss450_group4.model;
 
+import android.app.AlertDialog;
+import android.content.Context;
+
 public class WeatherHelper {
     private static final char DEGREE = (char) 0x00B0;
     public static String getNewIcon(String tIcon){
@@ -71,5 +74,14 @@ public class WeatherHelper {
         } else {
             return "https://www.weatherbit.io/static/img/icons/" + tIcon + ".png";
         }
+    }
+
+    public static void alert(String s, Context c) {
+        AlertDialog alertDialog = new AlertDialog.Builder(c).create();
+        alertDialog.setTitle("Alert");
+        alertDialog.setMessage(s);
+        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                (dialog, which) -> dialog.dismiss());
+        alertDialog.show();
     }
 }

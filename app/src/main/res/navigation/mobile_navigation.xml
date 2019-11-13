@@ -98,9 +98,6 @@
         <argument
             android:name="jwt"
             app:argType="string" />
-        <argument
-            android:name="latLng"
-            app:argType="com.google.android.gms.maps.model.LatLng" />
     </fragment>
 
 

@@ -73,6 +73,9 @@ import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_wind;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_prefs_email;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_prefs_password;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_shared_prefs;
+import static edu.uw.tcss450.tcss450_group4.model.WeatherHelper.alert;
+import static edu.uw.tcss450.tcss450_group4.model.WeatherHelper.getNewIcon;
+
 import edu.uw.tcss450.tcss450_group4.model.Chat;
 import edu.uw.tcss450.tcss450_group4.ui.ChatFragmentDirections;
 
@@ -90,9 +93,6 @@ public class HomeActivity extends AppCompatActivity {
     //Use a FusedLocationProviderClient to request the location
     private FusedLocationProviderClient mFusedLocationClient;
     private Location mLocations;
-
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -115,7 +115,10 @@ public class HomeActivity extends AppCompatActivity {
                 , mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
 
-        navController.setGraph(navigation.mobile_navigation, getIntent().getExtras());
+//        getIntent().getExtras().putString("Weather", "");
+//        Bundle bundle = new Bundle();
+//        getIntent().getExtras().putString("String", "String text");
+//        navController.setGraph(navigation.mobile_navigation, getIntent().getExtras());
 
         if (getIntent().getExtras() != null) {
             HomeActivityArgs args = HomeActivityArgs.fromBundle(getIntent().getExtras());
@@ -132,7 +135,6 @@ public class HomeActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.home, menu);
         return true;
     }
-
 
     @Override
     public boolean onSupportNavigateUp() {
@@ -200,7 +202,6 @@ public class HomeActivity extends AppCompatActivity {
         Log.e("ASYNC_TASK_ERROR", result);
     }
 
-
     private void handleChatsGetOnPostExecute(final String result) {
         try {
             JSONObject root = new JSONObject(result);
@@ -231,7 +232,6 @@ public class HomeActivity extends AppCompatActivity {
             Log.e("ERROR!", e.getMessage());
         }
     }
-        //parse JSON
 
     private void checkLocationPermission() {
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
@@ -315,110 +315,11 @@ public class HomeActivity extends AppCompatActivity {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-
-//        JSONArray connectionJArray = root.getJSONArray();
-//        try {
-//            JSONObject root = new JSONObject(result);
-//            if (root.has(getString(R.string.keys_json_connection_response))) {
-//                JSONObject response = root.getJSONObject(
-//                        getString(R.string.keys_json_connection_response));
-//                if (response.has(getString(R.string.keys_json_connection_data))) {
-//                    JSONArray data = response.getJSONArray(
-//                            getString(R.string.keys_json_connection_data));
-//                    ConnectionItem[] connection = new ConnectionItem[data.length()];
-//                    for(int i = 0; i < data.length(); i++) {
-//                        JSONObject jsonConnection = data.getJSONObject(i);
-//
-//                        connection[i] = (new ConnectionItem.Builder(
-//                                jsonConnection.getString(
-//                                        getString(R.string.keys_json_connection_firstname)),
-//                                jsonConnection.getString(
-//                                        getString(R.string.keys_json_connection_username)))
-//                                .build());
-//                    }
-//                    MobileNavigationDirections.ActionGlobalNavConnectionGUI directionsC
-//                            = ConnectionGUIFragmentDirections.actionGlobalNavConnectionGUI(connection);
-//                    Navigation.findNavController(this, R.id.nav_host_fragment)
-//                            .navigate(directionsC);
-
-//                    MobileNavigationDirections.ActionGlobalNavWeather directions
-//                            = WeatherFragmentDirections.actionGlobalNavWeather(weather);
-//
-//                    Navigation.findNavController(this, R.id.nav_host_fragment)
-//                            .navigate(directions);
-//                } else {
-//                    Log.e("ERROR!", "No data array");
-//                }
-//            } else {
-//                Log.e("ERROR!", "No response");
-//            }
-//        } catch (JSONException e) {
-//            e.printStackTrace();
-//            Log.e("ERROR!", e.getMessage());
-//        }
     }
-
-    private void gotoHome(Location location) {
-        double longitude = location.getLongitude();
-        double latitude = location.getLatitude();
-
-        Uri uri = new Uri.Builder()
-                .scheme("https")
-                .appendPath(getString(ep_base_url))
-                .appendPath(getString(ep_weather))
-                .appendPath(getString(ep_latLon))
-                .build();
-
-        JSONObject msg = new JSONObject();
-        try {
-            msg.put("lon", longitude);
-            msg.put("lat", latitude);
-        } catch (JSONException e) {
-            Log.wtf("LONG/LAT", "Error creating JSON: " + e.getMessage());
-        }
-
-        new SendPostAsyncTask.Builder(uri.toString(), msg)
-                .onPostExecute(this::handleWeatherGetOnPostExecute)
-                .onCancelled(error -> Log.e(TAG, error))
-                .addHeaderField("authorization", mJwToken) //add the JWT as a header
-                .build().execute();
-    }
-
 
     private void getWeather(Location location) {
         double longitude = location.getLongitude();
         double latitude = location.getLatitude();
-
-
-
-
-
-//        if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION)
-//                != PackageManager.PERMISSION_GRANTED
-//                && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION)
-//                != PackageManager.PERMISSION_GRANTED) {
-//            requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-//                    MY_PERMISSIONS_REQUEST_LOCATION);
-//
-//        }
-//        if (!(checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION)
-//                != PackageManager.PERMISSION_GRANTED
-//                && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION)
-//                != PackageManager.PERMISSION_GRANTED)) {
-//            LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-//
-//            Location location = null;
-//
-//            if (lm != null) {
-//                location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-//            } else {
-//                alert("Did not get current location (LocationManager is null)");
-//            }
-//            latitude = location != null ? location.getLatitude() : 0;
-//            longitude = location != null ? location.getLongitude() : 0;
-//        } else {
-//            alert("Did not get current location");
-//        }
 
         Uri uri = new Uri.Builder()
                 .scheme("https")
@@ -470,15 +371,6 @@ public class HomeActivity extends AppCompatActivity {
                 .build().execute();
     }
 
-    private void alert(String s) {
-        AlertDialog alertDialog = new AlertDialog.Builder(this).create();
-        alertDialog.setTitle("Alert");
-        alertDialog.setMessage(s);
-        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
-                (dialog, which) -> dialog.dismiss());
-        alertDialog.show();
-    }
-
     private void handleWeather24hGetOnPostExecute(final String result) {
         try {
             boolean hasHourly = false;
@@ -509,7 +401,7 @@ public class HomeActivity extends AppCompatActivity {
                 mWeathers24h = weathers;
 
             } else {
-                alert("Can't load current 24-h forecast");
+                alert("Can't load current 24-h forecast", this);
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -543,7 +435,7 @@ public class HomeActivity extends AppCompatActivity {
 
                 mWeathers10d = weathers;
             } else {
-                alert("Can't load current 10-day forecast");
+                alert("Can't load current 10-day forecast", this);
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -644,7 +536,7 @@ public class HomeActivity extends AppCompatActivity {
                 }
                 mWeather = weather;
             } else {
-                alert("can't load current weather");
+                alert("can't load current weather", this);
             }
 
 
@@ -652,59 +544,6 @@ public class HomeActivity extends AppCompatActivity {
             e.printStackTrace();
             Log.e("ERROR!", Objects.requireNonNull(e.getMessage()));
         }
-    }
-
-    private String getNewIcon(String tIcon){
-        switch (tIcon) {
-            case "01d":
-            case "clear-day":
-                return "c01d";
-            case "01n":
-            case "clear-night":
-                return "c01n";
-            case "02d":
-            case "partly-cloudy-day":
-            case "03d":
-                return "c02d";
-            case "02n":
-            case "partly-cloudy-night":
-            case "03n":
-                return "c02n";
-            case "04d":
-                return "c03d";
-            case "04n":
-                return "c03n";
-            case "09d":
-                return "r05d";
-            case "09n":
-                return "r05n";
-            case "10d":
-            case "rain":
-            case "10n":
-                return "r02d";
-            case "thunderstorm":
-            case "11d":
-                return "t04d";
-            case "11n":
-                return "t04n";
-            case "13d":
-            case "snow":
-            case "hail":
-                return "s02d";
-            case "13n":
-                return "s02n";
-            case "50d":
-                return "a01d";
-            case "50n":
-                return "a01n";
-            case "sleet":
-                /* || tIcon == "wind"*/
-
-                return "s05d";
-            case "fog":
-                return "50d";
-        }
-        return "c04d"; //sleet, cloudy, wind     would just be here
     }
 
     private void logout() {
@@ -724,6 +563,19 @@ public class HomeActivity extends AppCompatActivity {
         startActivity(i);
         //End this Activity and remove it from the Activity back stack.
         finish();
+    }
+
+    private void logoutAndFinish() {
+        SharedPreferences prefs =
+                getSharedPreferences(
+                        getString(keys_shared_prefs),
+                        Context.MODE_PRIVATE);
+        //remove the saved credentials from StoredPrefs
+        prefs.edit().remove(getString(keys_prefs_password)).apply();
+        prefs.edit().remove(getString(keys_prefs_email)).apply();
+
+        //close the app
+        finishAndRemoveTask();
     }
 
     @Override
@@ -764,18 +616,21 @@ public class HomeActivity extends AppCompatActivity {
 
                 AlertDialog alertDialog = new AlertDialog.Builder(this).create();
                 alertDialog.setTitle("Alert");
-                alertDialog.setMessage("You can't use the app without your location." +
-                        "Do you want to give us your location?" +
+                alertDialog.setMessage("You can't use the app without your location.\n" +
+                        "Do you want to give us your location?\n" +
                         "If you say no, the app will close.");//TODO
                 alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "NO",
                         (dialog, which) -> {
                             dialog.dismiss();
-                            finishAndRemoveTask();
+                            logoutAndFinish();
                         });
                 alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "YES",
                         (dialog, which) -> {
                             dialog.dismiss();
-                            onRequestPermissionsResult(requestCode, permissions, grantResults);
+                            ActivityCompat.requestPermissions(this,
+                                    new String[]{Manifest.permission.ACCESS_COARSE_LOCATION
+                                            , Manifest.permission.ACCESS_FINE_LOCATION},
+                                    MY_PERMISSIONS_LOCATIONS);
                         });
                 alertDialog.show();
             }
@@ -791,9 +646,8 @@ public class HomeActivity extends AppCompatActivity {
                 != PackageManager.PERMISSION_GRANTED) {
 
             Log.d("REQUEST LOCATION", "User did NOT allow permission to request location!");
-
-            //TODO
-            finishAndRemoveTask();
+//            is this needed TODO
+//            finishAndRemoveTask();
         } else {
             mFusedLocationClient.getLastLocation()
                     .addOnSuccessListener(this, location -> {
@@ -809,4 +663,5 @@ public class HomeActivity extends AppCompatActivity {
                     });
         }
     }
+
 }

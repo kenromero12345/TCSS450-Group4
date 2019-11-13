@@ -23,7 +23,6 @@ public class LocationViewModel extends ViewModel {
      */
     private MutableLiveData<Location> currentLocation;
 
-
     /**
      * Private to limit instantiation to this class and this class only. To obtain one (the only
      * one) of these objects, users must call the factory method.
@@ -31,7 +30,6 @@ public class LocationViewModel extends ViewModel {
     private LocationViewModel() {
         currentLocation = new MutableLiveData<>();
     }
-
 
     /**
      * Obtain access to the LiveData object. This is usually done to allow the addition and removal
@@ -42,7 +40,6 @@ public class LocationViewModel extends ViewModel {
         return currentLocation;
     }
 
-
     /**
      * Change the Location state of this ViewModel.
      * @param location the new Location
@@ -50,7 +47,6 @@ public class LocationViewModel extends ViewModel {
     public void changeLocation(final Location location) {
         currentLocation.setValue(location);
     }
-
 
     /**
      * Factory method. This ViewModel is a singleton. Use this factory method to obtain a
@@ -70,5 +66,4 @@ public class LocationViewModel extends ViewModel {
             }
         };
     }
-
 }

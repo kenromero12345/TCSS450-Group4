@@ -74,6 +74,7 @@ import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_temp_min;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_temperature;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_weather;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_wind;
+import static edu.uw.tcss450.tcss450_group4.model.WeatherHelper.alert;
 import static edu.uw.tcss450.tcss450_group4.model.WeatherHelper.getImgUrl;
 import static edu.uw.tcss450.tcss450_group4.model.WeatherHelper.getNewIcon;
 import static edu.uw.tcss450.tcss450_group4.model.WeatherHelper.tempFromKelvinToCelsiusString;
@@ -135,7 +136,7 @@ public class WeatherFragment extends Fragment {
     private void setComponents() {        
         setWeather();
         mView.findViewById(weather_getZipButton).setOnLongClickListener(v ->
-                setSnackbar("Get the current weather condition and forecasts of the zip"));
+                setSnackbar("Get the current weather condition and forecasts of the given zip"));
         mView.findViewById(weather_getZipButton).setOnClickListener(v -> attemptGetWeatherZip());
 
         mView.findViewById(weather_saveButton).setOnLongClickListener(v ->
@@ -164,7 +165,7 @@ public class WeatherFragment extends Fragment {
 
     private void gotoMap() {
         WeatherFragmentDirections.ActionNavWeatherToNavMap action =
-                WeatherFragmentDirections.actionNavWeatherToNavMap(mEmail, mJwToken, new LatLng(mWeather.getLat(), mWeather.getLon()));
+                WeatherFragmentDirections.actionNavWeatherToNavMap(mEmail, mJwToken/*, new LatLng(mWeather.getLat(), mWeather.getLon())*/);
         Navigation.findNavController(Objects.requireNonNull(getView())).navigate(action);
     }
 
@@ -334,42 +335,6 @@ public class WeatherFragment extends Fragment {
     }
 
     private void switchTemperature() {
-//        TextView tempDay1 = mView.findViewById(R.id.weather_day1Temp);
-//        TextView tempDay2 = mView.findViewById(R.id.weather_day2Temp);
-//        TextView tempDay3 = mView.findViewById(R.id.weather_day3Temp);
-//        TextView tempDay4 = mView.findViewById(R.id.weather_day4Temp);
-//        TextView tempDay5 = mView.findViewById(R.id.weather_day5Temp);
-//        TextView tempDay6 = mView.findViewById(R.id.weather_day6Temp);
-//        TextView tempDay7 = mView.findViewById(R.id.weather_day7Temp);
-//        TextView tempDay8 = mView.findViewById(R.id.weather_day8Temp);
-//        TextView tempDay9 = mView.findViewById(R.id.weather_day9Temp);
-//        TextView tempDay10 = mView.findViewById(R.id.weather_day10Temp);
-//
-//        TextView tempHour1 = mView.findViewById(R.id.weather_hour1Temp);
-//        TextView tempHour2 = mView.findViewById(R.id.weather_hour2Temp);
-//        TextView tempHour3 = mView.findViewById(R.id.weather_hour3Temp);
-//        TextView tempHour4 = mView.findViewById(R.id.weather_hour4Temp);
-//        TextView tempHour5 = mView.findViewById(R.id.weather_hour5Temp);
-//        TextView tempHour6 = mView.findViewById(R.id.weather_hour6Temp);
-//        TextView tempHour7 = mView.findViewById(R.id.weather_hour7Temp);
-//        TextView tempHour8 = mView.findViewById(R.id.weather_hour8Temp);
-//        TextView tempHour9 = mView.findViewById(R.id.weather_hour9Temp);
-//        TextView tempHour10 = mView.findViewById(R.id.weather_hour10Temp);
-//        TextView tempHour11 = mView.findViewById(R.id.weather_hour11Temp);
-//        TextView tempHour12 = mView.findViewById(R.id.weather_hour12Temp);
-//        TextView tempHour13 = mView.findViewById(R.id.weather_hour13Temp);
-//        TextView tempHour14 = mView.findViewById(R.id.weather_hour14Temp);
-//        TextView tempHour15 = mView.findViewById(R.id.weather_hour15Temp);
-//        TextView tempHour16 = mView.findViewById(R.id.weather_hour16Temp);
-//        TextView tempHour17 = mView.findViewById(R.id.weather_hour17Temp);
-//        TextView tempHour18 = mView.findViewById(R.id.weather_hour18Temp);
-//        TextView tempHour19 = mView.findViewById(R.id.weather_hour19Temp);
-//        TextView tempHour20 = mView.findViewById(R.id.weather_hour20Temp);
-//        TextView tempHour21 = mView.findViewById(R.id.weather_hour21Temp);
-//        TextView tempHour22 = mView.findViewById(R.id.weather_hour22Temp);
-//        TextView tempHour23 = mView.findViewById(R.id.weather_hour23Temp);
-//        TextView tempHour24 = mView.findViewById(R.id.weather_hour24Temp);
-
         if (((Switch) mView.findViewById(weather_temperatureSwitch)).isChecked()) {
             TextView temp = mView.findViewById(weather_temperature);
             temp.setText(tempFromKelvinToFarenheitString(mWeather.getTemp()));
@@ -545,9 +510,9 @@ public class WeatherFragment extends Fragment {
             JSONObject res = new JSONObject(result);
 
             if(res.has("success")  && !res.getBoolean("success")) {
-                alert("Save unsuccessful");
+                alert("Save unsuccessful", getContext());
             } else {
-                alert("Save successful");
+                alert("Save successful", getContext());
             }
 
         } catch (JSONException e) {
@@ -947,7 +912,7 @@ public class WeatherFragment extends Fragment {
                 }
 
             } else {
-                alert("Can't load 24-h weathers");
+                alert("Can't load 24-h weathers", getContext());
             }
 
         } catch (JSONException e) {
@@ -982,40 +947,14 @@ public class WeatherFragment extends Fragment {
                 }
                 setWeather();
             } else {
-                alert("Can't load 24-h forecast");
+                alert("Can't load 24-h forecast", getContext());
             }
         } catch (JSONException e) {
             e.printStackTrace();
             Log.e("ERROR!", Objects.requireNonNull(e.getMessage()));
-            alert("Can't load 24-h forecast");
+            alert("Can't load 24-h forecast", getContext());
         }
     }
-
-//    /**
-//     *
-//     */
-//    private void getWeatherLatLon() {
-//        Uri uri = new Uri.Builder()
-//                .scheme("https")
-//                .appendPath(getString(R.string.ep_base_url))
-//                .appendPath(getString(R.string.ep_weather))
-//                .appendPath(getString(R.string.ep_latLon))
-//                .build();
-//
-//        JSONObject msg = new JSONObject();
-//        try {
-//            msg.put("lon",/* round(*/mLon/*,2)*/);
-//            msg.put("lat",/* round(*/mLat/*,2)*/);
-//        } catch (JSONException e) {
-//            Log.wtf("LONG/LAT", "Error creating JSON: " + e.getMessage());
-//        }
-//
-//        new SendPostAsyncTask.Builder(uri.toString(), msg)
-//                .onPostExecute(this::endOfGetWeatherTask)
-//                .onCancelled(error -> Log.e(TAG, error))
-//                .addHeaderField("authorization", mJwToken) //add the JWT as a header
-//                .build().execute();
-//    }
 
     /**
      *
@@ -1027,7 +966,7 @@ public class WeatherFragment extends Fragment {
         try {
             JSONObject root = new JSONObject(result);
             if (root.has("success") && root.get("success").equals("false")) {
-                alert("getting weathers failed");
+                alert("getting weathers failed", getContext());
             }
             JSONArray messages = root.getJSONArray(getString(keys_json_messages));
 
@@ -1162,14 +1101,5 @@ public class WeatherFragment extends Fragment {
             e.printStackTrace();
             Log.e("ERROR!", Objects.requireNonNull(e.getMessage()));
         }
-    }
-
-    private void alert(String tS) {
-        AlertDialog alertDialog = new AlertDialog.Builder(getActivity()).create();
-        alertDialog.setTitle("Alert");
-        alertDialog.setMessage(tS);
-        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
-                (dialog, which) -> dialog.dismiss());
-        alertDialog.show();
     }
 }

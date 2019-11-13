@@ -80,14 +80,17 @@ public class HomeFragment extends Fragment {
 
     private void initialization(@NonNull View view) {
         mView = view;
-        HomeFragmentArgs args = null;
-        if (getArguments() != null) {
-//            args = HomeFragmentArgs.fromBundle(getArguments());
-        }
-        if (args != null) {
-            mWeather = args.getWeather();
+        HomeActivityArgs args = HomeActivityArgs.fromBundle(getArguments());
+        String s = getArguments().getString("String");
 //        setComponents();
-        }
+//        HomeFragmentArgs args = null;
+//        if (getArguments() != null) {
+////            args = HomeFragmentArgs.fromBundle(getArguments());
+//        }
+//        if (args != null) {
+//            mWeather = args.getWeather();
+////        setComponents();
+//        }
     }
 
     private void setComponents() {

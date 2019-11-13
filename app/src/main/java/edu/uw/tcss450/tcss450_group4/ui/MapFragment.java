@@ -94,7 +94,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
                 getArguments() != null ? getArguments() : null);
         mEmail =  args.getEmail();
         mJwToken = args.getJwt();
-        mLatLng = args.getLatLng();
+//        mLatLng = args.getLatLng();
     }
 
 
@@ -106,7 +106,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
         SupportMapFragment mapFragment =
                 (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
         //add this fragment as the OnMapReadyCallback -> See onMapReady()
-        Objects.requireNonNull(mapFragment).getMapAsync(this);
+        mapFragment.getMapAsync(this);
     }
 
     @Override
@@ -115,13 +115,15 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 
 //        //Go grab a reference to the ViewModel.
         LocationViewModel model =  LocationViewModel.getFactory().create(LocationViewModel.class);
-//        Location l = model.getCurrentLocation().getValue();
+        Location l = model.getCurrentLocation().getValue();
+
+//        Log.d("lat", "" +  l.getLatitude());
 
         // Add a marker in the current device location and move the camera
-//        LatLng current = new LatLng(l.getLatitude(), l.getLongitude());
-        mMap.addMarker(new MarkerOptions().position(mLatLng).title("Current Location"));
+        LatLng current = new LatLng(l.getLatitude(), l.getLongitude());
+        mMap.addMarker(new MarkerOptions().position(current).title("Current Location"));
         //Zoom levels are from 2.0f (zoomed out) to 21.f (zoomed in)
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mLatLng, 15.0f));
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(current, 15.0f));
 
         //Add a observer to the ViewModel. MainActivity is listening to changes to the device
         //location. It reports those changes to the ViewModel. This is an observer on
