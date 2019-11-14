@@ -151,8 +151,10 @@ public class WeatherFragment extends Fragment {
 //            mView.findViewById(weather_getSavedWeathersButton)
 //                    .setTooltipText("Get Saved Weathers");
 //        }
-        mView.findViewById(weather_temperatureSwitch).setOnClickListener(e -> switchTemperature());
-        mView.findViewById(weather_forecastSwitch).setOnClickListener(e -> switchForecast());
+        ((Switch)mView.findViewById(weather_temperatureSwitch)).setOnCheckedChangeListener(
+                (buttonView, isChecked) -> switchTemperature());
+        ((Switch)mView.findViewById(weather_forecastSwitch)).setOnCheckedChangeListener(
+                (buttonView, isChecked) -> switchForecast());
         mView.findViewById(weather_getLocationButton).setOnClickListener(e -> gotoMap());
         mView.findViewById(weather_getLocationButton).setOnLongClickListener(v ->
                 setSnackbar("Get the current weather condition and forecasts from the chosen location"));
@@ -1084,7 +1086,9 @@ public class WeatherFragment extends Fragment {
                 }
 
             } else {
-//                alert("Not a valid zip code");
+//                TODO alert but has a boolean to chekck if current weather, 10d, 24 are not working
+                // so only 1 will show up
+//                alert("Not a valid zip code", getContext());
                 ((EditText) mView.findViewById(weather_zipEditText))
                     .setError("Not a valid zip code");
             }
