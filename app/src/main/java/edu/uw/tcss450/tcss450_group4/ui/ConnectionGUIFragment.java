@@ -1,6 +1,7 @@
 package edu.uw.tcss450.tcss450_group4.ui;
 
 import android.content.Context;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -11,11 +12,14 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -23,6 +27,7 @@ import java.util.List;
 
 import edu.uw.tcss450.tcss450_group4.R;
 import edu.uw.tcss450.tcss450_group4.model.ConnectionItem;
+import edu.uw.tcss450.tcss450_group4.utils.SendPostAsyncTask;
 
 /**
  * A fragment representing a list of Items.
@@ -30,11 +35,12 @@ import edu.uw.tcss450.tcss450_group4.model.ConnectionItem;
  * Activities containing this fragment MUST implement the {@link OnListFragmentInteractionListener}
  * interface.
  */
-public class ConnectionGUIFragment extends Fragment {
+public class ConnectionGUIFragment extends Fragment implements View.OnClickListener{
 
     private List<ConnectionItem> mConnectionItem;
     private String mJwToken;
     private int mMemberId;
+    private ConnectionItem mConItem;
 
     // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
@@ -81,6 +87,8 @@ public class ConnectionGUIFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        Button button_chat = (Button) view.findViewById(R.id.connectionSearchButton);
+        button_chat.setOnClickListener(this::onClick);
 
         RecyclerView rv = view.findViewById(R.id.list);
         if (rv instanceof RecyclerView ) {
@@ -95,34 +103,141 @@ public class ConnectionGUIFragment extends Fragment {
         }
     }
 
-    private void displayConnection(ConnectionItem theConnection) {
+    @Override
+    public void onClick(View v) {
 
-        final Bundle args = new Bundle();
-        args.putSerializable(getString(R.string.keys_connection_view), theConnection);
-        args.putString("jwt", mJwToken);
-        args.putInt("memberid", mMemberId);
-        Navigation.findNavController(getView())
-                .navigate(R.id.action_nav_connectionGUI_to_viewConnectionFragment, args);
+        switch (v.getId()) {
+            case R.id.connectionSearchButton:
+                addConnection();
+                //navigate to chat
+                break;
+            case R.id.connectionRequest:
+                requestConnection();
+//                Log.d("DEBUG", "entered");
+//                Navigation.findNavController(getView())
+//                        .navigate(R.id.action_nav_login_to_nav_register);
+
+                break;
+        }
+
     }
 
 
 
-//    @Override
-//    public void onAttach(Context context) {
-//        super.onAttach(context);
-//        if (context instanceof OnListFragmentInteractionListener) {
-//            mListener = (OnListFragmentInteractionListener) context;
-//        } else {
-//            throw new RuntimeException(context.toString()
-//                    + " must implement OnListFragmentInteractionListener");
-//        }
-//    }
-//
-//    @Override
-//    public void onDetach() {
-//        super.onDetach();
-//        mListener = null;
-//    }
+    private void addConnection() {
+        final Bundle args = new Bundle();
+        args.putString("jwt", mJwToken);
+        Navigation.findNavController(getView())
+                .navigate(R.id.action_nav_connectionGUI_to_nav_connection_add, args);
+
+
+    }
+
+    private void requestConnection() {
+    }
+
+    private void displayConnection(ConnectionItem theConnection) {
+
+        Uri uriConnection = new Uri.Builder()
+                .scheme("https")
+                .appendPath(getString(R.string.ep_base_url))
+                .appendPath(getString(R.string.ep_connection))
+                .appendPath(getString(R.string.ep_getfriend))
+                .build();
+        JSONObject msgBody = new JSONObject();
+        try{
+            msgBody.put("memberIdUser", mMemberId);
+            msgBody.put("memberIdOther", theConnection.getContactId());
+        } catch (JSONException e) {
+            Log.wtf("MEMBERID", "Error creating JSON: " + e.getMessage());
+
+        }
+        new SendPostAsyncTask.Builder(uriConnection.toString(), msgBody)
+                .onPostExecute(this::handleDisplayOnPostExecute)
+                .onCancelled(error -> Log.e("CONNECTION FRAG", error))
+                .addHeaderField("authorization", mJwToken)  //add the JWT as header
+                .build().execute();
+
+
+
+
+//        final Bundle args = new Bundle();
+//        args.putSerializable(getString(R.string.keys_connection_view), theConnection);
+//        args.putString("jwt", mJwToken);
+//        args.putInt("memberid", mMemberId);
+//        Navigation.findNavController(getView())
+//                .navigate(R.id.action_nav_connectionGUI_to_viewConnectionFragment, args);
+
+
+    }
+
+    private void handleDisplayOnPostExecute(String result) {
+        //parse JSON
+        try {
+            boolean hasConnection = false;
+            JSONObject root = new JSONObject(result);
+            if (root.has(getString(R.string.keys_json_connection_connections))){
+                hasConnection = true;
+            } else {
+                Log.e("ERROR!", "No connection");
+            }
+
+            if (hasConnection){
+                JSONObject connectionJObject = root.getJSONObject(
+                        getString(R.string.keys_json_connection_connections));
+                if (connectionJObject.get(getString(R.string.keys_json_connection_verified)) != null) {
+                    mConItem = new ConnectionItem(connectionJObject.getInt(
+                            getString(R.string.keys_json_connection_memberid))
+                            , connectionJObject.getString(
+                            getString(R.string.keys_json_connection_firstname))
+                            , connectionJObject.getString(
+                            getString(R.string.keys_json_connection_lastname))
+                            ,connectionJObject.getString(
+                            getString(R.string.keys_json_connection_username))
+                            ,0);
+
+                } else {
+                    mConItem = new ConnectionItem(connectionJObject.getInt(
+                            getString(R.string.keys_json_connection_memberid))
+                            , connectionJObject.getString(
+                            getString(R.string.keys_json_connection_firstname))
+                            , connectionJObject.getString(
+                            getString(R.string.keys_json_connection_lastname))
+                            ,connectionJObject.getString(
+                            getString(R.string.keys_json_connection_username))
+                            ,1);
+                }
+
+
+//                for(int i = 0; i < connectionJArray.length(); i++){
+//                    JSONObject jsonConnection = connectionJArray.getJSONObject(i);
+//                    conItem[i] = new ConnectionItem(
+//                            jsonConnection.getInt(
+//                                    getString(R.string.keys_json_connection_memberid))
+//                            , jsonConnection.getString(
+//                            getString(R.string.keys_json_connection_firstname))
+//                            , jsonConnection.getString(
+//                            getString(R.string.keys_json_connection_lastname))
+//                            ,jsonConnection.getString(
+//                            getString(R.string.keys_json_connection_username))
+//                            ,jsonConnection.getInt(
+//                            getString(R.string.keys_json_connection_verified)));
+//                }
+
+
+            final Bundle args = new Bundle();
+            args.putSerializable(getString(R.string.keys_connection_view), mConItem);
+            args.putString("jwt", mJwToken);
+            args.putInt("memberid", mMemberId);
+            Navigation.findNavController(getView())
+                    .navigate(R.id.action_nav_connectionGUI_to_viewConnectionFragment, args);
+            }
+
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
 
     /**
      * This interface must be implemented by activities that contain this

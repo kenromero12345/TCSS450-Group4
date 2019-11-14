@@ -12,6 +12,7 @@ public class ConnectionItem implements Serializable, Parcelable {
     private final String mContactName;
     private final String mContactLastName;
     private final String mContactUserName;
+    private int mVerified;
 
     public ConnectionItem(int tContactId, String tContactName, String tContactLastName, String tContactUsername){
         mContactId = Integer.toString(tContactId);
@@ -20,6 +21,16 @@ public class ConnectionItem implements Serializable, Parcelable {
         mContactUserName = tContactUsername;
     }
 
+    public ConnectionItem(int tContactId, String tContactName, String tContactLastName, String tContactUsername,
+                          int tVerfied){
+        mContactId = Integer.toString(tContactId);
+        mContactName = tContactName;
+        mContactLastName = tContactLastName;
+        mContactUserName = tContactUsername;
+        mVerified = tVerfied;
+    }
+
+
 
 
     protected ConnectionItem(Parcel in) {
@@ -27,6 +38,7 @@ public class ConnectionItem implements Serializable, Parcelable {
         mContactName = in.readString();
         mContactLastName = in.readString();
         mContactUserName = in.readString();
+        mVerified = in.readInt();
     }
 
     public static final Creator<ConnectionItem> CREATOR = new Creator<ConnectionItem>() {
@@ -54,6 +66,7 @@ public class ConnectionItem implements Serializable, Parcelable {
         dest.writeString(mContactName);
         dest.writeString(mContactLastName);
         dest.writeString(mContactUserName);
+        dest.writeInt(mVerified);
     }
 
 //    public static class Builder {
@@ -86,6 +99,8 @@ public class ConnectionItem implements Serializable, Parcelable {
     }
 
     public String getContactUserName() { return mContactUserName; }
+
+    public int getVerified() { return mVerified; }
 
 }
 

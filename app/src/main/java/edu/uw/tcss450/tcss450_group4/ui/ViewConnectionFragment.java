@@ -14,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.json.JSONArray;
@@ -34,6 +35,7 @@ public class ViewConnectionFragment extends Fragment implements View.OnClickList
     private String mJwToken;
     private int mMemberId;
     private ConnectionItem mConnectionItem;
+    private int mVerified;
 
 
     public ViewConnectionFragment() {
@@ -57,8 +59,9 @@ public class ViewConnectionFragment extends Fragment implements View.OnClickList
 //            BlogPost blogPost = (BlogPost) getArguments().getSerializable(getString(R.string.blog_key));
             mJwToken = getArguments().getString("jwt");
             mMemberId = getArguments().getInt("memberid");
-            mConnectionItem= (ConnectionItem)
+            mConnectionItem = (ConnectionItem)
                     getArguments().get(getString(R.string.keys_connection_view));
+            mVerified = mConnectionItem.getVerified();
 
 
             ((TextView) getActivity().findViewById(R.id.fullName))
@@ -67,6 +70,13 @@ public class ViewConnectionFragment extends Fragment implements View.OnClickList
                     .setText("ID: " + mConnectionItem.getContactId()) ;
             ((TextView) getActivity().findViewById(R.id.fullUsername))
                     .setText("Username : " + mConnectionItem.getContactUserName());
+        }
+        if(mVerified != 0) {
+            (getActivity().findViewById(R.id.verifiedImage))
+                    .setVisibility(View.GONE);
+        } else {
+            (getActivity().findViewById(R.id.verifiedImage))
+                    .setVisibility(View.VISIBLE);
         }
     }
 

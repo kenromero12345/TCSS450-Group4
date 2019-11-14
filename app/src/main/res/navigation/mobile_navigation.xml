@@ -60,6 +60,9 @@
             android:name="memberid"
             app:argType="integer"
             android:defaultValue="0" />
+        <action
+            android:id="@+id/action_nav_connectionGUI_to_nav_connection_add"
+            app:destination="@id/nav_connection_add" />
     </fragment><action android:id="@+id/action_global_nav_connectionGUI" app:destination="@id/nav_connectionGUI"/>
     <fragment
         android:id="@+id/viewConnectionFragment"
@@ -71,4 +74,9 @@
             app:argType="string"
             android:defaultValue='""' />
     </fragment><action android:id="@+id/action_global_viewConnectionFragment" app:destination="@id/viewConnectionFragment"/>
+    <fragment
+        android:id="@+id/nav_connection_add"
+        android:name="edu.uw.tcss450.tcss450_group4.ui.ConnectionAddFragment"
+        android:label="fragment_connection_add"
+        tools:layout="@layout/fragment_connection_add" />
 </navigation>

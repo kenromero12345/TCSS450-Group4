@@ -30,10 +30,12 @@
     <string name="keys_json_connection_lastname">lastname</string>
     <string name="keys_json_connection_firstname">firstname</string>
     <string name="keys_json_connection_username">username</string>
+    <string name="keys_json_connection_verified">verified</string>
     <string name="keys_json_connection_connections">connections</string>
+    <string name="keys_json_connection_success">sucess</string>
     <string name="keys_connection_view">connectionview</string>
     <string name="keys_connection_jwt">jwt</string>
     <string name="keys_connection_item">jwt</string>
-
+    <string name="keys_json_connection_member">member</string>
     <string name="keys_json_error">error</string>
 </resources>
