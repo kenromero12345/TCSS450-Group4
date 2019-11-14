@@ -119,7 +119,7 @@ public class LocationsFragment extends Fragment {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
             recyclerView.setAdapter(new MyLocationsRecyclerViewAdapter(mLocations
-                    , this::displayWeather));
+                    , this::getWeather));
         }
         return view;
     }
@@ -148,6 +148,20 @@ public class LocationsFragment extends Fragment {
     public interface OnListFragmentInteractionListener {
         // TODO: Update argument type and name
         void onListFragmentInteraction(Location item);
+    }
+
+    private void getWeather(final Location tLocation) {
+        AlertDialog alertDialog = new AlertDialog.Builder(getActivity()).create();
+        alertDialog.setTitle("Alert");
+        alertDialog.setMessage("Do you want to get the location's weather?");
+        alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "YES",
+                (dialog, which) -> {
+                    displayWeather(tLocation);
+                    dialog.dismiss();
+                });
+        alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "NO",
+                (dialog, which) -> dialog.dismiss());
+        alertDialog.show();
     }
 
     private void displayWeather(final Location tLocation) {
