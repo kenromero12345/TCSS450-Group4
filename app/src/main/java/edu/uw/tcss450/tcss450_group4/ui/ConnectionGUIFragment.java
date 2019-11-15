@@ -134,6 +134,7 @@ public class ConnectionGUIFragment extends Fragment implements View.OnClickListe
     }
 
     private void requestConnection() {
+        
     }
 
     private void displayConnection(ConnectionItem theConnection) {

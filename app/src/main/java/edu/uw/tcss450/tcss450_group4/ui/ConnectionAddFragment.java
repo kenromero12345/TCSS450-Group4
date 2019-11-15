@@ -30,7 +30,7 @@ import edu.uw.tcss450.tcss450_group4.utils.SendPostAsyncTask;
 public class ConnectionAddFragment extends Fragment implements View.OnClickListener{
     private String mJwToken;
     private ConnectionItem mConItem;
-    private boolean mBoolean;
+    private boolean mBoolean = false;
 
 
     public ConnectionAddFragment() {
@@ -48,24 +48,49 @@ public class ConnectionAddFragment extends Fragment implements View.OnClickListe
     @Override
     public void onStart(){
         super.onStart();
+        ((TextView) getActivity().findViewById(R.id.connection_firstname))
+                .setText("hello");
         if (getArguments() != null) {
             mJwToken = getArguments().getString("jwt");
+            mBoolean = getArguments().getBoolean("boolean");
+            mConItem = (ConnectionItem)
+                    getArguments().get(getString(R.string.keys_connection_view));
+            Log.e("Boolean!", String.valueOf(mBoolean));
         }
-
         if (mBoolean == true) {
+            Log.e("firstname!", mConItem.getFirstName());
+            Log.e("lastname!", mConItem.getLastName());
+            Log.e("memberid!", mConItem.getContactId());
+            Log.e("username!", mConItem.getContactUserName());
             ((TextView) getActivity().findViewById(R.id.connection_firstname))
                     .setText("Name: " + mConItem.getFirstName() + " " + mConItem.getLastName());
             ((TextView) getActivity().findViewById(R.id.connection_memberid))
                     .setText("ID: " + mConItem.getContactId()) ;
             ((TextView) getActivity().findViewById(R.id.connection_username))
                     .setText("Username : " + mConItem.getContactUserName());
-
         }
+
+
+
+//        if (mBoolean == true) {
+//            ((TextView) getActivity().findViewById(R.id.connection_firstname))
+//                    .setText("Name: " + mConItem.getFirstName() + " " + mConItem.getLastName());
+//            ((TextView) getActivity().findViewById(R.id.connection_memberid))
+//                    .setText("ID: " + mConItem.getContactId()) ;
+//            ((TextView) getActivity().findViewById(R.id.connection_username))
+//                    .setText("Username : " + mConItem.getContactUserName());
+//
+//        }
     }
 
     @Override
     public void onViewCreated (@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        ((TextView) getActivity().findViewById(R.id.connection_firstname))
+                .setText("Name: ");
+
+
         Button button_search = (Button) view.findViewById(R.id.connectionSearchButton);
         button_search.setOnClickListener(this::onClick);
 
@@ -92,17 +117,19 @@ public class ConnectionAddFragment extends Fragment implements View.OnClickListe
     }
 
     private void searchConnection() {
-        mBoolean = true;
+//        mBoolean = true;
         EditText userNameText = getActivity().findViewById(R.id.connectionUserNameText);
+        String username = userNameText.getText().toString();
         Uri uriSearch = new Uri.Builder()
                 .scheme("https")
                 .appendPath(getString(R.string.ep_base_url))
                 .appendPath(getString(R.string.ep_connection))
                 .appendPath(getString(R.string.ep_search))
                 .build();
+        Log.e("name", String.valueOf(username));
         JSONObject msgBody = new JSONObject();
         try{
-            msgBody.put("username", userNameText);
+            msgBody.put("username", username);
         } catch (JSONException e) {
             Log.wtf("username", "Error creating JSON: " + e.getMessage());
 
@@ -123,6 +150,7 @@ public class ConnectionAddFragment extends Fragment implements View.OnClickListe
                 hasMember = true;
             } else {
                 Log.e("ERROR!", "No Member");
+
             }
 
             if (hasMember){
@@ -142,6 +170,7 @@ public class ConnectionAddFragment extends Fragment implements View.OnClickListe
                 final Bundle args = new Bundle();
                 args.putSerializable(getString(R.string.keys_connection_view), mConItem);
                 args.putString("jwt", mJwToken);
+                args.putBoolean("boolean", true);
 //                args.putInt("memberid", mMemberId);
                 Navigation.findNavController(getView())
                         .navigate(R.id.nav_connection_add, args);

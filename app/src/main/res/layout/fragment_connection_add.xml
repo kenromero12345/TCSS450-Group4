@@ -5,7 +5,7 @@
     android:id="@+id/frameLayout2"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.AddConnectionFragment">
+    tools:context=".ui.ConnectionAddFragment">
 
 
     <EditText
@@ -21,6 +21,7 @@
         android:inputType="textPersonName"
         app:layout_constraintBottom_toTopOf="@+id/connectionSearchButton"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.0" />
@@ -30,7 +31,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="147dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="44dp"
         android:layout_marginEnd="176dp"
         android:text="@android:string/search_go"
         app:layout_constraintEnd_toEndOf="parent"
@@ -42,11 +43,11 @@
         android:id="@+id/linearLayout2"
         android:layout_width="370dp"
         android:layout_height="68dp"
-        android:layout_marginEnd="36dp"
-        android:layout_marginBottom="500dp"
+        android:layout_marginTop="75dp"
         android:orientation="horizontal"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/connectionSearchButton">
 
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
@@ -64,37 +65,22 @@
                 app:layout_constraintBottom_toTopOf="@+id/connection_memberid"
                 app:layout_constraintTop_toTopOf="@+id/connection_memberid">
 
-                <TextView
-                    android:id="@+id/connection_memberid"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginBottom="8dp"
-                    android:textAppearance="?attr/textAppearanceListItem"
-                    android:textSize="15sp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    tools:layout_conversion_absoluteHeight="27dp"
-                    tools:layout_conversion_absoluteWidth="0dp" />
 
-
-<!--                <TextView-->
-<!--                    android:id="@+id/connection_lastname"-->
-<!--                    android:layout_width="1dp"-->
-<!--                    android:layout_height="18dp"-->
-<!--                    android:layout_marginStart="168dp"-->
-<!--                    android:layout_marginTop="8dp"-->
-<!--                    android:layout_marginBottom="8dp"-->
-<!--                    android:textAppearance="?attr/textAppearanceListItem"-->
-<!--                    android:textSize="10sp"-->
-<!--                    app:layout_constraintBottom_toBottomOf="parent"-->
-<!--                    app:layout_constraintStart_toStartOf="parent"-->
-<!--                    app:layout_constraintTop_toTopOf="parent"-->
-<!--                    app:layout_constraintVertical_bias="0.0"-->
-<!--                    tools:layout_conversion_absoluteHeight="27dp"-->
-<!--                    tools:layout_conversion_absoluteWidth="0dp" />-->
+                <!--                <TextView-->
+                <!--                    android:id="@+id/connection_lastname"-->
+                <!--                    android:layout_width="1dp"-->
+                <!--                    android:layout_height="18dp"-->
+                <!--                    android:layout_marginStart="168dp"-->
+                <!--                    android:layout_marginTop="8dp"-->
+                <!--                    android:layout_marginBottom="8dp"-->
+                <!--                    android:textAppearance="?attr/textAppearanceListItem"-->
+                <!--                    android:textSize="10sp"-->
+                <!--                    app:layout_constraintBottom_toBottomOf="parent"-->
+                <!--                    app:layout_constraintStart_toStartOf="parent"-->
+                <!--                    app:layout_constraintTop_toTopOf="parent"-->
+                <!--                    app:layout_constraintVertical_bias="0.0"-->
+                <!--                    tools:layout_conversion_absoluteHeight="27dp"-->
+                <!--                    tools:layout_conversion_absoluteWidth="0dp" />-->
 
                 <TextView
                     android:id="@+id/connection_firstname"
@@ -103,6 +89,7 @@
                     android:layout_marginStart="76dp"
                     android:layout_marginTop="8dp"
                     android:layout_marginBottom="8dp"
+                    android:text="hello yo"
                     android:textAppearance="?attr/textAppearanceListItem"
                     android:textSize="15sp"
                     app:layout_constraintBottom_toBottomOf="parent"
@@ -128,6 +115,17 @@
                     app:layout_constraintVertical_bias="0.0"
                     tools:layout_conversion_absoluteHeight="27dp"
                     tools:layout_conversion_absoluteWidth="0dp" />
+
+                <TextView
+                    android:id="@+id/connection_memberid"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginEnd="260dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/connectionAddButton"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <Button
                     android:id="@+id/connectionAddButton"
