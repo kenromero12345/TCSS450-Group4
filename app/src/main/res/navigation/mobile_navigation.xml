@@ -8,7 +8,18 @@
         android:id="@+id/nav_home"
         android:name="edu.uw.tcss450.tcss450_group4.ui.HomeFragment"
         android:label="fragment_home"
-        tools:layout="@layout/fragment_home" />
+        tools:layout="@layout/fragment_home" >
+        <argument
+            android:name="weather"
+            app:argType="edu.uw.tcss450.tcss450_group4.model.Weather"
+            app:nullable="true"
+            android:defaultValue="@null" />
+    </fragment>
+    <fragment
+        android:id="@+id/nav_chat"
+        android:name="edu.uw.tcss450.tcss450_group4.ui.ChatFragment"
+        android:label="fragment_chat"
+        tools:layout="@layout/fragment_chat" />
     <fragment
         android:id="@+id/nav_connections"
         android:name="edu.uw.tcss450.tcss450_group4.ui.ConnectionsFragment"
@@ -17,11 +28,28 @@
     <fragment
         android:id="@+id/nav_weather"
         android:name="edu.uw.tcss450.tcss450_group4.ui.WeatherFragment"
-        android:label="fragment_weather"
+        android:label="Weather"
         tools:layout="@layout/fragment_weather" >
+        <argument
+            android:name="jwt"
+            app:argType="string" />
+        <argument
+            android:name="email"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_nav_weather_to_nav_locations"
+            app:destination="@+id/nav_locations" />
         <argument
             android:name="weather"
             app:argType="edu.uw.tcss450.tcss450_group4.model.Weather" />
+        <argument
+            android:name="weathers10d"
+            app:argType="edu.uw.tcss450.tcss450_group4.model.Weather[]" />
+        <argument android:name="weathers24h"
+            app:argType="edu.uw.tcss450.tcss450_group4.model.Weather[]" />
+        <action
+            android:id="@+id/action_nav_weather_to_nav_map"
+            app:destination="@id/nav_map" />
     </fragment>
     <action android:id="@+id/action_global_nav_weather" app:destination="@id/nav_weather" />
     <activity
@@ -42,10 +70,66 @@
             android:defaultValue="-1" />
     </activity>
     <fragment
+
+
+        android:id="@+id/nav_locations"
+        android:name="edu.uw.tcss450.tcss450_group4.ui.LocationsFragment"
+        android:label="Saved Locations"
+        tools:layout="@layout/fragment_locations_list" >
+        <argument
+            android:name="locations"
+            app:argType="edu.uw.tcss450.tcss450_group4.model.Location[]" />
+        <argument
+            android:name="email"
+            app:argType="string" />
+        <argument
+            android:name="jwt"
+            app:argType="string" />
+    </fragment>
+    <fragment
+        android:id="@+id/nav_map"
+        android:name="edu.uw.tcss450.tcss450_group4.ui.MapFragment"
+        android:label="Map"
+        tools:layout="@layout/fragment_map" >
+        <action
+            android:id="@+id/action_nav_map_to_nav_weather"
+            app:destination="@id/nav_weather" />
+        <argument
+            android:name="email"
+            app:argType="string" />
+        <argument
+            android:name="jwt"
+            app:argType="string" />
+    </fragment>
+
+
+  <fragment
+        android:id="@+id/nav_connectionGUI"
+        android:name="edu.uw.tcss450.tcss450_group4.ui.ConnectionGUIFragment"
+        android:label="fragment_connectiongui_list"
+        tools:layout="@layout/fragment_connectiongui_list" >
+        <argument
+            android:name="connectionitems"
+            app:argType="edu.uw.tcss450.tcss450_group4.model.ConnectionItem[]" />
+        <argument
+            android:name="jwt"
+            app:argType="string"
+            android:defaultValue='""' />
+        <action
+            android:id="@+id/action_nav_connectionGUI_to_viewConnectionFragment"
+            app:destination="@id/viewConnectionFragment" />
+        <argument
+            android:name="memberid"
+            app:argType="integer"
+            android:defaultValue="0" />
+    </fragment><action android:id="@+id/action_global_nav_connectionGUI" app:destination="@id/nav_connectionGUI"/>
+
+
+  <fragment
         android:id="@+id/nav_chat_list"
         android:name="edu.uw.tcss450.tcss450_group4.ui.ChatFragment"
-        android:label="fragment_chat_list"
-        tools:layout="@layout/fragment_chat_list" >
+        android:label="Chats"
+        tools:layout="@layout/fragment_chat_list">
         <action
             android:id="@+id/action_nav_chat_list_to_nav_view_chat"
             app:destination="@id/nav_view_chat" />
@@ -61,4 +145,17 @@
     <action
         android:id="@+id/action_global_nav_chat_list"
         app:destination="@id/nav_chat_list" />
+
+
+    <fragment
+        android:id="@+id/viewConnectionFragment"
+        android:name="edu.uw.tcss450.tcss450_group4.ui.ViewConnectionFragment"
+        android:label="fragment_view_connection"
+        tools:layout="@layout/fragment_view_connection" >
+        <argument
+            android:name="jwt"
+            app:argType="string"
+            android:defaultValue='""' />
+    </fragment>
+    <action android:id="@+id/action_global_viewConnectionFragment" app:destination="@id/viewConnectionFragment"/><action android:id="@+id/action_global_nav_home" app:destination="@id/nav_home"/>
 </navigation>

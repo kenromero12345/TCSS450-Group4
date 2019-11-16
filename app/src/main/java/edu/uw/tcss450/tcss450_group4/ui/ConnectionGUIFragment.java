@@ -6,6 +6,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -14,12 +15,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import edu.uw.tcss450.tcss450_group4.R;
-import edu.uw.tcss450.tcss450_group4.model.Chat;
-import java.lang.reflect.Array;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import edu.uw.tcss450.tcss450_group4.R;
+import edu.uw.tcss450.tcss450_group4.model.ConnectionItem;
 
 /**
  * A fragment representing a list of Items.
@@ -27,26 +30,29 @@ import java.util.List;
  * Activities containing this fragment MUST implement the {@link OnListFragmentInteractionListener}
  * interface.
  */
-public class ChatFragment extends Fragment {
+public class ConnectionGUIFragment extends Fragment {
+
+    private List<ConnectionItem> mConnectionItem;
+    private String mJwToken;
+    private int mMemberId;
 
     // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
     // TODO: Customize parameters
     private int mColumnCount = 1;
     private OnListFragmentInteractionListener mListener;
-    private List<Chat> mChats;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
      */
-    public ChatFragment() {
+    public ConnectionGUIFragment() {
     }
 
     // TODO: Customize parameter initialization
     @SuppressWarnings("unused")
-    public static ChatFragment newInstance(int columnCount) {
-        ChatFragment fragment = new ChatFragment();
+    public static ConnectionGUIFragment newInstance(int columnCount) {
+        ConnectionGUIFragment fragment = new ConnectionGUIFragment();
         Bundle args = new Bundle();
         args.putInt(ARG_COLUMN_COUNT, columnCount);
         fragment.setArguments(args);
@@ -56,15 +62,18 @@ public class ChatFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        ChatFragmentArgs args = ChatFragmentArgs.fromBundle(getArguments());
-        mChats = new ArrayList<>(Arrays.asList(args.getChats()));
+        ConnectionGUIFragmentArgs args = ConnectionGUIFragmentArgs.fromBundle(getArguments());
+        mJwToken = args.getJwt();
+        mMemberId = args.getMemberid();
+        mConnectionItem = new ArrayList<>(Arrays.asList(args.getConnectionitems()));
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_chat_list, container, false);
+        View view = inflater.inflate(R.layout.fragment_connectiongui_list, container, false);
+
+        // Set the adapter
 
         return view;
     }
@@ -72,19 +81,48 @@ public class ChatFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
         RecyclerView rv = view.findViewById(R.id.list);
-        // Set the adapter
-        if (rv instanceof RecyclerView) {
+        if (rv instanceof RecyclerView ) {
             Context context = rv.getContext();
-            RecyclerView recyclerView = rv;
+            RecyclerView recyclerView = (RecyclerView) rv;
             if (mColumnCount <= 1) {
                 recyclerView.setLayoutManager(new LinearLayoutManager(context));
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            recyclerView.setAdapter(new MyChatRecyclerViewAdapter(mChats, mListener));
+            recyclerView.setAdapter(new MyConnectionGUIRecyclerViewAdapter(mConnectionItem, this::displayConnection));
         }
     }
+
+    private void displayConnection(ConnectionItem theConnection) {
+
+        final Bundle args = new Bundle();
+        args.putSerializable(getString(R.string.keys_connection_view), theConnection);
+        args.putString("jwt", mJwToken);
+        args.putInt("memberid", mMemberId);
+        Navigation.findNavController(getView())
+                .navigate(R.id.action_nav_connectionGUI_to_viewConnectionFragment, args);
+    }
+
+
+
+//    @Override
+//    public void onAttach(Context context) {
+//        super.onAttach(context);
+//        if (context instanceof OnListFragmentInteractionListener) {
+//            mListener = (OnListFragmentInteractionListener) context;
+//        } else {
+//            throw new RuntimeException(context.toString()
+//                    + " must implement OnListFragmentInteractionListener");
+//        }
+//    }
+//
+//    @Override
+//    public void onDetach() {
+//        super.onDetach();
+//        mListener = null;
+//    }
 
     /**
      * This interface must be implemented by activities that contain this
@@ -98,6 +136,6 @@ public class ChatFragment extends Fragment {
      */
     public interface OnListFragmentInteractionListener {
         // TODO: Update argument type and name
-        void onListFragmentInteraction(Chat item);
+        void onListFragmentInteraction(ConnectionItem item);
     }
 }

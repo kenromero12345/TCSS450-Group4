@@ -10,18 +10,20 @@
         android:id="@+id/button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="4dp"
-        android:text="+"
+        android:layout_marginEnd="1dp"
+        android:text="@string/button_create_chat"
+        android:textSize="30dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/list"
         android:name="edu.uw.tcss450.tcss450_group4.ui.ChatFragment"
-        android:layout_width="356dp"
-        android:layout_height="665dp"
-        android:layout_marginStart="25dp"
-        android:layout_marginEnd="25dp"
+
+        android:layout_width="353dp"
+        android:layout_height="723dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="20dp"
         app:layoutManager="LinearLayoutManager"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"

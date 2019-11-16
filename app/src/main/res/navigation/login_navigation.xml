@@ -8,8 +8,8 @@
     <fragment
         android:id="@+id/nav_register"
         android:name="edu.uw.tcss450.tcss450_group4.ui.RegisterFragment"
-        android:label="fragment_register"
-        tools:layout="@layout/fragment_register" >
+        android:label="Register"
+        tools:layout="@layout/fragment_register">
         <action
             android:id="@+id/action_nav_register_to_nav_login"
             app:destination="@id/nav_login" />
@@ -20,8 +20,8 @@
     <fragment
         android:id="@+id/nav_login"
         android:name="edu.uw.tcss450.tcss450_group4.ui.LoginFragment"
-        android:label="fragment_login"
-        tools:layout="@layout/fragment_login" >
+        android:label="Login"
+        tools:layout="@layout/fragment_login">
         <action
             android:id="@+id/action_nav_login_to_nav_register"
             app:destination="@id/nav_register" />
@@ -52,8 +52,8 @@
     <fragment
         android:id="@+id/nav_verify"
         android:name="edu.uw.tcss450.tcss450_group4.ui.VerifyFragment"
-        android:label="fragment_verify"
-        tools:layout="@layout/fragment_verify" >
+        android:label="Verification"
+        tools:layout="@layout/fragment_verify">
         <action
             android:id="@+id/action_nav_verify_to_nav_homeActivity"
             app:destination="@id/nav_homeActivity" />
@@ -62,7 +62,7 @@
             app:argType="edu.uw.tcss450.tcss450_group4.model.Credentials" />
         <argument
             android:name="jwt"
-            app:argType="string"
-            android:defaultValue='""' />
+            android:defaultValue='""'
+            app:argType="string" />
     </fragment>
 </navigation>

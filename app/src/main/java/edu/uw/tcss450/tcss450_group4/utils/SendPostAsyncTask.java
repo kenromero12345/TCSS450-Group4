@@ -43,6 +43,7 @@ public class SendPostAsyncTask extends AsyncTask<Void, String, String> {
     private Consumer<String> mOnPost;
     private Consumer<String> mOnCancel;
     private final Map<String, String> mHeaders;
+
     /**
      * Helper class for building PostAsyncTasks.
      *
@@ -60,6 +61,7 @@ public class SendPostAsyncTask extends AsyncTask<Void, String, String> {
         private Consumer<String> onPost = x -> {};
         private Consumer<String> onCancel = x -> {};
         private Map<String, String> headers;
+
         /**
          * Constructs a new Builder.
          *
@@ -228,4 +230,3 @@ public class SendPostAsyncTask extends AsyncTask<Void, String, String> {
         mOnPost.accept(result);
     }
 }
-
