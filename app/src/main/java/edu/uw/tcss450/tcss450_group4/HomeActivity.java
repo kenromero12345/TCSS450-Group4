@@ -26,6 +26,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -190,13 +191,9 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     private String convertTimeStampToDate(String timestamp) {
-        Date date = new Date();
-        DateFormat format = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss a");
-        try {
-            date = format.parse(timestamp);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
+        DateFormat formatter = new SimpleDateFormat("yyyy-mm-dd hh:mm:ss");
+        Timestamp ts = Timestamp.valueOf(timestamp);
+        Date date = new Date(ts.getTime());
         return date.toString();
     }
     private void handleWeatherGetOnPostExecute(final String result) {
