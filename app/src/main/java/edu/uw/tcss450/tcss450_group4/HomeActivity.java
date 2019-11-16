@@ -34,14 +34,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-
-import java.util.Objects;
-
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-
+import java.util.Objects;
 
 import edu.uw.tcss450.tcss450_group4.model.Chat;
 import edu.uw.tcss450.tcss450_group4.model.ConnectionItem;
@@ -68,8 +65,16 @@ import static edu.uw.tcss450.tcss450_group4.R.navigation;
 import static edu.uw.tcss450.tcss450_group4.R.string.ep_10d;
 import static edu.uw.tcss450.tcss450_group4.R.string.ep_24h;
 import static edu.uw.tcss450.tcss450_group4.R.string.ep_base_url;
+import static edu.uw.tcss450.tcss450_group4.R.string.ep_chats;
+import static edu.uw.tcss450.tcss450_group4.R.string.ep_connection;
+import static edu.uw.tcss450.tcss450_group4.R.string.ep_getall;
 import static edu.uw.tcss450.tcss450_group4.R.string.ep_latLon;
 import static edu.uw.tcss450.tcss450_group4.R.string.ep_weather;
+import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_connection_connections;
+import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_connection_firstname;
+import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_connection_lastname;
+import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_connection_memberid;
+import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_connection_username;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_coord;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_country;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_data;
@@ -79,6 +84,7 @@ import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_hourly;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_humidity;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_icon;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_lat;
+import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_login_success;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_lon;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_main;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_name;
@@ -89,6 +95,7 @@ import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_temp;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_temp_max;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_temp_min;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_temperature;
+import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_timezone;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_weather;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_wind;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_prefs_email;
@@ -262,16 +269,21 @@ public class HomeActivity extends AppCompatActivity {
     private boolean onNavigationSelected(final MenuItem menuItem) {
         NavController navController =
                 Navigation.findNavController(this, nav_host_fragment);
+        /* Use the ViewModel's factory method to gain access to the ViewModel */
+        LocationViewModel model =
+                LocationViewModel.getFactory().create(LocationViewModel.class);
+        // add an observer to the LiveData found in the ViewModel
+        Location loc = model.getCurrentLocation().getValue();
         switch (menuItem.getItemId()) {
             case nav_home:
-                if(Objects.requireNonNull(navController.getCurrentDestination()).getId() != nav_weather) {
+//                if(Objects.requireNonNull(navController.getCurrentDestination()).getId() != nav_weather) {
                     if (mWeather != null) {
                         MobileNavigationDirections.ActionGlobalNavHome directions
                                 = WeatherFragmentDirections.actionGlobalNavHome();
                         directions.setWeather(mWeather);
                         navController.navigate(directions);
                     }
-                }
+//                }
 
                 break;
             case nav_chat_list:
@@ -283,15 +295,14 @@ public class HomeActivity extends AppCompatActivity {
                 }
                 Uri uriChats = new Uri.Builder()
                         .scheme("https")
-                        .appendPath(getString(R.string.ep_base_url))
-                        .appendPath(getString(R.string.ep_chats))
+                        .appendPath(getString(ep_base_url))
+                        .appendPath(getString(ep_chats))
                         .build();
                 new SendPostAsyncTask.Builder(uriChats.toString(), memberId)
                         .onPostExecute(this::handleChatsGetOnPostExecute)
                         .addHeaderField("authorization", mJwToken)
                         .onCancelled(this::handleErrorsInTask)
                         .build().execute();
-//                navController.navigate(R.id.nav_chat_list);
                 break;
             case nav_connectionGUI:
                 gotoConnection();
@@ -321,7 +332,7 @@ public class HomeActivity extends AppCompatActivity {
     private void handleChatsGetOnPostExecute(final String result) {
         try {
             JSONObject root = new JSONObject(result);
-            if (root.has("success") && root.getBoolean(getString(R.string.keys_json_login_success))) {
+            if (root.has("success") && root.getBoolean(getString(keys_json_login_success))) {
                 JSONArray data = root.getJSONArray("names");
 //                if (response.has(getString(R.string.keys_json_chats_data))) {
 //                    JSONArray data = response.getJSONArray(getString(R.string.keys_json_chats_data));
@@ -360,7 +371,6 @@ public class HomeActivity extends AppCompatActivity {
         }
     }
 
-
     private void checkLocationPermission() {
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
@@ -383,9 +393,9 @@ public class HomeActivity extends AppCompatActivity {
     private void gotoConnection() {
         Uri uriConnection = new Uri.Builder()
                 .scheme("https")
-                .appendPath(getString(R.string.ep_base_url))
-                .appendPath(getString(R.string.ep_connection))
-                .appendPath(getString(R.string.ep_getall))
+                .appendPath(getString(ep_base_url))
+                .appendPath(getString(ep_connection))
+                .appendPath(getString(ep_getall))
                 .build();
         JSONObject msgBody = new JSONObject();
         try{
@@ -425,7 +435,7 @@ public class HomeActivity extends AppCompatActivity {
         try {
             boolean hasConnection = false;
             JSONObject root = new JSONObject(result);
-            if (root.has(getString(R.string.keys_json_connection_connections))){
+            if (root.has(getString(keys_json_connection_connections))){
                 hasConnection = true;
             } else {
                 Log.e("ERROR!", "No connection");
@@ -433,19 +443,19 @@ public class HomeActivity extends AppCompatActivity {
 
             if (hasConnection){
                 JSONArray connectionJArray = root.getJSONArray(
-                        getString(R.string.keys_json_connection_connections));
+                        getString(keys_json_connection_connections));
                 ConnectionItem[] conItem = new ConnectionItem[connectionJArray.length()];
                 for(int i = 0; i < connectionJArray.length(); i++){
                     JSONObject jsonConnection = connectionJArray.getJSONObject(i);
                     conItem[i] = new ConnectionItem(
                             jsonConnection.getInt(
-                                    getString(R.string.keys_json_connection_memberid))
+                                    getString(keys_json_connection_memberid))
                             , jsonConnection.getString(
-                            getString(R.string.keys_json_connection_firstname))
+                            getString(keys_json_connection_firstname))
                             , jsonConnection.getString(
-                            getString(R.string.keys_json_connection_lastname))
+                            getString(keys_json_connection_lastname))
                             ,jsonConnection.getString(
-                            getString(R.string.keys_json_connection_username)));
+                            getString(keys_json_connection_username)));
                 }
 
                 MobileNavigationDirections.ActionGlobalNavConnectionGUI directions
@@ -598,6 +608,7 @@ public class HomeActivity extends AppCompatActivity {
             boolean hasCoord = false;
             boolean hasSys = false;
             boolean hasName = false;
+            boolean hasTimezone = false;
             JSONObject root = new JSONObject(result);
             if (root.has(getString(keys_json_weather))) {
                 hasWeather = true;
@@ -629,8 +640,13 @@ public class HomeActivity extends AppCompatActivity {
             } else {
                 Log.e("ERROR!", "No sys");
             }
+            if (root.has(getString(keys_json_timezone))) {
+                hasTimezone = true;
+            } else {
+                Log.e("ERROR!", "No timezone");
+            }
 
-            if (hasCoord && hasMain && hasName && hasSys && hasWeather && hasWind) {
+            if (hasCoord && hasMain && hasName && hasSys && hasWeather && hasWind && hasTimezone) {
                 JSONArray weatherJArray = root.getJSONArray(
                         getString(keys_json_weather));
                 JSONObject mainJObject = root.getJSONObject(
@@ -643,6 +659,7 @@ public class HomeActivity extends AppCompatActivity {
                         getString(keys_json_coord));
                 JSONObject windJObject = root.getJSONObject(
                         getString(keys_json_wind));
+                long timezoneJObject = root.getLong(getString(keys_json_timezone));
 
                 JSONObject weatherJObject = weatherJArray.getJSONObject(0);
                 Weather weather = new Weather(
@@ -666,6 +683,7 @@ public class HomeActivity extends AppCompatActivity {
                                 keys_json_temp_max))
                         , windJObject.getDouble(getString(
                                 keys_json_speed))
+                        , timezoneJObject
                         , nameString
                         );
 

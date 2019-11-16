@@ -34,7 +34,7 @@ public class Weather implements Serializable, Parcelable {
     private double mTemp_max;
     private double mSpeed;
     private double mDeg;
-//    private final long mTimezone;
+    private long mTimezone;
     private String mCity;
     private String mCountry;
 
@@ -64,7 +64,7 @@ public class Weather implements Serializable, Parcelable {
     //TODO:
     public Weather(String tDescription, String tIcon, double tLon, double tLat, double tTemp
             , int tPressure, int tHumidity, double tTemp_min
-            , double tTemp_max, double tSpeed, /*long tTimezone,*/ String tCity
+            , double tTemp_max, double tSpeed, long tTimezone, String tCity
             /*, String tSunrise, String tSunset*//* , String tJwt*/)  {
         mDescription = tDescription;
         mIcon = tIcon;
@@ -76,7 +76,7 @@ public class Weather implements Serializable, Parcelable {
         mTemp_min = tTemp_min;
         mTemp_max = tTemp_max;
         mSpeed = tSpeed;
-//        mTimezone = tTimezone;
+        mTimezone = tTimezone;
         mCity = tCity;
 //        mMain = tMain;
 //        mSunrise = tSunrise;
@@ -116,7 +116,7 @@ public class Weather implements Serializable, Parcelable {
         mTemp_max = in.readDouble();
         mSpeed = in.readDouble();
         mDeg = in.readDouble();
-//        mTimezone = in.readLong();
+        mTimezone = in.readLong();
         mCity = in.readString();
         mCountry = in.readString();
 //        mJwt = in.readString();
@@ -165,6 +165,7 @@ public class Weather implements Serializable, Parcelable {
         dest.writeDouble(mTemp_max);
         dest.writeDouble(mTemp_min);
         dest.writeString(mMain);
+        dest.writeLong(mTimezone);
 //        dest.writeString(mJwt);
 //        dest.writeFloat(mLongitude);
 //        dest.writeFloat(mLatitude);
@@ -206,9 +207,9 @@ public class Weather implements Serializable, Parcelable {
         return mDeg;
     }
 
-//    public long getTimezone() {
-//        return mTimezone;
-//    }
+    public long getTimezone() {
+        return mTimezone;
+    }
 
     public String getCity() {
         return mCity;

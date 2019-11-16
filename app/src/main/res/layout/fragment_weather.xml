@@ -1389,7 +1389,7 @@
         android:layout_below="@id/layout_weather_wait"
         android:layout_alignParentStart="true"
         android:layout_marginStart="0dp"
-        android:layout_marginBottom="5dp"
+        android:layout_marginBottom="0dp"
         android:ems="10"
         android:hint="@string/edit_zip_code"
         android:inputType="textPersonName" />
@@ -1431,12 +1431,15 @@
         android:id="@+id/weather_saveButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/layout_weather_wait"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginTop="0dp"
+        android:layout_above="@+id/weather_getSavedWeathersButton"
+        android:layout_alignStart="@+id/weather_mainFab"
+        android:layout_alignEnd="@+id/weather_mainFab"
+        android:layout_marginStart="0dp"
         android:layout_marginEnd="0dp"
+        android:layout_marginBottom="10dp"
         android:clickable="true"
+        android:visibility="gone"
+        app:backgroundTint="@color/uwMetallicGold"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/ic_cloud_upload_black_24dp" />
 
@@ -1472,11 +1475,14 @@
         android:id="@+id/weather_getSavedWeathersButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/layout_weather_wait"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"
+        android:layout_above="@+id/weather_mainFab"
+        android:layout_alignStart="@+id/weather_mainFab"
+        android:layout_alignEnd="@+id/weather_mainFab"
+        android:layout_marginStart="0dp"
         android:layout_marginEnd="0dp"
+        android:layout_marginBottom="10dp"
         android:clickable="true"
+        android:visibility="gone"
         app:backgroundTint="@color/uwMetallicGold"
         app:srcCompat="@drawable/ic_cloud_download_black_24dp" />
 
@@ -1749,13 +1755,28 @@
         android:id="@+id/weather_getLocationButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/layout_weather_wait"
-        android:layout_alignParentBottom="true"
-        android:layout_marginEnd="20dp"
-        android:layout_toStartOf="@+id/weather_getSavedWeathersButton"
+        android:layout_above="@+id/weather_saveButton"
+        android:layout_alignStart="@+id/weather_mainFab"
+        android:layout_alignEnd="@+id/weather_mainFab"
+        android:layout_marginStart="0dp"
+        android:layout_marginEnd="0dp"
+        android:layout_marginBottom="10dp"
         android:clickable="true"
+        android:visibility="gone"
         app:backgroundTint="@color/uwMetallicGold"
         app:srcCompat="@drawable/ic_location_searching_black_24dp" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/weather_mainFab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/layout_weather_wait"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginTop="0dp"
+        android:clickable="true"
+        app:srcCompat="@drawable/ic_add_black_24dp" />
+
 
     <!--    <EditText-->
 <!--        android:id="@+id/editText2"-->

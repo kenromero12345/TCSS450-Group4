@@ -58,6 +58,7 @@ import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_temp;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_temp_max;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_temp_min;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_temperature;
+import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_timezone;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_weather;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_wind;
 import static edu.uw.tcss450.tcss450_group4.model.WeatherHelper.getNewIcon;
@@ -300,6 +301,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
             boolean hasCoord = false;
             boolean hasSys = false;
             boolean hasName = false;
+            boolean hasTimezone = false;
             JSONObject root = new JSONObject(result);
             if (root.has(getString(keys_json_weather))) {
                 hasWeather = true;
@@ -331,8 +333,13 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
             } else {
                 Log.e("ERROR!", "No sys");
             }
+            if (root.has(getString(keys_json_timezone))) {
+                hasTimezone = true;
+            } else {
+                Log.e("ERROR!", "No timezone");
+            }
 
-            if (hasCoord && hasMain && hasName && hasSys && hasWeather && hasWind) {
+            if (hasCoord && hasMain && hasName && hasSys && hasWeather && hasWind && hasTimezone) {
                 JSONArray weatherJArray = root.getJSONArray(
                         getString(keys_json_weather));
                 JSONObject mainJObject = root.getJSONObject(
@@ -345,6 +352,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
                         getString(keys_json_coord));
                 JSONObject windJObject = root.getJSONObject(
                         getString(keys_json_wind));
+                long timezoneJObject = root.getLong(getString(keys_json_timezone));
 
                 JSONObject weatherJObject = weatherJArray.getJSONObject(0);
                 Weather weather = new Weather(
@@ -358,7 +366,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
                         keys_json_lat))
                         , mainJObject.getDouble(getString(
                         keys_json_temp))
-                        , mainJObject.getInt(getString(
+                        ,  mainJObject.getInt(getString(
                         keys_json_pressure))
                         , mainJObject.getInt(getString(
                         keys_json_humidity))
@@ -368,6 +376,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
                         keys_json_temp_max))
                         , windJObject.getDouble(getString(
                         keys_json_speed))
+                        , timezoneJObject
                         , nameString
                 );
                 /*, mJwToken*/

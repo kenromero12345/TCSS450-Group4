@@ -52,5 +52,6 @@
     <string name="formatString">{0}{1}</string>
     <string name="title_activity_maps">Map</string>
     <string name="button_create_chat">+</string>
+    <string name="keys_json_timezone">timezone</string>
 
 </resources>
