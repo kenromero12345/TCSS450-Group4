@@ -144,9 +144,7 @@ public class WeatherFragment extends Fragment {
     private void setComponents() {
         mWeathers24h[0].setTemp(mWeather.getTemp());
         //TODO don't need to always do, just once
-        mView.findViewById(layout_weather_wait).setVisibility(View.VISIBLE);
-//        mView.findViewById(weather_saveButton).setVisibility(View.INVISIBLE); TODO check
-        mView.findViewById(weather_temperatureSwitch).setVisibility(View.GONE);
+
         mView.findViewById(weather_getZipButton).setOnLongClickListener(v ->
                 setToast("Get the current weather condition and forecasts of the given zip code"));
         mView.findViewById(weather_getZipButton).setOnClickListener(v -> attemptGetWeatherZip());
@@ -180,8 +178,6 @@ public class WeatherFragment extends Fragment {
         mFab_main.setOnClickListener(v -> toggleMainFab());
         mFab_main.setOnLongClickListener(v -> setToast("Actions"));
         setWeather();
-        setHours();
-        setDays();
     }
 
     @SuppressLint("RestrictedApi")
@@ -208,9 +204,13 @@ public class WeatherFragment extends Fragment {
     }
 
     private void gotoMap() {
+        if (mIsOpen) {
+            toggleMainFab();
+        }
         WeatherFragmentDirections.ActionNavWeatherToNavMap action =
                 WeatherFragmentDirections.actionNavWeatherToNavMap(mEmail, mJwToken/*, new LatLng(mWeather.getLat(), mWeather.getLon())*/);
         Navigation.findNavController(Objects.requireNonNull(getView())).navigate(action);
+
     }
 
     private boolean setToast(String tString) {
@@ -638,6 +638,11 @@ public class WeatherFragment extends Fragment {
      *
      */
     private void setWeather() {
+        mView.findViewById(layout_weather_wait).setVisibility(View.VISIBLE);
+//        mView.findViewById(weather_saveButton).setVisibility(View.INVISIBLE); TODO check
+        mView.findViewById(weather_temperatureSwitch).setVisibility(View.GONE);
+        setHours();
+        setDays();
         TextView cityText = mView.findViewById(weather_cityCountry);
         TextView condDescr = mView.findViewById(weather_conditonDescription);
         TextView temp = mView.findViewById(weather_temperature);
@@ -1040,6 +1045,9 @@ public class WeatherFragment extends Fragment {
                 locations[i] = new Location(message.getDouble(getString(keys_json_long))
                     , message.getDouble(getString(keys_json_lat))
                     , message.getString(getString(keys_json_nickname)));
+            }
+            if (mIsOpen) {
+                toggleMainFab();
             }
 
             WeatherFragmentDirections.ActionNavWeatherToNavLocations action =
