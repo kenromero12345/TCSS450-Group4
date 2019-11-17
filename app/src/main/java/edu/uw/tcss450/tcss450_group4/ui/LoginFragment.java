@@ -1,17 +1,9 @@
 package edu.uw.tcss450.tcss450_group4.ui;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.navigation.Navigation;
-
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,6 +11,11 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -245,8 +242,8 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
                             .setError("Login Unsuccessful");
                 }
             }
-            getActivity().findViewById(R.id.layout_login_wait)
-                    .setVisibility(View.GONE);
+//            getActivity().findViewById(R.id.layout_login_wait)
+//                    .setVisibility(View.GONE);
         } catch (JSONException e) {
             //It appears that the web service did not return a JSON formatted
             //String or it did not have what we expected in it.

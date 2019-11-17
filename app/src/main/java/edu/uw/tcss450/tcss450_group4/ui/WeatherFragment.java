@@ -135,10 +135,12 @@ public class WeatherFragment extends Fragment {
                 mWeather = args.getWeather();
                 mWeathers10d = args.getWeathers10d();
                 mWeathers24h = args.getWeathers24h();
+                if (!mAlertSave) {
+                    attemptSaveWeather();
+                }
             }
         }
         mView = view;
-        attemptSaveWeather();
     }
 
     private void setComponents() {
