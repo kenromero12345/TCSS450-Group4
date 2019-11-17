@@ -119,6 +119,8 @@ public class HomeActivity extends AppCompatActivity {
     private FusedLocationProviderClient mFusedLocationClient;
     private Location mLocations;
     private LocationRequest mLocationRequest;
+    private double mLat;
+    private double mLon;
 //    private View mView;
     /**
      * The desired interval for location updates. Inexact. Updates may be more or less frequent.
@@ -475,8 +477,8 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     private void getWeather(Location location) {
-        double longitude = location.getLongitude();
-        double latitude = location.getLatitude();
+        mLon = location.getLongitude();
+        mLat = location.getLatitude();
 
         Uri uri = new Uri.Builder()
                 .scheme("https")
@@ -503,8 +505,8 @@ public class HomeActivity extends AppCompatActivity {
 
         JSONObject msg = new JSONObject();
         try {
-            msg.put("lon", longitude);
-            msg.put("lat", latitude);
+            msg.put("lon", mLon);
+            msg.put("lat", mLat);
         } catch (JSONException e) {
             Log.wtf("LONG/LAT", "Error creating JSON: " + e.getMessage());
         }
@@ -579,7 +581,8 @@ public class HomeActivity extends AppCompatActivity {
             if (hasData) {
                 JSONArray dataJArray = root.getJSONArray(
                         getString(keys_json_data));
-
+                mWeather.setLat(root.getDouble(getString(keys_json_lat)));
+                mWeather.setLon(root.getDouble(getString(keys_json_lon)));
                 Weather[] weathers = new Weather[10];
                 for (int i = 0; i < 10; i++) {
                     JSONObject dataJSONObject = dataJArray.getJSONObject(i);
@@ -589,7 +592,6 @@ public class HomeActivity extends AppCompatActivity {
                             , dataJSONObject.getDouble(getString(keys_json_temp)) +  273.15 );
                     weathers[i] = weather;
                 }
-
                 mWeathers10d = weathers;
             } else {
                 alert("Can't load current 10-day forecast", this);
@@ -655,8 +657,8 @@ public class HomeActivity extends AppCompatActivity {
                         getString(keys_json_name));
                 JSONObject sysJObject = root.getJSONObject(
                         getString(keys_json_sys));
-                JSONObject coordJObject = root.getJSONObject(
-                        getString(keys_json_coord));
+//                JSONObject coordJObject = root.getJSONObject(
+//                        getString(keys_json_coord));
                 JSONObject windJObject = root.getJSONObject(
                         getString(keys_json_wind));
                 long timezoneJObject = root.getLong(getString(keys_json_timezone));
@@ -667,10 +669,8 @@ public class HomeActivity extends AppCompatActivity {
                                 keys_json_description))
                         , getNewIcon(weatherJObject.getString(getString(
                                 keys_json_icon)))
-                        , coordJObject.getDouble(getString(
-                                keys_json_lon))
-                        , coordJObject.getDouble(getString(
-                                keys_json_lat))
+                        , mLon
+                        , mLat
                         , mainJObject.getDouble(getString(
                                 keys_json_temp))
                         ,  mainJObject.getInt(getString(

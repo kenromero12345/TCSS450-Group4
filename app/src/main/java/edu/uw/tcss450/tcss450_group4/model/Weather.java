@@ -25,7 +25,17 @@ public class Weather implements Serializable, Parcelable {
     }
 
     private final String mIcon;
+
+    public void setLon(double mLon) {
+        this.mLon = mLon;
+    }
+
     private double mLon;
+
+    public void setLat(double mLat) {
+        this.mLat = mLat;
+    }
+
     private double mLat;
     private double mTemp;
     private int mPressure;

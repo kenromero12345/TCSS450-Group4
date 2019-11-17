@@ -47,8 +47,6 @@ import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_description;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_hourly;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_humidity;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_icon;
-import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_lat;
-import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_lon;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_main;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_name;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_pressure;
@@ -73,6 +71,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
     private Weather mWeather;
     private Weather[] mWeathers10d;
     private static final String TAG = "WEATHER_FRAG";
+    private double mLat;
+    private double mLon;
 
     public MapFragment() {
         // Required empty public constructor
@@ -157,6 +157,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
     }
 
     private void displayWeather(double tLat, double tLon) {
+        mLat = tLat;
+        mLon = tLon;
         Uri uri = new Uri.Builder()
                 .scheme("https")
                 .appendPath(getString(ep_base_url))
@@ -266,7 +268,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
             if (hasData) {
                 JSONArray dataJArray = root.getJSONArray(
                         getString(keys_json_data));
-
+//                mWeather.setLat(root.getDouble(getString(keys_json_lat)));
+//                mWeather.setLon(root.getDouble(getString(keys_json_lon)));
                 Weather[] weathers = new Weather[10];
                 for (int i = 0; i < 10; i++) {
                     JSONObject dataJSONObject = dataJArray.getJSONObject(i);
@@ -360,10 +363,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
                                 keys_json_description))
                         , getNewIcon(weatherJObject.getString(getString(
                         keys_json_icon)))
-                        , coordJObject.getDouble(getString(
-                        keys_json_lon))
-                        , coordJObject.getDouble(getString(
-                        keys_json_lat))
+                        , mLon
+                        , mLat
                         , mainJObject.getDouble(getString(
                         keys_json_temp))
                         ,  mainJObject.getInt(getString(

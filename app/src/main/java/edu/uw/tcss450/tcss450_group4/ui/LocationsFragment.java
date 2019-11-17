@@ -275,7 +275,8 @@ public class LocationsFragment extends Fragment {
             if (hasData) {
                 JSONArray dataJArray = root.getJSONArray(
                         getString(keys_json_data));
-
+                mWeather.setLat(root.getDouble(getString(keys_json_lat)));
+                mWeather.setLon(root.getDouble(getString(keys_json_lon)));
                 Weather[] weathers = new Weather[10];
                 for (int i = 0; i < 10; i++) {
                     JSONObject dataJSONObject = dataJArray.getJSONObject(i);

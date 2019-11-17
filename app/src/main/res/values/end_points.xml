@@ -24,6 +24,7 @@
     <string name="ep_blog">blog</string>
     <string name="ep_setlists">setlists</string>
     <string name="ep_recent">recent</string>
+    <string name="ep_rows">rows</string>
 
     <string name="ep_connection">connections</string>
     <string name="ep_getall">getAll</string>

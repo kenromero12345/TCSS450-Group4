@@ -36,12 +36,12 @@ import java.util.Date;
 import java.util.Objects;
 import java.util.TimeZone;
 
-import edu.uw.tcss450.tcss450_group4.R;
 import edu.uw.tcss450.tcss450_group4.model.Location;
 import edu.uw.tcss450.tcss450_group4.model.Weather;
 import edu.uw.tcss450.tcss450_group4.utils.SendPostAsyncTask;
 
 import static android.graphics.Color.BLACK;
+import static edu.uw.tcss450.tcss450_group4.R.anim;
 import static edu.uw.tcss450.tcss450_group4.R.color.redviolet;
 import static edu.uw.tcss450.tcss450_group4.R.color.uwPurple;
 import static edu.uw.tcss450.tcss450_group4.R.id.*;
@@ -104,6 +104,11 @@ public class WeatherFragment extends Fragment {
     private FloatingActionButton mFab_main, mFab_getSavedWeather, mFab_gotoLocations, mFab_saveWeather;
     private Animation mFab_open, mFab_close, mFab_clock, mFab_anticlock;
     private Boolean mIsOpen = false;
+    private int mLocationsNum;
+    private int mTempLocationsNum;
+    private boolean mSuccessSave;
+//    private int mCount;
+    private boolean mAlertSave;
 
     /**
      *
@@ -118,22 +123,26 @@ public class WeatherFragment extends Fragment {
     }
 
     private void initialization(@NonNull View view) {
+
         WeatherFragmentArgs args = null;
         if (getArguments() != null) {
             args = WeatherFragmentArgs.fromBundle(getArguments());
         }
         if (args != null) {
-            mEmail = args.getEmail();
-            mJwToken = args.getJwt();
-            mWeather = args.getWeather();
-            mWeathers10d = args.getWeathers10d();
-            mWeathers24h = args.getWeathers24h();
-            mWeathers24h[0].setTemp(mWeather.getTemp());
+            if (mWeather == null) {
+                mEmail = args.getEmail();
+                mJwToken = args.getJwt();
+                mWeather = args.getWeather();
+                mWeathers10d = args.getWeathers10d();
+                mWeathers24h = args.getWeathers24h();
+            }
         }
         mView = view;
+        attemptSaveWeather();
     }
 
     private void setComponents() {
+        mWeathers24h[0].setTemp(mWeather.getTemp());
         //TODO don't need to always do, just once
         mView.findViewById(layout_weather_wait).setVisibility(View.VISIBLE);
 //        mView.findViewById(weather_saveButton).setVisibility(View.INVISIBLE); TODO check
@@ -251,16 +260,20 @@ public class WeatherFragment extends Fragment {
         }
     }
 
-    private Calendar getNewTimzone() {
-        Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+    private Calendar getNewTimzone(TimeZone tTimeZone) {
+        Calendar calendar = Calendar.getInstance(tTimeZone);
+        Log.d("UTCbefore", calendar.getTime().toString());
         calendar.setTimeInMillis(calendar.getTimeInMillis() + (mWeather.getTimezone() * 1000));
+        Log.d("UTCafter", calendar.getTime().toString());
         return calendar;
     }
 
     private void setHours() {
+        TimeZone utc = TimeZone.getTimeZone("UTC");
         @SuppressLint("SimpleDateFormat") SimpleDateFormat sdf
                 = new SimpleDateFormat("h a");
-        Calendar calendar = getNewTimzone();
+        sdf.setTimeZone(utc);
+        Calendar calendar = getNewTimzone(utc);
 //        calendar.setTimeZone();//TODO timezone?
 
         Date today = calendar.getTime();
@@ -339,9 +352,10 @@ public class WeatherFragment extends Fragment {
 
     private void setDays() {
         // EEE MM/dd
+        TimeZone utc = TimeZone.getTimeZone("UTC");
         @SuppressLint("SimpleDateFormat") SimpleDateFormat sdf
                 = new SimpleDateFormat("MM/dd");
-        Calendar calendar = getNewTimzone();
+        Calendar calendar = getNewTimzone(utc);
 //        calendar.setTimeZone();
         Date today = calendar.getTime();
         calendar.add(Calendar.DAY_OF_YEAR, 1);
@@ -477,6 +491,7 @@ public class WeatherFragment extends Fragment {
      *
      */
     private void attemptSaveWeather() {
+//        getRowsWeather();
         JSONObject msg = new JSONObject();
 
         try {
@@ -485,7 +500,7 @@ public class WeatherFragment extends Fragment {
             msg.put("country", mWeather.getCountry());
             msg.put("lat", mWeather.getLat());
             msg.put("lon", mWeather.getLon());
-            msg.put("zip", attemptGetZip(mWeather.getLat(), mWeather.getLon()));
+//            msg.put("zip", attemptGetZip(mWeather.getLat(), mWeather.getLon()));
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -504,6 +519,49 @@ public class WeatherFragment extends Fragment {
                 .build().execute();
     }
 
+//    private void getRowsWeather() {
+//        Uri uri = new Uri.Builder()
+//            .scheme("https")
+//            .appendPath(getString(ep_base_url))
+//            .appendPath(getString(ep_weather))
+//            .appendPath(getString(ep_get))
+//            .appendPath(getString(ep_rows))
+//            .build();
+//
+//        JSONObject msg = new JSONObject();
+//
+//        try {
+//            msg.put("email", mEmail);
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
+//
+//        new SendPostAsyncTask.Builder(uri.toString(), msg)
+//            .onPostExecute(this::endOfGetRowsWeather)
+//                .onCancelled(error -> Log.e(TAG, error))
+//            .addHeaderField("authorization", mJwToken)
+//                .build().execute();
+//    }
+//
+//    private void endOfGetRowsWeather(final String result) {
+//        try {
+//            Log.d(TAG, result);
+//            JSONObject root = new JSONObject(result);
+//            if (root.has("success") && root.get("success").equals("false")) {
+//
+//                Log.d("rows", result);
+//            }
+//            mLocationsNum = root.getInt(getString(keys_json_messages));
+//
+//            if (mTempLocationsNum != mLocationsNum) {
+//                alert("Save successful", getContext());
+//            }
+//
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
+//    }
+
     /**
      *
      * @param result
@@ -515,8 +573,16 @@ public class WeatherFragment extends Fragment {
 
             if(res.has("success")  && !res.getBoolean("success")) {
                 alert("Save unsuccessful", getContext());
+                Log.d("savefailed", result);
             } else {
-                alert("Save successful", getContext());
+//                mTempLocationsNum = mLocationsNum;
+//                getRowsWeather();
+//                mSuccessSave = true;
+                if (!mAlertSave) {
+                    mAlertSave =  true;
+                } else {
+                    alert("Save successful", getContext());
+                }
             }
 
         } catch (JSONException e) {
@@ -806,10 +872,10 @@ public class WeatherFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mFab_close = AnimationUtils.loadAnimation(getContext(), R.anim.fab_close);
-        mFab_open = AnimationUtils.loadAnimation(getContext(), R.anim.fab_open);
-        mFab_clock = AnimationUtils.loadAnimation(getContext(), R.anim.fab_rotate_clock);
-        mFab_anticlock = AnimationUtils.loadAnimation(getContext(), R.anim.fab_rotate_anticlock);
+        mFab_close = AnimationUtils.loadAnimation(getContext(), anim.fab_close);
+        mFab_open = AnimationUtils.loadAnimation(getContext(), anim.fab_open);
+        mFab_clock = AnimationUtils.loadAnimation(getContext(), anim.fab_rotate_clock);
+        mFab_anticlock = AnimationUtils.loadAnimation(getContext(), anim.fab_rotate_anticlock);
     }
 
     /**
@@ -898,6 +964,8 @@ public class WeatherFragment extends Fragment {
                 JSONArray dataJArray = root.getJSONArray(
                         getString(keys_json_data));
 
+                mWeather.setLat(root.getDouble(getString(keys_json_lat)));
+                mWeather.setLon(root.getDouble(getString(keys_json_lon)));
                 for (int i = 0; i < 10; i++) {
                     JSONObject dataJSONObject = dataJArray.getJSONObject(i);
                     JSONObject weatherJObject = dataJSONObject.getJSONObject(
@@ -977,7 +1045,7 @@ public class WeatherFragment extends Fragment {
             WeatherFragmentDirections.ActionNavWeatherToNavLocations action =
                     WeatherFragmentDirections.actionNavWeatherToNavLocations(
                             locations, mEmail, mJwToken);
-            Navigation.findNavController(Objects.requireNonNull(getView())).navigate(action);
+            Navigation.findNavController(Objects.requireNonNull(mView)).navigate(action);
 //            final Bundle args = new Bundle();
 //            args.putSerializable(getString(R.string.key_blog_post_view), theBlogPost);
 //            Navigation.findNavController(getView())
@@ -1056,7 +1124,7 @@ public class WeatherFragment extends Fragment {
                 long timezoneJObject = root.getLong(getString(keys_json_timezone));
 
                 JSONObject weatherJObject = weatherJArray.getJSONObject(0);
-                Weather weather = new Weather(
+                mWeather = new Weather(
                         weatherJObject.getString(getString(
                                 keys_json_description))
                         , getNewIcon(weatherJObject.getString(getString(
