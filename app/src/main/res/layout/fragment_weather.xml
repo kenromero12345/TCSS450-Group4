@@ -1370,24 +1370,24 @@
         android:layout_toRightOf="@id/weather_windSpeed"
         android:textColor="@color/uwGold" />
 
-    <Button
-        android:id="@+id/weather_getZipButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/layout_weather_wait"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="0dp"
-        android:background="@color/uwMetallicGold"
-        android:text="@string/button_get" />
+<!--    <Button-->
+<!--        android:id="@+id/weather_getZipButton"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_below="@id/layout_weather_wait"-->
+<!--        android:layout_alignParentStart="true"-->
+<!--        android:layout_alignParentBottom="true"-->
+<!--        android:layout_marginBottom="0dp"-->
+<!--        android:background="@color/uwMetallicGold"-->
+<!--        android:text="@string/button_get" />-->
 
     <EditText
         android:id="@+id/weather_zipEditText"
         android:layout_width="202dp"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/weather_getZipButton"
         android:layout_below="@id/layout_weather_wait"
         android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true"
         android:layout_marginStart="0dp"
         android:layout_marginBottom="0dp"
         android:ems="10"
@@ -1441,7 +1441,7 @@
         android:visibility="gone"
         app:backgroundTint="@color/uwMetallicGold"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_cloud_upload_black_24dp" />
+        app:srcCompat="@drawable/ic_save_black_24dp" />
 
     <TextView
         android:id="@+id/weather_24HourForecast"
@@ -1752,6 +1752,21 @@
         android:layout_marginTop="10dp" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/weather_getCurrentLocationWeatherButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/weather_getLocationButton"
+        android:layout_alignStart="@+id/weather_mainFab"
+        android:layout_alignEnd="@+id/weather_mainFab"
+        android:layout_marginStart="0dp"
+        android:layout_marginEnd="0dp"
+        android:layout_marginBottom="10dp"
+        android:clickable="true"
+        android:visibility="gone"
+        app:backgroundTint="@color/uwMetallicGold"
+        app:srcCompat="@drawable/ic_my_location_black_24dp" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/weather_getLocationButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -1764,7 +1779,7 @@
         android:clickable="true"
         android:visibility="gone"
         app:backgroundTint="@color/uwMetallicGold"
-        app:srcCompat="@drawable/ic_location_searching_black_24dp" />
+        app:srcCompat="@drawable/ic_map_black_24dp" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/weather_mainFab"

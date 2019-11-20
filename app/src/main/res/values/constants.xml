@@ -35,6 +35,8 @@
     <string name="keys_json_sys">sys</string>
     <string name="keys_json_lon">lon</string>
     <string name="keys_json_lat">lat</string>
+    <string name="keys_json_longitude">longitude</string>
+    <string name="keys_json_latitude">latitude</string>
     <string name="keys_json_temp">temp</string>
     <string name="keys_json_pressure">pressure</string>
     <string name="keys_json_humidity">humidity</string>

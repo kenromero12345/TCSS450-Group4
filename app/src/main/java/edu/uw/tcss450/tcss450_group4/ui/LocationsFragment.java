@@ -27,15 +27,9 @@ import java.util.Objects;
 import edu.uw.tcss450.tcss450_group4.MobileNavigationDirections;
 import edu.uw.tcss450.tcss450_group4.model.Location;
 import edu.uw.tcss450.tcss450_group4.model.Weather;
-import edu.uw.tcss450.tcss450_group4.utils.SendPostAsyncTask;
+import edu.uw.tcss450.tcss450_group4.model.WeatherHelper;
 
 import static edu.uw.tcss450.tcss450_group4.R.layout;
-import static edu.uw.tcss450.tcss450_group4.R.string.ep_10d;
-import static edu.uw.tcss450.tcss450_group4.R.string.ep_24h;
-import static edu.uw.tcss450.tcss450_group4.R.string.ep_base_url;
-import static edu.uw.tcss450.tcss450_group4.R.string.ep_latLon;
-import static edu.uw.tcss450.tcss450_group4.R.string.ep_weather;
-import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_coord;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_country;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_data;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_deg;
@@ -43,8 +37,8 @@ import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_description;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_hourly;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_humidity;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_icon;
-import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_lat;
-import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_lon;
+import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_latitude;
+import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_longitude;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_main;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_name;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_pressure;
@@ -58,6 +52,10 @@ import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_timezone;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_weather;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_wind;
 import static edu.uw.tcss450.tcss450_group4.model.WeatherHelper.getNewIcon;
+import static edu.uw.tcss450.tcss450_group4.model.WeatherHelper.getUriWeather10dLatLon;
+import static edu.uw.tcss450.tcss450_group4.model.WeatherHelper.getUriWeather24hLatLon;
+import static edu.uw.tcss450.tcss450_group4.model.WeatherHelper.getUriWeatherCurrentLatLon;
+import static edu.uw.tcss450.tcss450_group4.model.WeatherHelper.sendPostAsyncTaskHelper;
 
 /**
  * A fragment representing a list of Items.
@@ -166,54 +164,36 @@ public class LocationsFragment extends Fragment {
     }
 
     private void displayWeather(final Location tLocation) {
-        Uri uri = new Uri.Builder()
-                .scheme("https")
-                .appendPath(getString(ep_base_url))
-                .appendPath(getString(ep_weather))
-                .appendPath(getString(ep_latLon))
-                .build();
+        //TODO use zip
+        Uri uri = getUriWeatherCurrentLatLon(getContext());
 
-        Uri uri2 = new Uri.Builder()
-                .scheme("https")
-                .appendPath(getString(ep_base_url))
-                .appendPath(getString(ep_weather))
-                .appendPath(getString(ep_latLon))
-                .appendPath(getString(ep_10d))
-                .build();
+        Uri uri2 = getUriWeather10dLatLon(getContext());
 
-        Uri uri3 = new Uri.Builder()
-                .scheme("https")
-                .appendPath(getString(ep_base_url))
-                .appendPath(getString(ep_weather))
-                .appendPath(getString(ep_latLon))
-                .appendPath(getString(ep_24h))
-                .build();
+        Uri uri3 = getUriWeather24hLatLon(getContext());
 
-        JSONObject msg = new JSONObject();
-        try {
-            msg.put("lon", tLocation.getLon());
-            msg.put("lat", tLocation.getLat());
-        } catch (JSONException e) {
-            Log.wtf("LONG/LAT", "Error creating JSON: " + e.getMessage());
-        }
+        JSONObject msg = WeatherHelper.getJsonObjectLatLon(tLocation.getLat(), tLocation.getLon());
 
-        new SendPostAsyncTask.Builder(uri.toString(), msg)
-                .onPostExecute(this::handleWeatherGetOnPostExecute)
-                .onCancelled(error -> Log.e(TAG, error))
-                .addHeaderField("authorization", mJwToken) //add the JWT as a header
-                .build().execute();
+//        new SendPostAsyncTask.Builder(uri.toString(), msg)
+//                .onPostExecute(this::handleWeatherGetOnPostExecute)
+//                .onCancelled(error -> Log.e(TAG, error))
+//                .addHeaderField("authorization", mJwToken) //add the JWT as a header
+//                .build().execute();
+//
+//        new SendPostAsyncTask.Builder(uri2.toString(), msg)
+//                .onPostExecute(this::handleWeather10dGetOnPostExecute)
+//                .onCancelled(error -> Log.e(TAG, error))
+//                .addHeaderField("authorization", mJwToken) //add the JWT as a header
+//                .build().execute();
+//
+//        new SendPostAsyncTask.Builder(uriWeather24h.toString(), msg)
+//                .onPostExecute(this::handleWeather24hGetOnPostExecute)
+//                .onCancelled(error -> Log.e(TAG, error))
+//                .addHeaderField("authorization", mJwToken) //add the JWT as a header
+//                .build().execute();
 
-        new SendPostAsyncTask.Builder(uri2.toString(), msg)
-                .onPostExecute(this::handleWeather10dGetOnPostExecute)
-                .onCancelled(error -> Log.e(TAG, error))
-                .addHeaderField("authorization", mJwToken) //add the JWT as a header
-                .build().execute();
-
-        new SendPostAsyncTask.Builder(uri3.toString(), msg)
-                .onPostExecute(this::handleWeather24hGetOnPostExecute)
-                .onCancelled(error -> Log.e(TAG, error))
-                .addHeaderField("authorization", mJwToken) //add the JWT as a header
-                .build().execute();
+        sendPostAsyncTaskHelper(uri, msg, this::handleWeatherGetOnPostExecute, mJwToken);
+        sendPostAsyncTaskHelper(uri2, msg, this::handleWeather10dGetOnPostExecute, mJwToken);
+        sendPostAsyncTaskHelper(uri3, msg, this::handleWeather24hGetOnPostExecute, mJwToken);
     }
 
     private void handleWeather24hGetOnPostExecute(final String result) {
@@ -225,7 +205,8 @@ public class LocationsFragment extends Fragment {
             } else {
                 Log.e("ERROR!", "No hourly");
             }
-
+            mWeather.setLat(root.getDouble(getString(keys_json_latitude)));
+            mWeather.setLon(root.getDouble(getString(keys_json_longitude)));
             if (hasHourly) {
                 JSONObject hourlyJObject = root.getJSONObject(
                         getString(keys_json_hourly));
@@ -241,10 +222,14 @@ public class LocationsFragment extends Fragment {
                             - 32) * 5 / 9) + 273.15);
                     weathers[i] = weather;
                 }
-
+                LocationsFragmentArgs args = null;
+                if (getArguments() != null) {
+                    args = LocationsFragmentArgs.fromBundle(getArguments());
+                }
                 MobileNavigationDirections.ActionGlobalNavWeather directions
-                        = WeatherFragmentDirections.actionGlobalNavWeather(mJwToken, mEmail,
-                                mWeather, mWeathers10d, weathers);
+                        = WeatherFragmentDirections.actionGlobalNavWeather(mJwToken, mEmail
+                                , mWeather, mWeathers10d, weathers, args.getWeatherHome()
+                                , args.getWeathersHome10d(), args.getWeathersHome24h());
 
                 Navigation.findNavController(Objects.requireNonNull(getView()))
                         .navigate(directions);
@@ -275,8 +260,8 @@ public class LocationsFragment extends Fragment {
             if (hasData) {
                 JSONArray dataJArray = root.getJSONArray(
                         getString(keys_json_data));
-                mWeather.setLat(root.getDouble(getString(keys_json_lat)));
-                mWeather.setLon(root.getDouble(getString(keys_json_lon)));
+//                mWeather.setLat(root.getDouble(getString(keys_json_lat)));
+//                mWeather.setLon(root.getDouble(getString(keys_json_lon)));
                 Weather[] weathers = new Weather[10];
                 for (int i = 0; i < 10; i++) {
                     JSONObject dataJSONObject = dataJArray.getJSONObject(i);
@@ -308,7 +293,6 @@ public class LocationsFragment extends Fragment {
             boolean hasWeather = false;
             boolean hasMain = false;
             boolean hasWind = false;
-            boolean hasCoord = false;
             boolean hasSys = false;
             boolean hasName = false;
             boolean hasTimezone = false;
@@ -328,11 +312,6 @@ public class LocationsFragment extends Fragment {
             } else {
                 Log.e("ERROR!", "No wind");
             }
-            if (root.has(getString(keys_json_coord))) {
-                hasCoord = true;
-            } else {
-                Log.e("ERROR!", "No coord");
-            }
             if (root.has(getString(keys_json_name))) {
                 hasName = true;
             } else {
@@ -349,7 +328,7 @@ public class LocationsFragment extends Fragment {
                 Log.e("ERROR!", "No timezone");
             }
 
-            if (hasCoord && hasMain && hasName && hasSys && hasWeather && hasWind && hasTimezone) {
+            if (hasMain && hasName && hasSys && hasWeather && hasWind && hasTimezone) {
                 JSONArray weatherJArray = root.getJSONArray(
                         getString(keys_json_weather));
                 JSONObject mainJObject = root.getJSONObject(
@@ -358,8 +337,6 @@ public class LocationsFragment extends Fragment {
                         getString(keys_json_name));
                 JSONObject sysJObject = root.getJSONObject(
                         getString(keys_json_sys));
-                JSONObject coordJObject = root.getJSONObject(
-                        getString(keys_json_coord));
                 JSONObject windJObject = root.getJSONObject(
                         getString(keys_json_wind));
                 long timezoneJObject = root.getLong(getString(keys_json_timezone));
@@ -370,10 +347,6 @@ public class LocationsFragment extends Fragment {
                                 keys_json_description))
                         , getNewIcon(weatherJObject.getString(getString(
                         keys_json_icon)))
-                        , coordJObject.getDouble(getString(
-                        keys_json_lon))
-                        , coordJObject.getDouble(getString(
-                        keys_json_lat))
                         , mainJObject.getDouble(getString(
                         keys_json_temp))
                         ,  mainJObject.getInt(getString(

@@ -1,15 +1,20 @@
 package edu.uw.tcss450.tcss450_group4.ui;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.graphics.Typeface;
+import android.location.Address;
+import android.location.Geocoder;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Switch;
@@ -30,15 +35,19 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.TimeZone;
 
 import edu.uw.tcss450.tcss450_group4.model.Location;
+import edu.uw.tcss450.tcss450_group4.model.State;
 import edu.uw.tcss450.tcss450_group4.model.Weather;
-import edu.uw.tcss450.tcss450_group4.utils.SendPostAsyncTask;
+import edu.uw.tcss450.tcss450_group4.model.WeatherHelper;
 
 import static android.graphics.Color.BLACK;
 import static edu.uw.tcss450.tcss450_group4.R.anim;
@@ -46,14 +55,10 @@ import static edu.uw.tcss450.tcss450_group4.R.color.redviolet;
 import static edu.uw.tcss450.tcss450_group4.R.color.uwPurple;
 import static edu.uw.tcss450.tcss450_group4.R.id.*;
 import static edu.uw.tcss450.tcss450_group4.R.layout;
-import static edu.uw.tcss450.tcss450_group4.R.string.ep_10d;
-import static edu.uw.tcss450.tcss450_group4.R.string.ep_24h;
 import static edu.uw.tcss450.tcss450_group4.R.string.ep_base_url;
 import static edu.uw.tcss450.tcss450_group4.R.string.ep_get;
 import static edu.uw.tcss450.tcss450_group4.R.string.ep_send;
 import static edu.uw.tcss450.tcss450_group4.R.string.ep_weather;
-import static edu.uw.tcss450.tcss450_group4.R.string.ep_zip;
-import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_coord;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_country;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_data;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_deg;
@@ -62,8 +67,9 @@ import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_hourly;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_humidity;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_icon;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_lat;
-import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_lon;
+import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_latitude;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_long;
+import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_longitude;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_main;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_messages;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_name;
@@ -81,8 +87,12 @@ import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_wind;
 import static edu.uw.tcss450.tcss450_group4.model.WeatherHelper.alert;
 import static edu.uw.tcss450.tcss450_group4.model.WeatherHelper.getImgUrl;
 import static edu.uw.tcss450.tcss450_group4.model.WeatherHelper.getNewIcon;
+import static edu.uw.tcss450.tcss450_group4.model.WeatherHelper.getUriWeather10dZip;
+import static edu.uw.tcss450.tcss450_group4.model.WeatherHelper.getUriWeather24hZip;
+import static edu.uw.tcss450.tcss450_group4.model.WeatherHelper.getUriWeatherCurrentZip;
+import static edu.uw.tcss450.tcss450_group4.model.WeatherHelper.sendPostAsyncTaskHelper;
 import static edu.uw.tcss450.tcss450_group4.model.WeatherHelper.tempFromKelvinToCelsiusString;
-import static edu.uw.tcss450.tcss450_group4.model.WeatherHelper.tempFromKelvinToFarenheitString;
+import static edu.uw.tcss450.tcss450_group4.model.WeatherHelper.tempFromKelvinToFahrenheitString;
 
 ///**
 // * A simple {@link Fragment} subclass.
@@ -98,17 +108,23 @@ public class WeatherFragment extends Fragment {
     private Weather mWeather;
     private Weather[] mWeathers10d;
     private Weather[] mWeathers24h;
+    private Weather mHomeWeather;
+    private Weather[] mHomeWeathers10d;
+    private Weather[] mHomeWeathers24h;
     private View mView;
     private String mEmail;
     private String mJwToken;
-    private FloatingActionButton mFab_main, mFab_getSavedWeather, mFab_gotoLocations, mFab_saveWeather;
+    private FloatingActionButton mFab_main, mFab_getSavedWeather, mFab_gotoLocations
+            , mFab_saveWeather, mFab_getCurrentLocationWeather;
     private Animation mFab_open, mFab_close, mFab_clock, mFab_anticlock;
-    private Boolean mIsOpen = false;
-    private int mLocationsNum;
-    private int mTempLocationsNum;
-    private boolean mSuccessSave;
+    private boolean mIsOpen;
+    private boolean isCountryNull;
+
+//    private int mLocationsNum;
+//    private int mTempLocationsNum;
+//    private boolean mSuccessSave;
 //    private int mCount;
-    private boolean mAlertSave;
+//    private boolean mAlertSave;
 
     /**
      *
@@ -122,6 +138,10 @@ public class WeatherFragment extends Fragment {
         setComponents();
     }
 
+    /**
+     *
+     * @param view
+     */
     private void initialization(@NonNull View view) {
 
         WeatherFragmentArgs args = null;
@@ -135,21 +155,30 @@ public class WeatherFragment extends Fragment {
                 mWeather = args.getWeather();
                 mWeathers10d = args.getWeathers10d();
                 mWeathers24h = args.getWeathers24h();
-                if (!mAlertSave) {
-                    attemptSaveWeather();
-                }
+                mHomeWeather = args.getWeatherHome();
+                mHomeWeathers10d = args.getWeathersHome10d();
+                mHomeWeathers24h = args.getWeathersHome24h();
             }
         }
         mView = view;
     }
 
+    /**
+     * set components actions
+     */
     private void setComponents() {
-        mWeathers24h[0].setTemp(mWeather.getTemp());
         //TODO don't need to always do, just once
 
-        mView.findViewById(weather_getZipButton).setOnLongClickListener(v ->
+        View zipView = mView.findViewById(weather_zipEditText);
+        zipView.setOnKeyListener((v, keyCode, event) ->
+                zipKeyListener(v, keyCode));
+//        zipView.setOnClickListener(e ->
+//                setToast("Get the current weather condition and forecasts of the given zip code"));
+        zipView.setOnLongClickListener(e ->
                 setToast("Get the current weather condition and forecasts of the given zip code"));
-        mView.findViewById(weather_getZipButton).setOnClickListener(v -> attemptGetWeatherZip());
+//        mView.findViewById(weather_getZipButton).setOnLongClickListener(v ->
+//                setToast("Get the current weather condition and forecasts of the given zip code"));
+//        mView.findViewById(weather_getZipButton).setOnClickListener(v -> attemptGetWeatherZip());
 
         mFab_saveWeather = mView.findViewById(weather_saveButton);
         mFab_saveWeather.setOnLongClickListener(v ->
@@ -169,7 +198,7 @@ public class WeatherFragment extends Fragment {
 //                    .setTooltipText("Get Saved Weathers");
 //        }
         ((Switch)mView.findViewById(weather_temperatureSwitch)).setOnCheckedChangeListener(
-                (buttonView, isChecked) -> switchTemperature());
+                (buttonView, isChecked) -> setTemperature());
         ((Switch)mView.findViewById(weather_forecastSwitch)).setOnCheckedChangeListener(
                 (buttonView, isChecked) -> switchForecast());
         mFab_gotoLocations = mView.findViewById(weather_getLocationButton);
@@ -179,42 +208,82 @@ public class WeatherFragment extends Fragment {
         mFab_main = mView.findViewById(weather_mainFab);
         mFab_main.setOnClickListener(v -> toggleMainFab());
         mFab_main.setOnLongClickListener(v -> setToast("Actions"));
+        mFab_getCurrentLocationWeather = mView.findViewById(weather_getCurrentLocationWeatherButton);
+        mFab_getCurrentLocationWeather.setOnClickListener(e -> getCurrentLocationWeather());
+        mFab_getCurrentLocationWeather.setOnLongClickListener(v ->
+                setToast("Get the current weather condition and forecasts from your current location"));
         setWeather();
     }
 
+    public boolean zipKeyListener(View tView, int tKey) {
+        if (tKey == KeyEvent.KEYCODE_ENTER || tKey == KeyEvent.KEYCODE_DPAD_CENTER) {
+            attemptGetWeatherZip();
+            InputMethodManager mgr = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+            mgr.hideSoftInputFromWindow(tView.getWindowToken(), 0);
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * get current location weather and set the view
+     */
+    private void getCurrentLocationWeather() {
+        mWeather = mHomeWeather;
+        mWeathers10d = mHomeWeathers10d.clone();
+        mWeathers24h = mHomeWeathers24h.clone();
+
+        setWeather();
+    }
+
+    /**
+     * toggle the main fab
+     */
     @SuppressLint("RestrictedApi")
     private void toggleMainFab() {
         if (mIsOpen) {
             mFab_gotoLocations.setVisibility(View.GONE);
             mFab_saveWeather.setVisibility(View.GONE);
             mFab_getSavedWeather.setVisibility(View.GONE);
+            mFab_getCurrentLocationWeather.setVisibility(View.GONE);
             mFab_gotoLocations.startAnimation(mFab_close);
             mFab_saveWeather.startAnimation(mFab_close);
             mFab_getSavedWeather.startAnimation(mFab_close);
+            mFab_getCurrentLocationWeather.startAnimation(mFab_close);
             mFab_main.startAnimation(mFab_anticlock);
             mIsOpen = false;
         } else {
             mFab_gotoLocations.setVisibility(View.VISIBLE);
             mFab_saveWeather.setVisibility(View.VISIBLE);
             mFab_getSavedWeather.setVisibility(View.VISIBLE);
+            mFab_getCurrentLocationWeather.setVisibility(View.VISIBLE);
             mFab_gotoLocations.startAnimation(mFab_open);
             mFab_saveWeather.startAnimation(mFab_open);
             mFab_getSavedWeather.startAnimation(mFab_open);
+            mFab_getCurrentLocationWeather.startAnimation(mFab_open);
             mFab_main.startAnimation(mFab_clock);
             mIsOpen = true;
         }
     }
 
+    /**
+     * When map fab is clicked, go to the map
+     */
     private void gotoMap() {
         if (mIsOpen) {
             toggleMainFab();
         }
         WeatherFragmentDirections.ActionNavWeatherToNavMap action =
-                WeatherFragmentDirections.actionNavWeatherToNavMap(mEmail, mJwToken/*, new LatLng(mWeather.getLat(), mWeather.getLon())*/);
+                WeatherFragmentDirections.actionNavWeatherToNavMap(mEmail, mJwToken, mHomeWeather
+                        , mHomeWeathers10d, mHomeWeathers24h);
         Navigation.findNavController(Objects.requireNonNull(getView())).navigate(action);
-
     }
 
+    /**
+     *
+     * @param tString the toast to display
+     * @return true for long clicks
+     */
     private boolean setToast(String tString) {
         Toast.makeText(getContext(),
                 tString,
@@ -222,6 +291,9 @@ public class WeatherFragment extends Fragment {
         return  true;
     }
 
+    /**
+     * switch forecast from 10 days to 24 hours
+     */
     private void switchForecast() {
         if (((Switch) mView.findViewById(weather_forecastSwitch)).isChecked()) {
             ((TextView)mView.findViewById(weather_10DayForecast)).setTypeface(Typeface.DEFAULT_BOLD);
@@ -262,6 +334,11 @@ public class WeatherFragment extends Fragment {
         }
     }
 
+    /**
+     *
+     * @param tTimeZone the given timezone
+     * @return the calendar from the given timezone + the location's timezone difference with UTC
+     */
     private Calendar getNewTimzone(TimeZone tTimeZone) {
         Calendar calendar = Calendar.getInstance(tTimeZone);
         Log.d("UTCbefore", calendar.getTime().toString());
@@ -270,6 +347,9 @@ public class WeatherFragment extends Fragment {
         return calendar;
     }
 
+    /**
+     * set hours components
+     */
     private void setHours() {
         TimeZone utc = TimeZone.getTimeZone("UTC");
         @SuppressLint("SimpleDateFormat") SimpleDateFormat sdf
@@ -352,6 +432,9 @@ public class WeatherFragment extends Fragment {
         ((TextView) mView.findViewById(weather_hour24)).setText(sdf.format(todayPlus23));
     }
 
+    /**
+     * set days components
+     */
     private void setDays() {
         // EEE MM/dd
         TimeZone utc = TimeZone.getTimeZone("UTC");
@@ -390,14 +473,14 @@ public class WeatherFragment extends Fragment {
         ((TextView) mView.findViewById(weather_day10)).setText(sdf.format(todayPlus9));
     }
 
-    private void switchTemperature() {
+    private void setTemperature() {
         TextView temp = mView.findViewById(weather_temperature);
         if (((Switch) mView.findViewById(weather_temperatureSwitch)).isChecked()) {
-            temp.setText(tempFromKelvinToFarenheitString(mWeather.getTemp()));
+            temp.setText(tempFromKelvinToFahrenheitString(mWeather.getTemp()));
             temp.setTextColor(ContextCompat.getColor(Objects.requireNonNull(getContext()), redviolet));
 
-            setTempDaysToFahrenheit();
-            setTempHoursToFahrenheit();
+            setTempDaysTextToFahrenheit();
+            setTempHoursTextToFahrenheit();
 
         } else {
             temp.setText(tempFromKelvinToCelsiusString(mWeather.getTemp()));
@@ -408,7 +491,7 @@ public class WeatherFragment extends Fragment {
         }
     }
 
-    private void setTempHoursToFahrenheit() {
+    private void setTempHoursTextToFahrenheit() {
         TextView tempHour1 = mView.findViewById(weather_hour1Temp);
         TextView tempHour2 = mView.findViewById(weather_hour2Temp);
         TextView tempHour3 = mView.findViewById(weather_hour3Temp);
@@ -434,33 +517,33 @@ public class WeatherFragment extends Fragment {
         TextView tempHour23 = mView.findViewById(weather_hour23Temp);
         TextView tempHour24 = mView.findViewById(weather_hour24Temp);
 
-        tempHour1.setText(tempFromKelvinToFarenheitString(mWeathers24h[0].getTemp()));
-        tempHour2.setText(tempFromKelvinToFarenheitString(mWeathers24h[1].getTemp()));
-        tempHour3.setText(tempFromKelvinToFarenheitString(mWeathers24h[2].getTemp()));
-        tempHour4.setText(tempFromKelvinToFarenheitString(mWeathers24h[3].getTemp()));
-        tempHour5.setText(tempFromKelvinToFarenheitString(mWeathers24h[4].getTemp()));
-        tempHour6.setText(tempFromKelvinToFarenheitString(mWeathers24h[5].getTemp()));
-        tempHour7.setText(tempFromKelvinToFarenheitString(mWeathers24h[6].getTemp()));
-        tempHour8.setText(tempFromKelvinToFarenheitString(mWeathers24h[7].getTemp()));
-        tempHour9.setText(tempFromKelvinToFarenheitString(mWeathers24h[8].getTemp()));
-        tempHour10.setText(tempFromKelvinToFarenheitString(mWeathers24h[9].getTemp()));
-        tempHour11.setText(tempFromKelvinToFarenheitString(mWeathers24h[10].getTemp()));
-        tempHour12.setText(tempFromKelvinToFarenheitString(mWeathers24h[11].getTemp()));
-        tempHour13.setText(tempFromKelvinToFarenheitString(mWeathers24h[12].getTemp()));
-        tempHour14.setText(tempFromKelvinToFarenheitString(mWeathers24h[13].getTemp()));
-        tempHour15.setText(tempFromKelvinToFarenheitString(mWeathers24h[14].getTemp()));
-        tempHour16.setText(tempFromKelvinToFarenheitString(mWeathers24h[15].getTemp()));
-        tempHour17.setText(tempFromKelvinToFarenheitString(mWeathers24h[16].getTemp()));
-        tempHour18.setText(tempFromKelvinToFarenheitString(mWeathers24h[17].getTemp()));
-        tempHour19.setText(tempFromKelvinToFarenheitString(mWeathers24h[18].getTemp()));
-        tempHour20.setText(tempFromKelvinToFarenheitString(mWeathers24h[19].getTemp()));
-        tempHour21.setText(tempFromKelvinToFarenheitString(mWeathers24h[20].getTemp()));
-        tempHour22.setText(tempFromKelvinToFarenheitString(mWeathers24h[21].getTemp()));
-        tempHour23.setText(tempFromKelvinToFarenheitString(mWeathers24h[22].getTemp()));
-        tempHour24.setText(tempFromKelvinToFarenheitString(mWeathers24h[23].getTemp()));
+        tempHour1.setText(tempFromKelvinToFahrenheitString(mWeathers24h[0].getTemp()));
+        tempHour2.setText(tempFromKelvinToFahrenheitString(mWeathers24h[1].getTemp()));
+        tempHour3.setText(tempFromKelvinToFahrenheitString(mWeathers24h[2].getTemp()));
+        tempHour4.setText(tempFromKelvinToFahrenheitString(mWeathers24h[3].getTemp()));
+        tempHour5.setText(tempFromKelvinToFahrenheitString(mWeathers24h[4].getTemp()));
+        tempHour6.setText(tempFromKelvinToFahrenheitString(mWeathers24h[5].getTemp()));
+        tempHour7.setText(tempFromKelvinToFahrenheitString(mWeathers24h[6].getTemp()));
+        tempHour8.setText(tempFromKelvinToFahrenheitString(mWeathers24h[7].getTemp()));
+        tempHour9.setText(tempFromKelvinToFahrenheitString(mWeathers24h[8].getTemp()));
+        tempHour10.setText(tempFromKelvinToFahrenheitString(mWeathers24h[9].getTemp()));
+        tempHour11.setText(tempFromKelvinToFahrenheitString(mWeathers24h[10].getTemp()));
+        tempHour12.setText(tempFromKelvinToFahrenheitString(mWeathers24h[11].getTemp()));
+        tempHour13.setText(tempFromKelvinToFahrenheitString(mWeathers24h[12].getTemp()));
+        tempHour14.setText(tempFromKelvinToFahrenheitString(mWeathers24h[13].getTemp()));
+        tempHour15.setText(tempFromKelvinToFahrenheitString(mWeathers24h[14].getTemp()));
+        tempHour16.setText(tempFromKelvinToFahrenheitString(mWeathers24h[15].getTemp()));
+        tempHour17.setText(tempFromKelvinToFahrenheitString(mWeathers24h[16].getTemp()));
+        tempHour18.setText(tempFromKelvinToFahrenheitString(mWeathers24h[17].getTemp()));
+        tempHour19.setText(tempFromKelvinToFahrenheitString(mWeathers24h[18].getTemp()));
+        tempHour20.setText(tempFromKelvinToFahrenheitString(mWeathers24h[19].getTemp()));
+        tempHour21.setText(tempFromKelvinToFahrenheitString(mWeathers24h[20].getTemp()));
+        tempHour22.setText(tempFromKelvinToFahrenheitString(mWeathers24h[21].getTemp()));
+        tempHour23.setText(tempFromKelvinToFahrenheitString(mWeathers24h[22].getTemp()));
+        tempHour24.setText(tempFromKelvinToFahrenheitString(mWeathers24h[23].getTemp()));
     }
 
-    private void setTempDaysToFahrenheit() {
+    private void setTempDaysTextToFahrenheit() {
         TextView tempDay1 = mView.findViewById(weather_day1Temp);
         TextView tempDay2 = mView.findViewById(weather_day2Temp);
         TextView tempDay3 = mView.findViewById(weather_day3Temp);
@@ -472,37 +555,40 @@ public class WeatherFragment extends Fragment {
         TextView tempDay9 = mView.findViewById(weather_day9Temp);
         TextView tempDay10 = mView.findViewById(weather_day10Temp);
 
-        tempDay1.setText(tempFromKelvinToFarenheitString(mWeathers10d[0].getTemp()));
-        tempDay2.setText(tempFromKelvinToFarenheitString(mWeathers10d[1].getTemp()));
-        tempDay3.setText(tempFromKelvinToFarenheitString(mWeathers10d[2].getTemp()));
-        tempDay4.setText(tempFromKelvinToFarenheitString(mWeathers10d[3].getTemp()));
-        tempDay5.setText(tempFromKelvinToFarenheitString(mWeathers10d[4].getTemp()));
-        tempDay6.setText(tempFromKelvinToFarenheitString(mWeathers10d[5].getTemp()));
-        tempDay7.setText(tempFromKelvinToFarenheitString(mWeathers10d[6].getTemp()));
-        tempDay8.setText(tempFromKelvinToFarenheitString(mWeathers10d[7].getTemp()));
-        tempDay9.setText(tempFromKelvinToFarenheitString(mWeathers10d[8].getTemp()));
-        tempDay10.setText(tempFromKelvinToFarenheitString(mWeathers10d[9].getTemp()));
+        tempDay1.setText(tempFromKelvinToFahrenheitString(mWeathers10d[0].getTemp()));
+        tempDay2.setText(tempFromKelvinToFahrenheitString(mWeathers10d[1].getTemp()));
+        tempDay3.setText(tempFromKelvinToFahrenheitString(mWeathers10d[2].getTemp()));
+        tempDay4.setText(tempFromKelvinToFahrenheitString(mWeathers10d[3].getTemp()));
+        tempDay5.setText(tempFromKelvinToFahrenheitString(mWeathers10d[4].getTemp()));
+        tempDay6.setText(tempFromKelvinToFahrenheitString(mWeathers10d[5].getTemp()));
+        tempDay7.setText(tempFromKelvinToFahrenheitString(mWeathers10d[6].getTemp()));
+        tempDay8.setText(tempFromKelvinToFahrenheitString(mWeathers10d[7].getTemp()));
+        tempDay9.setText(tempFromKelvinToFahrenheitString(mWeathers10d[8].getTemp()));
+        tempDay10.setText(tempFromKelvinToFahrenheitString(mWeathers10d[9].getTemp()));
     }
 
-    //TODO
-    private String attemptGetZip(double tLat, double tLon) {
-        return "";
-    }
+//    //TODO
+//    private String attemptGetZip(double tLat, double tLon) {
+//        return "";
+//    }
 
     /**
      *
      */
     private void attemptSaveWeather() {
-//        getRowsWeather();
         JSONObject msg = new JSONObject();
 
         try {
             msg.put("email", mEmail);
             msg.put("city", mWeather.getCity());
-            msg.put("country", mWeather.getCountry());
+            if (mWeather.getState().equals(null)) {
+                msg.put("country", mWeather.getCountry());
+            } else {
+                msg.put("country", mWeather.getState() + ", " + mWeather.getCountry());
+            }
             msg.put("lat", mWeather.getLat());
             msg.put("lon", mWeather.getLon());
-//            msg.put("zip", attemptGetZip(mWeather.getLat(), mWeather.getLon()));
+            msg.put("zip", Integer.parseInt(mWeather.getZip()));
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -514,11 +600,7 @@ public class WeatherFragment extends Fragment {
                 .appendPath(getString(ep_send))
                 .build();
 
-        new SendPostAsyncTask.Builder(uri.toString(), msg)
-                .onPostExecute(this::endOfSaveWeatherTask)
-                .onCancelled(error -> Log.e(TAG, error))
-                .addHeaderField("authorization", mJwToken)
-                .build().execute();
+        sendPostAsyncTaskHelper(uri, msg, this::endOfSaveWeatherTask, mJwToken);
     }
 
 //    private void getRowsWeather() {
@@ -580,11 +662,11 @@ public class WeatherFragment extends Fragment {
 //                mTempLocationsNum = mLocationsNum;
 //                getRowsWeather();
 //                mSuccessSave = true;
-                if (!mAlertSave) {
-                    mAlertSave =  true;
-                } else {
+//                if (!mAlertSave) {
+//                    mAlertSave =  true;
+//                } else {
                     alert("Save successful", getContext());
-                }
+//                }
             }
 
         } catch (JSONException e) {
@@ -611,11 +693,12 @@ public class WeatherFragment extends Fragment {
             e.printStackTrace();
         }
 
-        new SendPostAsyncTask.Builder(uri.toString(), msg)
-                .onPostExecute(this::endOfGetSavedWeathersTask)
-                .onCancelled(error -> Log.e(TAG, error))
-                .addHeaderField("authorization", mJwToken) //add the JWT as a header
-                .build().execute();
+        sendPostAsyncTaskHelper(uri, msg, this::endOfGetSavedWeathersTask, mJwToken);
+//        new SendPostAsyncTask.Builder(uri.toString(), msg)
+//                .onPostExecute(this::endOfGetSavedWeathersTask)
+//                .onCancelled(error -> Log.e(TAG, error))
+//                .addHeaderField("authorization", mJwToken) //add the JWT as a header
+//                .build().execute();
     }
 
     /**
@@ -640,6 +723,21 @@ public class WeatherFragment extends Fragment {
      *
      */
     private void setWeather() {
+        mWeathers24h[0].setTemp(mWeather.getTemp());
+        Geocoder geocoder;
+        List<Address> addresses;
+        geocoder = new Geocoder(getContext(), Locale.getDefault());
+
+        try {
+            addresses = geocoder.getFromLocation(mWeather.getLat(), mWeather.getLon(), 1);
+            mWeather.setZip(addresses.get(0).getPostalCode());
+            mWeather.setCity(addresses.get(0).getLocality());
+            mWeather.setState(addresses.get(0).getAdminArea());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        // Here 1 represent max location result to returned, by documents it recommended 1 to 5
+
         mView.findViewById(layout_weather_wait).setVisibility(View.VISIBLE);
 //        mView.findViewById(weather_saveButton).setVisibility(View.INVISIBLE); TODO check
         mView.findViewById(weather_temperatureSwitch).setVisibility(View.GONE);
@@ -653,7 +751,25 @@ public class WeatherFragment extends Fragment {
         TextView windSpeed = mView.findViewById(weather_windSpeed);
         TextView windDeg = mView.findViewById(weather_windDegree);
 
-        cityText.setText(String.format("%s, %s", mWeather.getCity(), mWeather.getCountry()));
+        if (mWeather.getCountry() == null) {
+            mWeather.setCountry("" + mWeather.getLat());
+            mWeather.setCity("" + mWeather.getLon());
+        }
+
+        if (mWeather.getState() == null) {
+            cityText.setText(String.format("%s, %s", mWeather.getCity(), mWeather.getCountry()));
+        } else {
+            if (State.valueOfName(mWeather.getState()) == State.UNKNOWN) {
+                cityText.setText(String.format("%s, %s, %s", mWeather.getCity()
+                        , mWeather.getState()
+                        , mWeather.getCountry()));
+            } else {
+                cityText.setText(String.format("%s, %s, %s", mWeather.getCity()
+                        , State.valueOfName(mWeather.getState()).getAbbreviation()
+                        , mWeather.getCountry()));
+                mWeather.setState(State.valueOfName(mWeather.getState()).getAbbreviation());
+            }
+        }
         condDescr.setText(String.format("%s(%s)", mWeather.getMain(), mWeather.getDescription()));
         temp.setText(tempFromKelvinToCelsiusString(mWeather.getTemp()));
         hum.setText(String.format("%s%%", mWeather.getHumidity()));
@@ -662,10 +778,11 @@ public class WeatherFragment extends Fragment {
         windDeg.setText(String.format("%s%s", mWeather.getDeg(), DEGREE));
 
         setWeatherImages();
-
-        setTempDaysTextToCelsius();
-
-        setTempHoursTextToCelsius();
+        setTemperature();//needed instead of below because of issue when
+        //on Fahrenheit then get weather from zip
+//        setTempDaysTextToCelsius();
+//
+//        setTempHoursTextToCelsius();
     }
 
     private void setTempHoursTextToCelsius() {
@@ -747,7 +864,8 @@ public class WeatherFragment extends Fragment {
     //TODO
     private void setWeatherImages() {
         ImageView imgView = mView.findViewById(weather_conditionIcon);
-        Picasso.get().load(getImgUrl(mWeather.getIcon())).into(imgView);
+        Picasso.get().load(getImgUrl(mWeather.getIcon())).resize(120, 120)
+                .into(imgView);
 
         ImageView imgViewDay1 = mView.findViewById(weather_Day1Img);
         ImageView imgViewDay2 = mView.findViewById(weather_Day2Img);
@@ -760,25 +878,25 @@ public class WeatherFragment extends Fragment {
         ImageView imgViewDay9 = mView.findViewById(weather_Day9Img);
         ImageView imgViewDay10 = mView.findViewById(weather_Day10Img);
 
-        Picasso.get().load(getImgUrl(mWeathers10d[0].getIcon()))
+        Picasso.get().load(getImgUrl(mWeathers10d[0].getIcon())).resize(120, 120)
                 .into(imgViewDay1);
-        Picasso.get().load(getImgUrl(mWeathers10d[1].getIcon()))
+        Picasso.get().load(getImgUrl(mWeathers10d[1].getIcon())).resize(120, 120)
                 .into(imgViewDay2);
-        Picasso.get().load(getImgUrl(mWeathers10d[2].getIcon()))
+        Picasso.get().load(getImgUrl(mWeathers10d[2].getIcon())).resize(120, 120)
                 .into(imgViewDay3);
-        Picasso.get().load(getImgUrl(mWeathers10d[3].getIcon()))
+        Picasso.get().load(getImgUrl(mWeathers10d[3].getIcon())).resize(120, 120)
                 .into(imgViewDay4);
-        Picasso.get().load(getImgUrl(mWeathers10d[4].getIcon()))
+        Picasso.get().load(getImgUrl(mWeathers10d[4].getIcon())).resize(120, 120)
                 .into(imgViewDay5);
-        Picasso.get().load(getImgUrl(mWeathers10d[5].getIcon()))
+        Picasso.get().load(getImgUrl(mWeathers10d[5].getIcon())).resize(120, 120)
                 .into(imgViewDay6);
-        Picasso.get().load(getImgUrl(mWeathers10d[6].getIcon()))
+        Picasso.get().load(getImgUrl(mWeathers10d[6].getIcon())).resize(120, 120)
                 .into(imgViewDay7);
-        Picasso.get().load(getImgUrl(mWeathers10d[7].getIcon()))
+        Picasso.get().load(getImgUrl(mWeathers10d[7].getIcon())).resize(120, 120)
                 .into(imgViewDay8);
-        Picasso.get().load(getImgUrl(mWeathers10d[8].getIcon()))
+        Picasso.get().load(getImgUrl(mWeathers10d[8].getIcon())).resize(120, 120)
                 .into(imgViewDay9);
-        Picasso.get().load(getImgUrl(mWeathers10d[9].getIcon()))
+        Picasso.get().load(getImgUrl(mWeathers10d[9].getIcon())).resize(120, 120)
                 .into(imgViewDay10);
 
         ImageView imgViewHour1 = mView.findViewById(weather_Hour1Img);
@@ -807,53 +925,53 @@ public class WeatherFragment extends Fragment {
         ImageView imgViewHour24 = mView.findViewById(weather_Hour24Img);
 
 
-        Picasso.get().load(getImgUrl(mWeathers24h[0].getIcon()))
+        Picasso.get().load(getImgUrl(mWeathers24h[0].getIcon())).resize(120, 120)
                 .into(imgViewHour1);
-        Picasso.get().load(getImgUrl(mWeathers24h[1].getIcon()))
+        Picasso.get().load(getImgUrl(mWeathers24h[1].getIcon())).resize(120, 120)
                 .into(imgViewHour2);
-        Picasso.get().load(getImgUrl(mWeathers24h[2].getIcon()))
+        Picasso.get().load(getImgUrl(mWeathers24h[2].getIcon())).resize(120, 120)
                 .into(imgViewHour3);
-        Picasso.get().load(getImgUrl(mWeathers24h[3].getIcon()))
+        Picasso.get().load(getImgUrl(mWeathers24h[3].getIcon())).resize(120, 120)
                 .into(imgViewHour4);
-        Picasso.get().load(getImgUrl(mWeathers24h[4].getIcon()))
+        Picasso.get().load(getImgUrl(mWeathers24h[4].getIcon())).resize(120, 120)
                 .into(imgViewHour5);
-        Picasso.get().load(getImgUrl(mWeathers24h[5].getIcon()))
+        Picasso.get().load(getImgUrl(mWeathers24h[5].getIcon())).resize(120, 120)
                 .into(imgViewHour6);
-        Picasso.get().load(getImgUrl(mWeathers24h[6].getIcon()))
+        Picasso.get().load(getImgUrl(mWeathers24h[6].getIcon())).resize(120, 120)
                 .into(imgViewHour7);
-        Picasso.get().load(getImgUrl(mWeathers24h[7].getIcon()))
+        Picasso.get().load(getImgUrl(mWeathers24h[7].getIcon())).resize(120, 120)
                 .into(imgViewHour8);
-        Picasso.get().load(getImgUrl(mWeathers24h[8].getIcon()))
+        Picasso.get().load(getImgUrl(mWeathers24h[8].getIcon())).resize(120, 120)
                 .into(imgViewHour9);
-        Picasso.get().load(getImgUrl(mWeathers24h[9].getIcon()))
+        Picasso.get().load(getImgUrl(mWeathers24h[9].getIcon())).resize(120, 120)
                 .into(imgViewHour10);
-        Picasso.get().load(getImgUrl(mWeathers24h[10].getIcon()))
+        Picasso.get().load(getImgUrl(mWeathers24h[10].getIcon())).resize(120, 120)
                 .into(imgViewHour11);
-        Picasso.get().load(getImgUrl(mWeathers24h[11].getIcon()))
+        Picasso.get().load(getImgUrl(mWeathers24h[11].getIcon())).resize(120, 120)
                 .into(imgViewHour12);
-        Picasso.get().load(getImgUrl(mWeathers24h[12].getIcon()))
+        Picasso.get().load(getImgUrl(mWeathers24h[12].getIcon())).resize(120, 120)
                 .into(imgViewHour13);
-        Picasso.get().load(getImgUrl(mWeathers24h[13].getIcon()))
+        Picasso.get().load(getImgUrl(mWeathers24h[13].getIcon())).resize(120, 120)
                 .into(imgViewHour14);
-        Picasso.get().load(getImgUrl(mWeathers24h[14].getIcon()))
+        Picasso.get().load(getImgUrl(mWeathers24h[14].getIcon())).resize(120, 120)
                 .into(imgViewHour15);
-        Picasso.get().load(getImgUrl(mWeathers24h[15].getIcon()))
+        Picasso.get().load(getImgUrl(mWeathers24h[15].getIcon())).resize(120, 120)
                 .into(imgViewHour16);
-        Picasso.get().load(getImgUrl(mWeathers24h[16].getIcon()))
+        Picasso.get().load(getImgUrl(mWeathers24h[16].getIcon())).resize(120, 120)
                 .into(imgViewHour17);
-        Picasso.get().load(getImgUrl(mWeathers24h[17].getIcon()))
+        Picasso.get().load(getImgUrl(mWeathers24h[17].getIcon())).resize(120, 120)
                 .into(imgViewHour18);
-        Picasso.get().load(getImgUrl(mWeathers24h[18].getIcon()))
+        Picasso.get().load(getImgUrl(mWeathers24h[18].getIcon())).resize(120, 120)
                 .into(imgViewHour19);
-        Picasso.get().load(getImgUrl(mWeathers24h[19].getIcon()))
+        Picasso.get().load(getImgUrl(mWeathers24h[19].getIcon())).resize(120, 120)
                 .into(imgViewHour20);
-        Picasso.get().load(getImgUrl(mWeathers24h[20].getIcon()))
+        Picasso.get().load(getImgUrl(mWeathers24h[20].getIcon())).resize(120, 120)
                 .into(imgViewHour21);
-        Picasso.get().load(getImgUrl(mWeathers24h[21].getIcon()))
+        Picasso.get().load(getImgUrl(mWeathers24h[21].getIcon())).resize(120, 120)
                 .into(imgViewHour22);
-        Picasso.get().load(getImgUrl(mWeathers24h[22].getIcon()))
+        Picasso.get().load(getImgUrl(mWeathers24h[22].getIcon())).resize(120, 120)
                 .into(imgViewHour23);
-        Picasso.get().load(getImgUrl(mWeathers24h[23].getIcon()))
+        Picasso.get().load(getImgUrl(mWeathers24h[23].getIcon())).resize(120, 120)
                 .into(imgViewHour24, new Callback() {
                     @Override
                     public void onSuccess() {
@@ -904,59 +1022,72 @@ public class WeatherFragment extends Fragment {
      */
     private void getWeatherZip() {
         String zip = ((EditText)mView.findViewById(weather_zipEditText)).getText().toString().trim();
+//        Uri uri = getUriWeatherCurrentLatLon(getContext());
+//
+//        Uri uri2 = getUriWeather10dLatLon(getContext());
+//
+//        Uri uri3 = getUriWeather24hLatLon(getContext());
+//        Uri uri = new Uri.Builder()
+//                .scheme("https")
+//                .appendPath(getString(ep_base_url))
+//                .appendPath(getString(ep_weather))
+//                .appendPath(getString(ep_zip))
+//                .build();
+//
+//        Uri uri2 = new Uri.Builder()
+//                .scheme("https")
+//                .appendPath(getString(ep_base_url))
+//                .appendPath(getString(ep_weather))
+//                .appendPath(getString(ep_zip))
+//                .appendPath(getString(ep_10d))
+//                .build();
+//
+//        Uri uri3 = new Uri.Builder()
+//                .scheme("https")
+//                .appendPath(getString(ep_base_url))
+//                .appendPath(getString(ep_weather))
+//                .appendPath(getString(ep_zip))
+//                .appendPath(getString(ep_24h))
+//                .build();
 
-        Uri uri = new Uri.Builder()
-                .scheme("https")
-                .appendPath(getString(ep_base_url))
-                .appendPath(getString(ep_weather))
-                .appendPath(getString(ep_zip))
-                .build();
+        Uri uri = getUriWeatherCurrentZip(getContext());
 
-        Uri uri2 = new Uri.Builder()
-                .scheme("https")
-                .appendPath(getString(ep_base_url))
-                .appendPath(getString(ep_weather))
-                .appendPath(getString(ep_zip))
-                .appendPath(getString(ep_10d))
-                .build();
+        Uri uri2 = getUriWeather10dZip(getContext());
 
-        Uri uri3 = new Uri.Builder()
-                .scheme("https")
-                .appendPath(getString(ep_base_url))
-                .appendPath(getString(ep_weather))
-                .appendPath(getString(ep_zip))
-                .appendPath(getString(ep_24h))
-                .build();
+        Uri uri3 = getUriWeather24hZip(getContext());
 
-        JSONObject msg = new JSONObject();
-        try {
-            msg.put("zip", zip);
-        } catch (JSONException e) {
-            Log.wtf("zip", "Error creating JSON: " + e.getMessage());
-        }
+        JSONObject msg = WeatherHelper.getJsonObjectZip(Integer.parseInt(zip));
 
-        new SendPostAsyncTask.Builder(uri.toString(), msg)
-                .onPostExecute(this::endOfGetWeatherTask)
-                .onCancelled(error -> /*((EditText) mView.findViewById(R.id.weather_zipEditText)
-                        ).setError("empty!!")*/Log.e(TAG, error)/*alert("save unsuccessful")*/)
-                .addHeaderField("authorization", mJwToken) //add the JWT as a header
-                .build().execute();
+//        new SendPostAsyncTask.Builder(uri.toString(), msg)
+//                .onPostExecute(this::endOfGetWeatherTask)
+//                .onCancelled(error -> /*((EditText) mView.findViewById(R.id.weather_zipEditText)
+//                        ).setError("empty!!")*/Log.e(TAG, error)/*alert("save unsuccessful")*/)
+//                .addHeaderField("authorization", mJwToken) //add the JWT as a header
+//                .build().execute();
+//
+//        new SendPostAsyncTask.Builder(uri2.toString(), msg)
+//                .onPostExecute(this::endOfGetWeathers10dTask)
+//                .onCancelled(error -> /*((EditText) mView.findViewById(R.id.weather_zipEditText)
+//                        ).setError("empty!!")*/Log.e(TAG, error)/*alert("save unsuccessful")*/)
+//                .addHeaderField("authorization", mJwToken) //add the JWT as a header
+//                .build().execute();
+//
+//        new SendPostAsyncTask.Builder(uriWeather24h.toString(), msg)
+//                .onPostExecute(this::endOfGetWeathers24hTask)
+//                .onCancelled(error -> /*((EditText) mView.findViewById(R.id.weather_zipEditText)
+//                        ).setError("empty!!")*/Log.e(TAG, error)/*alert("save unsuccessful")*/)
+//                .addHeaderField("authorization", mJwToken) //add the JWT as a header
+//                .build().execute();
 
-        new SendPostAsyncTask.Builder(uri2.toString(), msg)
-                .onPostExecute(this::endOfGetWeathers10dTask)
-                .onCancelled(error -> /*((EditText) mView.findViewById(R.id.weather_zipEditText)
-                        ).setError("empty!!")*/Log.e(TAG, error)/*alert("save unsuccessful")*/)
-                .addHeaderField("authorization", mJwToken) //add the JWT as a header
-                .build().execute();
-
-        new SendPostAsyncTask.Builder(uri3.toString(), msg)
-                .onPostExecute(this::endOfGetWeathers24hTask)
-                .onCancelled(error -> /*((EditText) mView.findViewById(R.id.weather_zipEditText)
-                        ).setError("empty!!")*/Log.e(TAG, error)/*alert("save unsuccessful")*/)
-                .addHeaderField("authorization", mJwToken) //add the JWT as a header
-                .build().execute();
+        sendPostAsyncTaskHelper(uri, msg, this::endOfGetWeatherTask, mJwToken);
+        sendPostAsyncTaskHelper(uri2, msg, this::endOfGetWeathers10dTask, mJwToken);
+        sendPostAsyncTaskHelper(uri3, msg, this::endOfGetWeathers24hTask, mJwToken);
     }
 
+    /**
+     *
+     * @param result
+     */
     private void endOfGetWeathers10dTask(String result) {
         try {
             boolean hasData = false;
@@ -971,8 +1102,8 @@ public class WeatherFragment extends Fragment {
                 JSONArray dataJArray = root.getJSONArray(
                         getString(keys_json_data));
 
-                mWeather.setLat(root.getDouble(getString(keys_json_lat)));
-                mWeather.setLon(root.getDouble(getString(keys_json_lon)));
+//                mWeather.setLat(root.getDouble(getString(keys_json_lat)));
+//                mWeather.setLon(root.getDouble(getString(keys_json_lon)));
                 for (int i = 0; i < 10; i++) {
                     JSONObject dataJSONObject = dataJArray.getJSONObject(i);
                     JSONObject weatherJObject = dataJSONObject.getJSONObject(
@@ -992,6 +1123,10 @@ public class WeatherFragment extends Fragment {
         }
     }
 
+    /**
+     *
+     * @param result
+     */
     private void endOfGetWeathers24hTask(final String result) {
         try {
             boolean hasHourly = false;
@@ -1007,7 +1142,8 @@ public class WeatherFragment extends Fragment {
                         getString(keys_json_hourly));
                 JSONArray dataJArray = hourlyJObject.getJSONArray(
                         getString(keys_json_data));
-
+                mWeather.setLat(root.getDouble(getString(keys_json_latitude)));
+                mWeather.setLon(root.getDouble(getString(keys_json_longitude)));
                 for (int i = 0; i < 24; i++) {
                     JSONObject dataJSONObject = dataJArray.getJSONObject(i);
                     Weather weather = new Weather(getNewIcon(dataJSONObject.getString(
@@ -1016,7 +1152,11 @@ public class WeatherFragment extends Fragment {
                             - 32) * 5 / 9) + 273.15);
                     mWeathers24h[i] = weather;
                 }
+//                mWeather.setZip();
                 setWeather();
+//                if (!mAlertSave) {
+//                    attemptSaveWeather();
+//                }
             } else {
                 alert("Can't load 24-h forecast", getContext());
             }
@@ -1054,7 +1194,8 @@ public class WeatherFragment extends Fragment {
 
             WeatherFragmentDirections.ActionNavWeatherToNavLocations action =
                     WeatherFragmentDirections.actionNavWeatherToNavLocations(
-                            locations, mEmail, mJwToken);
+                            locations, mEmail, mJwToken, mHomeWeather, mHomeWeathers10d
+                            , mHomeWeathers24h);
             Navigation.findNavController(Objects.requireNonNull(mView)).navigate(action);
 //            final Bundle args = new Bundle();
 //            args.putSerializable(getString(R.string.key_blog_post_view), theBlogPost);
@@ -1077,7 +1218,6 @@ public class WeatherFragment extends Fragment {
             boolean hasWeather = false;
             boolean hasMain = false;
             boolean hasWind = false;
-            boolean hasCoord = false;
             boolean hasSys = false;
             boolean hasName = false;
             boolean hasTimezone = false;
@@ -1097,11 +1237,6 @@ public class WeatherFragment extends Fragment {
             } else {
                 Log.e("ERROR!", "No wind");
             }
-            if (root.has(getString(keys_json_coord))) {
-                hasCoord = true;
-            } else {
-                Log.e("ERROR!", "No coord");
-            }
             if (root.has(getString(keys_json_name))) {
                 hasName = true;
             } else {
@@ -1118,7 +1253,7 @@ public class WeatherFragment extends Fragment {
                 Log.e("ERROR!", "No timezone");
             }
 
-            if (hasCoord && hasMain && hasName && hasSys && hasWeather && hasWind && hasTimezone) {
+            if (hasMain && hasName && hasSys && hasWeather && hasWind && hasTimezone) {
                 JSONArray weatherJArray = root.getJSONArray(
                         getString(keys_json_weather));
                 JSONObject mainJObject = root.getJSONObject(
@@ -1127,8 +1262,6 @@ public class WeatherFragment extends Fragment {
                         getString(keys_json_name));
                 JSONObject sysJObject = root.getJSONObject(
                         getString(keys_json_sys));
-                JSONObject coordJObject = root.getJSONObject(
-                        getString(keys_json_coord));
                 JSONObject windJObject = root.getJSONObject(
                         getString(keys_json_wind));
                 long timezoneJObject = root.getLong(getString(keys_json_timezone));
@@ -1139,10 +1272,6 @@ public class WeatherFragment extends Fragment {
                                 keys_json_description))
                         , getNewIcon(weatherJObject.getString(getString(
                         keys_json_icon)))
-                        , coordJObject.getDouble(getString(
-                        keys_json_lon))
-                        , coordJObject.getDouble(getString(
-                        keys_json_lat))
                         , mainJObject.getDouble(getString(
                         keys_json_temp))
                         ,  mainJObject.getInt(getString(

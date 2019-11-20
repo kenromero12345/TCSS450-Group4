@@ -5,6 +5,11 @@ import android.os.Parcelable;
 
 import java.io.Serializable;
 
+/**
+ * Location class that includes information about latitude, longitude, name(city, country),
+ * and zip
+ * @author Ken Gil Romero kgmr@uw.edu
+ */
 public class Location implements Parcelable, Serializable {
     protected Location(Parcel in) {
         mLon = in.readDouble();
@@ -13,6 +18,9 @@ public class Location implements Parcelable, Serializable {
         mZip = in.readInt();
     }
 
+    /**
+     *
+     */
     public static final Creator<Location> CREATOR = new Creator<Location>() {
         @Override
         public Location createFromParcel(Parcel in) {

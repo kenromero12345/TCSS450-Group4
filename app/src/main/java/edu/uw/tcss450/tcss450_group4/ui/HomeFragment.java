@@ -1,6 +1,8 @@
 package edu.uw.tcss450.tcss450_group4.ui;
 
 
+import android.location.Address;
+import android.location.Geocoder;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,9 +19,13 @@ import androidx.fragment.app.Fragment;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
+import java.io.IOException;
+import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 
 import edu.uw.tcss450.tcss450_group4.R;
+import edu.uw.tcss450.tcss450_group4.model.State;
 import edu.uw.tcss450.tcss450_group4.model.Weather;
 
 import static edu.uw.tcss450.tcss450_group4.R.color.redviolet;
@@ -36,7 +42,7 @@ import static edu.uw.tcss450.tcss450_group4.R.id.weather_windDegree;
 import static edu.uw.tcss450.tcss450_group4.R.id.weather_windSpeed;
 import static edu.uw.tcss450.tcss450_group4.model.WeatherHelper.getImgUrl;
 import static edu.uw.tcss450.tcss450_group4.model.WeatherHelper.tempFromKelvinToCelsiusString;
-import static edu.uw.tcss450.tcss450_group4.model.WeatherHelper.tempFromKelvinToFarenheitString;
+import static edu.uw.tcss450.tcss450_group4.model.WeatherHelper.tempFromKelvinToFahrenheitString;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -86,6 +92,18 @@ public class HomeFragment extends Fragment {
     }
 
     private void setWeather() {
+        Geocoder geocoder;
+        List<Address> addresses;
+        geocoder = new Geocoder(getContext(), Locale.getDefault());
+
+        try {
+            addresses = geocoder.getFromLocation(mWeather.getLat(), mWeather.getLon(), 1);
+            mWeather.setZip(addresses.get(0).getPostalCode());
+            mWeather.setCity(addresses.get(0).getLocality());
+            mWeather.setState(addresses.get(0).getAdminArea());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         TextView cityText = mView.findViewById(weather_cityCountry);
         TextView condDescr = mView.findViewById(weather_conditonDescription);
         TextView temp = mView.findViewById(weather_temperature);
@@ -94,7 +112,19 @@ public class HomeFragment extends Fragment {
         TextView windSpeed = mView.findViewById(weather_windSpeed);
         TextView windDeg = mView.findViewById(weather_windDegree);
 
-        cityText.setText(mWeather.getCity() + ", " + mWeather.getCountry());
+        if (mWeather.getState().equals(null)) {
+            cityText.setText(String.format("%s, %s", mWeather.getCity(), mWeather.getCountry()));
+        } else {
+            if (State.valueOfName(mWeather.getState()) == State.UNKNOWN) {
+                cityText.setText(String.format("%s, %s, %s", mWeather.getCity()
+                        , mWeather.getState()
+                        , mWeather.getCountry()));
+            } else {
+                cityText.setText(String.format("%s, %s, %s", mWeather.getCity()
+                        , State.valueOfName(mWeather.getState()).getAbbreviation()
+                        , mWeather.getCountry()));
+            }
+        }
         condDescr.setText(mWeather.getMain() + "(" + mWeather.getDescription() + ")");
         temp.setText(tempFromKelvinToCelsiusString(mWeather.getTemp()));
         hum.setText(mWeather.getHumidity() + "%");
@@ -120,7 +150,7 @@ public class HomeFragment extends Fragment {
     private void switchTemperature() {
         if (((Switch) mView.findViewById(weather_temperatureSwitch)).isChecked()) {
             TextView temp = mView.findViewById(weather_temperature);
-            temp.setText(tempFromKelvinToFarenheitString(mWeather.getTemp()));
+            temp.setText(tempFromKelvinToFahrenheitString(mWeather.getTemp()));
             temp.setTextColor(ContextCompat.getColor(Objects.requireNonNull(getContext()), redviolet));
 
         } else {
@@ -129,5 +159,4 @@ public class HomeFragment extends Fragment {
             temp.setTextColor(ContextCompat.getColor(Objects.requireNonNull(getContext()), uwPurple));
         }
     }
-
 }

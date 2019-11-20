@@ -5,6 +5,9 @@ import android.os.Parcelable;
 
 import java.io.Serializable;
 
+/**
+ *
+ */
 public class Weather implements Serializable, Parcelable {
 
     //TODO:low temp
@@ -45,6 +48,18 @@ public class Weather implements Serializable, Parcelable {
     private double mSpeed;
     private double mDeg;
     private long mTimezone;
+
+    public String getZip() {
+        return mZip;
+    }
+
+    private String mZip;
+    private String mState;
+
+    public void setCity(String mCity) {
+        this.mCity = mCity;
+    }
+
     private String mCity;
     private String mCountry;
 
@@ -72,14 +87,12 @@ public class Weather implements Serializable, Parcelable {
 //    private final float mLatitude;
 
     //TODO:
-    public Weather(String tDescription, String tIcon, double tLon, double tLat, double tTemp
+    public Weather(String tDescription, String tIcon, double tTemp
             , int tPressure, int tHumidity, double tTemp_min
             , double tTemp_max, double tSpeed, long tTimezone, String tCity
             /*, String tSunrise, String tSunset*//* , String tJwt*/)  {
         mDescription = tDescription;
         mIcon = tIcon;
-        mLon = tLon;
-        mLat = tLat;
         mTemp = tTemp;
         mPressure = tPressure;
         mHumidity = tHumidity;
@@ -113,6 +126,10 @@ public class Weather implements Serializable, Parcelable {
         mDeg = tDeg;
     }
 
+    public void setZip(String tZip) {
+        mZip = tZip;
+    }
+
     protected Weather(Parcel in) {
         mMain = in.readString();
         mDescription = in.readString();
@@ -129,6 +146,8 @@ public class Weather implements Serializable, Parcelable {
         mTimezone = in.readLong();
         mCity = in.readString();
         mCountry = in.readString();
+        mZip = in.readString();
+        mState = in.readString();
 //        mJwt = in.readString();
 //        mSunrise = in.readString();
 //        mSunset = in.readString();
@@ -176,6 +195,8 @@ public class Weather implements Serializable, Parcelable {
         dest.writeDouble(mTemp_min);
         dest.writeString(mMain);
         dest.writeLong(mTimezone);
+        dest.writeString(mZip);
+        dest.writeString(mState);
 //        dest.writeString(mJwt);
 //        dest.writeFloat(mLongitude);
 //        dest.writeFloat(mLatitude);
@@ -227,6 +248,14 @@ public class Weather implements Serializable, Parcelable {
 
     public String getCountry() {
         return mCountry;
+    }
+
+    public String getState() {
+        return mState;
+    }
+
+    public void setState(String mState) {
+        this.mState = mState;
     }
 
 //    public String getSunrise() {

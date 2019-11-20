@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -34,6 +35,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -50,6 +52,7 @@ import edu.uw.tcss450.tcss450_group4.ui.WeatherFragmentDirections;
 import edu.uw.tcss450.tcss450_group4.utils.SendPostAsyncTask;
 
 import static edu.uw.tcss450.tcss450_group4.R.id;
+import static edu.uw.tcss450.tcss450_group4.R.id.*;
 import static edu.uw.tcss450.tcss450_group4.R.id.action_logout;
 import static edu.uw.tcss450.tcss450_group4.R.id.drawer_layout;
 import static edu.uw.tcss450.tcss450_group4.R.id.nav_chat;
@@ -62,20 +65,15 @@ import static edu.uw.tcss450.tcss450_group4.R.id.nav_view;
 import static edu.uw.tcss450.tcss450_group4.R.id.nav_weather;
 import static edu.uw.tcss450.tcss450_group4.R.layout;
 import static edu.uw.tcss450.tcss450_group4.R.navigation;
-import static edu.uw.tcss450.tcss450_group4.R.string.ep_10d;
-import static edu.uw.tcss450.tcss450_group4.R.string.ep_24h;
 import static edu.uw.tcss450.tcss450_group4.R.string.ep_base_url;
 import static edu.uw.tcss450.tcss450_group4.R.string.ep_chats;
 import static edu.uw.tcss450.tcss450_group4.R.string.ep_connection;
 import static edu.uw.tcss450.tcss450_group4.R.string.ep_getall;
-import static edu.uw.tcss450.tcss450_group4.R.string.ep_latLon;
-import static edu.uw.tcss450.tcss450_group4.R.string.ep_weather;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_connection_connections;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_connection_firstname;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_connection_lastname;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_connection_memberid;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_connection_username;
-import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_coord;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_country;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_data;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_deg;
@@ -83,7 +81,9 @@ import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_description;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_hourly;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_humidity;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_icon;
+import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_latitude;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_login_success;
+import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_longitude;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_main;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_name;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_pressure;
@@ -100,12 +100,17 @@ import static edu.uw.tcss450.tcss450_group4.R.string.keys_prefs_email;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_prefs_password;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_shared_prefs;
 import static edu.uw.tcss450.tcss450_group4.model.WeatherHelper.alert;
+import static edu.uw.tcss450.tcss450_group4.model.WeatherHelper.getJsonObjectLatLon;
 import static edu.uw.tcss450.tcss450_group4.model.WeatherHelper.getNewIcon;
+import static edu.uw.tcss450.tcss450_group4.model.WeatherHelper.getUriWeather10dLatLon;
+import static edu.uw.tcss450.tcss450_group4.model.WeatherHelper.getUriWeather24hLatLon;
+import static edu.uw.tcss450.tcss450_group4.model.WeatherHelper.getUriWeatherCurrentLatLon;
+import static edu.uw.tcss450.tcss450_group4.model.WeatherHelper.sendPostAsyncTaskHelper;
 
 public class HomeActivity extends AppCompatActivity {
     // A constant int for the permissions request code. Must be a 16 bit number
     private static final int MY_PERMISSIONS_LOCATIONS = 8414;
-    private static final String TAG = "WEATHER_FRAG";
+//    private static final String TAG = "WEATHER_FRAG";
     private String mJwToken;
     private String mEmail;
     private int mMemberId;
@@ -117,8 +122,9 @@ public class HomeActivity extends AppCompatActivity {
     private FusedLocationProviderClient mFusedLocationClient;
     private Location mLocations;
     private LocationRequest mLocationRequest;
-    private double mLat;
-    private double mLon;
+//    private double mLat;
+//    private double mLon;
+    private boolean mUpdateWeather;
 //    private View mView;
     /**
      * The desired interval for location updates. Inexact. Updates may be more or less frequent.
@@ -308,13 +314,15 @@ public class HomeActivity extends AppCompatActivity {
                 gotoConnection();
                 break;
             case nav_weather:
-                if (Objects.requireNonNull(navController.getCurrentDestination()).getId() != nav_weather) {
-                    MobileNavigationDirections.ActionGlobalNavWeather directions2
-                            = WeatherFragmentDirections.actionGlobalNavWeather(mJwToken, mEmail,
-                            mWeather, mWeathers10d, mWeathers24h);
+//                if (Objects.requireNonNull(navController.getCurrentDestination()).getId() != nav_weather) {
+//                    MobileNavigationDirections.ActionGlobalNavWeather directions2
+//                            = WeatherFragmentDirections.actionGlobalNavWeather(mJwToken, mEmail,
+//                            mWeather, mWeathers10d, mWeathers24h);
+//
+//                    navController.navigate(directions2);
+//                }
+                clickWeather(navController);
 
-                    navController.navigate(directions2);
-                }
                 break;
             case nav_logout:
                 logout();
@@ -323,6 +331,32 @@ public class HomeActivity extends AppCompatActivity {
         //Close the drawer
         ((DrawerLayout) findViewById(drawer_layout)).closeDrawers();
         return true;
+    }
+
+    private void clickWeather(NavController navController) {
+        findViewById(layout_weather_wait).setVisibility(View.VISIBLE);
+        mUpdateWeather = true;
+        Log.d("weather", "update");
+        Location location = Objects.requireNonNull(LocationViewModel.getFactory()
+                .create(LocationViewModel.class)
+                .getCurrentLocation().getValue());
+        BigDecimal newLat = new BigDecimal(location.getLatitude())
+                .setScale(4, BigDecimal.ROUND_DOWN);
+        BigDecimal oldLat = new BigDecimal(mLocations.getLatitude())
+                .setScale(4, BigDecimal.ROUND_DOWN);
+        BigDecimal newLon = new BigDecimal(location.getLongitude())
+                .setScale(4, BigDecimal.ROUND_DOWN);
+        BigDecimal oldLon = new BigDecimal(mLocations.getLongitude())
+                .setScale(4, BigDecimal.ROUND_DOWN);
+        if (newLat.equals(oldLat) && newLon.equals(oldLon)) {
+            MobileNavigationDirections.ActionGlobalNavWeather directions
+                    = WeatherFragmentDirections.actionGlobalNavWeather
+                    (mJwToken, mEmail,mWeather, mWeathers10d, mWeathers24h, mWeather
+                            , mWeathers10d.clone(), mWeathers24h.clone());
+            navController.navigate(directions);
+        } else {
+            getWeather(location);
+        }
     }
 
     private void handleErrorsInTask(final String result) {
@@ -475,57 +509,51 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     private void getWeather(Location location) {
-        mLon = location.getLongitude();
-        mLat = location.getLatitude();
+//        mLon = location.getLongitude();
+//        mLat = location.getLatitude();
 
-        Uri uri = new Uri.Builder()
-                .scheme("https")
-                .appendPath(getString(ep_base_url))
-                .appendPath(getString(ep_weather))
-                .appendPath(getString(ep_latLon))
-                .build();
+        Uri uri = getUriWeatherCurrentLatLon(this);
 
-        Uri uri2 = new Uri.Builder()
-                .scheme("https")
-                .appendPath(getString(ep_base_url))
-                .appendPath(getString(ep_weather))
-                .appendPath(getString(ep_latLon))
-                .appendPath(getString(ep_10d))
-                .build();
+        Uri uri2 = getUriWeather10dLatLon(this);
 
-        Uri uri3 = new Uri.Builder()
-                .scheme("https")
-                .appendPath(getString(ep_base_url))
-                .appendPath(getString(ep_weather))
-                .appendPath(getString(ep_latLon))
-                .appendPath(getString(ep_24h))
-                .build();
+        Uri uri3 = getUriWeather24hLatLon(this);
 
-        JSONObject msg = new JSONObject();
-        try {
-            msg.put("lon", mLon);
-            msg.put("lat", mLat);
-        } catch (JSONException e) {
-            Log.wtf("LONG/LAT", "Error creating JSON: " + e.getMessage());
-        }
+//        Uri uri = new Uri.Builder()
+//                .scheme("https")
+//                .appendPath(getString(ep_base_url))
+//                .appendPath(getString(ep_weather))
+//                .appendPath(getString(ep_latLon))
+//                .build();
+//
+//        Uri uri2 = new Uri.Builder()
+//                .scheme("https")
+//                .appendPath(getString(ep_base_url))
+//                .appendPath(getString(ep_weather))
+//                .appendPath(getString(ep_latLon))
+//                .appendPath(getString(ep_10d))
+//                .build();
+//
+//        Uri uri3 = new Uri.Builder()
+//                .scheme("https")
+//                .appendPath(getString(ep_base_url))
+//                .appendPath(getString(ep_weather))
+//                .appendPath(getString(ep_latLon))
+//                .appendPath(getString(ep_24h))
+//                .build();
 
-        new SendPostAsyncTask.Builder(uri.toString(), msg)
-                .onPostExecute(this::handleWeatherGetOnPostExecute)
-                .onCancelled(error -> Log.e(TAG, error))
-                .addHeaderField("authorization", mJwToken) //add the JWT as a header
-                .build().execute();
+        JSONObject msg = getJsonObjectLatLon(location.getLatitude(), location.getLongitude());
 
-        new SendPostAsyncTask.Builder(uri2.toString(), msg)
-                .onPostExecute(this::handleWeather10dGetOnPostExecute)
-                .onCancelled(error -> Log.e(TAG, error))
-                .addHeaderField("authorization", mJwToken) //add the JWT as a header
-                .build().execute();
+//        JSONObject msg = new JSONObject();
+//        try {
+//            msg.put("lon", mLon);
+//            msg.put("lat", mLat);
+//        } catch (JSONException e) {
+//            Log.wtf("LONG/LAT", "Error creating JSON: " + e.getMessage());
+//        }
 
-        new SendPostAsyncTask.Builder(uri3.toString(), msg)
-                .onPostExecute(this::handleWeather24hGetOnPostExecute)
-                .onCancelled(error -> Log.e(TAG, error))
-                .addHeaderField("authorization", mJwToken) //add the JWT as a header
-                .build().execute();
+        sendPostAsyncTaskHelper(uri, msg, this::handleWeatherGetOnPostExecute, mJwToken);
+        sendPostAsyncTaskHelper(uri2, msg, this::handleWeather10dGetOnPostExecute, mJwToken);
+        sendPostAsyncTaskHelper(uri3, msg, this::handleWeather24hGetOnPostExecute, mJwToken);
     }
 
     private void handleWeather24hGetOnPostExecute(final String result) {
@@ -543,12 +571,23 @@ public class HomeActivity extends AppCompatActivity {
                         getString(keys_json_hourly));
                 JSONArray dataJArray = hourlyJObject.getJSONArray(
                         getString(keys_json_data));
-
+                mWeather.setLat(root.getDouble(getString(keys_json_latitude)));
+                mWeather.setLon(root.getDouble(getString(keys_json_longitude)));
                 Weather[] weathers = new Weather[24];
+
                 for (int i = 0; i < 24; i++) {
                     JSONObject dataJSONObject = dataJArray.getJSONObject(i);
-                    Weather weather = new Weather(getNewIcon(dataJSONObject.getString(
-                            getString(keys_json_icon)))
+//                    String icon = "";
+//                    if (dataJSONObject.getString(getString(keys_json_icon)).equals("fog")) {
+//                        if () {
+//                            icon = getNewIcon("fogd");
+//                        } else {
+//                            icon = getNewIcon("fogn");
+//                        }
+//                    } else {
+//                        icon = getNewIcon(dataJSONObject.getString(getString(keys_json_icon)));
+//                    }
+                    Weather weather = new Weather(getNewIcon(dataJSONObject.getString(getString(keys_json_icon)))//icon
                             , ((dataJSONObject.getDouble(getString(keys_json_temperature))
                             - 32) * 5 / 9) + 273.15);
                     weathers[i] = weather;
@@ -556,6 +595,22 @@ public class HomeActivity extends AppCompatActivity {
                 }
 
                 mWeathers24h = weathers;
+
+                if (mUpdateWeather) {
+                    MobileNavigationDirections.ActionGlobalNavWeather directions2
+                            = WeatherFragmentDirections.actionGlobalNavWeather
+                            (mJwToken, mEmail,mWeather, mWeathers10d, mWeathers24h, mWeather
+                                    , mWeathers10d.clone(), mWeathers24h.clone());
+
+                    NavController navController =
+                            Navigation.findNavController(this, nav_host_fragment);
+                    navController.navigate(directions2);
+                } else {
+                    MobileNavigationDirections.ActionGlobalNavHome directions
+                            = WeatherFragmentDirections.actionGlobalNavHome();
+                    directions.setWeather(mWeather);
+                    Navigation.findNavController(this, nav_host_fragment).navigate(directions);
+                }
 
             } else {
                 alert("Can't load current 24-h forecast", this);
@@ -605,7 +660,6 @@ public class HomeActivity extends AppCompatActivity {
             boolean hasWeather = false;
             boolean hasMain = false;
             boolean hasWind = false;
-            boolean hasCoord = false;
             boolean hasSys = false;
             boolean hasName = false;
             boolean hasTimezone = false;
@@ -625,11 +679,6 @@ public class HomeActivity extends AppCompatActivity {
             } else {
                 Log.e("ERROR!", "No wind");
             }
-            if (root.has(getString(keys_json_coord))) {
-                hasCoord = true;
-            } else {
-                Log.e("ERROR!", "No coord");
-            }
             if (root.has(getString(keys_json_name))) {
                 hasName = true;
             } else {
@@ -646,7 +695,7 @@ public class HomeActivity extends AppCompatActivity {
                 Log.e("ERROR!", "No timezone");
             }
 
-            if (hasCoord && hasMain && hasName && hasSys && hasWeather && hasWind && hasTimezone) {
+            if (hasMain && hasName && hasSys && hasWeather && hasWind && hasTimezone) {
                 JSONArray weatherJArray = root.getJSONArray(
                         getString(keys_json_weather));
                 JSONObject mainJObject = root.getJSONObject(
@@ -655,8 +704,6 @@ public class HomeActivity extends AppCompatActivity {
                         getString(keys_json_name));
                 JSONObject sysJObject = root.getJSONObject(
                         getString(keys_json_sys));
-//                JSONObject coordJObject = root.getJSONObject(
-//                        getString(keys_json_coord));
                 JSONObject windJObject = root.getJSONObject(
                         getString(keys_json_wind));
                 long timezoneJObject = root.getLong(getString(keys_json_timezone));
@@ -667,8 +714,6 @@ public class HomeActivity extends AppCompatActivity {
                                 keys_json_description))
                         , getNewIcon(weatherJObject.getString(getString(
                                 keys_json_icon)))
-                        , mLon
-                        , mLat
                         , mainJObject.getDouble(getString(
                                 keys_json_temp))
                         ,  mainJObject.getInt(getString(
@@ -698,10 +743,6 @@ public class HomeActivity extends AppCompatActivity {
                     weather.setMain(weatherJObject.getString(getString(keys_json_main)));
                 }
                 mWeather = weather;
-                MobileNavigationDirections.ActionGlobalNavHome directions
-                        = WeatherFragmentDirections.actionGlobalNavHome();
-                directions.setWeather(mWeather);
-                Navigation.findNavController(this,  nav_host_fragment).navigate(directions);
             } else {
                 alert("Can't load current weather", this);
             }
@@ -730,6 +771,7 @@ public class HomeActivity extends AppCompatActivity {
         startActivity(i);
         //End this Activity and remove it from the Activity back stack.
         finish();
+        findViewById(layout_login_wait).setVisibility(View.GONE);
     }
 
     private void logoutAndFinish() {

@@ -1,28 +1,49 @@
 package edu.uw.tcss450.tcss450_group4.ui;
 
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+
+import java.util.List;
+
 import edu.uw.tcss450.tcss450_group4.R;
 import edu.uw.tcss450.tcss450_group4.model.Location;
 import edu.uw.tcss450.tcss450_group4.ui.LocationsFragment.OnListFragmentInteractionListener;
 
-import java.util.List;
-
+/**
+ * adapter for the recycler view of locations
+ */
 public class MyLocationsRecyclerViewAdapter extends RecyclerView.Adapter<MyLocationsRecyclerViewAdapter.ViewHolder> {
-
+    /**
+     * list of locations that are saved
+     */
     private final List<Location> mValues;
+    /**
+     * listener for the fragment interaction
+     */
     private final OnListFragmentInteractionListener mListener;
 
+    /**
+     * contructor for the recycler view of locations adapter
+     * @param items the given locations
+     * @param listener the given listener
+     */
     public MyLocationsRecyclerViewAdapter(List<Location> items, OnListFragmentInteractionListener listener) {
         mValues = items;
         mListener = listener;
     }
 
+    /**
+     *
+     * @param parent
+     * @param viewType
+     * @return
+     */
+    @NonNull
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
@@ -30,6 +51,11 @@ public class MyLocationsRecyclerViewAdapter extends RecyclerView.Adapter<MyLocat
         return new ViewHolder(view);
     }
 
+    /**
+     *
+     * @param holder
+     * @param position
+     */
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mItem = mValues.get(position);
@@ -50,11 +76,18 @@ public class MyLocationsRecyclerViewAdapter extends RecyclerView.Adapter<MyLocat
         });
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public int getItemCount() {
         return mValues.size();
     }
 
+    /**
+     *
+     */
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
         public final TextView mNicknameView;
@@ -70,6 +103,10 @@ public class MyLocationsRecyclerViewAdapter extends RecyclerView.Adapter<MyLocat
 //            mZipView = (TextView) view.findViewById(R.id.weather_zip);
         }
 
+        /**
+         *
+         * @return
+         */
         @Override
         public String toString() {
             return super.toString() + " '" + mNicknameView.getText() + "'";

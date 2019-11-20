@@ -32,14 +32,7 @@ import edu.uw.tcss450.tcss450_group4.MobileNavigationDirections;
 import edu.uw.tcss450.tcss450_group4.R;
 import edu.uw.tcss450.tcss450_group4.model.LocationViewModel;
 import edu.uw.tcss450.tcss450_group4.model.Weather;
-import edu.uw.tcss450.tcss450_group4.utils.SendPostAsyncTask;
 
-import static edu.uw.tcss450.tcss450_group4.R.string.ep_10d;
-import static edu.uw.tcss450.tcss450_group4.R.string.ep_24h;
-import static edu.uw.tcss450.tcss450_group4.R.string.ep_base_url;
-import static edu.uw.tcss450.tcss450_group4.R.string.ep_latLon;
-import static edu.uw.tcss450.tcss450_group4.R.string.ep_weather;
-import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_coord;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_country;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_data;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_deg;
@@ -47,6 +40,8 @@ import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_description;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_hourly;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_humidity;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_icon;
+import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_latitude;
+import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_longitude;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_main;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_name;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_pressure;
@@ -59,31 +54,70 @@ import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_temperature;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_timezone;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_weather;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_wind;
+import static edu.uw.tcss450.tcss450_group4.model.WeatherHelper.getJsonObjectLatLon;
 import static edu.uw.tcss450.tcss450_group4.model.WeatherHelper.getNewIcon;
+import static edu.uw.tcss450.tcss450_group4.model.WeatherHelper.getUriWeather10dLatLon;
+import static edu.uw.tcss450.tcss450_group4.model.WeatherHelper.getUriWeather24hLatLon;
+import static edu.uw.tcss450.tcss450_group4.model.WeatherHelper.getUriWeatherCurrentLatLon;
+import static edu.uw.tcss450.tcss450_group4.model.WeatherHelper.sendPostAsyncTaskHelper;
 
 /**
+ * Fragment for displaying a map and choosing a location from it
  * A simple {@link Fragment} subclass.
  */
 public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleMap.OnMapClickListener {
+    /**
+     * the google map
+     */
     private GoogleMap mMap;
+    /**
+     * for getting this email's location
+     */
     private String mEmail;
+    /**
+     * for the authorization
+     */
     private String mJwToken;
+    /**
+     * stores the current weather condition
+     */
     private Weather mWeather;
+
+    /**
+     * stores the 10day forecast
+     */
     private Weather[] mWeathers10d;
-    private static final String TAG = "WEATHER_FRAG";
+//    private static final String TAG = "WEATHER_FRAG";
+    /**
+     * stores the latitude that was clicked
+     */
     private double mLat;
+    /**
+     * stores the longitude that was clicked
+     */
     private double mLon;
 
-    public MapFragment() {
-        // Required empty public constructor
-    }
+//    public MapFragment() {
+//        // Required empty public constructor
+//    }
 
+    /**
+     *
+     * @param inflater
+     * @param container
+     * @param savedInstanceState
+     * @return
+     */
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_map, container, false);
     }
 
+    /**
+     * initialization of some fields
+     * @param savedInstanceState
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -92,14 +126,17 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
                 Objects.requireNonNull(getArguments()));
         mEmail =  args.getEmail();
         mJwToken = args.getJwt();
-//        mLatLng = args.getLatLng();
     }
 
-
+    /**
+     * sync map
+     * @param view
+     * @param savedInstanceState
+     */
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        Log.d("map", "start");
+//        Log.d("map", "start");
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment =
                 (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
@@ -107,6 +144,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
         Objects.requireNonNull(mapFragment).getMapAsync(this);
     }
 
+    /**
+     * when map is ready
+     * @param googleMap
+     */
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
@@ -135,6 +176,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
         mMap.setOnMapClickListener(this);
     }
 
+    /**
+     * when the map is clicked
+     * @param latLng
+     */
     @Override
     public void onMapClick(LatLng latLng) {
         Log.d("LAT/LONG", latLng.toString());
@@ -156,59 +201,70 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 
     }
 
+    /**
+     * display weather after clicking the map
+     * @param tLat
+     * @param tLon
+     */
     private void displayWeather(double tLat, double tLon) {
         mLat = tLat;
         mLon = tLon;
-        Uri uri = new Uri.Builder()
-                .scheme("https")
-                .appendPath(getString(ep_base_url))
-                .appendPath(getString(ep_weather))
-                .appendPath(getString(ep_latLon))
-                .build();
+        Uri uri = getUriWeatherCurrentLatLon(getContext());
 
-        Uri uri2 = new Uri.Builder()
-                .scheme("https")
-                .appendPath(getString(ep_base_url))
-                .appendPath(getString(ep_weather))
-                .appendPath(getString(ep_latLon))
-                .appendPath(getString(ep_10d))
-                .build();
+        Uri uri2 = getUriWeather10dLatLon(getContext());
 
-        Uri uri3 = new Uri.Builder()
-                .scheme("https")
-                .appendPath(getString(ep_base_url))
-                .appendPath(getString(ep_weather))
-                .appendPath(getString(ep_latLon))
-                .appendPath(getString(ep_24h))
-                .build();
+        Uri uri3 = getUriWeather24hLatLon(getContext());
+//        Uri uri = new Uri.Builder()
+//                .scheme("https")
+//                .appendPath(getString(ep_base_url))
+//                .appendPath(getString(ep_weather))
+//                .appendPath(getString(ep_latLon))
+//                .build();
+//
+//        Uri uri2 = new Uri.Builder()
+//                .scheme("https")
+//                .appendPath(getString(ep_base_url))
+//                .appendPath(getString(ep_weather))
+//                .appendPath(getString(ep_latLon))
+//                .appendPath(getString(ep_10d))
+//                .build();
+//
+//        Uri uri3 = new Uri.Builder()
+//                .scheme("https")
+//                .appendPath(getString(ep_base_url))
+//                .appendPath(getString(ep_weather))
+//                .appendPath(getString(ep_latLon))
+//                .appendPath(getString(ep_24h))
+//                .build();
 
-        JSONObject msg = new JSONObject();
-        try {
-            msg.put("lon", tLon);
-            msg.put("lat", tLat);
-        } catch (JSONException e) {
-            Log.wtf("LONG/LAT", "Error creating JSON: " + e.getMessage());
-        }
+        JSONObject msg = getJsonObjectLatLon(tLat, tLon);
 
-        new SendPostAsyncTask.Builder(uri.toString(), msg)
-                .onPostExecute(this::handleWeatherGetOnPostExecute)
-                .onCancelled(error -> Log.e(TAG, error))
-                .addHeaderField("authorization", mJwToken) //add the JWT as a header
-                .build().execute();
-
-        new SendPostAsyncTask.Builder(uri2.toString(), msg)
-                .onPostExecute(this::handleWeather10dGetOnPostExecute)
-                .onCancelled(error -> Log.e(TAG, error))
-                .addHeaderField("authorization", mJwToken) //add the JWT as a header
-                .build().execute();
-
-        new SendPostAsyncTask.Builder(uri3.toString(), msg)
-                .onPostExecute(this::handleWeather24hGetOnPostExecute)
-                .onCancelled(error -> Log.e(TAG, error))
-                .addHeaderField("authorization", mJwToken) //add the JWT as a header
-                .build().execute();
+//        new SendPostAsyncTask.Builder(uri.toString(), msg)
+//                .onPostExecute(this::handleWeatherGetOnPostExecute)
+//                .onCancelled(error -> Log.e(TAG, error))
+//                .addHeaderField("authorization", mJwToken) //add the JWT as a header
+//                .build().execute();
+//
+//        new SendPostAsyncTask.Builder(uri2.toString(), msg)
+//                .onPostExecute(this::handleWeather10dGetOnPostExecute)
+//                .onCancelled(error -> Log.e(TAG, error))
+//                .addHeaderField("authorization", mJwToken) //add the JWT as a header
+//                .build().execute();
+//
+//        new SendPostAsyncTask.Builder(uriWeather24h.toString(), msg)
+//                .onPostExecute(this::handleWeather24hGetOnPostExecute)
+//                .onCancelled(error -> Log.e(TAG, error))
+//                .addHeaderField("authorization", mJwToken) //add the JWT as a header
+//                .build().execute();
+        sendPostAsyncTaskHelper(uri, msg, this::handleWeatherGetOnPostExecute, mJwToken);
+        sendPostAsyncTaskHelper(uri2, msg, this::handleWeather10dGetOnPostExecute, mJwToken);
+        sendPostAsyncTaskHelper(uri3, msg, this::handleWeather24hGetOnPostExecute, mJwToken);
     }
 
+    /**
+     * at post execute for getting 24 hour forecast
+     * @param result
+     */
     private void handleWeather24hGetOnPostExecute(final String result) {
         try {
             boolean hasHourly = false;
@@ -224,7 +280,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
                         getString(keys_json_hourly));
                 JSONArray dataJArray = hourlyJObject.getJSONArray(
                         getString(keys_json_data));
-
+                mWeather.setLat(root.getDouble(getString(keys_json_latitude)));
+                mWeather.setLon(root.getDouble(getString(keys_json_longitude)));
                 Weather[] weathers = new Weather[24];
                 for (int i = 0; i < 24; i++) {
                     JSONObject dataJSONObject = dataJArray.getJSONObject(i);
@@ -235,9 +292,14 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
                     weathers[i] = weather;
                 }
 
+                MapFragmentArgs args = null;
+                if (getArguments() != null) {
+                    args = MapFragmentArgs.fromBundle(getArguments());
+                }
                 MobileNavigationDirections.ActionGlobalNavWeather directions
-                        = WeatherFragmentDirections.actionGlobalNavWeather(mJwToken, mEmail,
-                        mWeather, mWeathers10d, weathers);
+                        = WeatherFragmentDirections.actionGlobalNavWeather(mJwToken, mEmail
+                        , mWeather, mWeathers10d, weathers, args.getWeatherHome()
+                        , args.getWeathersHome10d(), args.getWeathersHome24h());
 
                 Navigation.findNavController(Objects.requireNonNull(getView()))
                         .navigate(directions);
@@ -255,6 +317,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
         }
     }
 
+    /**
+     * at post execute for getting 10 day forecast
+     * @param result
+     */
     private void handleWeather10dGetOnPostExecute(final String result) {
         try {
             boolean hasData = false;
@@ -296,12 +362,15 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
         }
     }
 
+    /**
+     * at post execute for getting current weather condition
+     * @param result
+     */
     private void handleWeatherGetOnPostExecute(final String result) {
         try {
             boolean hasWeather = false;
             boolean hasMain = false;
             boolean hasWind = false;
-            boolean hasCoord = false;
             boolean hasSys = false;
             boolean hasName = false;
             boolean hasTimezone = false;
@@ -321,11 +390,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
             } else {
                 Log.e("ERROR!", "No wind");
             }
-            if (root.has(getString(keys_json_coord))) {
-                hasCoord = true;
-            } else {
-                Log.e("ERROR!", "No coord");
-            }
             if (root.has(getString(keys_json_name))) {
                 hasName = true;
             } else {
@@ -342,7 +406,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
                 Log.e("ERROR!", "No timezone");
             }
 
-            if (hasCoord && hasMain && hasName && hasSys && hasWeather && hasWind && hasTimezone) {
+            if (hasMain && hasName && hasSys && hasWeather && hasWind && hasTimezone) {
                 JSONArray weatherJArray = root.getJSONArray(
                         getString(keys_json_weather));
                 JSONObject mainJObject = root.getJSONObject(
@@ -351,8 +415,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
                         getString(keys_json_name));
                 JSONObject sysJObject = root.getJSONObject(
                         getString(keys_json_sys));
-                JSONObject coordJObject = root.getJSONObject(
-                        getString(keys_json_coord));
                 JSONObject windJObject = root.getJSONObject(
                         getString(keys_json_wind));
                 long timezoneJObject = root.getLong(getString(keys_json_timezone));
@@ -363,8 +425,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
                                 keys_json_description))
                         , getNewIcon(weatherJObject.getString(getString(
                         keys_json_icon)))
-                        , mLon
-                        , mLat
                         , mainJObject.getDouble(getString(
                         keys_json_temp))
                         ,  mainJObject.getInt(getString(
