@@ -4,7 +4,7 @@
     // register fragment ids
     <string name="register_firstName">First Name</string>
     <string name="register_lastName">Last Name</string>
-    <string name="register_nickname">Nickname</string>
+    <string name="register_username">Username</string>
     <string name="register_email">Email</string>
     <string name="register_password">Password</string>
     <string name="register_retypePassword">Retype Password</string>

@@ -30,6 +30,8 @@ public class VerifyFragment extends Fragment {
 
     private String mJwt = "";
 
+    private int tries = 0;
+
     public VerifyFragment() {
         // Required empty public constructor
     }
@@ -65,12 +67,12 @@ public class VerifyFragment extends Fragment {
         Button b = v.findViewById(R.id.verify_button);
         b.setOnClickListener(view -> validVerify(v));
         b = v.findViewById(R.id.verify_resend);
-        b.setOnClickListener(view -> resendVerify(v));
+        b.setOnClickListener(view -> resendVerify());
 
         return v;
     }
 
-    private void resendVerify(View v) {
+    private void resendVerify() {
         Uri uri = new Uri.Builder()
                 .scheme("https")
                 .appendPath(getString(R.string.ep_base_url))
@@ -205,8 +207,17 @@ public class VerifyFragment extends Fragment {
             } else {
                 //Login was unsuccessful. Don’t switch fragments and
                 // inform the user
-                ((EditText) getView().findViewById(R.id.verify_textView))
-                        .setError("Verification Unsuccessful");
+                if (tries >= 2) {
+                    tries = 0;
+                    ((EditText) getView().findViewById(R.id.verify_textView))
+                            .setError("Verification unsuccessful. You have made 3 attempts.\n" +
+                                        "A new code has been sent to your email");
+                    resendVerify();
+                } else {
+                    ((EditText) getView().findViewById(R.id.verify_textView))
+                            .setError("Verification Unsuccessful");
+                    tries++;
+                }
             }
             getActivity().findViewById(R.id.layout_verify_wait)
                     .setVisibility(View.GONE);

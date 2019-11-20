@@ -49,7 +49,7 @@ public class RegisterFragment extends Fragment {
     private void validRegister(View v) {
         EditText firstName = v.findViewById(R.id.register_firstName);
         EditText lastName = v.findViewById(R.id.register_lastName);
-        EditText nickname = v.findViewById(R.id.register_nickname);
+        EditText username = v.findViewById(R.id.register_username);
         EditText email = v.findViewById(R.id.register_email);
         EditText password = v.findViewById(R.id.register_password);
         EditText rePassword = v.findViewById(R.id.register_retypePassword);
@@ -57,7 +57,7 @@ public class RegisterFragment extends Fragment {
 
         String firstNameStr = firstName.getText().toString();
         String lastNameStr = lastName.getText().toString();
-        String nicknameStr = nickname.getText().toString();
+        String usernameStr = username.getText().toString();
         String emailStr = email.getText().toString();
         String passwordStr = password.getText().toString();
         String rePasswordStr = rePassword.getText().toString();
@@ -84,8 +84,8 @@ public class RegisterFragment extends Fragment {
         }
 
         // Checks for valid nickname
-        if (nicknameStr.length() == 0) {
-            nickname.setError("Enter a nickname");
+        if (usernameStr.length() == 0) {
+            username.setError("Enter a username");
         } else {
             nicknameError = true;
         }
@@ -119,7 +119,7 @@ public class RegisterFragment extends Fragment {
             Credentials credentials = new Credentials.Builder(emailStr, passwordStr)
                     .addFirstName(firstNameStr)
                     .addLastName(lastNameStr)
-                    .addUsername(nicknameStr)
+                    .addUsername(usernameStr)
                     .build();
             Uri uri = new Uri.Builder()
                     .scheme("https")
@@ -181,8 +181,13 @@ public class RegisterFragment extends Fragment {
                 // inform the user
                 String detail = resultsJSON.getJSONObject(getString(R.string.keys_json_register_error))
                         .getString(getString(R.string.keys_json_register_detail));
-                ((EditText) getView().findViewById(R.id.register_email))
-                        .setError(detail);
+                if (detail.startsWith("Key (username)")) {
+                    ((EditText) getView().findViewById(R.id.register_username))
+                            .setError("Username already exists");
+                } else {
+                    ((EditText) getView().findViewById(R.id.register_email))
+                            .setError("Email already is used");
+                }
             }
             getActivity().findViewById(R.id.layout_register_wait)
                     .setVisibility(View.GONE);
