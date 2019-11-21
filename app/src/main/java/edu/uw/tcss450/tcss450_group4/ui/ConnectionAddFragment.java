@@ -48,8 +48,8 @@ public class ConnectionAddFragment extends Fragment implements View.OnClickListe
     @Override
     public void onStart(){
         super.onStart();
-        ((TextView) getActivity().findViewById(R.id.connection_firstname))
-                .setText("hello");
+//        ((TextView) getActivity().findViewById(R.id.connection_firstname))
+//                .setText("hello");
         if (getArguments() != null) {
             mJwToken = getArguments().getString("jwt");
             mBoolean = getArguments().getBoolean("boolean");
@@ -57,18 +57,18 @@ public class ConnectionAddFragment extends Fragment implements View.OnClickListe
                     getArguments().get(getString(R.string.keys_connection_view));
             Log.e("Boolean!", String.valueOf(mBoolean));
         }
-        if (mBoolean == true) {
-            Log.e("firstname!", mConItem.getFirstName());
-            Log.e("lastname!", mConItem.getLastName());
-            Log.e("memberid!", mConItem.getContactId());
-            Log.e("username!", mConItem.getContactUserName());
-            ((TextView) getActivity().findViewById(R.id.connection_firstname))
-                    .setText("Name: " + mConItem.getFirstName() + " " + mConItem.getLastName());
-            ((TextView) getActivity().findViewById(R.id.connection_memberid))
-                    .setText("ID: " + mConItem.getContactId()) ;
-            ((TextView) getActivity().findViewById(R.id.connection_username))
-                    .setText("Username : " + mConItem.getContactUserName());
-        }
+//        if (mBoolean == true) {
+//            Log.e("firstname!", mConItem.getFirstName());
+//            Log.e("lastname!", mConItem.getLastName());
+//            Log.e("memberid!", mConItem.getContactId());
+//            Log.e("username!", mConItem.getContactUserName());
+//            ((TextView) getActivity().findViewById(R.id.connection_firstname))
+//                    .setText("Name: " + mConItem.getFirstName() + " " + mConItem.getLastName());
+//            ((TextView) getActivity().findViewById(R.id.connection_memberid))
+//                    .setText("ID: " + mConItem.getContactId()) ;
+//            ((TextView) getActivity().findViewById(R.id.connection_username))
+//                    .setText("Username : " + mConItem.getContactUserName());
+//        }
 
 
 
@@ -83,12 +83,30 @@ public class ConnectionAddFragment extends Fragment implements View.OnClickListe
 //        }
     }
 
+    public void populateSearch(){
+        Log.e("firstname!", mConItem.getFirstName());
+        Log.e("lastname!", mConItem.getLastName());
+        Log.e("memberid!", mConItem.getContactId());
+        Log.e("username!", mConItem.getContactUserName());
+        ((TextView) getActivity().findViewById(R.id.connection_firstname))
+                .setText("Name: " + mConItem.getFirstName() + " " + mConItem.getLastName());
+        ((TextView) getActivity().findViewById(R.id.connection_memberid))
+                .setText("ID: " + mConItem.getContactId()) ;
+        ((TextView) getActivity().findViewById(R.id.connection_username))
+                .setText("Username : " + mConItem.getContactUserName());
+    }
+
     @Override
     public void onViewCreated (@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        ((TextView) getActivity().findViewById(R.id.connection_firstname))
-                .setText("Name: ");
+//        ((TextView) getActivity().findViewById(R.id.connection_firstname))
+//                .setText("Name: ");
+
+        if (mBoolean == true) {
+            populateSearch();
+
+        }
 
 
         Button button_search = (Button) view.findViewById(R.id.connectionSearchButton);
