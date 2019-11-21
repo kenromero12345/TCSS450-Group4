@@ -54,9 +54,4 @@
     <string name="button_create_chat">+</string>
     <string name="keys_json_timezone">timezone</string>
 
-<<<<<<< HEAD
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-=======
->>>>>>> master
 </resources>

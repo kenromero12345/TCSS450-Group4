@@ -27,7 +27,6 @@
 
     <string name="ep_connection">connections</string>
     <string name="ep_getall">getAll</string>
-<<<<<<< HEAD
     <string name="ep_getfriend">getFriend</string>
     <string name="ep_search">search</string>
     <string name="ep_add">add</string>
@@ -36,9 +35,7 @@
     <string name="ep_remove">remove</string>
 
 </resources>
-=======
 
     <string name="ep_remove">remove</string>
     <string name="ep_chats">chats</string>
 </resources>
->>>>>>> master
