@@ -9,7 +9,7 @@
         android:title="@string/menu_home" />
 
     <item
-        android:id="@+id/nav_chat"
+        android:id="@+id/nav_chat_list"
         android:icon="@drawable/ic_chat_gold_24dp"
         android:title="@string/menu_chat" />
 
@@ -22,6 +22,11 @@
         android:id="@+id/nav_weather"
         android:icon="@drawable/ic_weather_gold_24dp"
         android:title="@string/menu_weather" />
+
+    <item
+        android:id="@+id/nav_logout"
+        android:icon="@drawable/ic_exit_to_app_black_24dp"
+        android:title="@string/menu_logout" />
 
 
 </menu>

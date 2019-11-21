@@ -125,10 +125,10 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        Button button_register = (Button) view.findViewById(R.id.button_register);
+        Button button_register = view.findViewById(R.id.button_register);
         button_register.setOnClickListener(this::onClick);
 
-        Button button_login = (Button) view.findViewById(R.id.button_signin);
+        Button button_login = view.findViewById(R.id.button_signin);
         button_login.setOnClickListener(this::onClick);
     }
 
@@ -294,7 +294,6 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
         JSONObject msg = credentials.asJSONObject();
 
         mCrendentials = credentials;
-
         //instantiate and execute the AsyncTask.
         //Feel free to add a handler for onPreExecution so that a progress bar
         //is displayed or maybe disable buttons.

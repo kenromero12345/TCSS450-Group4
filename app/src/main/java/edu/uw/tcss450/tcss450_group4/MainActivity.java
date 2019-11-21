@@ -7,10 +7,9 @@ import android.os.Bundle;
 import android.util.DisplayMetrics;
 
 import edu.uw.tcss450.tcss450_group4.ui.VerifyFragment;
-import edu.uw.tcss450.tcss450_group4.ui.home.HomeFragment;
+import edu.uw.tcss450.tcss450_group4.ui.HomeFragment;
 
 public class MainActivity extends AppCompatActivity {
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
