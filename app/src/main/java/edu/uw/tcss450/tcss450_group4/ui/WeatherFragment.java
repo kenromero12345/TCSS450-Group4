@@ -168,7 +168,7 @@ public class WeatherFragment extends Fragment {
      */
     private void setComponents() {
         //TODO don't need to always do, just once
-
+        mView.findViewById(layout_weather_clickable).setOnClickListener(e -> toggleMainFab());
         View zipView = mView.findViewById(weather_zipEditText);
         zipView.setOnKeyListener((v, keyCode, event) ->
                 zipKeyListener(v, keyCode));
@@ -176,6 +176,8 @@ public class WeatherFragment extends Fragment {
 //                setToast("Get the current weather condition and forecasts of the given zip code"));
         zipView.setOnLongClickListener(e ->
                 setToast("Get the current weather condition and forecasts of the given zip code"));
+        zipView.setOnClickListener(e -> ifFabOpenCloseIt());
+        zipView.setOnFocusChangeListener((v, hasFocus) -> toggleMainFab());
 //        mView.findViewById(weather_getZipButton).setOnLongClickListener(v ->
 //                setToast("Get the current weather condition and forecasts of the given zip code"));
 //        mView.findViewById(weather_getZipButton).setOnClickListener(v -> attemptGetWeatherZip());
@@ -252,6 +254,7 @@ public class WeatherFragment extends Fragment {
             mFab_getCurrentLocationWeather.startAnimation(mFab_close);
             mFab_main.startAnimation(mFab_anticlock);
             mIsOpen = false;
+            mView.findViewById(layout_weather_clickable).setVisibility(View.GONE);
         } else {
             mFab_gotoLocations.setVisibility(View.VISIBLE);
             mFab_saveWeather.setVisibility(View.VISIBLE);
@@ -263,6 +266,7 @@ public class WeatherFragment extends Fragment {
             mFab_getCurrentLocationWeather.startAnimation(mFab_open);
             mFab_main.startAnimation(mFab_clock);
             mIsOpen = true;
+            mView.findViewById(layout_weather_clickable).setVisibility(View.VISIBLE);
         }
     }
 
@@ -270,9 +274,7 @@ public class WeatherFragment extends Fragment {
      * When map fab is clicked, go to the map
      */
     private void gotoMap() {
-        if (mIsOpen) {
-            toggleMainFab();
-        }
+        ifFabOpenCloseIt();
         WeatherFragmentDirections.ActionNavWeatherToNavMap action =
                 WeatherFragmentDirections.actionNavWeatherToNavMap(mEmail, mJwToken, mHomeWeather
                         , mHomeWeathers10d, mHomeWeathers24h);
@@ -295,6 +297,7 @@ public class WeatherFragment extends Fragment {
      * switch forecast from 10 days to 24 hours
      */
     private void switchForecast() {
+        ifFabOpenCloseIt();
         if (((Switch) mView.findViewById(weather_forecastSwitch)).isChecked()) {
             ((TextView)mView.findViewById(weather_10DayForecast)).setTypeface(Typeface.DEFAULT_BOLD);
             ((TextView)mView.findViewById(weather_24HourForecast)).setTypeface(Typeface.DEFAULT);
@@ -331,6 +334,12 @@ public class WeatherFragment extends Fragment {
                     .setVisibility(View.GONE);
             getActivity().findViewById(weather_layoutDays2)
                     .setVisibility(View.GONE);
+        }
+    }
+
+    private void ifFabOpenCloseIt() {
+        if (mIsOpen) {
+            toggleMainFab();
         }
     }
 
@@ -474,6 +483,7 @@ public class WeatherFragment extends Fragment {
     }
 
     private void setTemperature() {
+        ifFabOpenCloseIt();
         TextView temp = mView.findViewById(weather_temperature);
         if (((Switch) mView.findViewById(weather_temperatureSwitch)).isChecked()) {
             temp.setText(tempFromKelvinToFahrenheitString(mWeather.getTemp()));
@@ -1188,9 +1198,7 @@ public class WeatherFragment extends Fragment {
                     , message.getDouble(getString(keys_json_lat))
                     , message.getString(getString(keys_json_nickname)));
             }
-            if (mIsOpen) {
-                toggleMainFab();
-            }
+            ifFabOpenCloseIt();
 
             WeatherFragmentDirections.ActionNavWeatherToNavLocations action =
                     WeatherFragmentDirections.actionNavWeatherToNavLocations(
