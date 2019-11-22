@@ -186,6 +186,27 @@ public class HomeActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(id.toolbar);
         setSupportActionBar(toolbar);
         DrawerLayout drawer = findViewById(drawer_layout);
+        drawer.addDrawerListener(new DrawerLayout.DrawerListener() {
+            @Override
+            public void onDrawerSlide(@NonNull View drawerView, float slideOffset) {
+
+            }
+
+            @Override
+            public void onDrawerOpened(@NonNull View drawerView) {
+//                findViewById(activity_loading).setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onDrawerClosed(@NonNull View drawerView) {
+                findViewById(activity_loading).setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onDrawerStateChanged(int newState) {
+
+            }
+        });
         NavigationView navigationView = findViewById(nav_view);
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
@@ -217,7 +238,6 @@ public class HomeActivity extends AppCompatActivity {
             mMemberId = args.getMemberId();
         }
         navigationView.setNavigationItemSelectedListener(this::onNavigationSelected);
-
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         mLocationCallback = new LocationCallback() {
             @Override
@@ -334,7 +354,11 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     private void clickWeather(NavController navController) {
-        findViewById(layout_weather_wait).setVisibility(View.VISIBLE);
+//        if(Objects.requireNonNull(navController.getCurrentDestination()).getId() == nav_home){
+//            findViewById(layout_weather_wait).setVisibility(View.VISIBLE);
+//        }
+        findViewById(activity_loading).setVisibility(View.VISIBLE);
+
         mUpdateWeather = true;
         Log.d("weather", "update");
         Location location = Objects.requireNonNull(LocationViewModel.getFactory()
@@ -803,6 +827,8 @@ public class HomeActivity extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
+
 
     @Override
     public void onRequestPermissionsResult(int requestCode,
