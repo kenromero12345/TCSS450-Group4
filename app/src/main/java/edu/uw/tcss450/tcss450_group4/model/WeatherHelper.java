@@ -174,7 +174,7 @@ public class WeatherHelper {
         return msg;
     }
 
-    public static JSONObject getJsonObjectZip(int tZip) {
+    public static JSONObject getJsonObjectZip(String tZip) {
         JSONObject msg = new JSONObject();
         try {
             msg.put("zip", tZip);

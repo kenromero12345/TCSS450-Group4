@@ -96,6 +96,7 @@ public class WeatherFragment extends Fragment {
     private int mTempLocationsCount;
     private int mLocationsCount;
     private boolean mRowsUpdated;
+    private boolean mIfWeatherSuccess;
 //    private int mTempLocationsNum;
 //    private boolean mSuccessSave;
 //    private int mCount;
@@ -152,7 +153,7 @@ public class WeatherFragment extends Fragment {
         zipView.setOnLongClickListener(e ->
                 setToast("Get the current weather condition and forecasts of the given zip code"));
         zipView.setOnClickListener(e -> ifFabOpenCloseIt());
-        zipView.setOnFocusChangeListener((v, hasFocus) -> toggleMainFab());
+        zipView.setOnFocusChangeListener((v, hasFocus) -> ifFabOpenCloseIt());
 //        mView.findViewById(weather_getZipButton).setOnLongClickListener(v ->
 //                setToast("Get the current weather condition and forecasts of the given zip code"));
 //        mView.findViewById(weather_getZipButton).setOnClickListener(v -> attemptGetWeatherZip());
@@ -198,6 +199,8 @@ public class WeatherFragment extends Fragment {
             InputMethodManager mgr = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
             mgr.hideSoftInputFromWindow(tView.getWindowToken(), 0);
             return true;
+        } else {
+            ifFabOpenCloseIt();
         }
         return false;
     }
@@ -344,6 +347,7 @@ public class WeatherFragment extends Fragment {
         TimeZone timeZone = TimeZone.getTimeZone(mWeather.getTimezoneID());
         @SuppressLint("SimpleDateFormat") SimpleDateFormat sdf
                 = new SimpleDateFormat("h a");
+        sdf.setTimeZone(timeZone);
         Calendar calendar = Calendar.getInstance(timeZone);
 
         Date today = calendar.getTime();
@@ -434,6 +438,7 @@ public class WeatherFragment extends Fragment {
         TimeZone timeZone = TimeZone.getTimeZone(mWeather.getTimezoneID());
         @SuppressLint("SimpleDateFormat") SimpleDateFormat sdf
                 = new SimpleDateFormat("MM/dd");
+        sdf.setTimeZone(timeZone);
         Calendar calendar = Calendar.getInstance(timeZone);
         Date today = calendar.getTime();
         calendar.add(Calendar.DAY_OF_YEAR, 1);
@@ -574,7 +579,9 @@ public class WeatherFragment extends Fragment {
 
         try {
             msg.put("email", mEmail);
-            msg.put("city", mWeather.getCity());
+//            if (mWeather.getCity() != null) {
+                msg.put("city", mWeather.getCity());
+//            }
             if (mWeather.getState() == null) {
                 msg.put("country", mWeather.getCountry());
             } else {
@@ -750,18 +757,24 @@ public class WeatherFragment extends Fragment {
         }
 
         if (mWeather.getState() == null) {
-            cityText.setText(String.format("%s, %s", mWeather.getCity(), mWeather.getCountry()));
+//            if(mWeather.getCity() == null) {
+                cityText.setText(String.format("%s", mWeather.getCountry()));
+//            } else {
+                cityText.setText(String.format("%s, %s", mWeather.getCity(), mWeather.getCountry()));
+//            }
         } else {
-            if (State.valueOfName(mWeather.getState()) == State.UNKNOWN) {
+            if (State.valueOfName(mWeather.getState()) != State.UNKNOWN) {
+                mWeather.setState(State.valueOfName(mWeather.getState()).getAbbreviation());
+            }
+//            if (mWeather.getCity() == null) {
+//                cityText.setText(String.format("%s, %s"
+//                        , mWeather.getState()
+//                        , mWeather.getCountry()));
+//            } else {
                 cityText.setText(String.format("%s, %s, %s", mWeather.getCity()
                         , mWeather.getState()
                         , mWeather.getCountry()));
-            } else {
-                cityText.setText(String.format("%s, %s, %s", mWeather.getCity()
-                        , State.valueOfName(mWeather.getState()).getAbbreviation()
-                        , mWeather.getCountry()));
-                mWeather.setState(State.valueOfName(mWeather.getState()).getAbbreviation());
-            }
+//            }
         }
         condDescr.setText(String.format("%s(%s)", mWeather.getMain(), mWeather.getDescription()));
         temp.setText(tempFromKelvinToCelsiusString(mWeather.getTemp()));
@@ -1050,7 +1063,7 @@ public class WeatherFragment extends Fragment {
 
         Uri uri3 = getUriWeather24hZip(getContext());
 
-        JSONObject msg = WeatherHelper.getJsonObjectZip(Integer.parseInt(zip));
+        JSONObject msg = WeatherHelper.getJsonObjectZip(zip);
 
 //        new SendPostAsyncTask.Builder(uri.toString(), msg)
 //                .onPostExecute(this::endOfGetWeatherTask)
@@ -1096,15 +1109,18 @@ public class WeatherFragment extends Fragment {
                 JSONArray dataJArray = root.getJSONArray(
                         getString(keys_json_data));
 
-//                mWeather.setLat(root.getDouble(getString(keys_json_lat)));
-//                mWeather.setLon(root.getDouble(getString(keys_json_lon)));
+
+                Weather[] weathers = new Weather[10];
                 for (int i = 0; i < 10; i++) {
                     JSONObject dataJSONObject = dataJArray.getJSONObject(i);
                     JSONObject weatherJObject = dataJSONObject.getJSONObject(
                             getString(keys_json_weather));
                     Weather weather = new Weather(getNewIcon(weatherJObject.getString(getString(keys_json_icon)))
                             , dataJSONObject.getDouble(getString(keys_json_temp)) +  273.15 );
-                    mWeathers10d[i] = weather;
+                    weathers[i] = weather;
+                }
+                if (mIfWeatherSuccess) {
+                    mWeathers10d = weathers;
                 }
 
             } else {
@@ -1136,19 +1152,26 @@ public class WeatherFragment extends Fragment {
                         getString(keys_json_hourly));
                 JSONArray dataJArray = hourlyJObject.getJSONArray(
                         getString(keys_json_data));
-                mWeather.setLat(root.getDouble(getString(keys_json_latitude)));
-                mWeather.setLon(root.getDouble(getString(keys_json_longitude)));
-                mWeather.setTimezoneID(root.getString(getString(keys_json_timezone)));
+
+                Weather[] weathers = new Weather[24];
                 for (int i = 0; i < 24; i++) {
                     JSONObject dataJSONObject = dataJArray.getJSONObject(i);
                     Weather weather = new Weather(getNewIcon(dataJSONObject.getString(
                             getString(keys_json_icon)))
                             , ((dataJSONObject.getDouble(getString(keys_json_temperature))
                             - 32) * 5 / 9) + 273.15);
-                    mWeathers24h[i] = weather;
+                    weathers[i] = weather;
+                }
+                if (mIfWeatherSuccess) {
+                    mWeather.setLat(root.getDouble(getString(keys_json_latitude)));
+                    mWeather.setLon(root.getDouble(getString(keys_json_longitude)));
+                    mWeather.setTimezoneID(root.getString(getString(keys_json_timezone)));
+                    mWeathers24h = weathers;
+                    setWeather();
+                    mIfWeatherSuccess = false;
                 }
 //                mWeather.setZip();
-                setWeather();
+//                setWeather();
 //                if (!mAlertSave) {
 //                    attemptSaveWeather();
 //                }
@@ -1248,6 +1271,7 @@ public class WeatherFragment extends Fragment {
             }
 
             if (hasMain && hasName && hasSys && hasWeather && hasWind && hasTimezone) {
+                mIfWeatherSuccess = true;
                 JSONArray weatherJArray = root.getJSONArray(
                         getString(keys_json_weather));
                 JSONObject mainJObject = root.getJSONObject(
