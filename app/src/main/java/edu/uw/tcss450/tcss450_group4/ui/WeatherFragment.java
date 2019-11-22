@@ -48,6 +48,7 @@ import edu.uw.tcss450.tcss450_group4.model.Location;
 import edu.uw.tcss450.tcss450_group4.model.State;
 import edu.uw.tcss450.tcss450_group4.model.Weather;
 import edu.uw.tcss450.tcss450_group4.model.WeatherHelper;
+import edu.uw.tcss450.tcss450_group4.utils.SendPostAsyncTask;
 
 import static android.graphics.Color.BLACK;
 import static edu.uw.tcss450.tcss450_group4.R.anim;
@@ -55,35 +56,7 @@ import static edu.uw.tcss450.tcss450_group4.R.color.redviolet;
 import static edu.uw.tcss450.tcss450_group4.R.color.uwPurple;
 import static edu.uw.tcss450.tcss450_group4.R.id.*;
 import static edu.uw.tcss450.tcss450_group4.R.layout;
-import static edu.uw.tcss450.tcss450_group4.R.string.ep_base_url;
-import static edu.uw.tcss450.tcss450_group4.R.string.ep_get;
-import static edu.uw.tcss450.tcss450_group4.R.string.ep_send;
-import static edu.uw.tcss450.tcss450_group4.R.string.ep_weather;
-import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_country;
-import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_data;
-import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_deg;
-import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_description;
-import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_hourly;
-import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_humidity;
-import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_icon;
-import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_lat;
-import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_latitude;
-import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_long;
-import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_longitude;
-import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_main;
-import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_messages;
-import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_name;
-import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_nickname;
-import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_pressure;
-import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_speed;
-import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_sys;
-import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_temp;
-import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_temp_max;
-import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_temp_min;
-import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_temperature;
-import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_timezone;
-import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_weather;
-import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_wind;
+import static edu.uw.tcss450.tcss450_group4.R.string.*;
 import static edu.uw.tcss450.tcss450_group4.model.WeatherHelper.alert;
 import static edu.uw.tcss450.tcss450_group4.model.WeatherHelper.getImgUrl;
 import static edu.uw.tcss450.tcss450_group4.model.WeatherHelper.getNewIcon;
@@ -120,7 +93,9 @@ public class WeatherFragment extends Fragment {
     private boolean mIsOpen;
     private boolean isCountryNull;
 
-//    private int mLocationsNum;
+    private int mTempLocationsCount;
+    private int mLocationsCount;
+    private boolean mRowsUpdated;
 //    private int mTempLocationsNum;
 //    private boolean mSuccessSave;
 //    private int mCount;
@@ -591,7 +566,7 @@ public class WeatherFragment extends Fragment {
         try {
             msg.put("email", mEmail);
             msg.put("city", mWeather.getCity());
-            if (mWeather.getState().equals(null)) {
+            if (mWeather.getState() == null) {
                 msg.put("country", mWeather.getCountry());
             } else {
                 msg.put("country", mWeather.getState() + ", " + mWeather.getCountry());
@@ -613,48 +588,54 @@ public class WeatherFragment extends Fragment {
         sendPostAsyncTaskHelper(uri, msg, this::endOfSaveWeatherTask, mJwToken);
     }
 
-//    private void getRowsWeather() {
-//        Uri uri = new Uri.Builder()
-//            .scheme("https")
-//            .appendPath(getString(ep_base_url))
-//            .appendPath(getString(ep_weather))
-//            .appendPath(getString(ep_get))
-//            .appendPath(getString(ep_rows))
-//            .build();
-//
-//        JSONObject msg = new JSONObject();
-//
-//        try {
-//            msg.put("email", mEmail);
-//        } catch (JSONException e) {
-//            e.printStackTrace();
-//        }
-//
-//        new SendPostAsyncTask.Builder(uri.toString(), msg)
-//            .onPostExecute(this::endOfGetRowsWeather)
-//                .onCancelled(error -> Log.e(TAG, error))
-//            .addHeaderField("authorization", mJwToken)
-//                .build().execute();
-//    }
-//
-//    private void endOfGetRowsWeather(final String result) {
-//        try {
-//            Log.d(TAG, result);
-//            JSONObject root = new JSONObject(result);
-//            if (root.has("success") && root.get("success").equals("false")) {
-//
-//                Log.d("rows", result);
-//            }
-//            mLocationsNum = root.getInt(getString(keys_json_messages));
-//
-//            if (mTempLocationsNum != mLocationsNum) {
-//                alert("Save successful", getContext());
-//            }
-//
-//        } catch (JSONException e) {
-//            e.printStackTrace();
-//        }
-//    }
+    private void getRowsWeather() {
+        Uri uri = new Uri.Builder()
+            .scheme("https")
+            .appendPath(getString(ep_base_url))
+            .appendPath(getString(ep_weather))
+            .appendPath(getString(ep_get))
+            .appendPath(getString(ep_rows))
+            .build();
+
+        JSONObject msg = new JSONObject();
+
+        try {
+            msg.put("email", mEmail);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        new SendPostAsyncTask.Builder(uri.toString(), msg)
+            .onPostExecute(this::endOfGetRowsWeather)
+                .onCancelled(error -> Log.e(TAG, error))
+            .addHeaderField("authorization", mJwToken)
+                .build().execute();
+    }
+
+    private void endOfGetRowsWeather(final String result) {
+        try {
+            Log.d(TAG, result);
+            JSONObject root = new JSONObject(result);
+
+            mLocationsCount = root.getInt(getString(keys_json_count));
+            if (!mRowsUpdated) {
+                mTempLocationsCount = mLocationsCount;
+                mRowsUpdated = true;
+            }
+            if(mLocationsCount == mTempLocationsCount + 1) {
+                alert("Save successful", getContext());
+            } else if (mLocationsCount == mTempLocationsCount) {
+                alert("That location has already been saved", getContext());
+            } else if (mTempLocationsCount != 0) {
+                alert("Unknown if location is saved. Problem occurred\n" +
+                        "Past location count is " + mTempLocationsCount +
+                        " and new location count is " + mLocationsCount,  getContext());
+            }
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
 
     /**
      *
@@ -669,14 +650,7 @@ public class WeatherFragment extends Fragment {
                 alert("Save unsuccessful", getContext());
                 Log.d("savefailed", result);
             } else {
-//                mTempLocationsNum = mLocationsNum;
-//                getRowsWeather();
-//                mSuccessSave = true;
-//                if (!mAlertSave) {
-//                    mAlertSave =  true;
-//                } else {
-                    alert("Save successful", getContext());
-//                }
+                getRowsWeather();
             }
 
         } catch (JSONException e) {
@@ -1011,6 +985,7 @@ public class WeatherFragment extends Fragment {
         mFab_open = AnimationUtils.loadAnimation(getContext(), anim.fab_open);
         mFab_clock = AnimationUtils.loadAnimation(getContext(), anim.fab_rotate_clock);
         mFab_anticlock = AnimationUtils.loadAnimation(getContext(), anim.fab_rotate_anticlock);
+        getRowsWeather();
     }
 
     /**
@@ -1198,6 +1173,7 @@ public class WeatherFragment extends Fragment {
                     , message.getDouble(getString(keys_json_lat))
                     , message.getString(getString(keys_json_nickname)));
             }
+
             ifFabOpenCloseIt();
 
             WeatherFragmentDirections.ActionNavWeatherToNavLocations action =
