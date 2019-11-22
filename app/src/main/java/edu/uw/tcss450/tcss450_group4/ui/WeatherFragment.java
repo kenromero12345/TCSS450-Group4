@@ -318,29 +318,33 @@ public class WeatherFragment extends Fragment {
         }
     }
 
-    /**
-     *
-     * @param tTimeZone the given timezone
-     * @return the calendar from the given timezone + the location's timezone difference with UTC
-     */
-    private Calendar getNewTimzone(TimeZone tTimeZone) {
-        Calendar calendar = Calendar.getInstance(tTimeZone);
-        Log.d("UTCbefore", calendar.getTime().toString());
-        calendar.setTimeInMillis(calendar.getTimeInMillis() + (mWeather.getTimezone() * 1000));
-        Log.d("UTCafter", calendar.getTime().toString());
-        return calendar;
-    }
+//    /**
+//     *
+//     * @param tTimeZone the given timezone
+//     * @return the calendar from the given timezone + the location's timezone difference with UTC
+//     */
+//    private Calendar getNewTimzone(TimeZone tTimeZone) {
+//        Calendar calendar = Calendar.getInstance(tTimeZone);
+//        Log.d("UTCbefore", calendar.getTime().toString());
+//        calendar.setTimeInMillis(calendar.getTimeInMillis() + (mWeather.getTimezone() * 1000));
+//        Log.d("UTCafter", calendar.getTime().toString());
+//        return calendar;
+//    }
 
     /**
      * set hours components
      */
     private void setHours() {
-        TimeZone utc = TimeZone.getTimeZone("UTC");
+//        TimeZone utc = TimeZone.getTimeZone("UTC");
+//        @SuppressLint("SimpleDateFormat") SimpleDateFormat sdf
+//                = new SimpleDateFormat("h a");
+//        sdf.setTimeZone(utc);
+//        Calendar calendar = getNewTimzone(utc);
+//        calendar.setTimeZone();//TODO timezone?
+        TimeZone timeZone = TimeZone.getTimeZone(mWeather.getTimezoneID());
         @SuppressLint("SimpleDateFormat") SimpleDateFormat sdf
                 = new SimpleDateFormat("h a");
-        sdf.setTimeZone(utc);
-        Calendar calendar = getNewTimzone(utc);
-//        calendar.setTimeZone();//TODO timezone?
+        Calendar calendar = Calendar.getInstance(timeZone);
 
         Date today = calendar.getTime();
         calendar.add(Calendar.HOUR, 1);
@@ -421,11 +425,16 @@ public class WeatherFragment extends Fragment {
      */
     private void setDays() {
         // EEE MM/dd
-        TimeZone utc = TimeZone.getTimeZone("UTC");
+//        TimeZone utc = TimeZone.getTimeZone("UTC");
+//        @SuppressLint("SimpleDateFormat") SimpleDateFormat sdf
+//                = new SimpleDateFormat("MM/dd");
+//        Calendar calendar = getNewTimzone(utc);
+//        calendar.setTimeZone();
+
+        TimeZone timeZone = TimeZone.getTimeZone(mWeather.getTimezoneID());
         @SuppressLint("SimpleDateFormat") SimpleDateFormat sdf
                 = new SimpleDateFormat("MM/dd");
-        Calendar calendar = getNewTimzone(utc);
-//        calendar.setTimeZone();
+        Calendar calendar = Calendar.getInstance(timeZone);
         Date today = calendar.getTime();
         calendar.add(Calendar.DAY_OF_YEAR, 1);
         Date todayPlus1 = calendar.getTime();
@@ -1129,6 +1138,7 @@ public class WeatherFragment extends Fragment {
                         getString(keys_json_data));
                 mWeather.setLat(root.getDouble(getString(keys_json_latitude)));
                 mWeather.setLon(root.getDouble(getString(keys_json_longitude)));
+                mWeather.setTimezoneID(root.getString(getString(keys_json_timezone)));
                 for (int i = 0; i < 24; i++) {
                     JSONObject dataJSONObject = dataJArray.getJSONObject(i);
                     Weather weather = new Weather(getNewIcon(dataJSONObject.getString(

@@ -207,6 +207,7 @@ public class LocationsFragment extends Fragment {
             }
             mWeather.setLat(root.getDouble(getString(keys_json_latitude)));
             mWeather.setLon(root.getDouble(getString(keys_json_longitude)));
+            mWeather.setTimezoneID(root.getString(getString(keys_json_timezone)));
             if (hasHourly) {
                 JSONObject hourlyJObject = root.getJSONObject(
                         getString(keys_json_hourly));

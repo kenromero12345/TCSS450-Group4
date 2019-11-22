@@ -48,6 +48,7 @@ public class Weather implements Serializable, Parcelable {
     private double mSpeed;
     private double mDeg;
     private long mTimezone;
+    private String mTimezoneID;
 
     public String getZip() {
         return mZip;
@@ -148,6 +149,7 @@ public class Weather implements Serializable, Parcelable {
         mCountry = in.readString();
         mZip = in.readString();
         mState = in.readString();
+        mTimezoneID = in.readString();
 //        mJwt = in.readString();
 //        mSunrise = in.readString();
 //        mSunset = in.readString();
@@ -197,6 +199,7 @@ public class Weather implements Serializable, Parcelable {
         dest.writeLong(mTimezone);
         dest.writeString(mZip);
         dest.writeString(mState);
+        dest.writeString(mTimezoneID);
 //        dest.writeString(mJwt);
 //        dest.writeFloat(mLongitude);
 //        dest.writeFloat(mLatitude);
@@ -256,6 +259,14 @@ public class Weather implements Serializable, Parcelable {
 
     public void setState(String mState) {
         this.mState = mState;
+    }
+
+    public String getTimezoneID() {
+        return mTimezoneID;
+    }
+
+    public void setTimezoneID(String mTimezoneID) {
+        this.mTimezoneID = mTimezoneID;
     }
 
 //    public String getSunrise() {

@@ -282,6 +282,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
                         getString(keys_json_data));
                 mWeather.setLat(root.getDouble(getString(keys_json_latitude)));
                 mWeather.setLon(root.getDouble(getString(keys_json_longitude)));
+                mWeather.setTimezoneID(root.getString(getString(keys_json_timezone)));
                 Weather[] weathers = new Weather[24];
                 for (int i = 0; i < 24; i++) {
                     JSONObject dataJSONObject = dataJArray.getJSONObject(i);
