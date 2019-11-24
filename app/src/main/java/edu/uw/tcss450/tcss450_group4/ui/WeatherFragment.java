@@ -167,6 +167,9 @@ public class WeatherFragment extends Fragment {
             }
         }
         mView = view;
+        if (!mRowsUpdated) {
+            getRowsWeather();
+        }
     }
 
     /**
@@ -609,9 +612,9 @@ public class WeatherFragment extends Fragment {
 
         try {
             msg.put("email", mEmail);
-//            if (mWeather.getCity() != null) {
+            if (mWeather.getCity() != null) {
                 msg.put("city", mWeather.getCity());
-//            }
+            }
             if (mWeather.getState() == null) {
                 msg.put("country", mWeather.getCountry());
             } else {
@@ -619,7 +622,7 @@ public class WeatherFragment extends Fragment {
             }
             msg.put("lat", mWeather.getLat());
             msg.put("lon", mWeather.getLon());
-            msg.put("zip", Integer.parseInt(mWeather.getZip()));
+            msg.put("zip", mWeather.getZip());
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -667,15 +670,17 @@ public class WeatherFragment extends Fragment {
             if (!mRowsUpdated) {
                 mTempLocationsCount = mLocationsCount;
                 mRowsUpdated = true;
-            }
-            if(mLocationsCount == mTempLocationsCount + 1) {
-                alert("Save successful", getContext());
-            } else if (mLocationsCount == mTempLocationsCount) {
-                alert("That location has already been saved", getContext());
-            } else if (mTempLocationsCount != 0) {
-                alert("Unknown if location is saved. Problem occurred\n" +
-                        "Past location count is " + mTempLocationsCount +
-                        " and new location count is " + mLocationsCount,  getContext());
+            } else {
+                if (mLocationsCount == mTempLocationsCount + 1) {
+                    alert("Save successful", getContext());
+                    mTempLocationsCount++;
+                } else if (mLocationsCount == mTempLocationsCount) {
+                    alert("That location has already been saved", getContext());
+                } else if (mTempLocationsCount != 0) {
+                    alert("Unknown if location is saved. Problem occurred\n" +
+                            "Past location count is " + mTempLocationsCount +
+                            " and new location count is " + mLocationsCount, getContext());
+                }
             }
 
         } catch (JSONException e) {
@@ -787,24 +792,24 @@ public class WeatherFragment extends Fragment {
         }
 
         if (mWeather.getState() == null) {
-//            if(mWeather.getCity() == null) {
+            if(mWeather.getCity() == null) {
                 cityText.setText(String.format("%s", mWeather.getCountry()));
-//            } else {
+            } else {
                 cityText.setText(String.format("%s, %s", mWeather.getCity(), mWeather.getCountry()));
-//            }
+            }
         } else {
             if (State.valueOfName(mWeather.getState()) != State.UNKNOWN) {
                 mWeather.setState(State.valueOfName(mWeather.getState()).getAbbreviation());
             }
-//            if (mWeather.getCity() == null) {
-//                cityText.setText(String.format("%s, %s"
-//                        , mWeather.getState()
-//                        , mWeather.getCountry()));
-//            } else {
+            if (mWeather.getCity() == null) {
+                cityText.setText(String.format("%s, %s"
+                        , mWeather.getState()
+                        , mWeather.getCountry()));
+            } else {
                 cityText.setText(String.format("%s, %s, %s", mWeather.getCity()
                         , mWeather.getState()
                         , mWeather.getCountry()));
-//            }
+            }
         }
         condDescr.setText(String.format("%s(%s)", mWeather.getMain(), mWeather.getDescription()));
         temp.setText(tempFromKelvinToCelsiusString(mWeather.getTemp()));
@@ -1037,7 +1042,7 @@ public class WeatherFragment extends Fragment {
         mFab_open = AnimationUtils.loadAnimation(getContext(), anim.fab_open);
         mFab_clock = AnimationUtils.loadAnimation(getContext(), anim.fab_rotate_clock);
         mFab_anticlock = AnimationUtils.loadAnimation(getContext(), anim.fab_rotate_anticlock);
-        getRowsWeather();
+//        getRowsWeather();
     }
 
     /**

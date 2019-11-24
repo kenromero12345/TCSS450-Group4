@@ -2,6 +2,8 @@ package edu.uw.tcss450.tcss450_group4.ui;
 
 
 import android.app.AlertDialog;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
@@ -26,6 +28,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
+import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 
 import edu.uw.tcss450.tcss450_group4.MobileNavigationDirections;
@@ -54,6 +59,7 @@ import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_temperature;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_timezone;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_weather;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_wind;
+import static edu.uw.tcss450.tcss450_group4.model.WeatherHelper.alert;
 import static edu.uw.tcss450.tcss450_group4.model.WeatherHelper.getJsonObjectLatLon;
 import static edu.uw.tcss450.tcss450_group4.model.WeatherHelper.getNewIcon;
 import static edu.uw.tcss450.tcss450_group4.model.WeatherHelper.getUriWeather10dLatLon;
@@ -191,7 +197,21 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
         alertDialog.setMessage("Do you want to get the location's weather?");
         alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "YES",
                 (dialog, which) -> {
-                    displayWeather(latLng.latitude, latLng.longitude);
+                    Geocoder geocoder;
+                    List<Address> addresses;
+                    geocoder = new Geocoder(getContext(), Locale.getDefault());
+
+                    try {
+                        addresses = geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1);
+                        if (!addresses.isEmpty()) {
+                            displayWeather(latLng.latitude, latLng.longitude);
+                        } else {
+                            alert("The location doesn't have an address",getContext());
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
                     dialog.dismiss();
                 });
         alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "NO",
