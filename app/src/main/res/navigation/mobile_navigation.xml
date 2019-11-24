@@ -136,7 +136,18 @@
         <argument
             android:name="chats"
             app:argType="edu.uw.tcss450.tcss450_group4.model.Chat[]" />
-    </fragment>
+      <action
+          android:id="@+id/action_nav_chat_list_to_nav_create_chat"
+          app:destination="@id/nav_create_chat" />
+      <argument
+          android:name="memberId"
+          app:argType="integer"
+          android:defaultValue="0" />
+      <argument
+          android:name="jwt"
+          app:argType="string"
+          android:defaultValue='""' />
+  </fragment>
     <fragment
         android:id="@+id/nav_view_chat"
         android:name="edu.uw.tcss450.tcss450_group4.ui.ViewChatFragment"
@@ -158,4 +169,27 @@
             android:defaultValue='""' />
     </fragment>
     <action android:id="@+id/action_global_viewConnectionFragment" app:destination="@id/viewConnectionFragment"/><action android:id="@+id/action_global_nav_home" app:destination="@id/nav_home"/>
+    <fragment
+        android:id="@+id/nav_create_chat"
+        android:name="edu.uw.tcss450.tcss450_group4.ui.CreateChatFragment"
+        android:label="fragment_createchat_list"
+        tools:layout="@layout/fragment_createchat_list" >
+        <action
+            android:id="@+id/action_nav_create_chat_to_nav_view_chat"
+            app:destination="@id/nav_view_chat" />
+        <argument
+            android:name="friendList"
+            app:argType="edu.uw.tcss450.tcss450_group4.model.ConnectionItem[]" />
+        <argument
+            android:name="memberId"
+            app:argType="integer"
+            android:defaultValue="0" />
+        <argument
+            android:name="jwt"
+            app:argType="string"
+            android:defaultValue='""' />
+    </fragment>
+    <action
+        android:id="@+id/action_global_nav_create_chat"
+        app:destination="@id/nav_create_chat" />
 </navigation>

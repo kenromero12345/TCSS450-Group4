@@ -16,19 +16,19 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import edu.uw.tcss450.tcss450_group4.HomeActivityArgs;
 import edu.uw.tcss450.tcss450_group4.MobileNavigationDirections;
 import edu.uw.tcss450.tcss450_group4.R;
-import edu.uw.tcss450.tcss450_group4.model.Chat;
 import edu.uw.tcss450.tcss450_group4.model.ConnectionItem;
 import edu.uw.tcss450.tcss450_group4.utils.SendPostAsyncTask;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -49,27 +49,27 @@ import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_connection_userna
  * Activities containing this fragment MUST implement the {@link OnListFragmentInteractionListener}
  * interface.
  */
-public class ChatFragment extends Fragment implements View.OnClickListener {
+public class CreateChatFragment extends Fragment implements View.OnClickListener {
 
     // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
     // TODO: Customize parameters
     private int mColumnCount = 1;
     private OnListFragmentInteractionListener mListener;
-    private List<Chat> mChats;
+    private List<ConnectionItem> mFriendList;
     private int mMemberId;
     private String mJwToken;
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
      */
-    public ChatFragment() {
+    public CreateChatFragment() {
     }
 
     // TODO: Customize parameter initialization
     @SuppressWarnings("unused")
-    public static ChatFragment newInstance(int columnCount) {
-        ChatFragment fragment = new ChatFragment();
+    public static CreateChatFragment newInstance(int columnCount) {
+        CreateChatFragment fragment = new CreateChatFragment();
         Bundle args = new Bundle();
         args.putInt(ARG_COLUMN_COUNT, columnCount);
         fragment.setArguments(args);
@@ -80,16 +80,15 @@ public class ChatFragment extends Fragment implements View.OnClickListener {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        ChatFragmentArgs args = ChatFragmentArgs.fromBundle(getArguments());
-        mChats = new ArrayList<>(Arrays.asList(args.getChats()));
-        mMemberId = args.getMemberId();
-        mJwToken = args.getJwt();
+        CreateChatFragmentArgs args = CreateChatFragmentArgs.fromBundle(getArguments());
+        mFriendList = new ArrayList<>(Arrays.asList(args.getFriendList()));
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_chat_list, container, false);
+        View view = inflater.inflate(R.layout.fragment_createchat_list, container, false);
+
 
         return view;
     }
@@ -98,7 +97,6 @@ public class ChatFragment extends Fragment implements View.OnClickListener {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         RecyclerView rv = view.findViewById(R.id.list);
-        Button btnCreateChat = view.findViewById(R.id.button_create_chat);
         // Set the adapter
         if (rv instanceof RecyclerView) {
             Context context = rv.getContext();
@@ -108,79 +106,16 @@ public class ChatFragment extends Fragment implements View.OnClickListener {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            recyclerView.setAdapter(new MyChatRecyclerViewAdapter(mChats, mListener));
+            recyclerView.setAdapter(new MyCreateChatRecyclerViewAdapter(mFriendList, mListener));
+
         }
-        btnCreateChat.setOnClickListener(this::onClick);
+        int[] selectedFriendList = getArguments().getIntArray("friend list");
+        Log.e("this is selected friend list", Arrays.toString(selectedFriendList));
     }
 
     @Override
-    public void onClick(View v) {
-        gotoConnection();
-    }
-    private void gotoConnection() {
-        Uri uriConnection = new Uri.Builder()
-                .scheme("https")
-                .appendPath(getString(ep_base_url))
-                .appendPath(getString(ep_connection))
-                .appendPath(getString(ep_getall))
-                .build();
-        JSONObject msgBody = new JSONObject();
-        try{
-            msgBody.put("memberId", mMemberId);
-        } catch (JSONException e) {
-            Log.wtf("MEMBERID", "Error creating JSON: " + e.getMessage());
+    public void onClick(View view) {
 
-        }
-        new SendPostAsyncTask.Builder(uriConnection.toString(), msgBody)
-                .onPostExecute(this::handleConnectionOnPostExecute)
-                .onCancelled(error -> Log.e("CONNECTION FRAG", error))
-                .addHeaderField("authorization", mJwToken)  //add the JWT as header
-                .build().execute();
-
-    }
-
-    private void handleConnectionOnPostExecute(final String result) {
-        //parse JSON
-        try {
-            boolean hasConnection = false;
-            JSONObject root = new JSONObject(result);
-            if (root.has(getString(keys_json_connection_connections))){
-                hasConnection = true;
-            } else {
-                Log.e("ERROR!", "No connection");
-            }
-
-            if (hasConnection){
-                JSONArray connectionJArray = root.getJSONArray(
-                        getString(keys_json_connection_connections));
-                ConnectionItem[] conItem = new ConnectionItem[connectionJArray.length()];
-                for(int i = 0; i < connectionJArray.length(); i++){
-                    JSONObject jsonConnection = connectionJArray.getJSONObject(i);
-                    conItem[i] = new ConnectionItem(
-                            jsonConnection.getInt(
-                                    getString(keys_json_connection_memberid))
-                            , jsonConnection.getString(
-                            getString(keys_json_connection_firstname))
-                            , jsonConnection.getString(
-                            getString(keys_json_connection_lastname))
-                            ,jsonConnection.getString(
-                            getString(keys_json_connection_username)));
-                }
-
-                MobileNavigationDirections.ActionGlobalNavCreateChat directions
-                        = CreateChatFragmentDirections.actionGlobalNavCreateChat(conItem);
-                directions.setJwt(mJwToken);
-                directions.setMemberId(mMemberId);
-
-                Navigation.findNavController(getActivity(), nav_host_fragment)
-                        .navigate(directions);
-
-            }
-
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
     }
     /**
      * This interface must be implemented by activities that contain this
@@ -194,6 +129,6 @@ public class ChatFragment extends Fragment implements View.OnClickListener {
      */
     public interface OnListFragmentInteractionListener {
         // TODO: Update argument type and name
-        void onListFragmentInteraction(Chat item);
+        void onListFragmentInteraction(ConnectionItem item);
     }
 }
