@@ -52,9 +52,10 @@ import edu.uw.tcss450.tcss450_group4.ui.WeatherFragmentDirections;
 import edu.uw.tcss450.tcss450_group4.utils.SendPostAsyncTask;
 
 import static edu.uw.tcss450.tcss450_group4.R.id;
-import static edu.uw.tcss450.tcss450_group4.R.id.*;
 import static edu.uw.tcss450.tcss450_group4.R.id.action_logout;
+import static edu.uw.tcss450.tcss450_group4.R.id.activity_loading;
 import static edu.uw.tcss450.tcss450_group4.R.id.drawer_layout;
+import static edu.uw.tcss450.tcss450_group4.R.id.layout_login_wait;
 import static edu.uw.tcss450.tcss450_group4.R.id.nav_chat;
 import static edu.uw.tcss450.tcss450_group4.R.id.nav_chat_list;
 import static edu.uw.tcss450.tcss450_group4.R.id.nav_connectionGUI;
@@ -354,6 +355,12 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     private void clickWeather(NavController navController) {
+//        ((DrawerLayout) findViewById(drawer_layout)).openDrawer();
+//        Runnable r = () -> {
+//        ((DrawerLayout) findViewById(drawer_layout)).closeDrawers();
+//        };
+//        final Thread t = new Thread(r);
+//        t.start();
 //        if(Objects.requireNonNull(navController.getCurrentDestination()).getId() == nav_home){
 //            findViewById(layout_weather_wait).setVisibility(View.VISIBLE);
 //        }
@@ -574,7 +581,11 @@ public class HomeActivity extends AppCompatActivity {
 //        } catch (JSONException e) {
 //            Log.wtf("LONG/LAT", "Error creating JSON: " + e.getMessage());
 //        }
-
+//        new SendPostAsyncTask.Builder(uri.toString(), msg)
+//                .onProgressUpdate(((DrawerLayout) findViewById(drawer_layout)).closeDrawers())
+//                .onCancelled(error -> Log.e("W", error))
+//                .addHeaderField("authorization", mJwToken) //add the JWT as a header
+//                .build().execute();
         sendPostAsyncTaskHelper(uri, msg, this::handleWeatherGetOnPostExecute, mJwToken);
         sendPostAsyncTaskHelper(uri2, msg, this::handleWeather10dGetOnPostExecute, mJwToken);
         sendPostAsyncTaskHelper(uri3, msg, this::handleWeather24hGetOnPostExecute, mJwToken);

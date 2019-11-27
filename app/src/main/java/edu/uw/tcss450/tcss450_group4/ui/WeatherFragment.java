@@ -1121,6 +1121,8 @@ public class WeatherFragment extends Fragment {
 //                .addHeaderField("authorization", mJwToken) //add the JWT as a header
 //                .build().execute();
 
+
+
         sendPostAsyncTaskHelper(uri, msg, this::endOfGetWeatherTask, mJwToken);
         sendPostAsyncTaskHelper(uri2, msg, this::endOfGetWeathers10dTask, mJwToken);
         sendPostAsyncTaskHelper(uri3, msg, this::endOfGetWeathers24hTask, mJwToken);
