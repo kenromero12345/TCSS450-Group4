@@ -11,27 +11,30 @@
         android:id="@+id/connectionRequest"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="7dp"
-        android:text="View Request"
-        app:layout_constraintEnd_toStartOf="@+id/connectionAdd"
+        android:layout_marginEnd="96dp"
+        android:text="Sent/Recieved Requests"
+        android:textSize="10sp"
+        app:layout_constraintEnd_toStartOf="@+id/connectionSearchButton"
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
-        android:id="@+id/connectionAdd"
+        android:id="@+id/connectionSearchButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Add Connection"
+        android:textSize="10sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <Button
-        android:id="@+id/connectionSent"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:text="Sent Requests"
-        app:layout_constraintEnd_toStartOf="@+id/connectionRequest"
-        app:layout_constraintTop_toTopOf="parent" />
+<!--    <Button-->
+<!--        android:id="@+id/connectionSent"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_marginEnd="44dp"-->
+<!--        android:text="Sent Requests"-->
+<!--        android:textSize="10sp"-->
+<!--        app:layout_constraintEnd_toStartOf="@+id/connectionRequest"-->
+<!--        app:layout_constraintTop_toTopOf="parent" />-->
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/list"
