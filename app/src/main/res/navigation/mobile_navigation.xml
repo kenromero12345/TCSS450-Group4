@@ -20,11 +20,11 @@
         android:name="edu.uw.tcss450.tcss450_group4.ui.ChatFragment"
         android:label="fragment_chat"
         tools:layout="@layout/fragment_chat" />
-    <fragment
-        android:id="@+id/nav_connections"
-        android:name="edu.uw.tcss450.tcss450_group4.ui.ConnectionsFragment"
-        android:label="fragment_connection"
-        tools:layout="@layout/fragment_connection" />
+<!--    <fragment-->
+<!--        android:id="@+id/nav_connections"-->
+<!--        android:name="edu.uw.tcss450.tcss450_group4.ui.ConnectionsFragment"-->
+<!--        android:label="fragment_connection"-->
+<!--        tools:layout="@layout/fragment_connection" />-->
     <fragment
         android:id="@+id/nav_weather"
         android:name="edu.uw.tcss450.tcss450_group4.ui.WeatherFragment"
@@ -196,7 +196,7 @@
             app:argType="string"
             android:defaultValue='""' />
     </fragment>
-    <action android:id="@+id/action_global_viewConnectionFragment" app:destination="@id/viewConnectionFragment"/><action android:id="@+id/action_global_nav_home" app:destination="@id/nav_home"/>
+    <action android:id="@+id/action_global_nav_home" app:destination="@id/nav_home"/>
     <fragment
         android:id="@+id/nav_create_chat"
         android:name="edu.uw.tcss450.tcss450_group4.ui.CreateChatFragment"
