@@ -35,7 +35,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+
 import java.math.BigDecimal;
+
+import java.sql.Timestamp;
+
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -212,7 +216,7 @@ public class HomeActivity extends AppCompatActivity {
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         mAppBarConfiguration = new AppBarConfiguration.Builder(
-                nav_home, nav_connectionGUI, nav_chat, nav_weather, nav_logout)
+                nav_home, nav_connectionGUI, nav_chat_list, nav_weather, nav_logout)
                 .setDrawerLayout(drawer)
                 .build();
         NavController navController = Navigation.findNavController(this
@@ -422,6 +426,8 @@ public class HomeActivity extends AppCompatActivity {
                 }
                 MobileNavigationDirections.ActionGlobalNavChatList directions
                         = ChatFragmentDirections.actionGlobalNavChatList(chats);
+                directions.setMemberId(mMemberId);
+                directions.setJwt(mJwToken);
                 Navigation.findNavController(this, nav_host_fragment)
                         .navigate(directions);
 //                }    else {
