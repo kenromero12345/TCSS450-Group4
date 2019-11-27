@@ -1246,6 +1246,11 @@ public class WeatherFragment extends Fragment {
 
             ifFabOpenCloseIt();
 
+            if(locations.length == 0) {
+                locations = new Location[1];
+                locations[0] = new Location(0.0,0.0, "No Locations");
+            }
+
             WeatherFragmentDirections.ActionNavWeatherToNavLocations action =
                     WeatherFragmentDirections.actionNavWeatherToNavLocations(
                             locations, mEmail, mJwToken, mHomeWeather, mHomeWeathers10d

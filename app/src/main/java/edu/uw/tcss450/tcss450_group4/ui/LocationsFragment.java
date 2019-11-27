@@ -51,6 +51,7 @@ import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_temperature;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_timezone;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_weather;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_wind;
+import static edu.uw.tcss450.tcss450_group4.model.WeatherHelper.alert;
 import static edu.uw.tcss450.tcss450_group4.model.WeatherHelper.getNewIcon;
 import static edu.uw.tcss450.tcss450_group4.model.WeatherHelper.getUriWeather10dLatLon;
 import static edu.uw.tcss450.tcss450_group4.model.WeatherHelper.getUriWeather24hLatLon;
@@ -150,17 +151,21 @@ public class LocationsFragment extends Fragment {
     }
 
     private void getWeather(final Location tLocation) {
-        AlertDialog alertDialog = new AlertDialog.Builder(getActivity()).create();
-        alertDialog.setTitle("Alert");
-        alertDialog.setMessage("Do you want to get the location's weather?");
-        alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "YES",
-                (dialog, which) -> {
-                    displayWeather(tLocation);
-                    dialog.dismiss();
-                });
-        alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "NO",
-                (dialog, which) -> dialog.dismiss());
-        alertDialog.show();
+        if (tLocation.getName() != "No Locations") {
+            AlertDialog alertDialog = new AlertDialog.Builder(getActivity()).create();
+            alertDialog.setTitle("Alert");
+            alertDialog.setMessage("Do you want to get the location's weather?");
+            alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "YES",
+                    (dialog, which) -> {
+                        displayWeather(tLocation);
+                        dialog.dismiss();
+                    });
+            alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "NO",
+                    (dialog, which) -> dialog.dismiss());
+            alertDialog.show();
+        } else {
+            alert("Cannot display any weather", getContext());
+        }
     }
 
     private void displayWeather(final Location tLocation) {
