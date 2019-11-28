@@ -30,4 +30,6 @@
 
     <string name="ep_remove">remove</string>
     <string name="ep_chats">chats</string>
+    <string name="ep_create_chat">createChat</string>
+    <string name="ep_add_friend_to_new_chat">addFriendToChat</string>
 </resources>
