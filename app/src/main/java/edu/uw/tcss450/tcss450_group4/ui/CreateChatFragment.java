@@ -150,11 +150,10 @@ public class CreateChatFragment extends Fragment implements View.OnClickListener
                 .appendPath(getString(ep_add_friend_to_new_chat))
                 .build();
         try {
-            JSONObject msgBody = new JSONObject();
             for (int i = 0; i < mFriendIDList.size(); i++) {
+                JSONObject msgBody = new JSONObject();
                 msgBody.put("contactID", mFriendIDList.get(i));
                 new SendPostAsyncTask.Builder(uriCreateChat.toString(), msgBody)
-                        .onPreExecute(this::handleCreateChatOnPre)
                         .onPostExecute(this::handleCreateChatOnPost)
                         .onCancelled(error -> Log.e("ADD FRIEND TO NEW CHAT FRAG", error))
                         .addHeaderField("authorization", mJwToken)
@@ -165,6 +164,9 @@ public class CreateChatFragment extends Fragment implements View.OnClickListener
             Log.wtf("chatName", "Error creating JSON: " + e.getMessage());
         }
     }
+    private void createNewChat(Uri uri, JSONObject json) {
+
+    }
     private void handleCreateChatOnPre() {
         getActivity().findViewById(R.id.layout_createChat_wait).setVisibility(View.VISIBLE);
     }
@@ -173,7 +175,7 @@ public class CreateChatFragment extends Fragment implements View.OnClickListener
             JSONObject resultJSON = new JSONObject(result);
             boolean success = resultJSON.getBoolean(getString(R.string.keys_json_success));
             if (success) {
-                //Log.wtf("Message", "success");
+                Navigation.findNavController(getView()).navigate(R.id.action_nav_create_chat_to_nav_view_chat);
             }
             getActivity().findViewById(R.id.layout_createChat_wait).setVisibility(View.GONE);
         } catch (JSONException e) {
