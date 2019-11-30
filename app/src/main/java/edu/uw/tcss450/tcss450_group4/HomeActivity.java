@@ -35,11 +35,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-
 import java.math.BigDecimal;
-
-import java.sql.Timestamp;
-
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -59,8 +55,6 @@ import static edu.uw.tcss450.tcss450_group4.R.id;
 import static edu.uw.tcss450.tcss450_group4.R.id.action_logout;
 import static edu.uw.tcss450.tcss450_group4.R.id.activity_loading;
 import static edu.uw.tcss450.tcss450_group4.R.id.drawer_layout;
-import static edu.uw.tcss450.tcss450_group4.R.id.layout_login_wait;
-import static edu.uw.tcss450.tcss450_group4.R.id.nav_chat;
 import static edu.uw.tcss450.tcss450_group4.R.id.nav_chat_list;
 import static edu.uw.tcss450.tcss450_group4.R.id.nav_connectionGUI;
 import static edu.uw.tcss450.tcss450_group4.R.id.nav_home;
@@ -813,7 +807,7 @@ public class HomeActivity extends AppCompatActivity {
         startActivity(i);
         //End this Activity and remove it from the Activity back stack.
         finish();
-        findViewById(layout_login_wait).setVisibility(View.GONE);
+//        findViewById(layout_login_wait).setVisibility(View.GONE);
     }
 
     private void logoutAndFinish() {
