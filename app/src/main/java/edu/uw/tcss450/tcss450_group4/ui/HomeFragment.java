@@ -132,248 +132,248 @@ public class HomeFragment extends Fragment {
         mMemberId = args.getMemberId();
 
         view.findViewById(layout_connection_wait).setVisibility(View.VISIBLE);
-//        gotoConnection();
-//        gotoChat();
+        gotoConnection();
+        gotoChat();
 
 //        mConnectionItem = new ArrayList<>(Arrays.asList(args.getConnectionItems()));
     }
 
-//    private void gotoChat() {
-//        JSONObject memberId = new JSONObject();
-//        try {
-//            memberId.put("memberId", mMemberId);
-//        } catch (JSONException e) {
-//            e.printStackTrace();
-//        }
-//        Uri uriChats = new Uri.Builder()
-//                .scheme("https")
-//                .appendPath(getString(ep_base_url))
-//                .appendPath(getString(ep_chats))
-//                .build();
-//        new SendPostAsyncTask.Builder(uriChats.toString(), memberId)
-//                .onPostExecute(this::handleChatsGetOnPostExecute)
-//                .addHeaderField("authorization", mJwToken)
-//                .onCancelled(this::handleErrorsInTask)
-//                .build().execute();
-//    }
-//
-//    private void handleErrorsInTask(final String result) {
-//        Log.e("ASYNC_TASK_ERROR", result);
-//    }
-//
-//    private void handleChatsGetOnPostExecute(final String result) {
-//        try {
-//            JSONObject root = new JSONObject(result);
-//            if (root.has("success") && root.getBoolean(getString(keys_json_login_success))) {
-//                JSONArray data = root.getJSONArray("names");
-////                if (response.has(getString(R.string.keys_json_chats_data))) {
-////                    JSONArray data = response.getJSONArray(getString(R.string.keys_json_chats_data));
-//                mChats = new Chat[data.length()];
-//                for (int i = 0; i < data.length(); i++) {
-//                    JSONObject jsonChatLists = data.getJSONObject(i);
-//
-//                    String recentMessage = jsonChatLists.getString("message");
-//                    if (recentMessage != "null") {
-//                        mChats[i] = (new Chat.Builder(jsonChatLists.getString("chatid"),
-//                                jsonChatLists.getString("name"),
-//                                jsonChatLists.getString("message"),
-//                                convertTimeStampToDate(jsonChatLists.getString("timestamp")))
-//                                .build());
-//                    } else {
-//                        mChats[i] = (new Chat.Builder(jsonChatLists.getString("chatid"),
-//                                jsonChatLists.getString("name"),
-//                                "",
-//                                "")
-//                                .build());
-//                    }
-//                }
-//                RecyclerView rv = getView().findViewById(R.id.chatList);
-//                // Set the adapter
-//                if (rv instanceof RecyclerView) {
-//                    Context context = rv.getContext();
-//                    RecyclerView recyclerView = rv;
-//                    if (mColumnCount <= 1) {
-//                        recyclerView.setLayoutManager(new LinearLayoutManager(context));
-//                    } else {
-//                        recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
-//                    }
-//                    recyclerView.setAdapter(new MyChatRecyclerViewAdapter(new ArrayList<>(Arrays.asList(mChats)), this::displayChat));
-//                }
-//            } else {
-//                Log.e("ERROR!", "No response");
-//            }
-//        } catch (JSONException e) {
-//            e.printStackTrace();
-//            Log.e("ERROR!", e.getMessage());
-//        }
-//    }
-//
-//    private void displayChat(Chat chat) {
-//
-//    }
+    private void gotoChat() {
+        JSONObject memberId = new JSONObject();
+        try {
+            memberId.put("memberId", mMemberId);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        Uri uriChats = new Uri.Builder()
+                .scheme("https")
+                .appendPath(getString(ep_base_url))
+                .appendPath(getString(ep_chats))
+                .build();
+        new SendPostAsyncTask.Builder(uriChats.toString(), memberId)
+                .onPostExecute(this::handleChatsGetOnPostExecute)
+                .addHeaderField("authorization", mJwToken)
+                .onCancelled(this::handleErrorsInTask)
+                .build().execute();
+    }
 
-//    private String convertTimeStampToDate(String timestamp) {
-//        Date date = new Date();
-//        String a = "";
-//        //Date showTime = new Date();
-//        //Date showDate = new Date();
-//        DateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-//        DateFormat timeFormat = new SimpleDateFormat("HH:mm");
-//        //DateFormat dateFormat = new SimpleDateFormat("MM-dd");
-//        try {
-//            date = format.parse(timestamp);
-//            a = timeFormat.format(date.getTime());
-//        } catch (ParseException e) {
-//            e.printStackTrace();
-//        }
-//
-//        return a;
-//    }
-//
-//    private void gotoConnection() {
-//        Uri uriConnection = new Uri.Builder()
-//                .scheme("https")
-//                .appendPath(getString(ep_base_url))
-//                .appendPath(getString(ep_connection))
-//                .appendPath(getString(ep_requestsReceived))
-//                .build();
-//        JSONObject msgBody = new JSONObject();
-//        try{
-//            msgBody.put("memberId", mMemberId);
-//        } catch (JSONException e) {
-//            Log.wtf("MEMBERID", "Error creating JSON: " + e.getMessage());
-//
-//        }
-//        new SendPostAsyncTask.Builder(uriConnection.toString(), msgBody)
-//
-//                .onPostExecute(this::handleConnectionOnPostExecute)
-//                .onCancelled(error -> Log.e("CONNECTION FRAG", error))
-//                .addHeaderField("authorization", mJwToken)  //add the JWT as header
-//                .build().execute();
-//
-//    }
-//
-//    private void handleConnectionOnPostExecute(final String result) {
-//        try {
-//            boolean hasConnection = false;
-//            JSONObject root = new JSONObject(result);
-//            if (root.has(getString(keys_json_connection_connections))) {
-//                hasConnection = true;
-//            } else {
-//                Log.e("ERROR!", "No connection");
-//            }
-//
-//            if (hasConnection) {
-//                JSONArray connectionJArray = root.getJSONArray(
-//                        getString(keys_json_connection_connections));
-//                mConnectionItems = new ConnectionItem[connectionJArray.length()];
-//                for (int i = 0; i < connectionJArray.length(); i++) {
-//                    JSONObject jsonConnection = connectionJArray.getJSONObject(i);
-//                    mConnectionItems[i] = new ConnectionItem(
-//                            jsonConnection.getInt(
-//                                    getString(keys_json_connection_memberid))
-//                            , jsonConnection.getString(
-//                            getString(keys_json_connection_firstname))
-//                            , jsonConnection.getString(
-//                            getString(keys_json_connection_lastname))
-//                            , jsonConnection.getString(
-//                            getString(keys_json_connection_username)));
-//                }
-//                RecyclerView rv = getView().findViewById(R.id.connectionList);
-//                if (rv instanceof RecyclerView ) {
-//                    Context context = rv.getContext();
-//                    RecyclerView recyclerView = (RecyclerView) rv;
-//                    if (mColumnCount <= 1) {
-//                        recyclerView.setLayoutManager(new LinearLayoutManager(context));
-//                    } else {
-//                        recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
-//                    }
-//                    recyclerView.setAdapter(new MyConnectionGUIRecyclerViewAdapter(new ArrayList<>(Arrays.asList(mConnectionItems)), this::displayConnection));
-//                }
-//                getView().findViewById(layout_connection_wait).setVisibility(View.INVISIBLE);
-//
-//            }
-//        } catch (JSONException e) {
-//            e.printStackTrace();
-//        }
-//    }
-//
-//    private void displayConnection(ConnectionItem theConnection) {
-//
-//        Uri uriConnection = new Uri.Builder()
-//                .scheme("https")
-//                .appendPath(getString(R.string.ep_base_url))
-//                .appendPath(getString(R.string.ep_connection))
-//                .appendPath(getString(R.string.ep_getfriend))
-//                .build();
-//        JSONObject msgBody = new JSONObject();
-//        try{
-//            msgBody.put("memberIdUser", mMemberId);
-//            msgBody.put("memberIdOther", theConnection.getContactId());
-//        } catch (JSONException e) {
-//            Log.wtf("MEMBERID", "Error creating JSON: " + e.getMessage());
-//
-//        }
-//        new SendPostAsyncTask.Builder(uriConnection.toString(), msgBody)
-//                .onPostExecute(this::handleDisplayOnPostExecute)
-//                .onCancelled(error -> Log.e("CONNECTION FRAG", error))
-//                .addHeaderField("authorization", mJwToken)  //add the JWT as header
-//                .build().execute();
-//
-//
-//    }
-//
-//    private void handleDisplayOnPostExecute(String result) {
-//        //parse JSON
-//        try {
-//            boolean hasConnection = false;
-//            JSONObject root = new JSONObject(result);
-//            if (root.has(getString(R.string.keys_json_connection_connections))){
-//                hasConnection = true;
-//            } else {
-//                Log.e("ERROR!", "No connection");
-//            }
-//
-//            if (hasConnection){
-//                JSONObject connectionJObject = root.getJSONObject(
-//                        getString(R.string.keys_json_connection_connections));
-//                if (connectionJObject.get(getString(R.string.keys_json_connection_verified)) != null) {
-//                    mConItem = new ConnectionItem(connectionJObject.getInt(
-//                            getString(R.string.keys_json_connection_memberid))
-//                            , connectionJObject.getString(
-//                            getString(R.string.keys_json_connection_firstname))
-//                            , connectionJObject.getString(
-//                            getString(R.string.keys_json_connection_lastname))
-//                            ,connectionJObject.getString(
-//                            getString(R.string.keys_json_connection_username))
-//                            ,0);
-//
-//                } else {
-//                    mConItem = new ConnectionItem(connectionJObject.getInt(
-//                            getString(R.string.keys_json_connection_memberid))
-//                            , connectionJObject.getString(
-//                            getString(R.string.keys_json_connection_firstname))
-//                            , connectionJObject.getString(
-//                            getString(R.string.keys_json_connection_lastname))
-//                            ,connectionJObject.getString(
-//                            getString(R.string.keys_json_connection_username))
-//                            ,1);
-//                }
-//
-//
-//                final Bundle args = new Bundle();
-//                args.putSerializable(getString(R.string.keys_connection_view), mConItem);
-//                args.putString("jwt", mJwToken);
-//                args.putInt("memberid", mMemberId);
-//                Navigation.findNavController(getView())
-//                        .navigate(R.id.action_nav_connectionGUI_to_viewConnectionFragment, args);
-//            }
-//
-//
-//        } catch (JSONException e) {
-//            e.printStackTrace();
-//        }
-//    }
+    private void handleErrorsInTask(final String result) {
+        Log.e("ASYNC_TASK_ERROR", result);
+    }
+
+    private void handleChatsGetOnPostExecute(final String result) {
+        try {
+            JSONObject root = new JSONObject(result);
+            if (root.has("success") && root.getBoolean(getString(keys_json_login_success))) {
+                JSONArray data = root.getJSONArray("names");
+//                if (response.has(getString(R.string.keys_json_chats_data))) {
+//                    JSONArray data = response.getJSONArray(getString(R.string.keys_json_chats_data));
+                mChats = new Chat[data.length()];
+                for (int i = 0; i < data.length(); i++) {
+                    JSONObject jsonChatLists = data.getJSONObject(i);
+
+                    String recentMessage = jsonChatLists.getString("message");
+                    if (recentMessage != "null") {
+                        mChats[i] = (new Chat.Builder(jsonChatLists.getString("chatid"),
+                                jsonChatLists.getString("name"),
+                                jsonChatLists.getString("message"),
+                                convertTimeStampToDate(jsonChatLists.getString("timestamp")))
+                                .build());
+                    } else {
+                        mChats[i] = (new Chat.Builder(jsonChatLists.getString("chatid"),
+                                jsonChatLists.getString("name"),
+                                "",
+                                "")
+                                .build());
+                    }
+                }
+                RecyclerView rv = getView().findViewById(R.id.chatList);
+                // Set the adapter
+                if (rv instanceof RecyclerView) {
+                    Context context = rv.getContext();
+                    RecyclerView recyclerView = rv;
+                    if (mColumnCount <= 1) {
+                        recyclerView.setLayoutManager(new LinearLayoutManager(context));
+                    } else {
+                        recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
+                    }
+                    recyclerView.setAdapter(new MyChatRecyclerViewAdapter(new ArrayList<>(Arrays.asList(mChats)), this::displayChat));
+                }
+            } else {
+                Log.e("ERROR!", "No response");
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+            Log.e("ERROR!", e.getMessage());
+        }
+    }
+
+    private void displayChat(Chat chat) {
+
+    }
+
+    private String convertTimeStampToDate(String timestamp) {
+        Date date = new Date();
+        String a = "";
+        //Date showTime = new Date();
+        //Date showDate = new Date();
+        DateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+        DateFormat timeFormat = new SimpleDateFormat("HH:mm");
+        //DateFormat dateFormat = new SimpleDateFormat("MM-dd");
+        try {
+            date = format.parse(timestamp);
+            a = timeFormat.format(date.getTime());
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        return a;
+    }
+
+    private void gotoConnection() {
+        Uri uriConnection = new Uri.Builder()
+                .scheme("https")
+                .appendPath(getString(ep_base_url))
+                .appendPath(getString(ep_connection))
+                .appendPath(getString(ep_requestsReceived))
+                .build();
+        JSONObject msgBody = new JSONObject();
+        try{
+            msgBody.put("memberId", mMemberId);
+        } catch (JSONException e) {
+            Log.wtf("MEMBERID", "Error creating JSON: " + e.getMessage());
+
+        }
+        new SendPostAsyncTask.Builder(uriConnection.toString(), msgBody)
+
+                .onPostExecute(this::handleConnectionOnPostExecute)
+                .onCancelled(error -> Log.e("CONNECTION FRAG", error))
+                .addHeaderField("authorization", mJwToken)  //add the JWT as header
+                .build().execute();
+
+    }
+
+    private void handleConnectionOnPostExecute(final String result) {
+        try {
+            boolean hasConnection = false;
+            JSONObject root = new JSONObject(result);
+            if (root.has(getString(keys_json_connection_connections))) {
+                hasConnection = true;
+            } else {
+                Log.e("ERROR!", "No connection");
+            }
+
+            if (hasConnection) {
+                JSONArray connectionJArray = root.getJSONArray(
+                        getString(keys_json_connection_connections));
+                mConnectionItems = new ConnectionItem[connectionJArray.length()];
+                for (int i = 0; i < connectionJArray.length(); i++) {
+                    JSONObject jsonConnection = connectionJArray.getJSONObject(i);
+                    mConnectionItems[i] = new ConnectionItem(
+                            jsonConnection.getInt(
+                                    getString(keys_json_connection_memberid))
+                            , jsonConnection.getString(
+                            getString(keys_json_connection_firstname))
+                            , jsonConnection.getString(
+                            getString(keys_json_connection_lastname))
+                            , jsonConnection.getString(
+                            getString(keys_json_connection_username)));
+                }
+                RecyclerView rv = getView().findViewById(R.id.connectionList);
+                if (rv instanceof RecyclerView ) {
+                    Context context = rv.getContext();
+                    RecyclerView recyclerView = (RecyclerView) rv;
+                    if (mColumnCount <= 1) {
+                        recyclerView.setLayoutManager(new LinearLayoutManager(context));
+                    } else {
+                        recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
+                    }
+                    recyclerView.setAdapter(new MyConnectionGUIRecyclerViewAdapter(new ArrayList<>(Arrays.asList(mConnectionItems)), this::displayConnection));
+                }
+                getView().findViewById(layout_connection_wait).setVisibility(View.INVISIBLE);
+
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void displayConnection(ConnectionItem theConnection) {
+
+        Uri uriConnection = new Uri.Builder()
+                .scheme("https")
+                .appendPath(getString(R.string.ep_base_url))
+                .appendPath(getString(R.string.ep_connection))
+                .appendPath(getString(R.string.ep_getfriend))
+                .build();
+        JSONObject msgBody = new JSONObject();
+        try{
+            msgBody.put("memberIdUser", mMemberId);
+            msgBody.put("memberIdOther", theConnection.getContactId());
+        } catch (JSONException e) {
+            Log.wtf("MEMBERID", "Error creating JSON: " + e.getMessage());
+
+        }
+        new SendPostAsyncTask.Builder(uriConnection.toString(), msgBody)
+                .onPostExecute(this::handleDisplayOnPostExecute)
+                .onCancelled(error -> Log.e("CONNECTION FRAG", error))
+                .addHeaderField("authorization", mJwToken)  //add the JWT as header
+                .build().execute();
+
+
+    }
+
+    private void handleDisplayOnPostExecute(String result) {
+        //parse JSON
+        try {
+            boolean hasConnection = false;
+            JSONObject root = new JSONObject(result);
+            if (root.has(getString(R.string.keys_json_connection_connections))){
+                hasConnection = true;
+            } else {
+                Log.e("ERROR!", "No connection");
+            }
+
+            if (hasConnection){
+                JSONObject connectionJObject = root.getJSONObject(
+                        getString(R.string.keys_json_connection_connections));
+                if (connectionJObject.get(getString(R.string.keys_json_connection_verified)) != null) {
+                    mConItem = new ConnectionItem(connectionJObject.getInt(
+                            getString(R.string.keys_json_connection_memberid))
+                            , connectionJObject.getString(
+                            getString(R.string.keys_json_connection_firstname))
+                            , connectionJObject.getString(
+                            getString(R.string.keys_json_connection_lastname))
+                            ,connectionJObject.getString(
+                            getString(R.string.keys_json_connection_username))
+                            ,0);
+
+                } else {
+                    mConItem = new ConnectionItem(connectionJObject.getInt(
+                            getString(R.string.keys_json_connection_memberid))
+                            , connectionJObject.getString(
+                            getString(R.string.keys_json_connection_firstname))
+                            , connectionJObject.getString(
+                            getString(R.string.keys_json_connection_lastname))
+                            ,connectionJObject.getString(
+                            getString(R.string.keys_json_connection_username))
+                            ,1);
+                }
+
+
+                final Bundle args = new Bundle();
+                args.putSerializable(getString(R.string.keys_connection_view), mConItem);
+                args.putString("jwt", mJwToken);
+                args.putInt("memberid", mMemberId);
+                Navigation.findNavController(getView())
+                        .navigate(R.id.action_nav_connectionGUI_to_viewConnectionFragment, args);
+            }
+
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
 
 
 
