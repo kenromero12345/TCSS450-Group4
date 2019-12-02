@@ -66,17 +66,39 @@ public class ViewConnectionFragment extends Fragment implements View.OnClickList
 
             ((TextView) getActivity().findViewById(R.id.fullName))
                     .setText("Name: " + mConnectionItem.getFirstName() + " " + mConnectionItem.getLastName());
-            ((TextView) getActivity().findViewById(R.id.fullID))
-                    .setText("ID: " + mConnectionItem.getContactId()) ;
+//            ((TextView) getActivity().findViewById(R.id.fullID))
+//                    .setText("ID: " + mConnectionItem.getContactId()) ;
             ((TextView) getActivity().findViewById(R.id.fullUsername))
                     .setText("Username : " + mConnectionItem.getContactUserName());
         }
-        if(mVerified != 0) {
+        Log.e("Verified", String.valueOf(mVerified));
+        if(mVerified == 1) {
+            ImageView img = getActivity().findViewById(R.id.verifiedImage);
+
+            //set verified check
+            img.setImageResource(R.drawable.charles_angels_icon);
+            (getActivity().findViewById(R.id.confirmImage))
+                    .setVisibility(View.GONE);
+        }
+        else if(mVerified == 2){
+            ImageView img = getActivity().findViewById(R.id.verifiedImage);
+
+            //set sent request image
+            img.setImageResource(R.drawable.charles_angels_icon);
             (getActivity().findViewById(R.id.verifiedImage))
                     .setVisibility(View.GONE);
-        } else {
+        }
+        else if(mVerified == 3){
+            ImageView img = getActivity().findViewById(R.id.verifiedImage);
+
+            //set received image
+            img.setImageResource(R.drawable.charles_angels_icon);
+            (getActivity().findViewById(R.id.confirmImage))
+                    .setVisibility(View.GONE);
+        }
+        else {
             (getActivity().findViewById(R.id.verifiedImage))
-                    .setVisibility(View.VISIBLE);
+                    .setVisibility(View.GONE);
         }
     }
 

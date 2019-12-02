@@ -39,7 +39,7 @@ public class MyConnectionGUIRecyclerViewAdapter extends RecyclerView.Adapter<MyC
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mItem = mValues.get(position);
-        holder.contactid.setText("ID: " + mValues.get(position).getContactId());
+//        holder.contactid.setText("ID: " + mValues.get(position).getContactId());
         holder.name.setText("Name: " + mValues.get(position).getFirstName()
         + " " + mValues.get(position).getLastName());
 //        holder.lastname.setText("Last Name: " + mValues.get(position).getLastName());
@@ -66,7 +66,7 @@ public class MyConnectionGUIRecyclerViewAdapter extends RecyclerView.Adapter<MyC
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
-        public final TextView contactid;
+//        public final TextView contactid;
         public final TextView lastname;
         public final TextView name;
         public final TextView userName;
@@ -75,7 +75,7 @@ public class MyConnectionGUIRecyclerViewAdapter extends RecyclerView.Adapter<MyC
         public ViewHolder(View view) {
             super(view);
             mView = view;
-            contactid = view.findViewById(R.id.connection_memberid);
+//            contactid = view.findViewById(R.id.connection_memberid);
             lastname = view.findViewById(R.id.connection_lastname);
             name = view.findViewById(R.id.connection_firstname);
             userName = view.findViewById(R.id.connection_username);

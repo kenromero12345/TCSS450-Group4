@@ -8,7 +8,7 @@
 
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="72dp"
         android:layout_marginTop="16dp"
         android:layout_marginBottom="16dp"
         app:cardBackgroundColor="@color/uwGold"
@@ -21,21 +21,6 @@
             android:orientation="horizontal"
             app:layout_constraintBottom_toTopOf="@+id/connection_memberid"
             app:layout_constraintTop_toTopOf="@+id/connection_memberid">
-
-            <TextView
-                android:id="@+id/connection_memberid"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="8dp"
-                android:textAppearance="?attr/textAppearanceListItem"
-                android:textSize="15sp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:layout_conversion_absoluteHeight="27dp"
-                tools:layout_conversion_absoluteWidth="0dp" />
 
 
             <TextView
@@ -58,7 +43,7 @@
                 android:id="@+id/connection_firstname"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="76dp"
+                android:layout_marginStart="16dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="8dp"
                 android:textAppearance="?attr/textAppearanceListItem"
@@ -66,7 +51,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="1.0"
+                app:layout_constraintVertical_bias="0.0"
                 tools:layout_conversion_absoluteHeight="27dp"
                 tools:layout_conversion_absoluteWidth="0dp" />
 
@@ -80,10 +65,10 @@
                 android:textSize="15sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.847"
+                app:layout_constraintHorizontal_bias="0.042"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.0"
+                app:layout_constraintVertical_bias="0.777"
                 tools:layout_conversion_absoluteHeight="27dp"
                 tools:layout_conversion_absoluteWidth="0dp" />
 

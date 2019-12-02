@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import org.json.JSONException;
@@ -31,6 +32,7 @@ public class ConnectionAddFragment extends Fragment implements View.OnClickListe
     private String mJwToken;
     private ConnectionItem mConItem;
     private boolean mBoolean = false;
+    private int mMemberId;
 
 
     public ConnectionAddFragment() {
@@ -42,7 +44,91 @@ public class ConnectionAddFragment extends Fragment implements View.OnClickListe
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_connection_add, container, false);
+        View view =  inflater.inflate(R.layout.fragment_connection_add, container, false);
+        LinearLayout layout = view.findViewById(R.id.addLayout);
+        layout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                displayConnection();
+            }
+        });
+
+        return view;
+    }
+
+    private void displayConnection() {
+        Uri uriConnection = new Uri.Builder()
+                .scheme("https")
+                .appendPath(getString(R.string.ep_base_url))
+                .appendPath(getString(R.string.ep_connection))
+                .appendPath(getString(R.string.ep_getPerson))
+                .build();
+        JSONObject msgBody = new JSONObject();
+        try{
+            msgBody.put("memberIdUser", mMemberId);
+            msgBody.put("memberIdOther", mConItem.getContactId());
+        } catch (JSONException e) {
+            Log.wtf("MEMBERID", "Error creating JSON: " + e.getMessage());
+
+        }
+        new SendPostAsyncTask.Builder(uriConnection.toString(), msgBody)
+                .onPostExecute(this::handleDisplayOnPostExecute)
+                .onCancelled(error -> Log.e("CONNECTION FRAG", error))
+                .addHeaderField("authorization", mJwToken)  //add the JWT as header
+                .build().execute();
+    }
+
+    private void handleDisplayOnPostExecute(String result) {
+        //parse JSON
+        try {
+            boolean hasConnection = false;
+            JSONObject root = new JSONObject(result);
+            if (root.has(getString(R.string.keys_json_connection_connection))){
+                hasConnection = true;
+            } else {
+                Log.e("ERROR!", "No connection");
+            }
+
+            if (hasConnection){
+                JSONObject connectionJObject = root.getJSONObject(
+                        getString(R.string.keys_json_connection_connection));
+                if (root.getString("status") == "already connected") {
+                    mConItem = new ConnectionItem(connectionJObject.getInt(
+                            getString(R.string.keys_json_connection_memberid))
+                            , connectionJObject.getString(
+                            getString(R.string.keys_json_connection_firstname))
+                            , connectionJObject.getString(
+                            getString(R.string.keys_json_connection_lastname))
+                            ,connectionJObject.getString(
+                            getString(R.string.keys_json_connection_username))
+                            ,1);
+
+                } else {
+                    mConItem = new ConnectionItem(connectionJObject.getInt(
+                            getString(R.string.keys_json_connection_memberid))
+                            , connectionJObject.getString(
+                            getString(R.string.keys_json_connection_firstname))
+                            , connectionJObject.getString(
+                            getString(R.string.keys_json_connection_lastname))
+                            ,connectionJObject.getString(
+                            getString(R.string.keys_json_connection_username))
+                            ,0);
+                }
+
+
+
+                final Bundle args = new Bundle();
+                args.putSerializable(getString(R.string.keys_connection_view), mConItem);
+                args.putString("jwt", mJwToken);
+                args.putInt("memberid", mMemberId);
+                Navigation.findNavController(getView())
+                        .navigate(R.id.action_nav_connection_add_to_viewConnectionFragment, args);
+            }
+
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -55,8 +141,11 @@ public class ConnectionAddFragment extends Fragment implements View.OnClickListe
             mBoolean = getArguments().getBoolean("boolean");
             mConItem = (ConnectionItem)
                     getArguments().get(getString(R.string.keys_connection_view));
-            Log.e("Boolean!", String.valueOf(mBoolean));
+//            Log.e("Boolean!", String.valueOf(mBoolean));
+
         }
+        LinearLayout layout = getActivity().findViewById(R.id.addLayout);
+        layout.setVisibility(View.GONE);
 //        if (mBoolean == true) {
 //            Log.e("firstname!", mConItem.getFirstName());
 //            Log.e("lastname!", mConItem.getLastName());
@@ -83,18 +172,15 @@ public class ConnectionAddFragment extends Fragment implements View.OnClickListe
 //        }
     }
 
-    public void populateSearch(){
-        Log.e("firstname!", mConItem.getFirstName());
-        Log.e("lastname!", mConItem.getLastName());
-        Log.e("memberid!", mConItem.getContactId());
-        Log.e("username!", mConItem.getContactUserName());
-        ((TextView) getActivity().findViewById(R.id.connection_firstname))
-                .setText("Name: " + mConItem.getFirstName() + " " + mConItem.getLastName());
-        ((TextView) getActivity().findViewById(R.id.connection_memberid))
-                .setText("ID: " + mConItem.getContactId()) ;
-        ((TextView) getActivity().findViewById(R.id.connection_username))
-                .setText("Username : " + mConItem.getContactUserName());
-    }
+//    public void populateSearch(){
+//
+//        ((TextView) getActivity().findViewById(R.id.connection_firstname))
+//                .setText("Name: " + mConItem.getFirstName() + " " + mConItem.getLastName());
+//        ((TextView) getActivity().findViewById(R.id.connection_memberid))
+//                .setText("ID: " + mConItem.getContactId()) ;
+//        ((TextView) getActivity().findViewById(R.id.connection_username))
+//                .setText("Username : " + mConItem.getContactUserName());
+//    }
 
     @Override
     public void onViewCreated (@NonNull View view, @Nullable Bundle savedInstanceState) {
@@ -102,11 +188,15 @@ public class ConnectionAddFragment extends Fragment implements View.OnClickListe
 
 //        ((TextView) getActivity().findViewById(R.id.connection_firstname))
 //                .setText("Name: ");
-
-        if (mBoolean == true) {
-            populateSearch();
-
-        }
+//
+//        if (mBoolean == true) {
+//            Log.e("firstname!", mConItem.getFirstName());
+//            Log.e("lastname!", mConItem.getLastName());
+//            Log.e("memberid!", mConItem.getContactId());
+//            Log.e("username!", mConItem.getContactUserName());
+//            populateSearch();
+//
+//        }
 
 
         Button button_search = (Button) view.findViewById(R.id.connectionSearchButton);
@@ -124,10 +214,8 @@ public class ConnectionAddFragment extends Fragment implements View.OnClickListe
                 searchConnection();
                 //navigate to chat
                 break;
-            case R.id.fullChat:
-//                Log.d("DEBUG", "entered");
-//                Navigation.findNavController(getView())
-//                        .navigate(R.id.action_nav_login_to_nav_register);
+            case R.id.connectionAddButton:
+                addConnection();
 
                 break;
         }
@@ -135,7 +223,6 @@ public class ConnectionAddFragment extends Fragment implements View.OnClickListe
     }
 
     private void searchConnection() {
-//        mBoolean = true;
         EditText userNameText = getActivity().findViewById(R.id.connectionUserNameText);
         String username = userNameText.getText().toString();
         Uri uriSearch = new Uri.Builder()
@@ -144,7 +231,7 @@ public class ConnectionAddFragment extends Fragment implements View.OnClickListe
                 .appendPath(getString(R.string.ep_connection))
                 .appendPath(getString(R.string.ep_search))
                 .build();
-        Log.e("name", String.valueOf(username));
+//        Log.e("name", String.valueOf(username));
         JSONObject msgBody = new JSONObject();
         try{
             msgBody.put("username", username);
@@ -157,6 +244,64 @@ public class ConnectionAddFragment extends Fragment implements View.OnClickListe
                 .onCancelled(error -> Log.e("CONNECTION FRAG", error))
                 .addHeaderField("authorization", mJwToken)  //add the JWT as header
                 .build().execute();
+
+    }
+
+    private void addConnection() {
+        EditText userNameText = getActivity().findViewById(R.id.connectionUserNameText);
+        String username = userNameText.getText().toString();
+        Log.e("ERROR!", mConItem.getContactId());
+        Uri uriSearch = new Uri.Builder()
+                .scheme("https")
+                .appendPath(getString(R.string.ep_base_url))
+                .appendPath(getString(R.string.ep_connection))
+                .appendPath(getString(R.string.ep_add))
+                .build();
+//        Log.e("name", String.valueOf(username));
+        JSONObject msgBody = new JSONObject();
+        try{
+            msgBody.put("memberIdUser", mMemberId);
+            msgBody.put("memberIdOther", mConItem.getContactId());
+        } catch (JSONException e) {
+            Log.wtf("username", "Error creating JSON: " + e.getMessage());
+
+        }
+        new SendPostAsyncTask.Builder(uriSearch.toString(), msgBody)
+                .onPostExecute(this::handleAddOnPostExecute)
+                .onCancelled(error -> Log.e("CONNECTION FRAG", error))
+                .addHeaderField("authorization", mJwToken)  //add the JWT as header
+                .build().execute();
+    }
+
+    private void handleAddOnPostExecute(String result) {
+        //parse JSON
+        Button button_add = getActivity().findViewById(R.id.connectionAddButton);
+        try {
+            boolean hasSuccess = false;
+            JSONObject root = new JSONObject(result);
+            Log.e("root!", String.valueOf(root));
+            Log.e("Success!", String.valueOf(root.getBoolean("success")));
+            boolean success = root.getBoolean("success");
+            if (root.has("success")){
+                hasSuccess = true;
+            } else {
+                Log.e("ERROR!", "No Success");
+            }
+
+            if (hasSuccess){
+                if (success == true) {
+                    button_add.setText("Added!");
+                } else {
+                    button_add.setText("Already Added!");
+
+                }
+            }
+
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
     }
 
     private void handleSearchOnPostExecute(String result) {
@@ -185,13 +330,23 @@ public class ConnectionAddFragment extends Fragment implements View.OnClickListe
 
 
 
-                final Bundle args = new Bundle();
-                args.putSerializable(getString(R.string.keys_connection_view), mConItem);
-                args.putString("jwt", mJwToken);
-                args.putBoolean("boolean", true);
-//                args.putInt("memberid", mMemberId);
-                Navigation.findNavController(getView())
-                        .navigate(R.id.nav_connection_add, args);
+                ((TextView) getActivity().findViewById(R.id.connection_firstname))
+                        .setText("Name: " + mConItem.getFirstName() + " " + mConItem.getLastName());
+                ((TextView) getActivity().findViewById(R.id.connection_memberid))
+                        .setText("ID: " + mConItem.getContactId()) ;
+                ((TextView) getActivity().findViewById(R.id.connection_username))
+                        .setText("Username : " + mConItem.getContactUserName());
+
+                LinearLayout layout = getActivity().findViewById(R.id.addLayout);
+                layout.setVisibility(View.VISIBLE);
+
+//                final Bundle args = new Bundle();
+//                args.putSerializable(getString(R.string.keys_connection_view), mConItem);
+//                args.putString("jwt", mJwToken);
+//                args.putBoolean("boolean", true);
+////                args.putInt("memberid", mMemberId);
+//                Navigation.findNavController(getView())
+//                        .navigate(R.id.nav_connection_add, args);
             }
 
 

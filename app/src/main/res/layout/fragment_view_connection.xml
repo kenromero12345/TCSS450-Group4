@@ -6,53 +6,50 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/linearLayout3"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_width="396dp"
+        android:layout_height="293dp"
         android:layout_marginStart="9dp"
         android:layout_marginTop="10dp"
         android:layout_marginEnd="9dp"
         android:layout_marginBottom="20dp"
         android:background="@color/uwGold"
-        android:orientation="vertical"
         app:layout_constraintBottom_toTopOf="@+id/fullChat"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
+
         <TextView
             android:id="@+id/fullName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="15dp"
-            android:textSize="25sp" />
-
-
-        <TextView
-            android:id="@+id/fullID"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="15dp"
-            android:textSize="25sp" />
+            android:layout_marginStart="136dp"
+            android:layout_marginTop="128dp"
+            android:textSize="25sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/fullUsername"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="15dp"
-            android:textSize="25sp" />
+            android:layout_marginStart="136dp"
+            android:layout_marginBottom="68dp"
+            android:textSize="25sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
 
-    </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 
     <Button
         android:id="@+id/fullChat"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="36dp"
         android:backgroundTint="@color/uwGold"
         android:text="@string/menu_chat"
         app:layout_constraintStart_toStartOf="parent"
@@ -62,23 +59,33 @@
         android:id="@+id/fullDelete"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginStart="72dp"
+        android:layout_marginEnd="16dp"
         android:backgroundTint="?attr/colorError"
         android:text="Delete"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/fullChat" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/verifiedImage"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
         android:id="@+id/verifiedImage"
         android:layout_width="59dp"
         android:layout_height="45dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="14dp"
+        android:layout_marginStart="176dp"
+        android:layout_marginTop="344dp"
         android:visibility="visible"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/fullDelete"
-        app:srcCompat="@android:drawable/presence_online" />
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/confirmImage"
+        android:layout_width="59dp"
+        android:layout_height="45dp"
+        android:layout_marginStart="176dp"
+        android:layout_marginTop="344dp"
+        android:visibility="visible"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

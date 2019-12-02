@@ -21,11 +21,6 @@
         android:label="fragment_chat"
         tools:layout="@layout/fragment_chat" />
     <fragment
-        android:id="@+id/nav_connections"
-        android:name="edu.uw.tcss450.tcss450_group4.ui.ConnectionsFragment"
-        android:label="fragment_connection"
-        tools:layout="@layout/fragment_connection" />
-    <fragment
         android:id="@+id/nav_weather"
         android:name="edu.uw.tcss450.tcss450_group4.ui.WeatherFragment"
         android:label="Weather"
@@ -125,7 +120,10 @@
         <action
             android:id="@+id/action_nav_connectionGUI_to_nav_connection_add"
             app:destination="@id/nav_connection_add" />
-    </fragment><action android:id="@+id/action_global_nav_connectionGUI" app:destination="@id/nav_connectionGUI"/>
+      <action
+          android:id="@+id/action_nav_connectionGUI_to_nav_connection_request"
+          app:destination="@id/nav_connection_request" />
+  </fragment><action android:id="@+id/action_global_nav_connectionGUI" app:destination="@id/nav_connectionGUI"/>
 
 
   <fragment
@@ -164,5 +162,31 @@
         android:id="@+id/nav_connection_add"
         android:name="edu.uw.tcss450.tcss450_group4.ui.ConnectionAddFragment"
         android:label="fragment_connection_add"
-        tools:layout="@layout/fragment_connection_add" />
+        tools:layout="@layout/fragment_connection_add" >
+        <action
+            android:id="@+id/action_nav_connection_add_to_viewConnectionFragment"
+            app:destination="@id/viewConnectionFragment" />
+    </fragment>
+    <action android:id="@+id/action_global_nav_home" app:destination="@id/nav_home" />
+    <fragment
+        android:id="@+id/nav_connection_request"
+        android:name="edu.uw.tcss450.tcss450_group4.ui.ConnectionRequestFragment"
+        android:label="fragment_connectionrequest_list"
+        tools:layout="@layout/fragment_connectionrequest_list" >
+        <argument
+            android:name="connectionitems"
+            app:argType="edu.uw.tcss450.tcss450_group4.model.ConnectionItem[]" />
+        <argument
+            android:name="jwt"
+            app:argType="string"
+            android:defaultValue='""' />
+        <argument
+            android:name="memberid"
+            app:argType="integer"
+            android:defaultValue="0" />
+        <action
+            android:id="@+id/action_nav_connection_request_to_viewConnectionFragment"
+            app:destination="@id/viewConnectionFragment" />
+    </fragment>
+    <action android:id="@+id/action_global_nav_connection_request" app:destination="@id/nav_connection_request" />
 </navigation>

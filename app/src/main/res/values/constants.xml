@@ -67,6 +67,7 @@
     <string name="keys_json_connection_username">username</string>
     <string name="keys_json_connection_verified">verified</string>
     <string name="keys_json_connection_connections">connections</string>
+    <string name="keys_json_connection_connection">connection</string>
     <string name="keys_json_connection_success">sucess</string>
     <string name="keys_connection_view">connectionview</string>
     <string name="keys_connection_jwt">jwt</string>
