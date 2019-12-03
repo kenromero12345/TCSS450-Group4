@@ -168,6 +168,10 @@
         <argument
             android:name="messageList"
             app:argType="edu.uw.tcss450.tcss450_group4.model.Message[]" />
+        <argument
+            android:name="chatId"
+            app:argType="string"
+            android:defaultValue='""' />
     </fragment>
     <action
         android:id="@+id/action_global_nav_chat_list"

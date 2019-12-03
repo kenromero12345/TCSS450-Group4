@@ -74,14 +74,14 @@ public class ViewChatFragment extends Fragment {
         ViewChatFragmentArgs args = ViewChatFragmentArgs.fromBundle(getArguments());
         //mEmail = args.getEmail();
         if(getArguments() != null) {
-            Chat chat = (Chat) getArguments().getSerializable(getString(R.string.chat_object));
-            mEmail = getArguments().getString("email");
-            mJwToken = getArguments().getString("jwt");
+//            Chat chat = (Chat) getArguments().getSerializable(getString(R.string.chat_object));
+//            mEmail = getArguments().getString("email");
+//            mJwToken = getArguments().getString("jwt");
 //            mMessageList = (List<Message>) getArguments().getSerializable("List");
+            mEmail = args.getEmail();
+            mJwToken = args.getJwt();
             mMessageList = new ArrayList<>(Arrays.asList(args.getMessageList()));
-            if (chat != null) {
-                CHAT_ID = chat.getChatId();
-            }
+            CHAT_ID = args.getChatId();
             if(CHAT_ID.equals("")) {
                 CHAT_ID = getArguments().getString("chatid");
             }
@@ -117,8 +117,8 @@ public class ViewChatFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        mUsesrnameOutputTextView = view.findViewById(R.id.txt_userName_display);
-        mMessageOutputTextView = view.findViewById(R.id.txt_chat_message_display);
+        mUsesrnameOutputTextView = view.findViewById(R.id.txt_friendUserName);
+        mMessageOutputTextView = view.findViewById(R.id.txt_theirMessage);
         mMessageInputEditText = view.findViewById(R.id.editText_chat_message_input);
         RecyclerView rv = view.findViewById(R.id.list);
         if (rv instanceof RecyclerView) {
@@ -129,7 +129,9 @@ public class ViewChatFragment extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            recyclerView.setAdapter(new MyMessageListRecyclerViewAdapter(mMessageList, null));
+            mMessageAdapter = new MyMessageListRecyclerViewAdapter(mMessageList, null);
+            recyclerView.setAdapter(mMessageAdapter);
+
         }
         view.findViewById(R.id.button_chat_send).setOnClickListener(this::handleSendClick);
 
@@ -158,6 +160,8 @@ public class ViewChatFragment extends Fragment {
 
         inputManager.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(),
                 InputMethodManager.HIDE_NOT_ALWAYS);
+        mMessageAdapter.notifyDataSetChanged();
+
     }
 
     private void endOfSendMsgTask(final String result) {
@@ -238,9 +242,10 @@ public class ViewChatFragment extends Fragment {
 
                 String sender = intent.getStringExtra("SENDER");
                 String messageText = intent.getStringExtra("MESSAGE");
-
-                mUsesrnameOutputTextView.append(sender+": ");
-                mMessageOutputTextView.setText(messageText);
+                mMessageAdapter.addMessage(sender, messageText, "");
+                mMessageAdapter.notifyDataSetChanged();
+//                mUsesrnameOutputTextView.append(sender+": ");
+//                mMessageOutputTextView.setText(messageText);
 //                mMessageOutputTextView.append(sender + ":" + messageText);
 //                mMessageOutputTextView.append(System.lineSeparator());
 //                mMessageOutputTextView.append(System.lineSeparator());

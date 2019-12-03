@@ -27,12 +27,14 @@ import org.json.JSONObject;
 import edu.uw.tcss450.tcss450_group4.MobileNavigationDirections;
 import edu.uw.tcss450.tcss450_group4.R;
 import edu.uw.tcss450.tcss450_group4.model.ConnectionItem;
+import edu.uw.tcss450.tcss450_group4.model.Message;
 import edu.uw.tcss450.tcss450_group4.utils.SendPostAsyncTask;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static edu.uw.tcss450.tcss450_group4.R.id.nav_host_fragment;
 import static edu.uw.tcss450.tcss450_group4.R.string.ep_add_friend_to_new_chat;
 import static edu.uw.tcss450.tcss450_group4.R.string.ep_base_url;
 import static edu.uw.tcss450.tcss450_group4.R.string.ep_chats;
@@ -127,11 +129,11 @@ public class CreateChatFragment extends Fragment implements View.OnClickListener
 
                 inputManager.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(),
                         InputMethodManager.HIDE_NOT_ALWAYS);
-                final Bundle bundle = new Bundle();
-                bundle.putString("chatid", mChatId);
-                bundle.putString("email", mEmail);
-                bundle.putString("jwt", mJwToken);
-                Navigation.findNavController(getView()).navigate(R.id.action_nav_create_chat_to_nav_view_chat, bundle);
+//                final Bundle bundle = new Bundle();
+//                bundle.putString("chatid", mChatId);
+//                bundle.putString("email", mEmail);
+//                bundle.putString("jwt", mJwToken);
+//                Navigation.findNavController(getView()).navigate(R.id.action_nav_create_chat_to_nav_view_chat, bundle);
 
                 break;
         }
@@ -192,6 +194,14 @@ public class CreateChatFragment extends Fragment implements View.OnClickListener
             if (success) {
                 mChatId = resultJSON.getString("chatid");
 //                Navigation.findNavController(getView()).navigate(R.id.action_nav_create_chat_to_nav_view_chat, bundle);
+
+                Message[] message = new Message[0];
+                MobileNavigationDirections.ActionGlobalNavViewChat directions;
+                directions = ViewChatFragmentDirections.actionGlobalNavViewChat(message);
+                directions.setEmail(mEmail);
+                directions.setJwt(mJwToken);
+                directions.setChatId(mChatId);
+                Navigation.findNavController(getActivity(), nav_host_fragment).navigate(directions);
             }
         } catch (JSONException e) {
             Log.wtf("JSON_PARSE_ERROR", "Error creating JSON: " + e.getMessage());

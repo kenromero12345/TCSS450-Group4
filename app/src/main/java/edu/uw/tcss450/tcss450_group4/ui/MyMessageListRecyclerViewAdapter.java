@@ -1,9 +1,11 @@
 package edu.uw.tcss450.tcss450_group4.ui;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 
@@ -11,6 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
+import java.util.Random;
 
 import edu.uw.tcss450.tcss450_group4.R;
 import edu.uw.tcss450.tcss450_group4.model.Message;
@@ -29,7 +32,7 @@ public class MyMessageListRecyclerViewAdapter extends RecyclerView.Adapter<MyMes
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.fragment_view_chat, parent, false);
+                .inflate(R.layout.their_message, parent, false);
         return new ViewHolder(view);
 //
 //        if (viewType == VIEW_TYPE_MESSAGE_SENT) {
@@ -49,6 +52,10 @@ public class MyMessageListRecyclerViewAdapter extends RecyclerView.Adapter<MyMes
         holder.mItem = mValues.get(position);
         holder.mUsername.setText(mValues.get(position).getUsername());
         holder.mMessage.setText(mValues.get(position).getMessage());
+
+//        Random rnd = new Random();
+//        int color = Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256));
+//        holder.mAvatar.setBackground(color);
 //        Message message = (Message) mValues.get(position);
 
 //        switch (holder.getItemViewType()) {
@@ -65,6 +72,10 @@ public class MyMessageListRecyclerViewAdapter extends RecyclerView.Adapter<MyMes
         return mValues.size();
     }
 
+    public void addMessage(String userName, String message, String timeStamp) {
+        Message newMess = new Message.Builder(userName, message, timeStamp).build();
+        mValues.add(newMess);
+    }
     // Determines the appropriate ViewType according to the sender of the message.
     @Override
     public int getItemViewType(int position) {
@@ -86,17 +97,19 @@ public class MyMessageListRecyclerViewAdapter extends RecyclerView.Adapter<MyMes
         public final TextView mUsername;
         ChatFragment chat = new ChatFragment();
         public Message mItem;
+        public final ImageView mAvatar;
 
         public ViewHolder(View view) {
             super(view);
             mView = view;
-            if (String.valueOf(mItem.getMemberId()).equals(chat.getmMemberId())) {
-                mUsername = null;
-                mMessage = view.findViewById(R.id.txt_myMessage);
-            } else {
+//            if (String.valueOf(mItem.getMemberId()).equals(chat.getmMemberId())) {
+//                mUsername = null;
+//                mMessage = view.findViewById(R.id.txt_myMessage);
+//            } else {
                 mUsername = view.findViewById(R.id.txt_friendUserName);
                 mMessage = view.findViewById(R.id.txt_theirMessage);
-            }
+                mAvatar = view.findViewById(R.id.avatar);
+   //         }
 
         }
 

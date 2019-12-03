@@ -67,6 +67,7 @@ public class ChatFragment extends Fragment implements View.OnClickListener {
     private String mJwToken;
     private String mEmail;
     private ArrayList<Message> mMessageList;
+    private Chat mChat;
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
@@ -193,7 +194,7 @@ public class ChatFragment extends Fragment implements View.OnClickListener {
     }
     private void displayChat(final Chat chat){
 
-
+        mChat = chat;
 
         JSONObject msgBody = new JSONObject();
         try {
@@ -213,12 +214,12 @@ public class ChatFragment extends Fragment implements View.OnClickListener {
                 .onCancelled(this::handleErrorsInTask)
                 .build().execute();
 
-        final Bundle args = new Bundle();
-        args.putSerializable(getString(R.string.chat_object), chat);
-        args.putString("email", mEmail);
-        args.putString("jwt", mJwToken);
+//        final Bundle args = new Bundle();
+//        args.putSerializable(getString(R.string.chat_object), chat);
+//        args.putString("email", mEmail);
+//        args.putString("jwt", mJwToken);
 //        args.putSerializable("List", mMessageList);
-        Navigation.findNavController(getView()).navigate(R.id.action_nav_chat_list_to_nav_view_chat, args);
+        //Navigation.findNavController(getView()).navigate(R.id.action_nav_chat_list_to_nav_view_chat, args);
     }
 
     private void handleMessageGetOnPostExecute(final String result) {
@@ -232,7 +233,7 @@ public class ChatFragment extends Fragment implements View.OnClickListener {
                 for (int i = 0; i < data.length(); i++) {
                     JSONObject jsonChatLists = data.getJSONObject(i);
 
-                    messages[i] = (new Message.Builder(jsonChatLists.getString("email"),
+                    messages[i] = (new Message.Builder(jsonChatLists.getString("username"),
                                 jsonChatLists.getString("message"),
                                 convertTimeStampToDate(jsonChatLists.getString("timestamp")))
                                 .build());
@@ -240,6 +241,9 @@ public class ChatFragment extends Fragment implements View.OnClickListener {
 //                mMessageList = new ArrayList<Message>(Arrays.asList(messages));
                 MobileNavigationDirections.ActionGlobalNavViewChat directions;
                 directions = ViewChatFragmentDirections.actionGlobalNavViewChat(messages);
+                directions.setEmail(mEmail);
+                directions.setJwt(mJwToken);
+                directions.setChatId(mChat.getChatId());
                 Navigation.findNavController(getActivity(), nav_host_fragment).navigate(directions);
             } else {
                 Log.e("ERROR!", "No response");
