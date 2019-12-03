@@ -46,16 +46,19 @@ import static edu.uw.tcss450.tcss450_group4.model.WeatherHelper.tempFromKelvinTo
 
 /**
  * A simple {@link Fragment} subclass.
+ * @author Ken Gil Romero kgmr@uw.edu
  */
 public class HomeFragment extends Fragment {
+    // the view of the fragmen
     private View mView;
+    //the  weather of the fragment
     private Weather mWeather;
+    // the char degree of the fragment
     private static final char DEGREE = (char) 0x00B0;
 
     public HomeFragment() {
         // Required empty public constructor
     }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -65,9 +68,9 @@ public class HomeFragment extends Fragment {
     }
 
     /**
-     *
-     * @param view
-     * @param savedInstanceState
+     * when view is created
+     * @param view  the view
+     * @param savedInstanceState the saved instance state
      */
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
@@ -77,6 +80,10 @@ public class HomeFragment extends Fragment {
         initialization(view);
     }
 
+    /**
+     * initialize all fields
+     * @param view the view given
+     */
     private void initialization(@NonNull View view) {
         mView = view;
         HomeFragmentArgs args = HomeFragmentArgs.fromBundle(Objects.requireNonNull(getArguments()));
@@ -86,11 +93,17 @@ public class HomeFragment extends Fragment {
         }
     }
 
+    /**
+     * set components and their action
+     */
     private void setComponents() {
         setWeather();
         mView.findViewById(weather_temperatureSwitch).setOnClickListener(e -> switchTemperature());
     }
 
+    /**
+     * set's the weather of the view
+     */
     private void setWeather() {
         Geocoder geocoder;
         List<Address> addresses;
@@ -112,7 +125,7 @@ public class HomeFragment extends Fragment {
         TextView windSpeed = mView.findViewById(weather_windSpeed);
         TextView windDeg = mView.findViewById(weather_windDegree);
 
-        if (mWeather.getState().equals(null)) {
+        if (mWeather.getState() == null) {
             cityText.setText(String.format("%s, %s", mWeather.getCity(), mWeather.getCountry()));
         } else {
             if (State.valueOfName(mWeather.getState()) == State.UNKNOWN) {
@@ -147,6 +160,9 @@ public class HomeFragment extends Fragment {
                 });
     }
 
+    /**
+     * switch the temperature of the weather
+     */
     private void switchTemperature() {
         if (((Switch) mView.findViewById(weather_temperatureSwitch)).isChecked()) {
             TextView temp = mView.findViewById(weather_temperature);

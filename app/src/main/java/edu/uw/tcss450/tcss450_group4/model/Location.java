@@ -11,6 +11,8 @@ import java.io.Serializable;
  * @author Ken Gil Romero kgmr@uw.edu
  */
 public class Location implements Parcelable, Serializable {
+
+    //overidden method of parceable
     protected Location(Parcel in) {
         mLon = in.readDouble();
         mLat = in.readDouble();
@@ -19,7 +21,7 @@ public class Location implements Parcelable, Serializable {
     }
 
     /**
-     *
+     * overriden static of parceable
      */
     public static final Creator<Location> CREATOR = new Creator<Location>() {
         @Override
@@ -33,32 +35,30 @@ public class Location implements Parcelable, Serializable {
         }
     };
 
-    public double getLon() {
-        return mLon;
-    }
-
+    /**
+     * the lon of the location
+     */
     private final double mLon;
 
-    public final double getLat() {
-        return mLat;
-    }
+    // the lat of the location
+    private final double mLat;
 
-    public final String getName() {
-        return mName;
-    }
-
-    public final int getZip() {
-        return mZip;
-    }
-
-    private double mLat;
+    // the name of the location
     private final String mName;
+
+    // the zip of the location
     private int mZip;
 
 //    public Location() {
 //        mName = "";
 //    }
 
+    /**
+     * constructor of the location
+     * @param tLon the given lon
+     * @param tLat the given lat
+     * @param tName the given name of the location
+     */
     public Location(double tLon, double tLat, String tName) {
         mLat = tLat;
         mLon = tLon;
@@ -66,9 +66,9 @@ public class Location implements Parcelable, Serializable {
         mZip = -1;
     }
 
-    public void setZip(int tZip) {
-        mZip = tZip;
-    }
+//    public void setZip(int tZip) {
+//        mZip = tZip;
+//    }
 
     @Override
     public int describeContents() {
@@ -82,4 +82,36 @@ public class Location implements Parcelable, Serializable {
         dest.writeString(mName);
         dest.writeInt(mZip);
     }
+
+    /**
+     *
+     * @return the lat of the location
+     */
+    public final double getLat() {
+        return mLat;
+    }
+
+    /**
+     *
+     * @return the name of the location
+     */
+    public final String getName() {
+        return mName;
+    }
+
+//    /**
+//     *
+//     * @return
+//     */
+//    public final int getZip() {
+//        return mZip;
+//    }
+
+    /**
+     *
+     * @return the lon of the location
+     */
+    public double getLon() {
+    return mLon;
+}
 }

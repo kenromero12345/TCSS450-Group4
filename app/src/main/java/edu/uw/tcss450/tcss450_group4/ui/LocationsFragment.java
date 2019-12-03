@@ -63,13 +63,22 @@ import static edu.uw.tcss450.tcss450_group4.model.WeatherHelper.sendPostAsyncTas
  * <p/>
  * Activities containing this fragment MUST implement the {@link OnListFragmentInteractionListener}
  * interface.
+ * @author Ken Gil Romero kgmr@uw.edu
  */
 public class LocationsFragment extends Fragment {
-    private static final String TAG = "WEATHER_FRAG";
+//    //the tag f
+//    private static final String TAG = "WEATHER_FRAG";
+    //the lst of location
     private List<Location> mLocations;
+    //the email
     private String mEmail;
+    //the jwtoken for authrization
     private String mJwToken;
+    // the current weather
     private Weather mWeather;
+    /**
+     * the 10 day weather
+     */
     private Weather[] mWeathers10d;
 
     // TODO: Customize parameter argument names
@@ -103,6 +112,7 @@ public class LocationsFragment extends Fragment {
 //        }
 //    }
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -124,12 +134,16 @@ public class LocationsFragment extends Fragment {
         return view;
     }
 
+    /**
+     * the lifecycle on create
+     * @param savedInstanceState the saved instance state
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         LocationsFragmentArgs args = LocationsFragmentArgs.fromBundle(
-                getArguments());
+                Objects.requireNonNull(getArguments()));
         mLocations = new ArrayList<>(Arrays.asList(args.getLocations()));
         mEmail =  args.getEmail();
         mJwToken = args.getJwt();
@@ -150,8 +164,12 @@ public class LocationsFragment extends Fragment {
         void onListFragmentInteraction(Location item);
     }
 
+    /**
+     * get the weather of the location
+     * @param tLocation
+     */
     private void getWeather(final Location tLocation) {
-        if (tLocation.getName() != "No Locations") {
+        if (!tLocation.getName().equals("No Locations")) {
             AlertDialog alertDialog = new AlertDialog.Builder(getActivity()).create();
             alertDialog.setTitle("Alert");
             alertDialog.setMessage("Do you want to get the location's weather?");
@@ -168,9 +186,13 @@ public class LocationsFragment extends Fragment {
         }
     }
 
+    /**
+     * displays the weather location
+     * @param tLocation the given location
+     */
     private void displayWeather(final Location tLocation) {
         //TODO use zip
-        Uri uri = getUriWeatherCurrentLatLon(getContext());
+        Uri uri = getUriWeatherCurrentLatLon(Objects.requireNonNull(getContext()));
 
         Uri uri2 = getUriWeather10dLatLon(getContext());
 
@@ -201,6 +223,10 @@ public class LocationsFragment extends Fragment {
         sendPostAsyncTaskHelper(uri3, msg, this::handleWeather24hGetOnPostExecute, mJwToken);
     }
 
+    /**
+     * handling the 24h weather result given
+     * @param result the given result
+     */
     private void handleWeather24hGetOnPostExecute(final String result) {
         try {
             boolean hasHourly = false;
@@ -234,7 +260,7 @@ public class LocationsFragment extends Fragment {
                 }
                 MobileNavigationDirections.ActionGlobalNavWeather directions
                         = WeatherFragmentDirections.actionGlobalNavWeather(mJwToken, mEmail
-                                , mWeather, mWeathers10d, weathers, args.getWeatherHome()
+                                , mWeather, mWeathers10d, weathers, Objects.requireNonNull(args).getWeatherHome()
                                 , args.getWeathersHome10d(), args.getWeathersHome24h());
 
                 Navigation.findNavController(Objects.requireNonNull(getView()))
@@ -249,10 +275,14 @@ public class LocationsFragment extends Fragment {
             }
         } catch (JSONException e) {
             e.printStackTrace();
-            Log.e("ERROR!", e.getMessage());
+            Log.e("ERROR!", Objects.requireNonNull(e.getMessage()));
         }
     }
 
+    /**
+     * handling the 10d weather result given
+     * @param result the given result
+     */
     private void handleWeather10dGetOnPostExecute(final String result) {
         try {
             boolean hasData = false;
@@ -290,10 +320,14 @@ public class LocationsFragment extends Fragment {
 
         } catch (JSONException e) {
             e.printStackTrace();
-            Log.e("ERROR!", e.getMessage());
+            Log.e("ERROR!", Objects.requireNonNull(e.getMessage()));
         }
     }
 
+    /**
+     * handling the weather result given
+     * @param result the given result
+     */
     private void handleWeatherGetOnPostExecute(final String result) {
         try {
             boolean hasWeather = false;
@@ -396,7 +430,7 @@ public class LocationsFragment extends Fragment {
 
         } catch (JSONException e) {
             e.printStackTrace();
-            Log.e("ERROR!", e.getMessage());
+            Log.e("ERROR!", Objects.requireNonNull(e.getMessage()));
         }
     }
 }

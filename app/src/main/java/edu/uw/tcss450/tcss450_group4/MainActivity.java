@@ -1,16 +1,18 @@
 package edu.uw.tcss450.tcss450_group4;
 
+import android.os.Bundle;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
-import android.os.Bundle;
-import android.util.DisplayMetrics;
-
-import edu.uw.tcss450.tcss450_group4.ui.VerifyFragment;
 import edu.uw.tcss450.tcss450_group4.ui.HomeFragment;
 
 public class MainActivity extends AppCompatActivity {
 
+    /**
+     *
+     * @param savedInstanceState the sta
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
