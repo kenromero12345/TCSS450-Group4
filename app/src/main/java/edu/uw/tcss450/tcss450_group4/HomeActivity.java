@@ -6,16 +6,22 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.location.Location;
+import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.util.AttributeSet;
+import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -34,12 +40,15 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.material.navigation.NavigationView;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.math.BigDecimal;
 
 import java.sql.Timestamp;
@@ -123,6 +132,7 @@ public class HomeActivity extends AppCompatActivity {
     private String mJwToken;
     private String mEmail;
     private int mMemberId;
+    private String mProfileURI;
     private AppBarConfiguration mAppBarConfiguration;
     private Weather mWeather;
     private Weather[] mWeathers10d;
@@ -238,6 +248,13 @@ public class HomeActivity extends AppCompatActivity {
             mJwToken = args.getJwt();
             mEmail = args.getCredentials().getEmail();
             mMemberId = args.getMemberId();
+            mProfileURI = args.getProfileuri();
+            View header = navigationView.getHeaderView(0);
+            ImageView profileHome = header.findViewById(id.profileHome);
+            String cleanImage = mProfileURI.replace("data:image/png;base64,", "").replace("data:image/jpeg;base64,","");
+            byte[] decodedString = Base64.decode(cleanImage, Base64.DEFAULT);
+            Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+            profileHome.setImageBitmap(decodedByte);
         }
         navigationView.setNavigationItemSelectedListener(this::onNavigationSelected);
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
@@ -260,7 +277,8 @@ public class HomeActivity extends AppCompatActivity {
         createLocationRequest();
     }
 
-//    @Override
+
+    //    @Override
 //    public View onCreateView(LayoutInflater inflater, ViewGroup container,
 //                             Bundle savedInstanceState) {
 //        View view = inflater.inflate(R.layout.fragment_connectiongui_list, container, false);
