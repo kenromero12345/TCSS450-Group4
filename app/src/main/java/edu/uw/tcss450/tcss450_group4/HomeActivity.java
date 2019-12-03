@@ -8,6 +8,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -49,6 +50,7 @@ import edu.uw.tcss450.tcss450_group4.ui.ChatFragmentDirections;
 import edu.uw.tcss450.tcss450_group4.ui.ConnectionGUIFragmentDirections;
 import edu.uw.tcss450.tcss450_group4.ui.WeatherFragmentDirections;
 import edu.uw.tcss450.tcss450_group4.utils.SendPostAsyncTask;
+import me.pushy.sdk.Pushy;
 
 import static edu.uw.tcss450.tcss450_group4.R.id;
 import static edu.uw.tcss450.tcss450_group4.R.id.action_logout;
@@ -360,6 +362,7 @@ public class HomeActivity extends AppCompatActivity {
                         = ChatFragmentDirections.actionGlobalNavChatList(chats);
                 directions.setMemberId(mMemberId);
                 directions.setJwt(mJwToken);
+                directions.setEmail(mEmail);
                 Navigation.findNavController(this, nav_host_fragment)
                         .navigate(directions);
 //                }    else {
@@ -719,22 +722,23 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     private void logout() {
-        SharedPreferences prefs =
-                getSharedPreferences(
-                        getString(keys_shared_prefs),
-                        Context.MODE_PRIVATE);
-        //remove the saved credentials from StoredPrefs
-        prefs.edit().remove(getString(keys_prefs_password)).apply();
-        prefs.edit().remove(getString(keys_prefs_email)).apply();
-
-        //close the app
-        //finishAndRemoveTask();
-
-        //or close this activity and bring back the Login
-        Intent i = new Intent(this, MainActivity.class);
-        startActivity(i);
-        //End this Activity and remove it from the Activity back stack.
-        finish();
+        new DeleteTokenAsyncTask().execute();
+//        SharedPreferences prefs =
+//                getSharedPreferences(
+//                        getString(keys_shared_prefs),
+//                        Context.MODE_PRIVATE);
+//        //remove the saved credentials from StoredPrefs
+//        prefs.edit().remove(getString(keys_prefs_password)).apply();
+//        prefs.edit().remove(getString(keys_prefs_email)).apply();
+//
+//        //close the app
+//        //finishAndRemoveTask();
+//
+//        //or close this activity and bring back the Login
+//        Intent i = new Intent(this, MainActivity.class);
+//        startActivity(i);
+//        //End this Activity and remove it from the Activity back stack.
+//        finish();
     }
 
     private void logoutAndFinish() {
@@ -835,4 +839,47 @@ public class HomeActivity extends AppCompatActivity {
                     });
         }
     }
+
+    // Deleting the Pushy device token must be done asynchronously. Good thing
+    // we have something that allows us to do that.
+    class DeleteTokenAsyncTask extends AsyncTask<Void, Void, Void> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+
+            //since we are already doing stuff in the background, go ahead
+            //and remove the credentials from shared prefs here.
+            SharedPreferences prefs =
+                    getSharedPreferences(
+                            getString(R.string.keys_shared_prefs),
+                            Context.MODE_PRIVATE);
+
+            prefs.edit().remove(getString(R.string.keys_prefs_password)).apply();
+            prefs.edit().remove(getString(R.string.keys_prefs_email)).apply();
+
+            //unregister the device from the Pushy servers
+            Pushy.unregister(HomeActivity.this);
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            //close the app
+            finishAndRemoveTask();
+
+            //or close this activity and bring back the Login
+//            Intent i = new Intent(this, MainActivity.class);
+//            startActivity(i);
+//            //Ends this Activity and removes it from the Activity back stack.
+//            finish();
+        }
+    }
+
 }

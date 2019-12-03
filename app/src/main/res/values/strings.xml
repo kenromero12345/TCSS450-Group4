@@ -55,5 +55,5 @@
     <string name="button_create_new_chat">Create</string>
     <string name="keys_json_timezone">timezone</string>
     <string name="edit_chat_name">Chat Name</string>
-
+    <string name="chat_object">chat</string>
 </resources>

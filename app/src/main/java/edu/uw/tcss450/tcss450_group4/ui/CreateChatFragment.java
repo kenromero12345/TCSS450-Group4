@@ -16,6 +16,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -23,6 +24,7 @@ import android.widget.EditText;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import edu.uw.tcss450.tcss450_group4.MobileNavigationDirections;
 import edu.uw.tcss450.tcss450_group4.R;
 import edu.uw.tcss450.tcss450_group4.model.ConnectionItem;
 import edu.uw.tcss450.tcss450_group4.utils.SendPostAsyncTask;
@@ -48,10 +50,12 @@ public class CreateChatFragment extends Fragment implements View.OnClickListener
     private static final String ARG_COLUMN_COUNT = "column-count";
     // TODO: Customize parameters
     private int mColumnCount = 1;
-    private OnListFragmentInteractionListener mListener;
     private List<ConnectionItem> mFriendList;
     private ArrayList<Integer> mFriendIDList;
     private String mJwToken;
+    private String mEmail;
+    private String mChatId;
+    private Bundle mBundle;
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
@@ -72,11 +76,13 @@ public class CreateChatFragment extends Fragment implements View.OnClickListener
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mBundle = new Bundle();
         mFriendIDList = MyCreateChatRecyclerViewAdapter.getFriendIDList();
         CreateChatFragmentArgs args = CreateChatFragmentArgs.fromBundle(getArguments());
         mFriendList = new ArrayList<>(Arrays.asList(args.getFriendList()));
         mJwToken = getArguments().getString("jwt");
         mFriendIDList.add(args.getMemberId());
+        mEmail = args.getEmail();
     }
 
     @Override
@@ -102,7 +108,7 @@ public class CreateChatFragment extends Fragment implements View.OnClickListener
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
 
-            recyclerView.setAdapter(new MyCreateChatRecyclerViewAdapter(mFriendList, mListener));
+            recyclerView.setAdapter(new MyCreateChatRecyclerViewAdapter(mFriendList, null));
 
 
         }
@@ -116,6 +122,17 @@ public class CreateChatFragment extends Fragment implements View.OnClickListener
             case R.id.button_create_new_chat:
                 createNewChat();
                 addFriendToNewChat();
+                InputMethodManager inputManager = (InputMethodManager)
+                        getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+
+                inputManager.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(),
+                        InputMethodManager.HIDE_NOT_ALWAYS);
+                final Bundle bundle = new Bundle();
+                bundle.putString("chatid", mChatId);
+                bundle.putString("email", mEmail);
+                bundle.putString("jwt", mJwToken);
+                Navigation.findNavController(getView()).navigate(R.id.action_nav_create_chat_to_nav_view_chat, bundle);
+
                 break;
         }
     }
@@ -164,9 +181,7 @@ public class CreateChatFragment extends Fragment implements View.OnClickListener
             Log.wtf("chatName", "Error creating JSON: " + e.getMessage());
         }
     }
-    private void createNewChat(Uri uri, JSONObject json) {
 
-    }
     private void handleCreateChatOnPre() {
         getActivity().findViewById(R.id.layout_createChat_wait).setVisibility(View.VISIBLE);
     }
@@ -175,14 +190,13 @@ public class CreateChatFragment extends Fragment implements View.OnClickListener
             JSONObject resultJSON = new JSONObject(result);
             boolean success = resultJSON.getBoolean(getString(R.string.keys_json_success));
             if (success) {
-                Navigation.findNavController(getView()).navigate(R.id.action_nav_create_chat_to_nav_view_chat);
+                mChatId = resultJSON.getString("chatid");
+//                Navigation.findNavController(getView()).navigate(R.id.action_nav_create_chat_to_nav_view_chat, bundle);
             }
-            getActivity().findViewById(R.id.layout_createChat_wait).setVisibility(View.GONE);
         } catch (JSONException e) {
             Log.wtf("JSON_PARSE_ERROR", "Error creating JSON: " + e.getMessage());
         }
     }
-
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated

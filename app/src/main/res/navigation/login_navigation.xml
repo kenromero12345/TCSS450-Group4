@@ -48,6 +48,10 @@
             android:name="memberId"
             app:argType="integer"
             android:defaultValue="-1" />
+        <argument
+            android:name="email"
+            app:argType="string"
+            android:defaultValue='""' />
     </activity>
     <fragment
         android:id="@+id/nav_verify"

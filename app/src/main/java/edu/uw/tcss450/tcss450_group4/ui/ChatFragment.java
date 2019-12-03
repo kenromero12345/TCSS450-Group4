@@ -26,22 +26,29 @@ import edu.uw.tcss450.tcss450_group4.MobileNavigationDirections;
 import edu.uw.tcss450.tcss450_group4.R;
 import edu.uw.tcss450.tcss450_group4.model.Chat;
 import edu.uw.tcss450.tcss450_group4.model.ConnectionItem;
+import edu.uw.tcss450.tcss450_group4.model.Message;
 import edu.uw.tcss450.tcss450_group4.utils.SendPostAsyncTask;
 
-import java.lang.reflect.Array;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 import static edu.uw.tcss450.tcss450_group4.R.id.nav_host_fragment;
 import static edu.uw.tcss450.tcss450_group4.R.string.ep_base_url;
 import static edu.uw.tcss450.tcss450_group4.R.string.ep_connection;
 import static edu.uw.tcss450.tcss450_group4.R.string.ep_getall;
+import static edu.uw.tcss450.tcss450_group4.R.string.ep_messaging_base;
+import static edu.uw.tcss450.tcss450_group4.R.string.ep_messaging_getAll;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_connection_connections;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_connection_firstname;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_connection_lastname;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_connection_memberid;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_connection_username;
+import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_messaging_success;
 
 /**
  * A fragment representing a list of Items.
@@ -55,10 +62,11 @@ public class ChatFragment extends Fragment implements View.OnClickListener {
     private static final String ARG_COLUMN_COUNT = "column-count";
     // TODO: Customize parameters
     private int mColumnCount = 1;
-    private OnListFragmentInteractionListener mListener;
     private List<Chat> mChats;
     private int mMemberId;
     private String mJwToken;
+    private String mEmail;
+    private ArrayList<Message> mMessageList;
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
@@ -84,6 +92,7 @@ public class ChatFragment extends Fragment implements View.OnClickListener {
         mChats = new ArrayList<>(Arrays.asList(args.getChats()));
         mMemberId = args.getMemberId();
         mJwToken = args.getJwt();
+        mEmail = args.getEmail();
     }
 
     @Override
@@ -108,7 +117,7 @@ public class ChatFragment extends Fragment implements View.OnClickListener {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            recyclerView.setAdapter(new MyChatRecyclerViewAdapter(mChats, mListener));
+            recyclerView.setAdapter(new MyChatRecyclerViewAdapter(mChats, this::displayChat));
         }
         btnCreateChat.setOnClickListener(this::onClick);
     }
@@ -126,7 +135,7 @@ public class ChatFragment extends Fragment implements View.OnClickListener {
                 .build();
         JSONObject msgBody = new JSONObject();
         try{
-            msgBody.put("memberId", mMemberId);
+            msgBody.put("memberId", getmMemberId());
         } catch (JSONException e) {
             Log.wtf("MEMBERID", "Error creating JSON: " + e.getMessage());
 
@@ -170,7 +179,7 @@ public class ChatFragment extends Fragment implements View.OnClickListener {
                 MobileNavigationDirections.ActionGlobalNavCreateChat directions
                         = CreateChatFragmentDirections.actionGlobalNavCreateChat(conItem);
                 directions.setJwt(mJwToken);
-                directions.setMemberId(mMemberId);
+                directions.setMemberId(getmMemberId());
 
                 Navigation.findNavController(getActivity(), nav_host_fragment)
                         .navigate(directions);
@@ -182,6 +191,89 @@ public class ChatFragment extends Fragment implements View.OnClickListener {
             e.printStackTrace();
         }
     }
+    private void displayChat(final Chat chat){
+
+
+
+        JSONObject msgBody = new JSONObject();
+        try {
+            msgBody.put("chatId", chat.getChatId());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        Uri uriChats = new Uri.Builder()
+                .scheme("https")
+                .appendPath(getString(ep_base_url))
+                .appendPath(getString(ep_messaging_base))
+                .appendPath(getString(ep_messaging_getAll))
+                .build();
+        new SendPostAsyncTask.Builder(uriChats.toString(), msgBody)
+                .onPostExecute(this::handleMessageGetOnPostExecute)
+                .addHeaderField("authorization", mJwToken)
+                .onCancelled(this::handleErrorsInTask)
+                .build().execute();
+
+        final Bundle args = new Bundle();
+        args.putSerializable(getString(R.string.chat_object), chat);
+        args.putString("email", mEmail);
+        args.putString("jwt", mJwToken);
+//        args.putSerializable("List", mMessageList);
+        Navigation.findNavController(getView()).navigate(R.id.action_nav_chat_list_to_nav_view_chat, args);
+    }
+
+    private void handleMessageGetOnPostExecute(final String result) {
+        try {
+            JSONObject root = new JSONObject(result);
+            if (root.has("success") && root.getBoolean(getString(keys_json_messaging_success))) {
+                JSONArray data = root.getJSONArray("messages");
+//                if (response.has(getString(R.string.keys_json_chats_data))) {
+//                    JSONArray data = response.getJSONArray(getString(R.string.keys_json_chats_data));
+                Message[] messages = new Message[data.length()];
+                for (int i = 0; i < data.length(); i++) {
+                    JSONObject jsonChatLists = data.getJSONObject(i);
+
+                    messages[i] = (new Message.Builder(jsonChatLists.getString("email"),
+                                jsonChatLists.getString("message"),
+                                convertTimeStampToDate(jsonChatLists.getString("timestamp")))
+                                .build());
+                }
+//                mMessageList = new ArrayList<Message>(Arrays.asList(messages));
+                MobileNavigationDirections.ActionGlobalNavViewChat directions;
+                directions = ViewChatFragmentDirections.actionGlobalNavViewChat(messages);
+                Navigation.findNavController(getActivity(), nav_host_fragment).navigate(directions);
+            } else {
+                Log.e("ERROR!", "No response");
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+            Log.e("ERROR!", e.getMessage());
+        }
+    }
+    private void handleErrorsInTask(final String result) {
+        Log.e("ASYNC_TASK_ERROR", result);
+    }
+    private String convertTimeStampToDate(String timestamp) {
+        Date date = new Date();
+        String result = "";
+        //Date showTime = new Date();
+        //Date showDate = new Date();
+        DateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+        DateFormat timeFormat = new SimpleDateFormat("HH:mm");
+        //DateFormat dateFormat = new SimpleDateFormat("MM-dd");
+        try {
+            date = format.parse(timestamp);
+            result = timeFormat.format(date.getTime());
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        return result;
+    }
+
+    public int getmMemberId() {
+        return mMemberId;
+    }
+
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
