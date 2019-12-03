@@ -1,5 +1,6 @@
 package edu.uw.tcss450.tcss450_group4.ui;
 
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
@@ -26,7 +27,7 @@ public class MyCreateChatRecyclerViewAdapter extends RecyclerView.Adapter<MyCrea
 
     private final List<ConnectionItem> mValues;
     private final OnListFragmentInteractionListener mListener;
-    private ArrayList<Integer> mFriendIDList;
+    private static final ArrayList<Integer> mFriendIDList = new ArrayList<>();
 
     public MyCreateChatRecyclerViewAdapter(List<ConnectionItem> items, OnListFragmentInteractionListener listener) {
         mValues = items;
@@ -45,7 +46,6 @@ public class MyCreateChatRecyclerViewAdapter extends RecyclerView.Adapter<MyCrea
         holder.mItem = mValues.get(position);
         holder.mUserName.setText(mValues.get(position).getContactUserName());
         //holder.mContactId.setText(mValues.get(position).getContactId());
-        mFriendIDList = new ArrayList<>();
        holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -55,6 +55,7 @@ public class MyCreateChatRecyclerViewAdapter extends RecyclerView.Adapter<MyCrea
                     mListener.onListFragmentInteraction(holder.mItem);
                 }
             }
+
         });
        holder.mContactId.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if (isChecked) {
@@ -67,9 +68,9 @@ public class MyCreateChatRecyclerViewAdapter extends RecyclerView.Adapter<MyCrea
        Bundle bundle = new Bundle();
        bundle.putIntegerArrayList("friend list", mFriendIDList);
 
-       ChatFragment args = new ChatFragment();
-       args.setArguments(bundle);
+
     }
+
     private void addMemberIdToList(ArrayList<Integer> list, int memberId) {
         list.add(memberId);
     }
@@ -83,7 +84,7 @@ public class MyCreateChatRecyclerViewAdapter extends RecyclerView.Adapter<MyCrea
     }
 
 
-    public ArrayList<Integer> getFriendIDList() {
+    public static ArrayList<Integer> getFriendIDList() {
         return mFriendIDList;
     }
 

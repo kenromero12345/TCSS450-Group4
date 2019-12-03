@@ -4,10 +4,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-import androidx.navigation.Navigation;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +11,9 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+
+import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -106,7 +105,7 @@ public class VerifyFragment extends Fragment {
                 ((EditText) getView().findViewById(R.id.verify_textView))
                         .setError("Verification Unsuccessful");
             }
-            getActivity().findViewById(R.id.verify_resendCode).setVisibility(View.VISIBLE);
+            getActivity().findViewById(R.id.verify_note).setVisibility(View.VISIBLE);
             getActivity().findViewById(R.id.verify_resend).setEnabled(true);
             getActivity().findViewById(R.id.verify_button).setEnabled(true);
         } catch (JSONException e) {
@@ -115,7 +114,7 @@ public class VerifyFragment extends Fragment {
             Log.e("JSON_PARSE_ERROR", result
                     + System.lineSeparator()
                     + e.getMessage());
-            getActivity().findViewById(R.id.verify_resendCode).setVisibility(View.VISIBLE);
+            getActivity().findViewById(R.id.verify_note).setVisibility(View.VISIBLE);
             getActivity().findViewById(R.id.verify_resend).setEnabled(true);
             getActivity().findViewById(R.id.verify_button).setEnabled(true);
             ((TextView) getView().findViewById(R.id.verify_textView))
@@ -124,7 +123,7 @@ public class VerifyFragment extends Fragment {
     }
 
     private void handleResendOnPre() {
-        getActivity().findViewById(R.id.verify_resendCode).setVisibility(View.INVISIBLE);
+        getActivity().findViewById(R.id.verify_note).setVisibility(View.INVISIBLE);
         getActivity().findViewById(R.id.verify_resend).setEnabled(false);
         getActivity().findViewById(R.id.verify_button).setEnabled(false);
     }
@@ -215,10 +214,11 @@ public class VerifyFragment extends Fragment {
                                         "A new code has been sent to your email");
                     resendVerify();
                 } else {
-                    ((EditText) getView().findViewById(R.id.verify_textView))
-                            .setError("Verification Unsuccessful");
                     tries++;
+                    ((EditText) getView().findViewById(R.id.verify_textView))
+                            .setError("Verification Unsuccessful\n"+ tries + " out of 3 tries");
                 }
+
             }
             getActivity().findViewById(R.id.layout_verify_wait)
                     .setVisibility(View.GONE);
