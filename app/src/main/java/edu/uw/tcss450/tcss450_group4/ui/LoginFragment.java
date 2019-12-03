@@ -3,6 +3,7 @@ package edu.uw.tcss450.tcss450_group4.ui;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -20,9 +21,17 @@ import androidx.navigation.Navigation;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
+import java.net.URL;
+
 import edu.uw.tcss450.tcss450_group4.R;
 import edu.uw.tcss450.tcss450_group4.model.Credentials;
 import edu.uw.tcss450.tcss450_group4.utils.SendPostAsyncTask;
+import me.pushy.sdk.Pushy;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -286,20 +295,146 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
                 .scheme("https")
                 .appendPath(getString(R.string.ep_base_url))
                 .appendPath(getString(R.string.ep_login))
+                .appendPath(getString(R.string.ep_pushy))
                 .build();
 
-        //build the JSONObject
-        JSONObject msg = credentials.asJSONObject();
+//        build the JSONObject
+//        JSONObject msg = credentials.asJSONObject();
 
         mCrendentials = credentials;
+
+        new AttemptLoginTask().execute(uri.toString());
         //instantiate and execute the AsyncTask.
         //Feel free to add a handler for onPreExecution so that a progress bar
         //is displayed or maybe disable buttons.
-        new SendPostAsyncTask.Builder(uri.toString(), msg)
-                .onPreExecute(this::handleLoginOnPre)
-                .onPostExecute(this::handleLoginOnPost)
-                .onCancelled(this::handleErrorsInTask)
-                .build().execute();
+//        new SendPostAsyncTask.Builder(uri.toString(), msg)
+//                .onPreExecute(this::handleLoginOnPre)
+//                .onPostExecute(this::handleLoginOnPost)
+//                .onCancelled(this::handleErrorsInTask)
+//                .build().execute();
+    }
+
+    class AttemptLoginTask extends AsyncTask<String, Void, String> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            getActivity().findViewById(R.id.layout_login_wait).setVisibility(View.VISIBLE);
+        }
+
+        @Override
+        protected String doInBackground(String... urls) {
+            //get pushy token
+            String deviceToken = "";
+
+            try {
+                // Assign a unique token to this device
+                deviceToken = Pushy.register(getActivity().getApplicationContext());
+
+                //subscribe to a topic (this is a Blocking call)
+                Pushy.subscribe("all", getActivity().getApplicationContext());
+            }
+            catch (Exception exc) {
+
+                cancel(true);
+                // Return exc to onCancelled
+                return exc.getMessage();
+            }
+
+            //feel free to remove later.
+            Log.d("LOGIN", "Pushy Token: " + deviceToken);
+
+
+            //attempt to log in: Send credentials AND pushy token to the web service
+            StringBuilder response = new StringBuilder();
+            HttpURLConnection urlConnection = null;
+
+            try {
+                URL urlObject = new URL(urls[0]);
+                urlConnection = (HttpURLConnection) urlObject.openConnection();
+                urlConnection.setRequestMethod("POST");
+                urlConnection.setRequestProperty("Content-Type", "application/json");
+
+
+                urlConnection.setDoOutput(true);
+                OutputStreamWriter wr = new OutputStreamWriter(urlConnection.getOutputStream());
+
+                JSONObject message = mCrendentials.asJSONObject();
+                message.put("token", deviceToken);
+                wr.write(message.toString());
+                wr.flush();
+                wr.close();
+
+                InputStream content = urlConnection.getInputStream();
+                BufferedReader buffer = new BufferedReader(new InputStreamReader(content));
+                String s = "";
+                while((s = buffer.readLine()) != null) {
+                    response.append(s);
+                }
+                publishProgress();
+            } catch (Exception e) {
+                response = new StringBuilder("Unable to connect, Reason: "
+                        + e.getMessage());
+                cancel(true);
+            } finally {
+                if(urlConnection != null) {
+                    urlConnection.disconnect();
+                }
+            }
+
+            return response.toString();
+        }
+
+        @Override
+        protected void onCancelled(String s) {
+            super.onCancelled(s);
+            getActivity().findViewById(R.id.layout_login_wait).setVisibility(View.GONE);
+            Log.e("LOGIN_ERROR", "Error in Login Async Task: " + s);
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            super.onPostExecute(result);
+
+            try {
+
+                Log.d("JSON result",result);
+
+                JSONObject resultsJSON = new JSONObject(result);
+                boolean success = resultsJSON.getBoolean("success");
+                Log.d("Member ID",String.valueOf(resultsJSON.getInt(getString(R.string.keys_json_login_memberId))));
+
+                if (success) {
+                    saveCredentials(mCrendentials);
+
+                    //Login was successful. Switch to the SuccessFragment.
+                    LoginFragmentDirections.ActionNavLoginToNavHomeActivity homeActivity =
+                            LoginFragmentDirections.actionNavLoginToNavHomeActivity(mCrendentials);
+                    homeActivity.setJwt(resultsJSON.getString(
+                            getString(R.string.keys_json_login_jwt)));
+                    homeActivity.setMemberId(resultsJSON.getInt(getString(R.string.keys_json_login_memberId)));
+
+
+                    Navigation.findNavController(getView()).navigate(homeActivity);
+
+                    getActivity().finish();
+                    return;
+                } else {
+                    //Saving the token wrong. Don’t switch fragments and inform the user
+                    ((TextView) getView().findViewById(R.id.editText_email))
+                            .setError("Login Unsuccessful");
+                }
+            } catch (JSONException e) {
+                //It appears that the web service didn’t return a JSON formatted String
+                //or it didn’t have what we expected in it.
+                Log.e("JSON_PARSE_ERROR",  result
+                        + System.lineSeparator()
+                        + e.getMessage());
+
+                ((TextView) getView().findViewById(R.id.editText_email))
+                        .setError("Login Unsuccessful");
+            }
+        }
     }
 
 }

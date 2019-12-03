@@ -87,4 +87,5 @@
     <string name="keys_json_chats_data">names</string>
     <string name="keys_json_chats_chatid">ChatID</string>
     <string name="keys_json_chats_name">Name</string>
+    <string name="keys_json_messaging_success">success</string>
 </resources>

@@ -8,12 +8,14 @@ import android.util.DisplayMetrics;
 
 import edu.uw.tcss450.tcss450_group4.ui.VerifyFragment;
 import edu.uw.tcss450.tcss450_group4.ui.HomeFragment;
+import me.pushy.sdk.Pushy;
 
 public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Pushy.listen(this);
         setContentView(R.layout.activity_main);
 //        Intent intent = new Intent(this, HomeActivity.class);
 //        startActivity(intent);

@@ -1,29 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:clipToPadding="false"
     android:focusableInTouchMode="true"
     tools:context="edu.uw.tcss450.tcss450_group4.ui.ViewChatFragment">
 
-    <ListView
-        android:layout_width="match_parent"
-        android:id="@+id/messages_view"
-        android:layout_weight="2"
-        android:divider="#fff"
-        android:layout_height="wrap_content"
-        />
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/list"
+        android:name="edu.uw.tcss450.tcss450_group4.ui.ViewChatFragment"
+        app:layoutManager="LinearLayoutManager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".ui.ViewChatFragment"
+        tools:listitem="@layout/their_message"/>
+
+    <!-- A horizontal line between the chatbox and RecyclerView -->
+    <View
+        android:layout_width="0dp"
+        android:layout_height="2dp"
+        android:background="#dfdfdf"
+        android:layout_marginBottom="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/layout_chatbox"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"/>
+
+    <LinearLayout
+        android:id="@+id/layout_chatbox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="0dp"
         android:background="#fff"
         android:orientation="horizontal">
 
         <EditText
-            android:id="@+id/editText"
+            android:id="@+id/editText_chat_message_input"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="2"
@@ -34,12 +50,13 @@
             android:text="" />
 
         <ImageButton
+            android:id="@+id/button_chat_send"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:scaleType="fitCenter"
-            android:padding="20dp"
             android:layout_marginHorizontal="10dp"
-            android:background="@drawable/ic_send_black_24dp"/>
+            android:background="@drawable/ic_send_black_24dp"
+            android:padding="20dp"
+            android:scaleType="fitCenter" />
     </LinearLayout>
-</LinearLayout>
+</RelativeLayout>
