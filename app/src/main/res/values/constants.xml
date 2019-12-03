@@ -7,7 +7,13 @@
     <string name="keys_json_login_success">success</string>
     <string name="keys_json_login_jwt">token</string>
     <string name="keys_json_login_memberId">memberid</string>
+    <string name="keys_json_login_profileuri">profileuri</string>
 
+
+    <string name="keys_json_verify_success">success</string>
+    <string name="keys_json_verify_jwt">token</string>
+    <string name="keys_json_verify_memberId">memberid</string>
+    <string name="keys_json_verify_profileuri">profileuri</string>
 
     <string name="keys_json_register_success">success</string>
     <string name="keys_json_register_error">error</string>

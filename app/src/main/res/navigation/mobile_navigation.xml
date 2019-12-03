@@ -14,6 +14,14 @@
             app:argType="edu.uw.tcss450.tcss450_group4.model.Weather"
             app:nullable="true"
             android:defaultValue="@null" />
+        <argument
+            android:name="jwt"
+            app:argType="string"
+            android:defaultValue='""' />
+        <argument
+            android:name="memberId"
+            app:argType="integer"
+            android:defaultValue="0" />
     </fragment>
     <fragment
         android:id="@+id/nav_chat"
@@ -75,6 +83,10 @@
             android:name="memberId"
             app:argType="integer"
             android:defaultValue="-1" />
+        <argument
+            android:name="profileuri"
+            app:argType="string"
+            android:defaultValue='""' />
     </activity>
     <fragment
 
@@ -226,4 +238,9 @@
         android:name="edu.uw.tcss450.tcss450_group4.ui.ConnectionAddFragment"
         android:label="fragment_connection_add"
         tools:layout="@layout/fragment_connection_add" />
+    <fragment
+        android:id="@+id/blankFragment2"
+        android:name="edu.uw.tcss450.tcss450_group4.BlankFragment"
+        android:label="fragment_blank"
+        tools:layout="@layout/fragment_blank" />
 </navigation>

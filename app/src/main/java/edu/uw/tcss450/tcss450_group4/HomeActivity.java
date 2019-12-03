@@ -6,15 +6,25 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.location.Location;
+import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
+import android.util.AttributeSet;
+import android.util.Base64;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
@@ -30,11 +40,15 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.material.navigation.NavigationView;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -115,6 +129,7 @@ public class HomeActivity extends AppCompatActivity {
     // the email given
     private String mEmail;
     private int mMemberId;
+    private String mProfileURI;
     private AppBarConfiguration mAppBarConfiguration;
     // the weather given
     private Weather mWeather;
@@ -132,6 +147,9 @@ public class HomeActivity extends AppCompatActivity {
 //    private double mLon;
     // flag if weather is updated
     private boolean mUpdateWeather;
+
+    private ConnectionItem[] mConnectionItems;
+//    private boolean mGoToConnection;
 //    private View mView;
     /**
      * The desired interval for location updates. Inexact. Updates may be more or less frequent.
@@ -198,6 +216,7 @@ public class HomeActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+//        gotoConnection();
         checkLocationPermission();
         setContentView(layout.activity_home);
         Toolbar toolbar = findViewById(id.toolbar);
@@ -236,16 +255,6 @@ public class HomeActivity extends AppCompatActivity {
         NavigationUI.setupActionBarWithNavController(this, navController
                 , mAppBarConfiguration);
 
-
-//        getIntent().getExtras().putString("Weather", "");
-//        Bundle bundle = new Bundle();
-//        bundle.putParcelable("weather", weather);
-////        getIntent().getExtras().putString("String", "String text");
-
-//        navController.setGraph(navigation.mobile_navigation, getIntent().getExtras());
-//        Bundle bundle = new Bundle();
-//        bundle.putDouble(getString(keys_json_lat), location.getLatitude());
-//        bundle.putDouble(getString(keys_json_lon), location.getLongitude());
         navController.setGraph(navigation.mobile_navigation, getIntent().getExtras());
         NavigationUI.setupWithNavController(navigationView, navController);
         if (getIntent().getExtras() != null) {
@@ -253,6 +262,13 @@ public class HomeActivity extends AppCompatActivity {
             mJwToken = args.getJwt();
             mEmail = args.getCredentials().getEmail();
             mMemberId = args.getMemberId();
+            mProfileURI = args.getProfileuri();
+            View header = navigationView.getHeaderView(0);
+            ImageView profileHome = header.findViewById(id.profileHome);
+            String cleanImage = mProfileURI.replace("data:image/png;base64,", "").replace("data:image/jpeg;base64,","");
+            byte[] decodedString = Base64.decode(cleanImage, Base64.DEFAULT);
+            Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+            profileHome.setImageBitmap(decodedByte);
         }
         navigationView.setNavigationItemSelectedListener(this::onNavigationSelected);
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
@@ -274,6 +290,18 @@ public class HomeActivity extends AppCompatActivity {
         };
         createLocationRequest();
     }
+
+
+    //    @Override
+//    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+//                             Bundle savedInstanceState) {
+//        View view = inflater.inflate(R.layout.fragment_connectiongui_list, container, false);
+//
+//        // Set the adapter
+//
+//        return view;
+//    }
+
 
     /**
      * Create and configure a Location Request used when retrieving location updates
@@ -327,8 +355,12 @@ public class HomeActivity extends AppCompatActivity {
                         MobileNavigationDirections.ActionGlobalNavHome directions
                                 = WeatherFragmentDirections.actionGlobalNavHome();
                         directions.setWeather(mWeather);
+                        directions.setMemberId(mMemberId);
+                        directions.setJwt(mJwToken);
+//                        directions.setConnectionItems(mConnectionItems);
                         navController.navigate(directions);
                     }
+//                    mGoToConnection = false;
 //                }
 
                 break;
@@ -351,6 +383,7 @@ public class HomeActivity extends AppCompatActivity {
                         .build().execute();
                 break;
             case nav_connectionGUI:
+//                mGoToConnection = true;
                 gotoConnection();
                 break;
             case nav_weather:
@@ -537,10 +570,11 @@ public class HomeActivity extends AppCompatActivity {
             if (hasConnection){
                 JSONArray connectionJArray = root.getJSONArray(
                         getString(keys_json_connection_connections));
-                ConnectionItem[] conItem = new ConnectionItem[connectionJArray.length()];
+//                ConnectionItem[] conItem = new ConnectionItem[connectionJArray.length()];
+                mConnectionItems = new ConnectionItem[connectionJArray.length()];
                 for(int i = 0; i < connectionJArray.length(); i++){
                     JSONObject jsonConnection = connectionJArray.getJSONObject(i);
-                    conItem[i] = new ConnectionItem(
+                    mConnectionItems[i] = new ConnectionItem(
                             jsonConnection.getInt(
                                     getString(keys_json_connection_memberid))
                             , jsonConnection.getString(
@@ -551,13 +585,22 @@ public class HomeActivity extends AppCompatActivity {
                             getString(keys_json_connection_username)));
                 }
 
-                MobileNavigationDirections.ActionGlobalNavConnectionGUI directions
-                        = ConnectionGUIFragmentDirections.actionGlobalNavConnectionGUI(conItem);
-                directions.setJwt(mJwToken);
-                directions.setMemberid(mMemberId);
 
-                Navigation.findNavController(this, nav_host_fragment)
-                        .navigate(directions);
+//                if (mGoToConnection) {
+                    MobileNavigationDirections.ActionGlobalNavConnectionGUI directions
+                            = ConnectionGUIFragmentDirections.actionGlobalNavConnectionGUI(mConnectionItems);
+                    directions.setJwt(mJwToken);
+                    directions.setMemberid(mMemberId);
+                    Navigation.findNavController(this, nav_host_fragment)
+                            .navigate(directions);
+//                }
+//                else {
+//                    MobileNavigationDirections.ActionGlobalNavHome directions
+//                            = MobileNavigationDirections.actionGlobalNavHome();
+//                    directions.set
+//                    directions.setConnectionItems(mConnectionItems);
+//                }
+
 
             }
 
@@ -681,6 +724,10 @@ public class HomeActivity extends AppCompatActivity {
                     MobileNavigationDirections.ActionGlobalNavHome directions
                             = WeatherFragmentDirections.actionGlobalNavHome();
                     directions.setWeather(mWeather);
+                    directions.setMemberId(mMemberId);
+                    directions.setJwt(mJwToken);
+//                    Log.e("DEBUG", mConnectionItems.toString());
+//                    directions.setConnectionItems(mConnectionItems);
                     Navigation.findNavController(this, nav_host_fragment).navigate(directions);
                 }
 
@@ -967,6 +1014,7 @@ public class HomeActivity extends AppCompatActivity {
                             if (mLocations == null || mLocations.getLatitude() == location.getLatitude()
                                     && mLocations.getLongitude() == location.getLongitude()) {
                                 mLocations = location;
+//                                gotoConnection();
                                 getWeather(location);
                             }
                         }

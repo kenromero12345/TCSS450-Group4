@@ -196,8 +196,9 @@ public class VerifyFragment extends Fragment {
             if (success) {
                 VerifyFragmentDirections.ActionNavVerifyToNavHomeActivity homeActivity =
                         VerifyFragmentDirections.actionNavVerifyToNavHomeActivity(mCredentials);
-                homeActivity.setMemberId(resultsJSON.getInt(getString(R.string.keys_json_register_memberId)));
+                homeActivity.setMemberId(resultsJSON.getInt(getString(R.string.keys_json_verify_memberId)));
                 homeActivity.setJwt(mJwt);
+                homeActivity.setProfileuri(resultsJSON.getString(getString(R.string.keys_json_verify_profileuri)));
                 saveCredentials(mCredentials);
                 Navigation.findNavController(getView()).navigate(homeActivity);
                 //Remove this Activity from the back stack. Do not allow back navigation to login
