@@ -2,6 +2,7 @@ package edu.uw.tcss450.tcss450_group4;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -20,6 +21,13 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         Pushy.listen(this);
         setContentView(R.layout.activity_main);
+
+        if (getIntent().getExtras() != null) {
+            if (getIntent().getExtras().containsKey("type")) {
+                Navigation.findNavController(this, R.id.nav_host_fragment)
+                        .setGraph(R.navigation.login_navigation, getIntent().getExtras());
+            }
+        }
 //        Intent intent = new Intent(this, HomeActivity.class);
 //        startActivity(intent);
     }

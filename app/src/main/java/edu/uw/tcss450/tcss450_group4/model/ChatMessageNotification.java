@@ -6,15 +6,18 @@ public class ChatMessageNotification implements Serializable {
 
     private final String mMessage;
     private final String mSender;
+    private final String mChatId;
 
 
     public static class Builder {
         private final String message;
         private final String sender;
+        private final String chatId;
 
-        public Builder(String sender, String message) {
+        public Builder(String sender, String message, String chatId) {
             this.message = message;
             this.sender = sender;
+            this.chatId = chatId;
         }
 
         public ChatMessageNotification build() {
@@ -25,6 +28,7 @@ public class ChatMessageNotification implements Serializable {
     private ChatMessageNotification(final Builder builder) {
         mMessage = builder.message;
         mSender = builder.sender;
+        mChatId = builder.chatId;
     }
 
     public String getMessage() {
@@ -34,4 +38,6 @@ public class ChatMessageNotification implements Serializable {
     public String getSender() {
         return mSender;
     }
+
+    public String getChatId() { return mChatId; }
 }

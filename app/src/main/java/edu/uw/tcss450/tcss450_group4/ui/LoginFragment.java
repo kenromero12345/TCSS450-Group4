@@ -29,6 +29,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 import edu.uw.tcss450.tcss450_group4.R;
+import edu.uw.tcss450.tcss450_group4.model.ChatMessageNotification;
 import edu.uw.tcss450.tcss450_group4.model.Credentials;
 import edu.uw.tcss450.tcss450_group4.utils.SendPostAsyncTask;
 import me.pushy.sdk.Pushy;
@@ -415,6 +416,18 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
                     homeActivity.setMemberId(resultsJSON.getInt(getString(R.string.keys_json_login_memberId)));
                     homeActivity.setProfileuri(resultsJSON.getString(getString(R.string.keys_json_login_profileuri)));
 
+                    if (getArguments() != null) {
+                        if (getArguments().containsKey("type")) {
+                            if (getArguments().getString("type").equals("msg")) {
+                                String msg = getArguments().getString("message");
+                                String sender = getArguments().getString("sender");
+                                String chatId = getArguments().getString("chatid");
+                                ChatMessageNotification chat =
+                                        new ChatMessageNotification.Builder(sender, msg, chatId).build();
+                                homeActivity.setChatMessage(chat);
+                            }
+                        }
+                    }
 
                     Navigation.findNavController(getView()).navigate(homeActivity);
 

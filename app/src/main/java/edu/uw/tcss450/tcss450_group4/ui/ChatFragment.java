@@ -28,6 +28,7 @@ import java.util.List;
 import edu.uw.tcss450.tcss450_group4.MobileNavigationDirections;
 import edu.uw.tcss450.tcss450_group4.R;
 import edu.uw.tcss450.tcss450_group4.model.Chat;
+import edu.uw.tcss450.tcss450_group4.model.ChatMessageNotification;
 import edu.uw.tcss450.tcss450_group4.model.ConnectionItem;
 import edu.uw.tcss450.tcss450_group4.model.Message;
 import edu.uw.tcss450.tcss450_group4.utils.SendPostAsyncTask;
@@ -71,6 +72,8 @@ public class ChatFragment extends Fragment implements View.OnClickListener {
     private String mEmail;
     private ArrayList<Message> mMessageList;
     private Chat mChat;
+    private ChatMessageNotification mChatMessage;
+    private String mChatId;
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
@@ -96,7 +99,8 @@ public class ChatFragment extends Fragment implements View.OnClickListener {
         mChats = new ArrayList<>(Arrays.asList(args.getChats()));
         mMemberId = args.getMemberId();
         mJwToken = args.getJwt();
-        mEmail = args.getEmail();
+//        mEmail = args.getEmail();
+        mChatMessage = args.getChatMessage();
     }
 
     @Override
@@ -121,9 +125,13 @@ public class ChatFragment extends Fragment implements View.OnClickListener {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            recyclerView.setAdapter(new MyChatRecyclerViewAdapter(mChats, this::displayChat));
+            recyclerView.setAdapter(new MyChatRecyclerViewAdapter(mChats, chat -> displayChat(chat.getChatId())));
         }
         btnCreateChat.setOnClickListener(this::onClick);
+        if (mChatMessage != null) {
+            displayChat(mChatMessage.getChatId());
+
+        }
     }
 
     @Override
@@ -195,13 +203,12 @@ public class ChatFragment extends Fragment implements View.OnClickListener {
             e.printStackTrace();
         }
     }
-    private void displayChat(final Chat chat){
+    private void displayChat(final String chatId){
 
-        mChat = chat;
-
+        mChatId = chatId;
         JSONObject msgBody = new JSONObject();
         try {
-            msgBody.put("chatId", chat.getChatId());
+            msgBody.put("chatId", chatId);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -244,9 +251,10 @@ public class ChatFragment extends Fragment implements View.OnClickListener {
 //                mMessageList = new ArrayList<Message>(Arrays.asList(messages));
                 MobileNavigationDirections.ActionGlobalNavViewChat directions;
                 directions = ViewChatFragmentDirections.actionGlobalNavViewChat(messages);
-                directions.setEmail(mEmail);
+//                directions.setEmail(mEmail);
+                directions.setMemberId(mMemberId);
                 directions.setJwt(mJwToken);
-                directions.setChatId(mChat.getChatId());
+                directions.setChatId(mChatId);
                 Navigation.findNavController(getActivity(), nav_host_fragment).navigate(directions);
             } else {
                 Log.e("ERROR!", "No response");

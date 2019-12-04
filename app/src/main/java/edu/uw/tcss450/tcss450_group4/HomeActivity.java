@@ -59,8 +59,10 @@ import java.util.Date;
 import java.util.Objects;
 
 import edu.uw.tcss450.tcss450_group4.model.Chat;
+import edu.uw.tcss450.tcss450_group4.model.ChatMessageNotification;
 import edu.uw.tcss450.tcss450_group4.model.ConnectionItem;
 import edu.uw.tcss450.tcss450_group4.model.LocationViewModel;
+import edu.uw.tcss450.tcss450_group4.model.Message;
 import edu.uw.tcss450.tcss450_group4.model.Weather;
 import edu.uw.tcss450.tcss450_group4.ui.ChatFragmentDirections;
 import edu.uw.tcss450.tcss450_group4.ui.ConnectionGUIFragmentDirections;
@@ -133,6 +135,7 @@ public class HomeActivity extends AppCompatActivity {
     private String mEmail;
     private int mMemberId;
     private String mProfileURI;
+    private ChatMessageNotification mChatMessage;
     private AppBarConfiguration mAppBarConfiguration;
     private Weather mWeather;
     private Weather[] mWeathers10d;
@@ -244,12 +247,13 @@ public class HomeActivity extends AppCompatActivity {
 
         navController.setGraph(navigation.mobile_navigation, getIntent().getExtras());
         NavigationUI.setupWithNavController(navigationView, navController);
-        if (getIntent().getExtras() != null) {
+//        if (getIntent().getExtras() != null) {
             HomeActivityArgs args = HomeActivityArgs.fromBundle(getIntent().getExtras());
             mJwToken = args.getJwt();
             mEmail = args.getCredentials().getEmail();
             mMemberId = args.getMemberId();
             mProfileURI = args.getProfileuri();
+            mChatMessage = args.getChatMessage();
             View header = navigationView.getHeaderView(0);
             ImageView profileHome = header.findViewById(id.profileHome);
             String cleanImage = mProfileURI.replace("data:image/png;base64,", "").replace("data:image/jpeg;base64,","");
@@ -257,8 +261,13 @@ public class HomeActivity extends AppCompatActivity {
             Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
             profileHome.setImageBitmap(decodedByte);
 //            Log.e("BITMAP", decodedByte.toString());
-        }
-        navigationView.setNavigationItemSelectedListener(this::onNavigationSelected);
+//        }
+//        navigationView.setNavigationItemSelectedListener(this::onNavigationSelected);
+//        if (args.getChatMessage() != null) {
+//            gotoChat();
+//        } else {
+            navigationView.setNavigationItemSelectedListener(this::onNavigationSelected);
+//        }
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         mLocationCallback = new LocationCallback() {
             @Override
@@ -342,6 +351,7 @@ public class HomeActivity extends AppCompatActivity {
                         directions.setWeather(mWeather);
                         directions.setMemberId(mMemberId);
                         directions.setJwt(mJwToken);
+                        directions.setChatMessage(mChatMessage);
 //                        directions.setConnectionItems(mConnectionItems);
                         navController.navigate(directions);
                     }
@@ -350,22 +360,7 @@ public class HomeActivity extends AppCompatActivity {
 
                 break;
             case nav_chat_list:
-                JSONObject memberId = new JSONObject();
-                try {
-                    memberId.put("memberId", mMemberId);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                Uri uriChats = new Uri.Builder()
-                        .scheme("https")
-                        .appendPath(getString(ep_base_url))
-                        .appendPath(getString(ep_chats))
-                        .build();
-                new SendPostAsyncTask.Builder(uriChats.toString(), memberId)
-                        .onPostExecute(this::handleChatsGetOnPostExecute)
-                        .addHeaderField("authorization", mJwToken)
-                        .onCancelled(this::handleErrorsInTask)
-                        .build().execute();
+                gotoChat();
                 break;
             case nav_connectionGUI:
 //                mGoToConnection = true;
@@ -384,11 +379,31 @@ public class HomeActivity extends AppCompatActivity {
                 break;
             case nav_logout:
                 logout();
+                break;
 
         }
         //Close the drawer
         ((DrawerLayout) findViewById(drawer_layout)).closeDrawers();
         return true;
+    }
+
+    private void gotoChat() {
+        JSONObject memberId = new JSONObject();
+        try {
+            memberId.put("memberId", mMemberId);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        Uri uriChats = new Uri.Builder()
+                .scheme("https")
+                .appendPath(getString(ep_base_url))
+                .appendPath(getString(ep_chats))
+                .build();
+        new SendPostAsyncTask.Builder(uriChats.toString(), memberId)
+                .onPostExecute(this::handleChatsGetOnPostExecute)
+                .addHeaderField("authorization", mJwToken)
+                .onCancelled(this::handleErrorsInTask)
+                .build().execute();
     }
 
     private void clickWeather(NavController navController) {
@@ -460,8 +475,11 @@ public class HomeActivity extends AppCompatActivity {
                 MobileNavigationDirections.ActionGlobalNavChatList directions
                         = ChatFragmentDirections.actionGlobalNavChatList(chats);
                 directions.setMemberId(mMemberId);
+                Log.e("MESSAGE", "homeactivity " + mMemberId);
                 directions.setJwt(mJwToken);
-                directions.setEmail(mEmail);
+//                directions.setChats(chats);
+//                directions.setEmail(mEmail);
+                directions.setChatMessage(mChatMessage);
                 Navigation.findNavController(this, nav_host_fragment)
                         .navigate(directions);
 //                }    else {
@@ -845,7 +863,7 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     private void logout() {
-        new DeleteTokenAsyncTask().execute();
+        new DeleteTokenAsyncTask(this).execute();
 //        SharedPreferences prefs =
 //                getSharedPreferences(
 //                        getString(keys_shared_prefs),
@@ -970,6 +988,12 @@ public class HomeActivity extends AppCompatActivity {
     // we have something that allows us to do that.
     class DeleteTokenAsyncTask extends AsyncTask<Void, Void, Void> {
 
+        private HomeActivity mHomeActivity;
+
+        public DeleteTokenAsyncTask(HomeActivity homeActivity) {
+            mHomeActivity = homeActivity;
+        }
+
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
@@ -998,13 +1022,13 @@ public class HomeActivity extends AppCompatActivity {
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
             //close the app
-            finishAndRemoveTask();
+//            finishAndRemoveTask();
 
             //or close this activity and bring back the Login
-//            Intent i = new Intent(this, MainActivity.class);
-//            startActivity(i);
-//            //Ends this Activity and removes it from the Activity back stack.
-//            finish();
+            Intent i = new Intent(mHomeActivity, MainActivity.class);
+            startActivity(i);
+            //Ends this Activity and removes it from the Activity back stack.
+            finish();
         }
     }
 //    @Override

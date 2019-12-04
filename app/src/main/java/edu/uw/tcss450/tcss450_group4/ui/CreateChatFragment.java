@@ -55,7 +55,7 @@ public class CreateChatFragment extends Fragment implements View.OnClickListener
     private List<ConnectionItem> mFriendList;
     private ArrayList<Integer> mFriendIDList;
     private String mJwToken;
-    private String mEmail;
+//    private String mEmail;
     private String mChatId;
     private Bundle mBundle;
     /**
@@ -84,7 +84,7 @@ public class CreateChatFragment extends Fragment implements View.OnClickListener
         mFriendList = new ArrayList<>(Arrays.asList(args.getFriendList()));
         mJwToken = getArguments().getString("jwt");
         mFriendIDList.add(args.getMemberId());
-        mEmail = args.getEmail();
+//        mEmail = args.getEmail();
     }
 
     @Override
@@ -198,7 +198,6 @@ public class CreateChatFragment extends Fragment implements View.OnClickListener
                 Message[] message = new Message[0];
                 MobileNavigationDirections.ActionGlobalNavViewChat directions;
                 directions = ViewChatFragmentDirections.actionGlobalNavViewChat(message);
-                directions.setEmail(mEmail);
                 directions.setJwt(mJwToken);
                 directions.setChatId(mChatId);
                 Navigation.findNavController(getActivity(), nav_host_fragment).navigate(directions);

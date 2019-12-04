@@ -49,13 +49,14 @@
             app:argType="integer"
             android:defaultValue="-1" />
         <argument
-            android:name="email"
-            app:argType="string"
-            android:defaultValue='""' />
-        <argument
             android:name="profileuri"
             app:argType="string"
             android:defaultValue='""' />
+        <argument
+            android:name="chatMessage"
+            app:argType="edu.uw.tcss450.tcss450_group4.model.ChatMessageNotification"
+            app:nullable="true"
+            android:defaultValue="@null" />
     </activity>
     <fragment
         android:id="@+id/nav_verify"

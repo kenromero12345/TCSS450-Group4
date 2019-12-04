@@ -49,7 +49,8 @@ public class ViewChatFragment extends Fragment {
     private TextView mMessageOutputTextView;
     private EditText mMessageInputEditText;
     private String CHAT_ID = "";
-    private String mEmail;
+//    private String mEmail;
+    private int mMemberId;
     private String mJwToken;
     private String mSendUrl;
     private PushMessageReceiver mPushMessageReciever;
@@ -78,10 +79,11 @@ public class ViewChatFragment extends Fragment {
 //            mEmail = getArguments().getString("email");
 //            mJwToken = getArguments().getString("jwt");
 //            mMessageList = (List<Message>) getArguments().getSerializable("List");
-            mEmail = args.getEmail();
+//            mEmail = args.getEmail();
             mJwToken = args.getJwt();
             mMessageList = new ArrayList<>(Arrays.asList(args.getMessageList()));
             CHAT_ID = args.getChatId();
+            mMemberId = args.getMemberId();
             if(CHAT_ID.equals("")) {
                 CHAT_ID = getArguments().getString("chatid");
             }
@@ -140,10 +142,10 @@ public class ViewChatFragment extends Fragment {
     private void handleSendClick(final View theButton) {
         String msg = mMessageInputEditText.getText().toString();
         Log.d("MESSAGE", "CLICKED");
-
+        Log.d("MESSAGE", mMemberId + "");
         JSONObject messageJson = new JSONObject();
         try {
-            messageJson.put("email", mEmail);
+            messageJson.put("memberId", mMemberId);
             messageJson.put("message", msg);
             messageJson.put("chatId", CHAT_ID);
         } catch (JSONException e) {

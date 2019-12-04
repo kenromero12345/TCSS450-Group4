@@ -22,6 +22,11 @@
             android:name="memberId"
             android:defaultValue="0"
             app:argType="integer" />
+        <argument
+            android:name="chatMessage"
+            app:argType="edu.uw.tcss450.tcss450_group4.model.ChatMessageNotification"
+            app:nullable="true"
+            android:defaultValue="@null" />
     </fragment>
     <!--    <fragment-->
 <!--        android:id="@+id/nav_connections"-->
@@ -82,6 +87,11 @@
             android:name="profileuri"
             app:argType="string"
             android:defaultValue='""' />
+        <argument
+            android:name="chatMessage"
+            app:argType="edu.uw.tcss450.tcss450_group4.model.ChatMessageNotification"
+            app:nullable="true"
+            android:defaultValue="@null" />
     </activity>
     <fragment
 
@@ -183,9 +193,10 @@
           app:argType="string"
           android:defaultValue='""' />
       <argument
-          android:name="email"
-          app:argType="string"
-          android:defaultValue='""' />
+          android:name="chatMessage"
+          app:argType="edu.uw.tcss450.tcss450_group4.model.ChatMessageNotification"
+          app:nullable="true"
+          android:defaultValue="@null" />
   </fragment>
     <fragment
         android:id="@+id/nav_view_chat"
@@ -193,9 +204,9 @@
         android:label="Messaging"
         tools:layout="@layout/fragment_view_chat">
         <argument
-            android:name="email"
-            android:defaultValue='""'
-            app:argType="string" />
+            android:name="memberId"
+            android:defaultValue="0"
+            app:argType="integer" />
         <argument
             android:name="jwt"
             android:defaultValue='""'
@@ -210,6 +221,11 @@
         <action
             android:id="@+id/action_nav_view_chat_to_nav_chat_list"
             app:destination="@id/nav_chat_list" />
+        <argument
+            android:name="chatMessage"
+            app:argType="edu.uw.tcss450.tcss450_group4.model.ChatMessageNotification"
+            app:nullable="true"
+            android:defaultValue="@null" />
     </fragment>
     <action
         android:id="@+id/action_global_nav_chat_list"
@@ -244,10 +260,6 @@
             app:argType="integer" />
         <argument
             android:name="jwt"
-            android:defaultValue='""'
-            app:argType="string" />
-        <argument
-            android:name="email"
             android:defaultValue='""'
             app:argType="string" />
     </fragment>

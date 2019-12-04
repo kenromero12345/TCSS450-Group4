@@ -18,6 +18,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -40,8 +41,12 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 
+import edu.uw.tcss450.tcss450_group4.HomeActivity;
+import edu.uw.tcss450.tcss450_group4.HomeActivityArgs;
+import edu.uw.tcss450.tcss450_group4.MobileNavigationDirections;
 import edu.uw.tcss450.tcss450_group4.R;
 import edu.uw.tcss450.tcss450_group4.model.Chat;
+import edu.uw.tcss450.tcss450_group4.model.ChatMessageNotification;
 import edu.uw.tcss450.tcss450_group4.model.ConnectionItem;
 import edu.uw.tcss450.tcss450_group4.model.State;
 import edu.uw.tcss450.tcss450_group4.model.Weather;
@@ -52,6 +57,7 @@ import static edu.uw.tcss450.tcss450_group4.R.color.uwPurple;
 import static edu.uw.tcss450.tcss450_group4.R.id.layout_chat_wait;
 import static edu.uw.tcss450.tcss450_group4.R.id.layout_connection_wait;
 import static edu.uw.tcss450.tcss450_group4.R.id.layout_weather_wait;
+import static edu.uw.tcss450.tcss450_group4.R.id.nav_host_fragment;
 import static edu.uw.tcss450.tcss450_group4.R.id.requestCount;
 import static edu.uw.tcss450.tcss450_group4.R.id.weather_cityCountry;
 import static edu.uw.tcss450.tcss450_group4.R.id.weather_conditionIcon;
@@ -85,6 +91,7 @@ public class HomeFragment extends Fragment {
     private String mJwToken;
     private int mMemberId;
     private String mEmail;
+    private ChatMessageNotification mChatMessage;
 
     private int mConnectionCount = 0;
 
@@ -120,18 +127,27 @@ public class HomeFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        view.findViewById(layout_weather_wait).setVisibility(View.VISIBLE);
-        view.findViewById(weather_temperatureSwitch).setVisibility(View.INVISIBLE);
-        initialization(view);
 
         HomeFragmentArgs args = HomeFragmentArgs.fromBundle(getArguments());
         mJwToken = args.getJwt();
         mMemberId = args.getMemberId();
+        mChatMessage = args.getChatMessage();
 
-        view.findViewById(layout_connection_wait).setVisibility(View.VISIBLE);
-        view.findViewById(layout_chat_wait).setVisibility(View.VISIBLE);
-        getConnectionRequestCount();
-        getRecentChats();
+//        if (mChatMessage != null) {
+//            gotoChat();
+//        } else {
+            view.findViewById(layout_weather_wait).setVisibility(View.VISIBLE);
+            view.findViewById(weather_temperatureSwitch).setVisibility(View.INVISIBLE);
+            initialization(view);
+
+
+            view.findViewById(layout_connection_wait).setVisibility(View.VISIBLE);
+            view.findViewById(layout_chat_wait).setVisibility(View.VISIBLE);
+            getConnectionRequestCount();
+            getRecentChats();
+//        }
+
+
 
 //        mConnectionItem = new ArrayList<>(Arrays.asList(args.getConnectionItems()));
     }
@@ -150,18 +166,13 @@ public class HomeFragment extends Fragment {
                 .build();
         new SendPostAsyncTask.Builder(uriChats.toString(), memberId)
                 .onPreExecute(() -> getView().findViewById(layout_chat_wait).setVisibility(View.VISIBLE))
-                .onPostExecute(this::handleChatsGetOnPostExecute)
+                .onPostExecute(this::handleChatsGetFewOnPostExecute)
                 .addHeaderField("authorization", mJwToken)
                 .onCancelled(this::handleChatErrorsInTask)
                 .build().execute();
     }
 
-    private void handleChatErrorsInTask(final String result) {
-        getView().findViewById(layout_chat_wait).setVisibility(View.INVISIBLE);
-        Log.e("ASYNC_TASK_ERROR", result);
-    }
-
-    private void handleChatsGetOnPostExecute(final String result) {
+    private void handleChatsGetFewOnPostExecute(final String result) {
         try {
             JSONObject root = new JSONObject(result);
             if (root.has("success") && root.getBoolean(getString(keys_json_login_success))) {
@@ -211,6 +222,11 @@ public class HomeFragment extends Fragment {
             getView().findViewById(layout_chat_wait).setVisibility(View.INVISIBLE);
             Log.e("ERROR!", e.getMessage());
         }
+    }
+
+    private void handleChatErrorsInTask(final String result) {
+        getView().findViewById(layout_chat_wait).setVisibility(View.INVISIBLE);
+        Log.e("ASYNC_TASK_ERROR", result);
     }
 
     private void displayChat(Chat chat) {
@@ -363,6 +379,8 @@ public class HomeFragment extends Fragment {
                     public void onSuccess() {
                         mView.findViewById(layout_weather_wait).setVisibility(View.GONE);
                         mView.findViewById(weather_temperatureSwitch).setVisibility(View.VISIBLE);
+                        
+//        }
                     }
 
                     @Override
@@ -382,6 +400,75 @@ public class HomeFragment extends Fragment {
             TextView temp = mView.findViewById(weather_temperature);
             temp.setText(tempFromKelvinToCelsiusString(mWeather.getTemp()));
             temp.setTextColor(ContextCompat.getColor(Objects.requireNonNull(getContext()), uwPurple));
+        }
+    }
+
+    private void gotoChat() {
+        JSONObject memberId = new JSONObject();
+        try {
+            memberId.put("memberId", mMemberId);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        Uri uriChats = new Uri.Builder()
+                .scheme("https")
+                .appendPath(getString(ep_base_url))
+                .appendPath(getString(ep_chats))
+                .build();
+        new SendPostAsyncTask.Builder(uriChats.toString(), memberId)
+                .onPostExecute(this::handleChatsGetOnPostExecute)
+                .addHeaderField("authorization", mJwToken)
+                .onCancelled(this::handleErrorsInTask)
+                .build().execute();
+    }
+
+    private void handleErrorsInTask(final String result) {
+        Log.e("ASYNC_TASK_ERROR", result);
+    }
+
+    private void handleChatsGetOnPostExecute(final String result) {
+        try {
+            JSONObject root = new JSONObject(result);
+            if (root.has("success") && root.getBoolean(getString(keys_json_login_success))) {
+                JSONArray data = root.getJSONArray("names");
+//                if (response.has(getString(R.string.keys_json_chats_data))) {
+//                    JSONArray data = response.getJSONArray(getString(R.string.keys_json_chats_data));
+                Chat[] chats = new Chat[data.length()];
+                for (int i = 0; i < data.length(); i++) {
+                    JSONObject jsonChatLists = data.getJSONObject(i);
+
+                    String recentMessage = jsonChatLists.getString("message");
+                    if (recentMessage != "null") {
+                        chats[i] = (new Chat.Builder(jsonChatLists.getString("chatid"),
+                                jsonChatLists.getString("name"),
+                                jsonChatLists.getString("message"),
+                                convertTimeStampToDate(jsonChatLists.getString("timestamp")))
+                                .build());
+                    } else {
+                        chats[i] = (new Chat.Builder(jsonChatLists.getString("chatid"),
+                                jsonChatLists.getString("name"),
+                                "",
+                                "")
+                                .build());
+                    }
+                }
+                MobileNavigationDirections.ActionGlobalNavChatList directions
+                        = ChatFragmentDirections.actionGlobalNavChatList(chats);
+                directions.setMemberId(mMemberId);
+                directions.setJwt(mJwToken);
+//                directions.setEmail(mEmail);
+                directions.setChatMessage(mChatMessage);
+                Navigation.findNavController(getActivity(), nav_host_fragment)
+                        .navigate(directions);
+//                }    else {
+//                    Log.e("ERROR!", "No data array");
+//                }
+            } else {
+                Log.e("ERROR!", "No response");
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+            Log.e("ERROR!", e.getMessage());
         }
     }
 }
