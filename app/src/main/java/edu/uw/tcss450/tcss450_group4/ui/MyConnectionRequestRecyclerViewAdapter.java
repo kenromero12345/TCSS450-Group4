@@ -44,23 +44,13 @@ public class MyConnectionRequestRecyclerViewAdapter extends RecyclerView.Adapter
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mItem = mValues.get(position);
         holder.mItem = mValues.get(position);
-//        ImageView imageView = holder.profileimage;
         String cleanImage = mValues.get(position).getContactImage().replace("data:image/png;base64,", "").replace("data:image/jpeg;base64,","");
         byte[] decodedString = Base64.decode(cleanImage, Base64.DEFAULT);
         Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
-//        holder.contactId.setText("ID: " + mValues.get(position).getContactId());
         holder.name.setText("Name: " + mValues.get(position).getFirstName()
                 + " " + mValues.get(position).getLastName());
-//        holder.lastname.setText("Last Name: " + mValues.get(position).getLastName());
         holder.userName.setText("Username: " + mValues.get(position).getContactUserName());
         holder.profileimage.setImageBitmap(decodedByte);
-//        holder.mNae.setText(mValues.get(position).id);
-//        holder.mContentView.setText(mValues.get(position).name);
-
-//        holder.mItem = mValues.get(position);
-//        holder.mIdView.setText(mValues.get(position).id);
-//        holder.mContentView.setText(mValues.get(position).content);
-//
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -80,7 +70,6 @@ public class MyConnectionRequestRecyclerViewAdapter extends RecyclerView.Adapter
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
-//        public final TextView contactId;
         public final TextView lastName;
         public final TextView name;
         public final TextView userName;
@@ -90,7 +79,6 @@ public class MyConnectionRequestRecyclerViewAdapter extends RecyclerView.Adapter
         public ViewHolder(View view) {
             super(view);
             mView = view;
-//            contactId = view.findViewById(R.id.request_memberid);
             lastName = view.findViewById(R.id.request_lastname);
             name = view.findViewById(R.id.request_firstname);
             userName = view.findViewById(R.id.request_username);

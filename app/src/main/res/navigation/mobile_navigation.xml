@@ -98,32 +98,32 @@
     </fragment>
 
 
-  <fragment
+    <fragment
         android:id="@+id/nav_connectionGUI"
         android:name="edu.uw.tcss450.tcss450_group4.ui.ConnectionGUIFragment"
-        android:label="fragment_connectiongui_list"
-        tools:layout="@layout/fragment_connectiongui_list" >
+        android:label="Connections"
+        tools:layout="@layout/fragment_connectiongui_list">
         <argument
             android:name="connectionitems"
             app:argType="edu.uw.tcss450.tcss450_group4.model.ConnectionItem[]" />
         <argument
             android:name="jwt"
-            app:argType="string"
-            android:defaultValue='""' />
+            android:defaultValue='""'
+            app:argType="string" />
         <action
             android:id="@+id/action_nav_connectionGUI_to_viewConnectionFragment"
             app:destination="@id/viewConnectionFragment" />
         <argument
             android:name="memberid"
-            app:argType="integer"
-            android:defaultValue="0" />
+            android:defaultValue="0"
+            app:argType="integer" />
         <action
             android:id="@+id/action_nav_connectionGUI_to_nav_connection_add"
             app:destination="@id/nav_connection_add" />
-      <action
-          android:id="@+id/action_nav_connectionGUI_to_nav_connection_request"
-          app:destination="@id/nav_connection_request" />
-  </fragment><action android:id="@+id/action_global_nav_connectionGUI" app:destination="@id/nav_connectionGUI"/>
+        <action
+            android:id="@+id/action_nav_connectionGUI_to_nav_connection_request"
+            app:destination="@id/nav_connection_request" />
+    </fragment><action android:id="@+id/action_global_nav_connectionGUI" app:destination="@id/nav_connectionGUI"/>
 
 
   <fragment
@@ -151,18 +151,18 @@
     <fragment
         android:id="@+id/viewConnectionFragment"
         android:name="edu.uw.tcss450.tcss450_group4.ui.ViewConnectionFragment"
-        android:label="fragment_view_connection"
-        tools:layout="@layout/fragment_view_connection" >
+        android:label="Profile"
+        tools:layout="@layout/fragment_view_connection">
         <argument
             android:name="jwt"
-            app:argType="string"
-            android:defaultValue='""' />
+            android:defaultValue='""'
+            app:argType="string" />
     </fragment><action android:id="@+id/action_global_viewConnectionFragment" app:destination="@id/viewConnectionFragment"/>
     <fragment
         android:id="@+id/nav_connection_add"
         android:name="edu.uw.tcss450.tcss450_group4.ui.ConnectionAddFragment"
-        android:label="fragment_connection_add"
-        tools:layout="@layout/fragment_connection_add" >
+        android:label="Search"
+        tools:layout="@layout/fragment_connection_add">
         <action
             android:id="@+id/action_nav_connection_add_to_viewConnectionFragment"
             app:destination="@id/viewConnectionFragment" />
@@ -171,19 +171,19 @@
     <fragment
         android:id="@+id/nav_connection_request"
         android:name="edu.uw.tcss450.tcss450_group4.ui.ConnectionRequestFragment"
-        android:label="fragment_connectionrequest_list"
-        tools:layout="@layout/fragment_connectionrequest_list" >
+        android:label="Requests"
+        tools:layout="@layout/fragment_connectionrequest_list">
         <argument
             android:name="connectionitems"
             app:argType="edu.uw.tcss450.tcss450_group4.model.ConnectionItem[]" />
         <argument
             android:name="jwt"
-            app:argType="string"
-            android:defaultValue='""' />
+            android:defaultValue='""'
+            app:argType="string" />
         <argument
             android:name="memberid"
-            app:argType="integer"
-            android:defaultValue="0" />
+            android:defaultValue="0"
+            app:argType="integer" />
         <action
             android:id="@+id/action_nav_connection_request_to_viewConnectionFragment"
             app:destination="@id/viewConnectionFragment" />

@@ -163,11 +163,6 @@ public class ConnectionGUIFragment extends Fragment implements View.OnClickListe
                 .addHeaderField("authorization", mJwToken)  //add the JWT as header
                 .build().execute();
 
-//
-//        final Bundle args = new Bundle();
-//        args.putString("jwt", mJwToken);
-//        Navigation.findNavController(getView())
-//                .navigate(R.id.action_nav_connectionGUI_to_nav_connection_request, args);
 
     }
 
@@ -224,24 +219,6 @@ public class ConnectionGUIFragment extends Fragment implements View.OnClickListe
                             jsonConnection.getString(
                                     getString(keys_json_connection_image)));
                 }
-//                JSONObject connectionJObject = root.getJSONObject(
-//                        getString(R.string.keys_json_connection_connections));
-//                mConItem = new ConnectionItem(connectionJObject.getInt(
-//                        getString(R.string.keys_json_connection_memberid))
-//                        , connectionJObject.getString(
-//                        getString(R.string.keys_json_connection_firstname))
-//                        , connectionJObject.getString(
-//                        getString(R.string.keys_json_connection_lastname))
-//                        ,connectionJObject.getString(
-//                        getString(R.string.keys_json_connection_username)));
-
-
-//                final Bundle args = new Bundle();
-//                args.putSerializable(getString(R.string.keys_connection_view), conItem);
-//                args.putString("jwt", mJwToken);
-//                args.putInt("memberid", mMemberId);
-//                Navigation.findNavController(getView())
-//                        .navigate(R.id.action_nav_connectionGUI_to_nav_connection_request, args);
 
                 MobileNavigationDirections.ActionGlobalNavConnectionRequest directions
                         = ConnectionRequestFragmentDirections.actionGlobalNavConnectionRequest(conItem);
@@ -297,24 +274,6 @@ public class ConnectionGUIFragment extends Fragment implements View.OnClickListe
                             jsonConnection.getString(
                                     getString(keys_json_connection_image)));
                 }
-//                JSONObject connectionJObject = root.getJSONObject(
-//                        getString(R.string.keys_json_connection_connections));
-//                mConItem = new ConnectionItem(connectionJObject.getInt(
-//                        getString(R.string.keys_json_connection_memberid))
-//                        , connectionJObject.getString(
-//                        getString(R.string.keys_json_connection_firstname))
-//                        , connectionJObject.getString(
-//                        getString(R.string.keys_json_connection_lastname))
-//                        ,connectionJObject.getString(
-//                        getString(R.string.keys_json_connection_username)));
-
-
-//                final Bundle args = new Bundle();
-//                args.putSerializable(getString(R.string.keys_connection_view), conItem);
-//                args.putString("jwt", mJwToken);
-//                args.putInt("memberid", mMemberId);
-//                Navigation.findNavController(getView())
-//                        .navigate(R.id.action_nav_connectionGUI_to_nav_connection_request, args);
 
                 MobileNavigationDirections.ActionGlobalNavConnectionRequest directions
                         = ConnectionRequestFragmentDirections.actionGlobalNavConnectionRequest(conItem);
@@ -355,15 +314,6 @@ public class ConnectionGUIFragment extends Fragment implements View.OnClickListe
                 .addHeaderField("authorization", mJwToken)  //add the JWT as header
                 .build().execute();
 
-
-
-
-//        final Bundle args = new Bundle();
-//        args.putSerializable(getString(R.string.keys_connection_view), theConnection);
-//        args.putString("jwt", mJwToken);
-//        args.putInt("memberid", mMemberId);
-//        Navigation.findNavController(getView())
-//                .navigate(R.id.action_nav_connectionGUI_to_viewConnectionFragment, args);
 
 
     }

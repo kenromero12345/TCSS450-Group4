@@ -1,6 +1,7 @@
 package edu.uw.tcss450.tcss450_group4.ui;
 
 
+import android.app.AlertDialog;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -170,79 +171,30 @@ public class ConnectionAddFragment extends Fragment implements View.OnClickListe
     @Override
     public void onStart(){
         super.onStart();
-//        ((TextView) getActivity().findViewById(R.id.connection_firstname))
-//                .setText("hello");
+
         if (getArguments() != null) {
             mJwToken = getArguments().getString("jwt");
             mBoolean = getArguments().getBoolean("boolean");
             mConItem = (ConnectionItem)
                     getArguments().get(getString(R.string.keys_connection_view));
             mMemberId = getArguments().getInt("memberId");
-//            Log.e("Boolean!", String.valueOf(mBoolean));
 
         }
         LinearLayout layout = getActivity().findViewById(R.id.addLayout);
         layout.setVisibility(View.GONE);
-        Button button = getActivity().findViewById(R.id.connectionAddButton);
-        button.setVisibility(View.GONE);
-//        if (mBoolean == true) {
-//            Log.e("firstname!", mConItem.getFirstName());
-//            Log.e("lastname!", mConItem.getLastName());
-//            Log.e("memberid!", mConItem.getContactId());
-//            Log.e("username!", mConItem.getContactUserName());
-//            ((TextView) getActivity().findViewById(R.id.connection_firstname))
-//                    .setText("Name: " + mConItem.getFirstName() + " " + mConItem.getLastName());
-//            ((TextView) getActivity().findViewById(R.id.connection_memberid))
-//                    .setText("ID: " + mConItem.getContactId()) ;
-//            ((TextView) getActivity().findViewById(R.id.connection_username))
-//                    .setText("Username : " + mConItem.getContactUserName());
-//        }
 
-
-
-//        if (mBoolean == true) {
-//            ((TextView) getActivity().findViewById(R.id.connection_firstname))
-//                    .setText("Name: " + mConItem.getFirstName() + " " + mConItem.getLastName());
-//            ((TextView) getActivity().findViewById(R.id.connection_memberid))
-//                    .setText("ID: " + mConItem.getContactId()) ;
-//            ((TextView) getActivity().findViewById(R.id.connection_username))
-//                    .setText("Username : " + mConItem.getContactUserName());
-//
-//        }
     }
 
-//    public void populateSearch(){
-//
-//        ((TextView) getActivity().findViewById(R.id.connection_firstname))
-//                .setText("Name: " + mConItem.getFirstName() + " " + mConItem.getLastName());
-//        ((TextView) getActivity().findViewById(R.id.connection_memberid))
-//                .setText("ID: " + mConItem.getContactId()) ;
-//        ((TextView) getActivity().findViewById(R.id.connection_username))
-//                .setText("Username : " + mConItem.getContactUserName());
-//    }
 
     @Override
     public void onViewCreated (@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-//        ((TextView) getActivity().findViewById(R.id.connection_firstname))
-//                .setText("Name: ");
-//
-//        if (mBoolean == true) {
-//            Log.e("firstname!", mConItem.getFirstName());
-//            Log.e("lastname!", mConItem.getLastName());
-//            Log.e("memberid!", mConItem.getContactId());
-//            Log.e("username!", mConItem.getContactUserName());
-//            populateSearch();
-//
-//        }
 
 
         Button button_search = (Button) view.findViewById(R.id.connectionSearchButton);
         button_search.setOnClickListener(this::onClick);
 
-        Button button_add = (Button) view.findViewById(R.id.connectionAddButton);
-        button_add.setOnClickListener(this::onClick);
     }
 
     @Override
@@ -251,11 +203,6 @@ public class ConnectionAddFragment extends Fragment implements View.OnClickListe
         switch (v.getId()) {
             case R.id.connectionSearchButton:
                 searchConnection();
-                //navigate to chat
-                break;
-            case R.id.connectionAddButton:
-                addConnection();
-
                 break;
         }
 
@@ -286,85 +233,18 @@ public class ConnectionAddFragment extends Fragment implements View.OnClickListe
 
     }
 
-    private void addConnection() {
-        EditText userNameText = getActivity().findViewById(R.id.connectionUserNameText);
-        String username = userNameText.getText().toString();
-        Log.e("ERROR!", mConItem.getContactId());
-        Uri uriSearch = new Uri.Builder()
-                .scheme("https")
-                .appendPath(getString(R.string.ep_base_url))
-                .appendPath(getString(R.string.ep_connection))
-                .appendPath(getString(R.string.ep_add))
-                .build();
-//        Log.e("name", String.valueOf(username));
-        JSONObject msgBody = new JSONObject();
-        try{
-            msgBody.put("memberIdUser", mMemberId);
-            msgBody.put("memberIdOther", mConItem.getContactId());
-        } catch (JSONException e) {
-            Log.wtf("username", "Error creating JSON: " + e.getMessage());
-
-        }
-        new SendPostAsyncTask.Builder(uriSearch.toString(), msgBody)
-                .onPostExecute(this::handleAddOnPostExecute)
-                .onCancelled(error -> Log.e("CONNECTION FRAG", error))
-                .addHeaderField("authorization", mJwToken)  //add the JWT as header
-                .build().execute();
-    }
-
-    private void handleAddOnPostExecute(String result) {
-        //parse JSON
-        Button button_add = getActivity().findViewById(R.id.connectionAddButton);
-        try {
-            boolean hasSuccess = false;
-            JSONObject root = new JSONObject(result);
-            Log.e("root!", String.valueOf(root));
-            Log.e("Success!", String.valueOf(root.getBoolean("success")));
-            boolean success = root.getBoolean("success");
-            if (root.has("success")){
-                hasSuccess = true;
-            } else {
-                Log.e("ERROR!", "No Success");
-            }
-
-            if (hasSuccess){
-                if (success == true) {
-                    button_add.setText("Added!");
-                } else {
-                    button_add.setText("Already Added!");
-
-                }
-            }
-
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-    }
 
     private void handleSearchOnPostExecute(String result) {
         //parse JSON
         try {
 
-//            boolean hasSuccess = false;
-//            JSONObject root = new JSONObject(result);
-//            if (root.has(getString(R.string.keys_json_connection_success))){
-//                Boolean booleanSuccess = root.getBoolean(String.valueOf(R.string.keys_json_connection_success));
-//            } else {
-//                mMessage = root.getString("message");
-//                Log.e("ERROR!", "No Member");
-//
-//            }
             JSONObject root = new JSONObject(result);
             Boolean booleanSuccess = root.getBoolean("success");
 
             if(booleanSuccess == false) {
                 LinearLayout layout = getActivity().findViewById(R.id.addLayout);
                 layout.setVisibility(View.GONE);
-
-                Button button = getActivity().findViewById(R.id.connectionAddButton);
-                button.setVisibility(View.GONE);
+                showNoUser();
             } else {
                 JSONObject connectionJObject = root.getJSONObject(
                         getString(R.string.keys_json_connection_member));
@@ -386,64 +266,14 @@ public class ConnectionAddFragment extends Fragment implements View.OnClickListe
 
                     ((TextView) getActivity().findViewById(R.id.connection_firstname))
                             .setText("Name: " + mConItem.getFirstName() + " " + mConItem.getLastName());
-//                    ((TextView) getActivity().findViewById(R.id.connection_memberid))
-//                            .setText("ID: " + mConItem.getContactId()) ;
                     ((TextView) getActivity().findViewById(R.id.connection_username))
                             .setText("Username : " + mConItem.getContactUserName());
 
                     LinearLayout layout = getActivity().findViewById(R.id.addLayout);
                     layout.setVisibility(View.VISIBLE);
 
-                    Button button = getActivity().findViewById(R.id.connectionAddButton);
-                    button.setVisibility(View.VISIBLE);
             }
 
-
-//            if (booleanSuccess){
-//                if(booleanSuccess == false){
-//                    LinearLayout layout = getActivity().findViewById(R.id.addLayout);
-//                    layout.setVisibility(View.GONE);
-//
-//                    Button button = getActivity().findViewById(R.id.connectionAddButton);
-//                    button.setVisibility(View.GONE);
-//                } else {
-//
-//                    JSONObject connectionJObject = root.getJSONObject(
-//                            getString(R.string.keys_json_connection_member));
-//                    mConItem = new ConnectionItem(connectionJObject.getInt(
-//                            getString(R.string.keys_json_connection_memberid))
-//                            , connectionJObject.getString(
-//                            getString(R.string.keys_json_connection_firstname))
-//                            , connectionJObject.getString(
-//                            getString(R.string.keys_json_connection_lastname))
-//                            ,connectionJObject.getString(
-//                            getString(R.string.keys_json_connection_username)));
-//
-//
-//
-//                    ((TextView) getActivity().findViewById(R.id.connection_firstname))
-//                            .setText("Name: " + mConItem.getFirstName() + " " + mConItem.getLastName());
-//                    ((TextView) getActivity().findViewById(R.id.connection_memberid))
-//                            .setText("ID: " + mConItem.getContactId()) ;
-//                    ((TextView) getActivity().findViewById(R.id.connection_username))
-//                            .setText("Username : " + mConItem.getContactUserName());
-//
-//                    LinearLayout layout = getActivity().findViewById(R.id.addLayout);
-//                    layout.setVisibility(View.VISIBLE);
-//
-//                    Button button = getActivity().findViewById(R.id.connectionAddButton);
-//                    button.setVisibility(View.VISIBLE);
-//
-//                }
-
-
-//                final Bundle args = new Bundle();
-//                args.putSerializable(getString(R.string.keys_connection_view), mConItem);
-//                args.putString("jwt", mJwToken);
-//                args.putBoolean("boolean", true);
-////                args.putInt("memberid", mMemberId);
-//                Navigation.findNavController(getView())
-//                        .navigate(R.id.nav_connection_add, args);
 
 
 
@@ -454,6 +284,20 @@ public class ConnectionAddFragment extends Fragment implements View.OnClickListe
 
 
 
+
+    }
+
+        private void showNoUser() {
+        // setup the alert builder
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setTitle("Search Error");
+        builder.setMessage("Could not find a user with that name!");
+
+        builder.setNegativeButton("OK", null);
+
+        // create and show the alert dialog
+        AlertDialog dialog = builder.create();
+        dialog.show();
 
     }
 }

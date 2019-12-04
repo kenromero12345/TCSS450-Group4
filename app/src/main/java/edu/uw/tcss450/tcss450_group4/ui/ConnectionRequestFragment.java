@@ -67,18 +67,6 @@ public class ConnectionRequestFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        if (getArguments() != null) {
-//            BlogPost blogPost = (BlogPost) getArguments().getSerializable(getString(R.string.blog_key));
-//            mJwToken = getArguments().getString("jwt");
-//            mMemberId = getArguments().getInt("memberid");
-//            mConnectionItem = new ArrayList<>(Arrays.asList(getArguments().get(getString(R.string.keys_connection_view))));
-//            mVerified = mConnectionItem.getVerified();
-//
-//        ConnectionGUIFragmentArgs args = ConnectionGUIFragmentArgs.fromBundle(getArguments());
-//        mJwToken = args.getJwt();
-//        mMemberId = args.getMemberid();
-//        mConnectionItem = new ArrayList<>(Arrays.asList(args.getConnectionitems()));
-//        }
         ConnectionRequestFragmentArgs args = ConnectionRequestFragmentArgs.fromBundle(getArguments());
         mJwToken = args.getJwt();
         mMemberId = args.getMemberid();
@@ -203,73 +191,7 @@ public class ConnectionRequestFragment extends Fragment {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-//        try {
-//            boolean hasConnection = false;
-//            JSONObject root = new JSONObject(result);
-//            if (root.has(getString(R.string.keys_json_connection_connections))){
-//                hasConnection = true;
-//            } else {
-//                Log.e("ERROR!", "No connection");
-//            }
-//
-//            if (hasConnection){
-//                JSONObject connectionJObject = root.getJSONObject(
-//                        getString(R.string.keys_json_connection_connection));
-//                if (connectionJObject.get(getString(R.string.keys_json_connection_verified)) != null) {
-//                    mConItem = new ConnectionItem(connectionJObject.getInt(
-//                            getString(R.string.keys_json_connection_memberid))
-//                            , connectionJObject.getString(
-//                            getString(R.string.keys_json_connection_firstname))
-//                            , connectionJObject.getString(
-//                            getString(R.string.keys_json_connection_lastname))
-//                            ,connectionJObject.getString(
-//                            getString(R.string.keys_json_connection_username))
-//                            ,0);
-//
-//                } else {
-//                    mConItem = new ConnectionItem(connectionJObject.getInt(
-//                            getString(R.string.keys_json_connection_memberid))
-//                            , connectionJObject.getString(
-//                            getString(R.string.keys_json_connection_firstname))
-//                            , connectionJObject.getString(
-//                            getString(R.string.keys_json_connection_lastname))
-//                            ,connectionJObject.getString(
-//                            getString(R.string.keys_json_connection_username))
-//                            ,1);
-//                }
-//
-//
-//                final Bundle args = new Bundle();
-//                args.putSerializable(getString(R.string.keys_connection_view), mConItem);
-//                args.putString("jwt", mJwToken);
-//                args.putInt("memberid", mMemberId);
-//                Navigation.findNavController(getView())
-//                        .navigate(R.id.action_nav_connectionGUI_to_viewConnectionFragment, args);
-//            }
-//
-//
-//        } catch (JSONException e) {
-//            e.printStackTrace();
-//        }
     }
-
-
-//    @Override
-//    public void onAttach(Context context) {
-//        super.onAttach(context);
-//        if (context instanceof OnListFragmentInteractionListener) {
-//            mListener = (OnListFragmentInteractionListener) context;
-//        } else {
-//            throw new RuntimeException(context.toString()
-//                    + " must implement OnListFragmentInteractionListener");
-//        }
-//    }
-//
-//    @Override
-//    public void onDetach() {
-//        super.onDetach();
-//        mListener = null;
-//    }
 
     /**
      * This interface must be implemented by activities that contain this

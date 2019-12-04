@@ -44,18 +44,12 @@ public class MyConnectionGUIRecyclerViewAdapter extends RecyclerView.Adapter<MyC
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mItem = mValues.get(position);
-//        ImageView imageView = holder.profileimage;
         String cleanImage = mValues.get(position).getContactImage().replace("data:image/png;base64,", "").replace("data:image/jpeg;base64,","");
         byte[] decodedString = Base64.decode(cleanImage, Base64.DEFAULT);
         Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
-//        imageView.setImageBitmap(decodedByte);
-//        holder.contactid.setText("ID: " + mValues.get(position).getContactId());
         holder.name.setText("Name: " + mValues.get(position).getFirstName()
         + " " + mValues.get(position).getLastName());
-//        holder.lastname.setText("Last Name: " + mValues.get(position).getLastName());
         holder.userName.setText("Username: " + mValues.get(position).getContactUserName());
-//        holder.mNae.setText(mValues.get(position).id);
-//        holder.mContentView.setText(mValues.get(position).name);
         holder.profileimage.setImageBitmap(decodedByte);
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
@@ -77,7 +71,6 @@ public class MyConnectionGUIRecyclerViewAdapter extends RecyclerView.Adapter<MyC
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
-//        public final TextView contactid;
         public final TextView lastname;
         public final TextView name;
         public final TextView userName;
@@ -87,7 +80,6 @@ public class MyConnectionGUIRecyclerViewAdapter extends RecyclerView.Adapter<MyC
         public ViewHolder(View view) {
             super(view);
             mView = view;
-//            contactid = view.findViewById(R.id.connection_memberid);
             lastname = view.findViewById(R.id.connection_lastname);
             name = view.findViewById(R.id.connection_firstname);
             userName = view.findViewById(R.id.connection_username);
