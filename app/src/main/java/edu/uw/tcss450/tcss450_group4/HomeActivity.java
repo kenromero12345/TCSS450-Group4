@@ -55,7 +55,6 @@ import me.pushy.sdk.Pushy;
 import static edu.uw.tcss450.tcss450_group4.R.id;
 import static edu.uw.tcss450.tcss450_group4.R.id.action_logout;
 import static edu.uw.tcss450.tcss450_group4.R.id.drawer_layout;
-import static edu.uw.tcss450.tcss450_group4.R.id.nav_chat;
 import static edu.uw.tcss450.tcss450_group4.R.id.nav_chat_list;
 import static edu.uw.tcss450.tcss450_group4.R.id.nav_connectionGUI;
 import static edu.uw.tcss450.tcss450_group4.R.id.nav_home;
@@ -171,6 +170,7 @@ public class HomeActivity extends AppCompatActivity {
         super.onPause();
         stopLocationUpdates();
     }
+
 
     // Will use this call back to decide what to do when a location change is detected
     private LocationCallback mLocationCallback;

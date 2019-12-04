@@ -180,6 +180,7 @@ public class ChatFragment extends Fragment implements View.OnClickListener {
                 MobileNavigationDirections.ActionGlobalNavCreateChat directions
                         = CreateChatFragmentDirections.actionGlobalNavCreateChat(conItem);
                 directions.setJwt(mJwToken);
+                directions.setEmail(mEmail);
                 directions.setMemberId(getmMemberId());
 
                 Navigation.findNavController(getActivity(), nav_host_fragment)

@@ -16,11 +16,6 @@
             android:defaultValue="@null" />
     </fragment>
     <fragment
-        android:id="@+id/nav_chat"
-        android:name="edu.uw.tcss450.tcss450_group4.ui.ChatFragment"
-        android:label="fragment_chat"
-        tools:layout="@layout/fragment_chat" />
-    <fragment
         android:id="@+id/nav_connections"
         android:name="edu.uw.tcss450.tcss450_group4.ui.ConnectionsFragment"
         android:label="fragment_connection"
@@ -215,5 +210,6 @@
     </fragment>
     <action
         android:id="@+id/action_global_nav_create_chat"
-        app:destination="@id/nav_create_chat" /><action android:id="@+id/action_global_nav_view_chat" app:destination="@id/nav_view_chat"/>
+        app:destination="@id/nav_create_chat" />
+    <action android:id="@+id/action_global_nav_view_chat" app:destination="@id/nav_view_chat"/>
 </navigation>
