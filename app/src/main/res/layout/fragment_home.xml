@@ -11,35 +11,22 @@
     tools:context=".MainActivity">
 
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/connectionList"
-        android:name="edu.uw.tcss450.tcss450_group4.ui.ConnectionGUIFragment"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
+<!--    <androidx.recyclerview.widget.RecyclerView-->
+<!--        android:id="@+id/connectionList"-->
+<!--        android:name="edu.uw.tcss450.tcss450_group4.ui.ConnectionGUIFragment"-->
+<!--        android:layout_width="0dp"-->
+<!--        android:layout_height="wrap_content"-->
 
 
-        android:layout_marginTop="10dp"
-        app:layoutManager="LinearLayoutManager"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/constraintLayout"
-        tools:context=".ui.ConnectionGUIFragment"
-        tools:listitem="@layout/fragment_connectiongui">
+<!--        android:layout_marginTop="10dp"-->
+<!--        app:layoutManager="LinearLayoutManager"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toBottomOf="@+id/constraintLayout"-->
+<!--        tools:context=".ui.ConnectionGUIFragment"-->
+<!--        tools:listitem="@layout/fragment_connectiongui">-->
 
-    </androidx.recyclerview.widget.RecyclerView>
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/chatList"
-        android:name="edu.uw.tcss450.tcss450_group4.ui.ChatFragment"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        app:layoutManager="LinearLayoutManager"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/connectionList"
-        tools:context=".ui.ChatFragment"
-        tools:listitem="@layout/fragment_chat" />
+<!--    </androidx.recyclerview.widget.RecyclerView>-->
 
     <!--    android:src="@drawable/ic_menu_manage"-->
 
@@ -93,10 +80,25 @@
     <!--        android:hint="@string/keys_json_lon"-->
     <!--        android:inputType="textPersonName" />-->
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/constraintLayout"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/list_chat_body"
+        android:name="edu.uw.tcss450.tcss450_group4.ui.ChatFragment"
         android:layout_width="0dp"
-        android:layout_height="176dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginEnd="10dp"
+        app:layoutManager="LinearLayoutManager"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/layout_connection_wait"
+        tools:context=".ui.ChatFragment"
+        tools:listitem="@layout/fragment_chat" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/layout_weather_body"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
         android:layout_marginEnd="10dp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -230,14 +232,67 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/layout_connection_body"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginEnd="10dp"
+        android:background="@drawable/round_outline"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/layout_weather_body">
+
+        <TextView
+            android:id="@+id/textView_home_requestsHeader"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="5dp"
+            android:text="Requests Received"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/requestCount"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:gravity="center"
+            android:textSize="20sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView_home_requestsHeader" />
+
+        <Button
+            android:id="@+id/button_home_requests"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginBottom="5dp"
+            android:text="See Requests"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/requestCount" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/layout_chat_wait"
-        android:layout_width="1dp"
-        android:layout_height="7dp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
         android:background="@color/colorPrimary"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="@+id/chatList"
-        app:layout_constraintEnd_toEndOf="@+id/chatList"
-        app:layout_constraintStart_toStartOf="@+id/chatList">
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/list_chat_body">
 
         <ProgressBar
             android:id="@+id/progressBar_chat"
@@ -255,12 +310,11 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:background="@color/colorPrimary"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="@+id/connectionList"
-        app:layout_constraintEnd_toEndOf="@+id/connectionList"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/connectionList"
-        app:layout_constraintTop_toTopOf="@+id/connectionList">
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="@+id/layout_connection_body"
+        app:layout_constraintEnd_toEndOf="@+id/layout_connection_body"
+        app:layout_constraintStart_toStartOf="@+id/layout_connection_body"
+        app:layout_constraintTop_toTopOf="@+id/layout_connection_body">
 
         <ProgressBar
             android:id="@+id/progressBar_connection"
@@ -278,11 +332,11 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:background="@color/colorPrimary"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="@+id/constraintLayout"
-        app:layout_constraintEnd_toEndOf="@+id/constraintLayout"
-        app:layout_constraintStart_toStartOf="@+id/constraintLayout"
-        app:layout_constraintTop_toTopOf="@+id/constraintLayout">
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="@+id/layout_weather_body"
+        app:layout_constraintEnd_toEndOf="@+id/layout_weather_body"
+        app:layout_constraintStart_toStartOf="@+id/layout_weather_body"
+        app:layout_constraintTop_toTopOf="@+id/layout_weather_body">
 
         <ProgressBar
             android:id="@+id/progressBar"
@@ -294,4 +348,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>

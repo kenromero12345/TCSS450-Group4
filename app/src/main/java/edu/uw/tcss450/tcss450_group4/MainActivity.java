@@ -3,8 +3,11 @@ package edu.uw.tcss450.tcss450_group4;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
+import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 
 import edu.uw.tcss450.tcss450_group4.ui.VerifyFragment;
 import edu.uw.tcss450.tcss450_group4.ui.HomeFragment;
@@ -19,6 +22,14 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 //        Intent intent = new Intent(this, HomeActivity.class);
 //        startActivity(intent);
+    }
+
+    private void closeKeyboard() {
+        View view = this.getCurrentFocus();
+        if (view != null) {
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        }
     }
 
 

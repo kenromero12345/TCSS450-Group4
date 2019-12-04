@@ -413,6 +413,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
                     homeActivity.setJwt(resultsJSON.getString(
                             getString(R.string.keys_json_login_jwt)));
                     homeActivity.setMemberId(resultsJSON.getInt(getString(R.string.keys_json_login_memberId)));
+                    homeActivity.setProfileuri(resultsJSON.getString(getString(R.string.keys_json_login_profileuri)));
 
 
                     Navigation.findNavController(getView()).navigate(homeActivity);

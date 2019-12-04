@@ -10,7 +10,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -19,7 +18,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
-import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -42,8 +40,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 
-import edu.uw.tcss450.tcss450_group4.HomeActivityArgs;
-import edu.uw.tcss450.tcss450_group4.MobileNavigationDirections;
 import edu.uw.tcss450.tcss450_group4.R;
 import edu.uw.tcss450.tcss450_group4.model.Chat;
 import edu.uw.tcss450.tcss450_group4.model.ConnectionItem;
@@ -53,9 +49,10 @@ import edu.uw.tcss450.tcss450_group4.utils.SendPostAsyncTask;
 
 import static edu.uw.tcss450.tcss450_group4.R.color.redviolet;
 import static edu.uw.tcss450.tcss450_group4.R.color.uwPurple;
+import static edu.uw.tcss450.tcss450_group4.R.id.layout_chat_wait;
 import static edu.uw.tcss450.tcss450_group4.R.id.layout_connection_wait;
 import static edu.uw.tcss450.tcss450_group4.R.id.layout_weather_wait;
-import static edu.uw.tcss450.tcss450_group4.R.id.nav_host_fragment;
+import static edu.uw.tcss450.tcss450_group4.R.id.requestCount;
 import static edu.uw.tcss450.tcss450_group4.R.id.weather_cityCountry;
 import static edu.uw.tcss450.tcss450_group4.R.id.weather_conditionIcon;
 import static edu.uw.tcss450.tcss450_group4.R.id.weather_conditonDescription;
@@ -68,13 +65,8 @@ import static edu.uw.tcss450.tcss450_group4.R.id.weather_windSpeed;
 import static edu.uw.tcss450.tcss450_group4.R.string.ep_base_url;
 import static edu.uw.tcss450.tcss450_group4.R.string.ep_chats;
 import static edu.uw.tcss450.tcss450_group4.R.string.ep_connection;
-import static edu.uw.tcss450.tcss450_group4.R.string.ep_getall;
 import static edu.uw.tcss450.tcss450_group4.R.string.ep_requestsReceived;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_connection_connections;
-import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_connection_firstname;
-import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_connection_lastname;
-import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_connection_memberid;
-import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_connection_username;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_login_success;
 import static edu.uw.tcss450.tcss450_group4.model.WeatherHelper.getImgUrl;
 import static edu.uw.tcss450.tcss450_group4.model.WeatherHelper.tempFromKelvinToCelsiusString;
@@ -93,6 +85,9 @@ public class HomeFragment extends Fragment {
     private String mJwToken;
     private int mMemberId;
     private String mEmail;
+
+    private int mConnectionCount = 0;
+
     private int mColumnCount = 1;
 
     public HomeFragment() {
@@ -112,7 +107,9 @@ public class HomeFragment extends Fragment {
 //        mEmail = args.getCredentials().getEmail();
 //        mMemberId = args.getMemberId();
 //        mConnectionItem = new ArrayList<>(Arrays.asList(args.getConnectionitems()));
-        return inflater.inflate(R.layout.fragment_home, container, false);
+        View view = inflater.inflate(R.layout.fragment_home, container, false);
+        view.setClipToOutline(true);
+        return view;
     }
 
     /**
@@ -132,13 +129,14 @@ public class HomeFragment extends Fragment {
         mMemberId = args.getMemberId();
 
         view.findViewById(layout_connection_wait).setVisibility(View.VISIBLE);
-        gotoConnection();
-        gotoChat();
+        view.findViewById(layout_chat_wait).setVisibility(View.VISIBLE);
+        getConnectionRequestCount();
+        getRecentChats();
 
 //        mConnectionItem = new ArrayList<>(Arrays.asList(args.getConnectionItems()));
     }
 
-    private void gotoChat() {
+    private void getRecentChats() {
         JSONObject memberId = new JSONObject();
         try {
             memberId.put("memberId", mMemberId);
@@ -151,13 +149,15 @@ public class HomeFragment extends Fragment {
                 .appendPath(getString(ep_chats))
                 .build();
         new SendPostAsyncTask.Builder(uriChats.toString(), memberId)
+                .onPreExecute(() -> getView().findViewById(layout_chat_wait).setVisibility(View.VISIBLE))
                 .onPostExecute(this::handleChatsGetOnPostExecute)
                 .addHeaderField("authorization", mJwToken)
-                .onCancelled(this::handleErrorsInTask)
+                .onCancelled(this::handleChatErrorsInTask)
                 .build().execute();
     }
 
-    private void handleErrorsInTask(final String result) {
+    private void handleChatErrorsInTask(final String result) {
+        getView().findViewById(layout_chat_wait).setVisibility(View.INVISIBLE);
         Log.e("ASYNC_TASK_ERROR", result);
     }
 
@@ -168,8 +168,10 @@ public class HomeFragment extends Fragment {
                 JSONArray data = root.getJSONArray("names");
 //                if (response.has(getString(R.string.keys_json_chats_data))) {
 //                    JSONArray data = response.getJSONArray(getString(R.string.keys_json_chats_data));
-                mChats = new Chat[data.length()];
-                for (int i = 0; i < data.length(); i++) {
+                int size = Math.min(3, data.length());
+                mChats = new Chat[size];
+//                int size = Math.min(data.length(), 3);
+                for (int i = 0; i < size; i++) {
                     JSONObject jsonChatLists = data.getJSONObject(i);
 
                     String recentMessage = jsonChatLists.getString("message");
@@ -187,7 +189,7 @@ public class HomeFragment extends Fragment {
                                 .build());
                     }
                 }
-                RecyclerView rv = getView().findViewById(R.id.chatList);
+                RecyclerView rv = getView().findViewById(R.id.list_chat_body);
                 // Set the adapter
                 if (rv instanceof RecyclerView) {
                     Context context = rv.getContext();
@@ -199,11 +201,14 @@ public class HomeFragment extends Fragment {
                     }
                     recyclerView.setAdapter(new MyChatRecyclerViewAdapter(new ArrayList<>(Arrays.asList(mChats)), this::displayChat));
                 }
+                getView().findViewById(layout_chat_wait).setVisibility(View.INVISIBLE);
             } else {
+                getView().findViewById(layout_chat_wait).setVisibility(View.INVISIBLE);
                 Log.e("ERROR!", "No response");
             }
         } catch (JSONException e) {
             e.printStackTrace();
+            getView().findViewById(layout_chat_wait).setVisibility(View.INVISIBLE);
             Log.e("ERROR!", e.getMessage());
         }
     }
@@ -230,7 +235,10 @@ public class HomeFragment extends Fragment {
         return a;
     }
 
-    private void gotoConnection() {
+    /**
+     * Get the number of connection requests of user
+     */
+    private void getConnectionRequestCount() {
         Uri uriConnection = new Uri.Builder()
                 .scheme("https")
                 .appendPath(getString(ep_base_url))
@@ -241,18 +249,33 @@ public class HomeFragment extends Fragment {
         try{
             msgBody.put("memberId", mMemberId);
         } catch (JSONException e) {
+            getView().findViewById(layout_connection_wait).setVisibility(View.INVISIBLE);
             Log.wtf("MEMBERID", "Error creating JSON: " + e.getMessage());
 
         }
         new SendPostAsyncTask.Builder(uriConnection.toString(), msgBody)
-
+                .onPreExecute(() -> getView().findViewById(layout_connection_wait).setVisibility(View.VISIBLE))
                 .onPostExecute(this::handleConnectionOnPostExecute)
-                .onCancelled(error -> Log.e("CONNECTION FRAG", error))
+                .onCancelled(this::handleConnectionErrorsInTask)
                 .addHeaderField("authorization", mJwToken)  //add the JWT as header
                 .build().execute();
 
     }
 
+    /**
+     * Helper method that handles errors when getting connection count fails
+     * @param result
+     */
+    private void handleConnectionErrorsInTask(final String result) {
+        getView().findViewById(layout_connection_wait).setVisibility(View.INVISIBLE);
+        Log.e("ASYNC_TASK_ERROR", result);
+    }
+
+    /**
+     * Helper method that handles post execution when connection count
+     * has been successfully retrieved
+     * @param result
+     */
     private void handleConnectionOnPostExecute(final String result) {
         try {
             boolean hasConnection = false;
@@ -260,121 +283,23 @@ public class HomeFragment extends Fragment {
             if (root.has(getString(keys_json_connection_connections))) {
                 hasConnection = true;
             } else {
+                getView().findViewById(layout_connection_wait).setVisibility(View.INVISIBLE);
                 Log.e("ERROR!", "No connection");
             }
 
             if (hasConnection) {
                 JSONArray connectionJArray = root.getJSONArray(
                         getString(keys_json_connection_connections));
-                mConnectionItems = new ConnectionItem[connectionJArray.length()];
-                for (int i = 0; i < connectionJArray.length(); i++) {
-                    JSONObject jsonConnection = connectionJArray.getJSONObject(i);
-                    mConnectionItems[i] = new ConnectionItem(
-                            jsonConnection.getInt(
-                                    getString(keys_json_connection_memberid))
-                            , jsonConnection.getString(
-                            getString(keys_json_connection_firstname))
-                            , jsonConnection.getString(
-                            getString(keys_json_connection_lastname))
-                            , jsonConnection.getString(
-                            getString(keys_json_connection_username)));
-                }
-                RecyclerView rv = getView().findViewById(R.id.connectionList);
-                if (rv instanceof RecyclerView ) {
-                    Context context = rv.getContext();
-                    RecyclerView recyclerView = (RecyclerView) rv;
-                    if (mColumnCount <= 1) {
-                        recyclerView.setLayoutManager(new LinearLayoutManager(context));
-                    } else {
-                        recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
-                    }
-                    recyclerView.setAdapter(new MyConnectionGUIRecyclerViewAdapter(new ArrayList<>(Arrays.asList(mConnectionItems)), this::displayConnection));
-                }
+                mConnectionCount = connectionJArray.length();
+                ((TextView) getView().findViewById(requestCount)).setText("You have " + mConnectionCount + " request(s)");
                 getView().findViewById(layout_connection_wait).setVisibility(View.INVISIBLE);
 
             }
         } catch (JSONException e) {
+            getView().findViewById(layout_connection_wait).setVisibility(View.INVISIBLE);
             e.printStackTrace();
         }
     }
-
-    private void displayConnection(ConnectionItem theConnection) {
-
-        Uri uriConnection = new Uri.Builder()
-                .scheme("https")
-                .appendPath(getString(R.string.ep_base_url))
-                .appendPath(getString(R.string.ep_connection))
-                .appendPath(getString(R.string.ep_getfriend))
-                .build();
-        JSONObject msgBody = new JSONObject();
-        try{
-            msgBody.put("memberIdUser", mMemberId);
-            msgBody.put("memberIdOther", theConnection.getContactId());
-        } catch (JSONException e) {
-            Log.wtf("MEMBERID", "Error creating JSON: " + e.getMessage());
-
-        }
-        new SendPostAsyncTask.Builder(uriConnection.toString(), msgBody)
-                .onPostExecute(this::handleDisplayOnPostExecute)
-                .onCancelled(error -> Log.e("CONNECTION FRAG", error))
-                .addHeaderField("authorization", mJwToken)  //add the JWT as header
-                .build().execute();
-
-
-    }
-
-    private void handleDisplayOnPostExecute(String result) {
-        //parse JSON
-        try {
-            boolean hasConnection = false;
-            JSONObject root = new JSONObject(result);
-            if (root.has(getString(R.string.keys_json_connection_connections))){
-                hasConnection = true;
-            } else {
-                Log.e("ERROR!", "No connection");
-            }
-
-            if (hasConnection){
-                JSONObject connectionJObject = root.getJSONObject(
-                        getString(R.string.keys_json_connection_connections));
-                if (connectionJObject.get(getString(R.string.keys_json_connection_verified)) != null) {
-                    mConItem = new ConnectionItem(connectionJObject.getInt(
-                            getString(R.string.keys_json_connection_memberid))
-                            , connectionJObject.getString(
-                            getString(R.string.keys_json_connection_firstname))
-                            , connectionJObject.getString(
-                            getString(R.string.keys_json_connection_lastname))
-                            ,connectionJObject.getString(
-                            getString(R.string.keys_json_connection_username))
-                            ,0);
-
-                } else {
-                    mConItem = new ConnectionItem(connectionJObject.getInt(
-                            getString(R.string.keys_json_connection_memberid))
-                            , connectionJObject.getString(
-                            getString(R.string.keys_json_connection_firstname))
-                            , connectionJObject.getString(
-                            getString(R.string.keys_json_connection_lastname))
-                            ,connectionJObject.getString(
-                            getString(R.string.keys_json_connection_username))
-                            ,1);
-                }
-
-
-                final Bundle args = new Bundle();
-                args.putSerializable(getString(R.string.keys_connection_view), mConItem);
-                args.putString("jwt", mJwToken);
-                args.putInt("memberid", mMemberId);
-                Navigation.findNavController(getView())
-                        .navigate(R.id.action_nav_connectionGUI_to_viewConnectionFragment, args);
-            }
-
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-    }
-
 
 
     private void initialization(@NonNull View view) {

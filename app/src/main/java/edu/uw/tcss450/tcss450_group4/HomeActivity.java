@@ -202,6 +202,7 @@ public class HomeActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
 //        gotoConnection();
         checkLocationPermission();
         setContentView(layout.activity_home);
@@ -255,6 +256,7 @@ public class HomeActivity extends AppCompatActivity {
             byte[] decodedString = Base64.decode(cleanImage, Base64.DEFAULT);
             Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
             profileHome.setImageBitmap(decodedByte);
+//            Log.e("BITMAP", decodedByte.toString());
         }
         navigationView.setNavigationItemSelectedListener(this::onNavigationSelected);
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
