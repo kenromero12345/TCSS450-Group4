@@ -167,6 +167,9 @@
         <action
             android:id="@+id/action_nav_connectionGUI_to_nav_connection_add"
             app:destination="@id/nav_connection_add" />
+        <action
+            android:id="@+id/action_nav_connectionGUI_to_nav_connection_request"
+            app:destination="@id/nav_connection_request" />
     </fragment><action android:id="@+id/action_global_nav_connectionGUI" app:destination="@id/nav_connectionGUI"/>
 
 
@@ -235,7 +238,7 @@
     <fragment
         android:id="@+id/viewConnectionFragment"
         android:name="edu.uw.tcss450.tcss450_group4.ui.ViewConnectionFragment"
-        android:label="Profile Information"
+        android:label="Profile"
         tools:layout="@layout/fragment_view_connection">
         <argument
             android:name="jwt"
@@ -271,6 +274,31 @@
         android:id="@+id/nav_connection_add"
         android:name="edu.uw.tcss450.tcss450_group4.ui.ConnectionAddFragment"
         android:label="Search"
-        tools:layout="@layout/fragment_connection_add" />
-        <action android:id="@+id/action_global_nav_view_chat" app:destination="@id/nav_view_chat"/>
+        tools:layout="@layout/fragment_connection_add">
+        <action
+            android:id="@+id/action_nav_connection_add_to_viewConnectionFragment"
+            app:destination="@id/viewConnectionFragment" />
+    </fragment>
+    <action android:id="@+id/action_global_nav_home" app:destination="@id/nav_home" />
+    <fragment
+        android:id="@+id/nav_connection_request"
+        android:name="edu.uw.tcss450.tcss450_group4.ui.ConnectionRequestFragment"
+        android:label="Requests"
+        tools:layout="@layout/fragment_connectionrequest_list">
+        <argument
+            android:name="connectionitems"
+            app:argType="edu.uw.tcss450.tcss450_group4.model.ConnectionItem[]" />
+        <argument
+            android:name="jwt"
+            android:defaultValue='""'
+            app:argType="string" />
+        <argument
+            android:name="memberid"
+            android:defaultValue="0"
+            app:argType="integer" />
+        <action
+            android:id="@+id/action_nav_connection_request_to_viewConnectionFragment"
+            app:destination="@id/viewConnectionFragment" />
+    </fragment>
+    <action android:id="@+id/action_global_nav_connection_request" app:destination="@id/nav_connection_request" />
 </navigation>

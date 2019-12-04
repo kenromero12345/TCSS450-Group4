@@ -18,6 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -25,9 +26,18 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import edu.uw.tcss450.tcss450_group4.MobileNavigationDirections;
 import edu.uw.tcss450.tcss450_group4.R;
 import edu.uw.tcss450.tcss450_group4.model.ConnectionItem;
 import edu.uw.tcss450.tcss450_group4.utils.SendPostAsyncTask;
+
+import static edu.uw.tcss450.tcss450_group4.R.id.nav_host_fragment;
+import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_connection_connections;
+import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_connection_firstname;
+import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_connection_image;
+import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_connection_lastname;
+import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_connection_memberid;
+import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_connection_username;
 
 /**
  * A fragment representing a list of Items.
@@ -88,9 +98,13 @@ public class ConnectionGUIFragment extends Fragment implements View.OnClickListe
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         Button button_chat = (Button) view.findViewById(R.id.connectionSearchButton);
+        Button button_sent = (Button) view.findViewById(R.id.connectionSent);
+        Button button_received = (Button) view.findViewById(R.id.connectionRequest);
         button_chat.setOnClickListener(this::onClick);
+        button_sent.setOnClickListener(this::onClick);
+        button_received.setOnClickListener(this::onClick);
 
-        RecyclerView rv = view.findViewById(R.id.list);
+        RecyclerView rv = view.findViewById(R.id.connectionGuiList);
         if (rv instanceof RecyclerView ) {
             Context context = rv.getContext();
             RecyclerView recyclerView = (RecyclerView) rv;
@@ -107,35 +121,176 @@ public class ConnectionGUIFragment extends Fragment implements View.OnClickListe
     public void onClick(View v) {
 
         switch (v.getId()) {
+
             case R.id.connectionSearchButton:
                 addConnection();
                 //navigate to chat
                 break;
+
+
+            case R.id.connectionSent:
+                sentConnection();
+
+                break;
+
+
             case R.id.connectionRequest:
                 requestConnection();
-//                Log.d("DEBUG", "entered");
-//                Navigation.findNavController(getView())
-//                        .navigate(R.id.action_nav_login_to_nav_register);
 
                 break;
         }
 
     }
 
+    private void sentConnection() {
 
+        Uri uriConnection = new Uri.Builder()
+                .scheme("https")
+                .appendPath(getString(R.string.ep_base_url))
+                .appendPath(getString(R.string.ep_connection))
+                .appendPath(getString(R.string.ep_requestsSent))
+                .build();
+        JSONObject msgBody = new JSONObject();
+        try{
+            msgBody.put("memberId", mMemberId);
+        } catch (JSONException e) {
+            Log.wtf("MEMBERID", "Error creating JSON: " + e.getMessage());
 
-    private void addConnection() {
-        final Bundle args = new Bundle();
-        args.putString("jwt", mJwToken);
-        Navigation.findNavController(getView())
-                .navigate(R.id.action_nav_connectionGUI_to_nav_connection_add, args);
+        }
+        new SendPostAsyncTask.Builder(uriConnection.toString(), msgBody)
+                .onPostExecute(this::handleRequestOnPostExecute)
+                .onCancelled(error -> Log.e("CONNECTION FRAG", error))
+                .addHeaderField("authorization", mJwToken)  //add the JWT as header
+                .build().execute();
 
 
     }
 
     private void requestConnection() {
-        
+
+        Uri uriConnection = new Uri.Builder()
+                .scheme("https")
+                .appendPath(getString(R.string.ep_base_url))
+                .appendPath(getString(R.string.ep_connection))
+                .appendPath(getString(R.string.ep_requestsReceived))
+                .build();
+        JSONObject msgBody = new JSONObject();
+        try{
+            msgBody.put("memberId", mMemberId);
+        } catch (JSONException e) {
+            Log.wtf("MEMBERID", "Error creating JSON: " + e.getMessage());
+
+        }
+        new SendPostAsyncTask.Builder(uriConnection.toString(), msgBody)
+                .onPostExecute(this::handleReceivedOnPostExecute)
+                .onCancelled(error -> Log.e("CONNECTION FRAG", error))
+                .addHeaderField("authorization", mJwToken)  //add the JWT as header
+                .build().execute();
+
     }
+
+    private void handleReceivedOnPostExecute(String result) {
+        //parse JSON
+        try {
+            boolean hasConnection = false;
+            JSONObject root = new JSONObject(result);
+            if (root.has(getString(R.string.keys_json_connection_connections))){
+                hasConnection = true;
+            } else {
+                Log.e("ERROR!", "No connection");
+            }
+
+            if (hasConnection){
+
+                JSONArray connectionJArray = root.getJSONArray(
+                        getString(keys_json_connection_connections));
+                ConnectionItem[] conItem = new ConnectionItem[connectionJArray.length()];
+                for(int i = 0; i < connectionJArray.length(); i++){
+                    JSONObject jsonConnection = connectionJArray.getJSONObject(i);
+                    conItem[i] = new ConnectionItem(
+                            jsonConnection.getInt(
+                                    getString(keys_json_connection_memberid))
+                            , jsonConnection.getString(
+                            getString(keys_json_connection_firstname))
+                            , jsonConnection.getString(
+                            getString(keys_json_connection_lastname))
+                            ,jsonConnection.getString(
+                            getString(keys_json_connection_username)),
+                            jsonConnection.getString(
+                                    getString(keys_json_connection_image)));
+                }
+
+                MobileNavigationDirections.ActionGlobalNavConnectionRequest directions
+                        = ConnectionRequestFragmentDirections.actionGlobalNavConnectionRequest(conItem);
+                directions.setJwt(mJwToken);
+                directions.setMemberid(mMemberId);
+
+                Navigation.findNavController(getActivity(), nav_host_fragment)
+                        .navigate(directions);
+            }
+
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    private void addConnection() {
+        final Bundle args = new Bundle();
+        args.putString("jwt", mJwToken);
+        args.putInt("memberId", mMemberId);
+        Navigation.findNavController(getView())
+                .navigate(R.id.action_nav_connectionGUI_to_nav_connection_add, args);
+    }
+
+    private void handleRequestOnPostExecute(String result) {
+        //parse JSON
+        try {
+            boolean hasConnection = false;
+            JSONObject root = new JSONObject(result);
+            if (root.has(getString(R.string.keys_json_connection_connections))){
+                hasConnection = true;
+            } else {
+                Log.e("ERROR!", "No connection");
+            }
+
+            if (hasConnection){
+
+                JSONArray connectionJArray = root.getJSONArray(
+                        getString(keys_json_connection_connections));
+                ConnectionItem[] conItem = new ConnectionItem[connectionJArray.length()];
+                for(int i = 0; i < connectionJArray.length(); i++){
+                    JSONObject jsonConnection = connectionJArray.getJSONObject(i);
+                    conItem[i] = new ConnectionItem(
+                            jsonConnection.getInt(
+                                    getString(keys_json_connection_memberid))
+                            , jsonConnection.getString(
+                            getString(keys_json_connection_firstname))
+                            , jsonConnection.getString(
+                            getString(keys_json_connection_lastname))
+                            ,jsonConnection.getString(
+                            getString(keys_json_connection_username)),
+                            jsonConnection.getString(
+                                    getString(keys_json_connection_image)));
+                }
+
+                MobileNavigationDirections.ActionGlobalNavConnectionRequest directions
+                        = ConnectionRequestFragmentDirections.actionGlobalNavConnectionRequest(conItem);
+                directions.setJwt(mJwToken);
+                directions.setMemberid(mMemberId);
+
+                Navigation.findNavController(getActivity(), nav_host_fragment)
+                        .navigate(directions);
+            }
+
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+
 
     private void displayConnection(ConnectionItem theConnection) {
 
@@ -143,7 +298,7 @@ public class ConnectionGUIFragment extends Fragment implements View.OnClickListe
                 .scheme("https")
                 .appendPath(getString(R.string.ep_base_url))
                 .appendPath(getString(R.string.ep_connection))
-                .appendPath(getString(R.string.ep_getfriend))
+                .appendPath(getString(R.string.ep_getPerson))
                 .build();
         JSONObject msgBody = new JSONObject();
         try{
@@ -161,15 +316,6 @@ public class ConnectionGUIFragment extends Fragment implements View.OnClickListe
 
 
 
-
-//        final Bundle args = new Bundle();
-//        args.putSerializable(getString(R.string.keys_connection_view), theConnection);
-//        args.putString("jwt", mJwToken);
-//        args.putInt("memberid", mMemberId);
-//        Navigation.findNavController(getView())
-//                .navigate(R.id.action_nav_connectionGUI_to_viewConnectionFragment, args);
-
-
     }
 
     private void handleDisplayOnPostExecute(String result) {
@@ -177,61 +323,38 @@ public class ConnectionGUIFragment extends Fragment implements View.OnClickListe
         try {
             boolean hasConnection = false;
             JSONObject root = new JSONObject(result);
-            if (root.has(getString(R.string.keys_json_connection_connections))){
+            if (root.has(getString(R.string.keys_json_connection_connection))){
                 hasConnection = true;
             } else {
                 Log.e("ERROR!", "No connection");
             }
 
+            Log.e("root", String.valueOf(root));
+            Log.e("Status!", root.getString("status"));
+            Log.e("Status!", String.valueOf(root.getString("status") == "already connected"));
+            String status = root.getString("status");
+            Log.e("Status variable! boolean", String.valueOf(status.equals("already connected")));
             if (hasConnection){
                 JSONObject connectionJObject = root.getJSONObject(
-                        getString(R.string.keys_json_connection_connections));
-                if (connectionJObject.get(getString(R.string.keys_json_connection_verified)) != null) {
-                    mConItem = new ConnectionItem(connectionJObject.getInt(
-                            getString(R.string.keys_json_connection_memberid))
-                            , connectionJObject.getString(
-                            getString(R.string.keys_json_connection_firstname))
-                            , connectionJObject.getString(
-                            getString(R.string.keys_json_connection_lastname))
-                            ,connectionJObject.getString(
-                            getString(R.string.keys_json_connection_username))
-                            ,0);
+                        getString(R.string.keys_json_connection_connection));
+                mConItem = new ConnectionItem(connectionJObject.getInt(
+                        getString(R.string.keys_json_connection_memberid))
+                        , connectionJObject.getString(
+                        getString(R.string.keys_json_connection_firstname))
+                        , connectionJObject.getString(
+                        getString(R.string.keys_json_connection_lastname))
+                        ,connectionJObject.getString(
+                        getString(R.string.keys_json_connection_username))
+                        ,1
+                        , connectionJObject.getString(getString(R.string.keys_json_connection_image)));
+//                Log.e("verified!", String.valueOf(mConItem.getVerified()));
 
-                } else {
-                    mConItem = new ConnectionItem(connectionJObject.getInt(
-                            getString(R.string.keys_json_connection_memberid))
-                            , connectionJObject.getString(
-                            getString(R.string.keys_json_connection_firstname))
-                            , connectionJObject.getString(
-                            getString(R.string.keys_json_connection_lastname))
-                            ,connectionJObject.getString(
-                            getString(R.string.keys_json_connection_username))
-                            ,1);
-                }
-
-
-//                for(int i = 0; i < connectionJArray.length(); i++){
-//                    JSONObject jsonConnection = connectionJArray.getJSONObject(i);
-//                    conItem[i] = new ConnectionItem(
-//                            jsonConnection.getInt(
-//                                    getString(R.string.keys_json_connection_memberid))
-//                            , jsonConnection.getString(
-//                            getString(R.string.keys_json_connection_firstname))
-//                            , jsonConnection.getString(
-//                            getString(R.string.keys_json_connection_lastname))
-//                            ,jsonConnection.getString(
-//                            getString(R.string.keys_json_connection_username))
-//                            ,jsonConnection.getInt(
-//                            getString(R.string.keys_json_connection_verified)));
-//                }
-
-
-            final Bundle args = new Bundle();
-            args.putSerializable(getString(R.string.keys_connection_view), mConItem);
-            args.putString("jwt", mJwToken);
-            args.putInt("memberid", mMemberId);
-            Navigation.findNavController(getView())
-                    .navigate(R.id.action_nav_connectionGUI_to_viewConnectionFragment, args);
+                final Bundle args = new Bundle();
+                args.putSerializable(getString(R.string.keys_connection_view), mConItem);
+                args.putString("jwt", mJwToken);
+                args.putInt("memberid", mMemberId);
+                Navigation.findNavController(getView())
+                        .navigate(R.id.action_nav_connectionGUI_to_viewConnectionFragment, args);
             }
 
 
