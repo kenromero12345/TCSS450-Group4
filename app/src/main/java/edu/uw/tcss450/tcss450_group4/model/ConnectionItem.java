@@ -12,22 +12,28 @@ public class ConnectionItem implements Serializable, Parcelable {
     private final String mContactName;
     private final String mContactLastName;
     private final String mContactUserName;
+    private final String mContactImage;
     private int mVerified;
 
-    public ConnectionItem(int tContactId, String tContactName, String tContactLastName, String tContactUsername){
+    public ConnectionItem(int tContactId, String tContactName, String tContactLastName, String tContactUsername,
+                          String tContactImage){
         mContactId = Integer.toString(tContactId);
         mContactName = tContactName;
         mContactLastName = tContactLastName;
         mContactUserName = tContactUsername;
+        mContactImage = tContactImage;
+
+
     }
 
     public ConnectionItem(int tContactId, String tContactName, String tContactLastName, String tContactUsername,
-                          int tVerfied){
+                          int tVerfied, String tContactImage){
         mContactId = Integer.toString(tContactId);
         mContactName = tContactName;
         mContactLastName = tContactLastName;
         mContactUserName = tContactUsername;
         mVerified = tVerfied;
+        mContactImage = tContactImage;
     }
 
 
@@ -39,6 +45,7 @@ public class ConnectionItem implements Serializable, Parcelable {
         mContactLastName = in.readString();
         mContactUserName = in.readString();
         mVerified = in.readInt();
+        mContactImage = in.readString();
     }
 
     public static final Creator<ConnectionItem> CREATOR = new Creator<ConnectionItem>() {
@@ -67,6 +74,7 @@ public class ConnectionItem implements Serializable, Parcelable {
         dest.writeString(mContactLastName);
         dest.writeString(mContactUserName);
         dest.writeInt(mVerified);
+        dest.writeString(mContactImage);
     }
 
 //    public static class Builder {
@@ -101,6 +109,8 @@ public class ConnectionItem implements Serializable, Parcelable {
     public String getContactUserName() { return mContactUserName; }
 
     public int getVerified() { return mVerified; }
+
+    public String getContactImage() { return mContactImage; }
 
 }
 

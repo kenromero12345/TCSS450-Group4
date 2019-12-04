@@ -160,7 +160,8 @@ public class ConnectionRequestFragment extends Fragment {
                             getString(R.string.keys_json_connection_lastname))
                             ,connectionJObject.getString(
                             getString(R.string.keys_json_connection_username))
-                            ,2);
+                            ,2
+                            ,connectionJObject.getString(getString(R.string.keys_json_connection_image)));
 
                 }
                 else if (status.equals("received request from person")) {
@@ -172,7 +173,8 @@ public class ConnectionRequestFragment extends Fragment {
                             getString(R.string.keys_json_connection_lastname))
                             ,connectionJObject.getString(
                             getString(R.string.keys_json_connection_username))
-                            ,3);
+                            ,3
+                            ,connectionJObject.getString(getString(R.string.keys_json_connection_image)));
 
                 } else {
                     mConItem = new ConnectionItem(connectionJObject.getInt(
@@ -183,7 +185,8 @@ public class ConnectionRequestFragment extends Fragment {
                             getString(R.string.keys_json_connection_lastname))
                             ,connectionJObject.getString(
                             getString(R.string.keys_json_connection_username))
-                            ,0);
+                            ,0
+                            ,connectionJObject.getString(getString(R.string.keys_json_connection_image)));
                 }
 
 

@@ -2,9 +2,14 @@ package edu.uw.tcss450.tcss450_group4.ui;
 
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.util.Base64;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import edu.uw.tcss450.tcss450_group4.R;
@@ -39,6 +44,11 @@ public class MyConnectionGUIRecyclerViewAdapter extends RecyclerView.Adapter<MyC
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mItem = mValues.get(position);
+//        ImageView imageView = holder.profileimage;
+        String cleanImage = mValues.get(position).getContactImage().replace("data:image/png;base64,", "").replace("data:image/jpeg;base64,","");
+        byte[] decodedString = Base64.decode(cleanImage, Base64.DEFAULT);
+        Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+//        imageView.setImageBitmap(decodedByte);
 //        holder.contactid.setText("ID: " + mValues.get(position).getContactId());
         holder.name.setText("Name: " + mValues.get(position).getFirstName()
         + " " + mValues.get(position).getLastName());
@@ -46,6 +56,7 @@ public class MyConnectionGUIRecyclerViewAdapter extends RecyclerView.Adapter<MyC
         holder.userName.setText("Username: " + mValues.get(position).getContactUserName());
 //        holder.mNae.setText(mValues.get(position).id);
 //        holder.mContentView.setText(mValues.get(position).name);
+        holder.profileimage.setImageBitmap(decodedByte);
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -71,6 +82,7 @@ public class MyConnectionGUIRecyclerViewAdapter extends RecyclerView.Adapter<MyC
         public final TextView name;
         public final TextView userName;
         public ConnectionItem mItem;
+        public final ImageView profileimage;
 
         public ViewHolder(View view) {
             super(view);
@@ -79,6 +91,7 @@ public class MyConnectionGUIRecyclerViewAdapter extends RecyclerView.Adapter<MyC
             lastname = view.findViewById(R.id.connection_lastname);
             name = view.findViewById(R.id.connection_firstname);
             userName = view.findViewById(R.id.connection_username);
+            profileimage = view.findViewById(R.id.profileImageGUI);
         }
 
         @Override

@@ -72,6 +72,7 @@ import static edu.uw.tcss450.tcss450_group4.R.string.ep_latLon;
 import static edu.uw.tcss450.tcss450_group4.R.string.ep_weather;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_connection_connections;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_connection_firstname;
+import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_connection_image;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_connection_lastname;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_connection_memberid;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_connection_username;
@@ -441,6 +442,7 @@ public class HomeActivity extends AppCompatActivity {
                 Log.e("ERROR!", "No connection");
             }
 
+
             if (hasConnection){
                 JSONArray connectionJArray = root.getJSONArray(
                         getString(keys_json_connection_connections));
@@ -455,8 +457,12 @@ public class HomeActivity extends AppCompatActivity {
                             , jsonConnection.getString(
                             getString(keys_json_connection_lastname))
                             ,jsonConnection.getString(
-                            getString(keys_json_connection_username)));
+                            getString(keys_json_connection_username)),
+                            jsonConnection.getString(
+                                    getString(keys_json_connection_image)));
                 }
+                Log.e("profile pic", conItem[0].getContactImage());
+
 
                 MobileNavigationDirections.ActionGlobalNavConnectionGUI directions
                         = ConnectionGUIFragmentDirections.actionGlobalNavConnectionGUI(conItem);

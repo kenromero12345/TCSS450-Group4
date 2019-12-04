@@ -34,6 +34,7 @@ import edu.uw.tcss450.tcss450_group4.utils.SendPostAsyncTask;
 import static edu.uw.tcss450.tcss450_group4.R.id.nav_host_fragment;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_connection_connections;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_connection_firstname;
+import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_connection_image;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_connection_lastname;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_connection_memberid;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_connection_username;
@@ -103,7 +104,7 @@ public class ConnectionGUIFragment extends Fragment implements View.OnClickListe
         button_sent.setOnClickListener(this::onClick);
         button_received.setOnClickListener(this::onClick);
 
-        RecyclerView rv = view.findViewById(R.id.list);
+        RecyclerView rv = view.findViewById(R.id.connectionGuiList);
         if (rv instanceof RecyclerView ) {
             Context context = rv.getContext();
             RecyclerView recyclerView = (RecyclerView) rv;
@@ -219,7 +220,9 @@ public class ConnectionGUIFragment extends Fragment implements View.OnClickListe
                             , jsonConnection.getString(
                             getString(keys_json_connection_lastname))
                             ,jsonConnection.getString(
-                            getString(keys_json_connection_username)));
+                            getString(keys_json_connection_username)),
+                            jsonConnection.getString(
+                                    getString(keys_json_connection_image)));
                 }
 //                JSONObject connectionJObject = root.getJSONObject(
 //                        getString(R.string.keys_json_connection_connections));
@@ -290,7 +293,9 @@ public class ConnectionGUIFragment extends Fragment implements View.OnClickListe
                             , jsonConnection.getString(
                             getString(keys_json_connection_lastname))
                             ,jsonConnection.getString(
-                            getString(keys_json_connection_username)));
+                            getString(keys_json_connection_username)),
+                            jsonConnection.getString(
+                                    getString(keys_json_connection_image)));
                 }
 //                JSONObject connectionJObject = root.getJSONObject(
 //                        getString(R.string.keys_json_connection_connections));
@@ -373,8 +378,6 @@ public class ConnectionGUIFragment extends Fragment implements View.OnClickListe
             } else {
                 Log.e("ERROR!", "No connection");
             }
-            JSONObject connectionJObject = root.getJSONObject(
-                    getString(R.string.keys_json_connection_connection));
 
             Log.e("root", String.valueOf(root));
             Log.e("Status!", root.getString("status"));
@@ -382,6 +385,8 @@ public class ConnectionGUIFragment extends Fragment implements View.OnClickListe
             String status = root.getString("status");
             Log.e("Status variable! boolean", String.valueOf(status.equals("already connected")));
             if (hasConnection){
+                JSONObject connectionJObject = root.getJSONObject(
+                        getString(R.string.keys_json_connection_connection));
                 mConItem = new ConnectionItem(connectionJObject.getInt(
                         getString(R.string.keys_json_connection_memberid))
                         , connectionJObject.getString(
@@ -390,8 +395,9 @@ public class ConnectionGUIFragment extends Fragment implements View.OnClickListe
                         getString(R.string.keys_json_connection_lastname))
                         ,connectionJObject.getString(
                         getString(R.string.keys_json_connection_username))
-                        ,1);
-                Log.e("verified!", String.valueOf(mConItem.getVerified()));
+                        ,1
+                        , connectionJObject.getString(getString(R.string.keys_json_connection_image)));
+//                Log.e("verified!", String.valueOf(mConItem.getVerified()));
 
                 final Bundle args = new Bundle();
                 args.putSerializable(getString(R.string.keys_connection_view), mConItem);

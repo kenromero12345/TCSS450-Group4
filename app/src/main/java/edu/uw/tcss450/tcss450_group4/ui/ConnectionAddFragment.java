@@ -1,6 +1,8 @@
 package edu.uw.tcss450.tcss450_group4.ui;
 
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -9,12 +11,14 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 
+import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -33,6 +37,7 @@ public class ConnectionAddFragment extends Fragment implements View.OnClickListe
     private ConnectionItem mConItem;
     private boolean mBoolean = false;
     private int mMemberId;
+    private String mMessage;
 
 
     public ConnectionAddFragment() {
@@ -46,6 +51,7 @@ public class ConnectionAddFragment extends Fragment implements View.OnClickListe
         // Inflate the layout for this fragment
         View view =  inflater.inflate(R.layout.fragment_connection_add, container, false);
         LinearLayout layout = view.findViewById(R.id.addLayout);
+
         layout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -92,7 +98,10 @@ public class ConnectionAddFragment extends Fragment implements View.OnClickListe
             if (hasConnection){
                 JSONObject connectionJObject = root.getJSONObject(
                         getString(R.string.keys_json_connection_connection));
-                if (root.getString("status") == "already connected") {
+                String status = root.getString("status");
+                Log.e("Verified add fragment", status);
+                Log.e("Member id", mConItem.getContactId());
+                if (status.equals("already connected")) {
                     mConItem = new ConnectionItem(connectionJObject.getInt(
                             getString(R.string.keys_json_connection_memberid))
                             , connectionJObject.getString(
@@ -101,8 +110,34 @@ public class ConnectionAddFragment extends Fragment implements View.OnClickListe
                             getString(R.string.keys_json_connection_lastname))
                             ,connectionJObject.getString(
                             getString(R.string.keys_json_connection_username))
-                            ,1);
+                            ,1
+                            , connectionJObject.getString(getString(R.string.keys_json_connection_image)));
 
+                }
+                else if (status.equals("sent request to person")) {
+                    mConItem = new ConnectionItem(connectionJObject.getInt(
+                            getString(R.string.keys_json_connection_memberid))
+                            , connectionJObject.getString(
+                            getString(R.string.keys_json_connection_firstname))
+                            , connectionJObject.getString(
+                            getString(R.string.keys_json_connection_lastname))
+                            ,connectionJObject.getString(
+                            getString(R.string.keys_json_connection_username))
+                            ,2
+                            ,connectionJObject.getString(getString(R.string.keys_json_connection_image)));
+
+                }
+                else if (status.equals("received request from person")) {
+                    mConItem = new ConnectionItem(connectionJObject.getInt(
+                            getString(R.string.keys_json_connection_memberid))
+                            , connectionJObject.getString(
+                            getString(R.string.keys_json_connection_firstname))
+                            , connectionJObject.getString(
+                            getString(R.string.keys_json_connection_lastname))
+                            , connectionJObject.getString(
+                            getString(R.string.keys_json_connection_username))
+                            , 3
+                            , connectionJObject.getString(getString(R.string.keys_json_connection_image)));
                 } else {
                     mConItem = new ConnectionItem(connectionJObject.getInt(
                             getString(R.string.keys_json_connection_memberid))
@@ -112,7 +147,8 @@ public class ConnectionAddFragment extends Fragment implements View.OnClickListe
                             getString(R.string.keys_json_connection_lastname))
                             ,connectionJObject.getString(
                             getString(R.string.keys_json_connection_username))
-                            ,0);
+                            ,0
+                            ,connectionJObject.getString(getString(R.string.keys_json_connection_image)));
                 }
 
 
@@ -141,11 +177,14 @@ public class ConnectionAddFragment extends Fragment implements View.OnClickListe
             mBoolean = getArguments().getBoolean("boolean");
             mConItem = (ConnectionItem)
                     getArguments().get(getString(R.string.keys_connection_view));
+            mMemberId = getArguments().getInt("memberId");
 //            Log.e("Boolean!", String.valueOf(mBoolean));
 
         }
         LinearLayout layout = getActivity().findViewById(R.id.addLayout);
         layout.setVisibility(View.GONE);
+        Button button = getActivity().findViewById(R.id.connectionAddButton);
+        button.setVisibility(View.GONE);
 //        if (mBoolean == true) {
 //            Log.e("firstname!", mConItem.getFirstName());
 //            Log.e("lastname!", mConItem.getLastName());
@@ -307,38 +346,96 @@ public class ConnectionAddFragment extends Fragment implements View.OnClickListe
     private void handleSearchOnPostExecute(String result) {
         //parse JSON
         try {
-            boolean hasMember = false;
+
+//            boolean hasSuccess = false;
+//            JSONObject root = new JSONObject(result);
+//            if (root.has(getString(R.string.keys_json_connection_success))){
+//                Boolean booleanSuccess = root.getBoolean(String.valueOf(R.string.keys_json_connection_success));
+//            } else {
+//                mMessage = root.getString("message");
+//                Log.e("ERROR!", "No Member");
+//
+//            }
             JSONObject root = new JSONObject(result);
-            if (root.has(getString(R.string.keys_json_connection_member))){
-                hasMember = true;
+            Boolean booleanSuccess = root.getBoolean("success");
+
+            if(booleanSuccess == false) {
+                LinearLayout layout = getActivity().findViewById(R.id.addLayout);
+                layout.setVisibility(View.GONE);
+
+                Button button = getActivity().findViewById(R.id.connectionAddButton);
+                button.setVisibility(View.GONE);
             } else {
-                Log.e("ERROR!", "No Member");
-
-            }
-
-            if (hasMember){
                 JSONObject connectionJObject = root.getJSONObject(
                         getString(R.string.keys_json_connection_member));
-                mConItem = new ConnectionItem(connectionJObject.getInt(
-                        getString(R.string.keys_json_connection_memberid))
-                        , connectionJObject.getString(
-                        getString(R.string.keys_json_connection_firstname))
-                        , connectionJObject.getString(
-                        getString(R.string.keys_json_connection_lastname))
-                        ,connectionJObject.getString(
-                        getString(R.string.keys_json_connection_username)));
+                    mConItem = new ConnectionItem(connectionJObject.getInt(
+                            getString(R.string.keys_json_connection_memberid))
+                            , connectionJObject.getString(
+                            getString(R.string.keys_json_connection_firstname))
+                            , connectionJObject.getString(
+                            getString(R.string.keys_json_connection_lastname))
+                            ,connectionJObject.getString(
+                            getString(R.string.keys_json_connection_username))
+                            ,connectionJObject.getString(getString(R.string.keys_json_connection_image)));
+
+                ImageView img = getActivity().findViewById(R.id.profileImageAdd);
+                String cleanImage = mConItem.getContactImage().replace("data:image/png;base64,", "").replace("data:image/jpeg;base64,","");
+                byte[] decodedString = Base64.decode(cleanImage, Base64.DEFAULT);
+                Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+                img.setImageBitmap(decodedByte);
+
+                    ((TextView) getActivity().findViewById(R.id.connection_firstname))
+                            .setText("Name: " + mConItem.getFirstName() + " " + mConItem.getLastName());
+//                    ((TextView) getActivity().findViewById(R.id.connection_memberid))
+//                            .setText("ID: " + mConItem.getContactId()) ;
+                    ((TextView) getActivity().findViewById(R.id.connection_username))
+                            .setText("Username : " + mConItem.getContactUserName());
+
+                    LinearLayout layout = getActivity().findViewById(R.id.addLayout);
+                    layout.setVisibility(View.VISIBLE);
+
+                    Button button = getActivity().findViewById(R.id.connectionAddButton);
+                    button.setVisibility(View.VISIBLE);
+            }
 
 
+//            if (booleanSuccess){
+//                if(booleanSuccess == false){
+//                    LinearLayout layout = getActivity().findViewById(R.id.addLayout);
+//                    layout.setVisibility(View.GONE);
+//
+//                    Button button = getActivity().findViewById(R.id.connectionAddButton);
+//                    button.setVisibility(View.GONE);
+//                } else {
+//
+//                    JSONObject connectionJObject = root.getJSONObject(
+//                            getString(R.string.keys_json_connection_member));
+//                    mConItem = new ConnectionItem(connectionJObject.getInt(
+//                            getString(R.string.keys_json_connection_memberid))
+//                            , connectionJObject.getString(
+//                            getString(R.string.keys_json_connection_firstname))
+//                            , connectionJObject.getString(
+//                            getString(R.string.keys_json_connection_lastname))
+//                            ,connectionJObject.getString(
+//                            getString(R.string.keys_json_connection_username)));
+//
+//
+//
+//                    ((TextView) getActivity().findViewById(R.id.connection_firstname))
+//                            .setText("Name: " + mConItem.getFirstName() + " " + mConItem.getLastName());
+//                    ((TextView) getActivity().findViewById(R.id.connection_memberid))
+//                            .setText("ID: " + mConItem.getContactId()) ;
+//                    ((TextView) getActivity().findViewById(R.id.connection_username))
+//                            .setText("Username : " + mConItem.getContactUserName());
+//
+//                    LinearLayout layout = getActivity().findViewById(R.id.addLayout);
+//                    layout.setVisibility(View.VISIBLE);
+//
+//                    Button button = getActivity().findViewById(R.id.connectionAddButton);
+//                    button.setVisibility(View.VISIBLE);
+//
+//                }
 
-                ((TextView) getActivity().findViewById(R.id.connection_firstname))
-                        .setText("Name: " + mConItem.getFirstName() + " " + mConItem.getLastName());
-                ((TextView) getActivity().findViewById(R.id.connection_memberid))
-                        .setText("ID: " + mConItem.getContactId()) ;
-                ((TextView) getActivity().findViewById(R.id.connection_username))
-                        .setText("Username : " + mConItem.getContactUserName());
-
-                LinearLayout layout = getActivity().findViewById(R.id.addLayout);
-                layout.setVisibility(View.VISIBLE);
 
 //                final Bundle args = new Bundle();
 //                args.putSerializable(getString(R.string.keys_connection_view), mConItem);
@@ -347,7 +444,7 @@ public class ConnectionAddFragment extends Fragment implements View.OnClickListe
 ////                args.putInt("memberid", mMemberId);
 //                Navigation.findNavController(getView())
 //                        .navigate(R.id.nav_connection_add, args);
-            }
+
 
 
         } catch (JSONException e) {

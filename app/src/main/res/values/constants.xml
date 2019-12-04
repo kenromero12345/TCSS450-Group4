@@ -68,7 +68,8 @@
     <string name="keys_json_connection_verified">verified</string>
     <string name="keys_json_connection_connections">connections</string>
     <string name="keys_json_connection_connection">connection</string>
-    <string name="keys_json_connection_success">sucess</string>
+    <string name="keys_json_connection_success">success</string>
+    <string name="keys_json_connection_image">profileuri</string>
     <string name="keys_connection_view">connectionview</string>
     <string name="keys_connection_jwt">jwt</string>
     <string name="keys_connection_item">jwt</string>

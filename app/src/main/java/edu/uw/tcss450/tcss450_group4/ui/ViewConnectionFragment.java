@@ -1,6 +1,10 @@
 package edu.uw.tcss450.tcss450_group4.ui;
 
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -9,6 +13,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 
+import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -62,6 +67,11 @@ public class ViewConnectionFragment extends Fragment implements View.OnClickList
             mConnectionItem = (ConnectionItem)
                     getArguments().get(getString(R.string.keys_connection_view));
             mVerified = mConnectionItem.getVerified();
+            ImageView img = getActivity().findViewById(R.id.profileImageFull);
+            String cleanImage = mConnectionItem.getContactImage().replace("data:image/png;base64,", "").replace("data:image/jpeg;base64,","");
+            byte[] decodedString = Base64.decode(cleanImage, Base64.DEFAULT);
+            Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+            img.setImageBitmap(decodedByte);
 
 
             ((TextView) getActivity().findViewById(R.id.fullName))
@@ -73,31 +83,42 @@ public class ViewConnectionFragment extends Fragment implements View.OnClickList
         }
         Log.e("Verified", String.valueOf(mVerified));
         if(mVerified == 1) {
-            ImageView img = getActivity().findViewById(R.id.verifiedImage);
-
             //set verified check
+            ImageView img = getActivity().findViewById(R.id.verifiedImage);
             img.setImageResource(R.drawable.charles_angels_icon);
+
+            //confirm and set image not visible
+            (getActivity().findViewById(R.id.sentImage))
+                    .setVisibility(View.GONE);
             (getActivity().findViewById(R.id.confirmImage))
                     .setVisibility(View.GONE);
         }
         else if(mVerified == 2){
-            ImageView img = getActivity().findViewById(R.id.verifiedImage);
-
             //set sent request image
-            img.setImageResource(R.drawable.charles_angels_icon);
+            ImageView img = getActivity().findViewById(R.id.sentImage);
+//            img.setImageResource(R.drawable.charles_angels_icon);
+
+            //set verified and confirm not visible
             (getActivity().findViewById(R.id.verifiedImage))
+                    .setVisibility(View.GONE);
+            (getActivity().findViewById(R.id.confirmImage))
                     .setVisibility(View.GONE);
         }
         else if(mVerified == 3){
-            ImageView img = getActivity().findViewById(R.id.verifiedImage);
-
             //set received image
-            img.setImageResource(R.drawable.charles_angels_icon);
-            (getActivity().findViewById(R.id.confirmImage))
+            ImageView img = getActivity().findViewById(R.id.confirmImage);
+//            img.setImageResource(R.drawable.charles_angels_icon);
+
+            //set verified and sent not visible.
+            (getActivity().findViewById(R.id.verifiedImage))
+                    .setVisibility(View.GONE);
+            (getActivity().findViewById(R.id.sentImage))
                     .setVisibility(View.GONE);
         }
         else {
             (getActivity().findViewById(R.id.verifiedImage))
+                    .setVisibility(View.GONE);
+            (getActivity().findViewById(R.id.sentImage))
                     .setVisibility(View.GONE);
         }
     }
@@ -117,6 +138,12 @@ public class ViewConnectionFragment extends Fragment implements View.OnClickList
 
         Button button_delete = (Button) view.findViewById(R.id.fullDelete);
         button_delete.setOnClickListener(this::onClick);
+
+        ImageView sent_image = view.findViewById(R.id.sentImage);
+        sent_image.setOnClickListener(this::onClick);
+
+        ImageView confirm_image = view.findViewById(R.id.confirmImage);
+        confirm_image.setOnClickListener(this::onClick);
     }
 
 
@@ -127,19 +154,107 @@ public class ViewConnectionFragment extends Fragment implements View.OnClickList
         switch (v.getId()) {
             case R.id.fullDelete:
                 removeConnection();
-                //navigate to chat
                 break;
+                
+            case R.id.sentImage:
+                sentImage();
+                break;
+                
+            case R.id.confirmImage:
+                confirmImage();
+                break;
+                
             case R.id.fullChat:
-//                Log.d("DEBUG", "entered");
-//                Navigation.findNavController(getView())
-//                        .navigate(R.id.action_nav_login_to_nav_register);
-
                 break;
         }
 
     }
 
-        private void removeConnection() {
+
+    private void sentImage() {
+//        ((TextView) getActivity().findViewById(R.id.testText))
+//                .setText("Sent Image Test");
+        showSentDialogButtonClicked();
+    }
+
+    private void confirmImage() {
+//        ((TextView) getActivity().findViewById(R.id.testText))
+//                .setText("confirm Image Test");
+        showConfirmDialogButtonClicked();
+
+    }
+
+    private void showConfirmDialogButtonClicked() {
+        // setup the alert builder
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setTitle("Confirm Request");
+        builder.setMessage("Are you sure you want to confirm this request?");
+
+        // add the buttons
+        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+                // do something like...
+                confirmConnection();
+            }
+        });
+        builder.setNegativeButton("Cancel", null);
+
+        // create and show the alert dialog
+        AlertDialog dialog = builder.create();
+        dialog.show();
+
+    }
+
+    public void showSentDialogButtonClicked() {
+
+        // setup the alert builder
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setTitle("Remove Sent Request");
+        builder.setMessage("Are you sure you want to cancel your sent request?");
+
+        // add the buttons
+        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+                // do something like...
+                removeConnection();
+            }
+        });
+        builder.setNegativeButton("Cancel", null);
+
+        // create and show the alert dialog
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
+    private void confirmConnection() {
+        Uri uriConnection = new Uri.Builder()
+                .scheme("https")
+                .appendPath(getString(R.string.ep_base_url))
+                .appendPath(getString(R.string.ep_connection))
+                .appendPath(getString(R.string.ep_confirm))
+                .build();
+        JSONObject msgBody = new JSONObject();
+        try{
+            msgBody.put("memberIdUser", mMemberId);
+            msgBody.put("memberIdOther", mConnectionItem.getContactId());
+        } catch (JSONException e) {
+            Log.wtf("MEMBERID", "Error creating JSON: " + e.getMessage());
+
+        }
+        new SendPostAsyncTask.Builder(uriConnection.toString(), msgBody)
+                .onPostExecute(this::handleRemoveOnPostExecute)
+                .onCancelled(error -> Log.e("CONNECTION FRAG", error))
+                .addHeaderField("authorization", mJwToken)  //add the JWT as header
+                .build().execute();
+
+
+    }
+
+    private void removeConnection() {
         Uri uriConnection = new Uri.Builder()
                 .scheme("https")
                 .appendPath(getString(R.string.ep_base_url))
@@ -215,7 +330,8 @@ public class ViewConnectionFragment extends Fragment implements View.OnClickList
                             , jsonConnection.getString(
                             getString(R.string.keys_json_connection_lastname))
                             ,jsonConnection.getString(
-                            getString(R.string.keys_json_connection_username)));
+                            getString(R.string.keys_json_connection_username)),
+                            jsonConnection.getString(getString(R.string.keys_json_connection_image)));
                 }
 
                 MobileNavigationDirections.ActionGlobalNavConnectionGUI directions

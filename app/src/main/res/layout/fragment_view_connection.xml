@@ -21,11 +21,26 @@
         app:layout_constraintTop_toTopOf="parent">
 
 
+        <ImageView
+            android:id="@+id/profileImageFull"
+            android:layout_width="59dp"
+            android:layout_height="45dp"
+            android:layout_marginStart="169dp"
+            android:layout_marginTop="69dp"
+            android:layout_marginEnd="169dp"
+            android:layout_marginBottom="179dp"
+            android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0" />
+
         <TextView
             android:id="@+id/fullName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="136dp"
+            android:layout_marginStart="125dp"
             android:layout_marginTop="128dp"
             android:textSize="25sp"
             app:layout_constraintStart_toStartOf="parent"
@@ -35,7 +50,7 @@
             android:id="@+id/fullUsername"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="136dp"
+            android:layout_marginStart="125dp"
             android:layout_marginBottom="68dp"
             android:textSize="25sp"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -59,33 +74,49 @@
         android:id="@+id/fullDelete"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="72dp"
-        android:layout_marginEnd="16dp"
+        android:layout_marginTop="36dp"
+        android:layout_marginEnd="8dp"
         android:backgroundTint="?attr/colorError"
         android:text="Delete"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/verifiedImage"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout3" />
 
     <ImageView
         android:id="@+id/verifiedImage"
         android:layout_width="59dp"
         android:layout_height="45dp"
-        android:layout_marginStart="176dp"
-        android:layout_marginTop="344dp"
+        android:layout_marginStart="80dp"
+        android:layout_marginTop="36dp"
+        android:layout_marginEnd="80dp"
         android:visibility="visible"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintEnd_toStartOf="@+id/fullDelete"
+        app:layout_constraintStart_toEndOf="@+id/fullChat"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout3" />
+
+    <ImageView
+        android:id="@+id/sentImage"
+        android:layout_width="59dp"
+        android:layout_height="45dp"
+        android:layout_marginStart="80dp"
+        android:layout_marginTop="36dp"
+        android:layout_marginEnd="80dp"
+        android:visibility="visible"
+        app:layout_constraintEnd_toStartOf="@+id/fullDelete"
+        app:layout_constraintStart_toEndOf="@+id/fullChat"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout3"
+        app:srcCompat="@drawable/ic_cloud_upload_black_24dp" />
 
     <ImageView
         android:id="@+id/confirmImage"
         android:layout_width="59dp"
         android:layout_height="45dp"
-        android:layout_marginStart="176dp"
-        android:layout_marginTop="344dp"
+        android:layout_marginStart="80dp"
+        android:layout_marginTop="36dp"
+        android:layout_marginEnd="80dp"
         android:visibility="visible"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintEnd_toStartOf="@+id/fullDelete"
+        app:layout_constraintStart_toEndOf="@+id/fullChat"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout3"
+        app:srcCompat="@drawable/ic_cloud_download_black_24dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

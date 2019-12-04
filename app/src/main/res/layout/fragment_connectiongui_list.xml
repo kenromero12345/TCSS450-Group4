@@ -51,7 +51,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/list"
+        android:id="@+id/connectionGuiList"
         android:name="edu.uw.tcss450.tcss450_group4.ui.ConnectionGUIFragment"
         android:layout_width="357dp"
         android:layout_height="514dp"
@@ -60,7 +60,9 @@
         android:layout_alignParentBottom="true"
         android:layout_marginStart="28dp"
         android:layout_marginTop="55dp"
+        android:layout_marginEnd="28dp"
         app:layoutManager="LinearLayoutManager"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/connectionRequest"
         tools:context=".ui.ConnectionGUIFragment"
