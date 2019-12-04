@@ -3,6 +3,13 @@ package edu.uw.tcss450.tcss450_group4.ui;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.EditText;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -12,24 +19,17 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.EditText;
-
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import edu.uw.tcss450.tcss450_group4.R;
-import edu.uw.tcss450.tcss450_group4.model.ConnectionItem;
-import edu.uw.tcss450.tcss450_group4.utils.SendPostAsyncTask;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
+
+import edu.uw.tcss450.tcss450_group4.R;
+import edu.uw.tcss450.tcss450_group4.model.ConnectionItem;
+import edu.uw.tcss450.tcss450_group4.utils.SendPostAsyncTask;
 
 import static edu.uw.tcss450.tcss450_group4.R.string.ep_add_friend_to_new_chat;
 import static edu.uw.tcss450.tcss450_group4.R.string.ep_base_url;
@@ -73,7 +73,7 @@ public class CreateChatFragment extends Fragment implements View.OnClickListener
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mFriendIDList = MyCreateChatRecyclerViewAdapter.getFriendIDList();
-        CreateChatFragmentArgs args = CreateChatFragmentArgs.fromBundle(getArguments());
+        CreateChatFragmentArgs args = CreateChatFragmentArgs.fromBundle(Objects.requireNonNull(getArguments()));
         mFriendList = new ArrayList<>(Arrays.asList(args.getFriendList()));
         mJwToken = getArguments().getString("jwt");
         mFriendIDList.add(args.getMemberId());

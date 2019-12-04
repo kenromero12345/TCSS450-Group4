@@ -16,7 +16,7 @@
         android:text="@string/button_create_new_chat" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/list"
+        android:id="@+id/location_list"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
 

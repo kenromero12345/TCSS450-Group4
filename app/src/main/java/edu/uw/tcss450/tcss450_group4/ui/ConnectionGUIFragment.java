@@ -90,7 +90,7 @@ public class ConnectionGUIFragment extends Fragment implements View.OnClickListe
         Button button_chat = (Button) view.findViewById(R.id.connectionSearchButton);
         button_chat.setOnClickListener(this::onClick);
 
-        RecyclerView rv = view.findViewById(R.id.list);
+        RecyclerView rv = view.findViewById(R.id.location_list);
         if (rv instanceof RecyclerView ) {
             Context context = rv.getContext();
             RecyclerView recyclerView = (RecyclerView) rv;

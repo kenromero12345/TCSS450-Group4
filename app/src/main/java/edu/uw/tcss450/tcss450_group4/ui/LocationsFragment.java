@@ -8,12 +8,17 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -25,32 +30,13 @@ import java.util.List;
 import java.util.Objects;
 
 import edu.uw.tcss450.tcss450_group4.MobileNavigationDirections;
+import edu.uw.tcss450.tcss450_group4.R;
 import edu.uw.tcss450.tcss450_group4.model.Location;
 import edu.uw.tcss450.tcss450_group4.model.Weather;
 import edu.uw.tcss450.tcss450_group4.model.WeatherHelper;
 
 import static edu.uw.tcss450.tcss450_group4.R.layout;
-import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_country;
-import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_data;
-import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_deg;
-import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_description;
-import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_hourly;
-import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_humidity;
-import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_icon;
-import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_latitude;
-import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_longitude;
-import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_main;
-import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_name;
-import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_pressure;
-import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_speed;
-import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_sys;
-import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_temp;
-import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_temp_max;
-import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_temp_min;
-import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_temperature;
-import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_timezone;
-import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_weather;
-import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_wind;
+import static edu.uw.tcss450.tcss450_group4.R.string.*;
 import static edu.uw.tcss450.tcss450_group4.model.WeatherHelper.alert;
 import static edu.uw.tcss450.tcss450_group4.model.WeatherHelper.getNewIcon;
 import static edu.uw.tcss450.tcss450_group4.model.WeatherHelper.getUriWeather10dLatLon;
@@ -85,6 +71,8 @@ public class LocationsFragment extends Fragment {
     private static final String ARG_COLUMN_COUNT = "column-count";
     // TODO: Customize parameters
     private int mColumnCount = 1;
+    private RecyclerView mRv;
+    private boolean mDeleteFlag;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -119,19 +107,55 @@ public class LocationsFragment extends Fragment {
         View view = inflater.inflate(layout.fragment_locations_list, container
                 , false);
 
-        // Set the adapter
-        if (view instanceof RecyclerView) {
-            Context context = view.getContext();
-            RecyclerView recyclerView = (RecyclerView) view;
-            if (mColumnCount <= 1) {
-                recyclerView.setLayoutManager(new LinearLayoutManager(context));
-            } else {
-                recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
-            }
-            recyclerView.setAdapter(new MyLocationsRecyclerViewAdapter(mLocations
-                    , this::getWeather));
-        }
         return view;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        RecyclerView rv = view.findViewById(R.id.location_list);
+        // Set the adapter
+        if (rv instanceof RecyclerView) {
+            Context context = rv.getContext();
+            mRv = rv;
+            if (mColumnCount <= 1) {
+                mRv.setLayoutManager(new LinearLayoutManager(context));
+            } else {
+                mRv.setLayoutManager(new GridLayoutManager(context, mColumnCount));
+            }
+            mRv.setAdapter(new MyLocationsRecyclerViewAdapter(mLocations
+                    , this::getClick));
+        }
+        mDeleteFlag = false;
+        FloatingActionButton fab = view.findViewById(R.id.locations_closeButton);
+        fab.setOnLongClickListener(v -> {
+            if (mDeleteFlag) {
+                return setToast("DELETE MODE: ON");
+            } else {
+                return setToast("DELETE MODE: OFF");
+            }
+        });
+        fab.setOnClickListener(v -> toggleDelete());
+    }
+
+    private void toggleDelete() {
+        if (mDeleteFlag) {
+            mDeleteFlag = false;
+        } else {
+            mDeleteFlag = true;
+        }
+    }
+
+    /**
+     *
+     * @param tString the toast to display
+     * @return true for long clicks
+     */
+    private boolean setToast(String tString) {
+        Toast.makeText(getContext(),
+                tString,
+                Toast.LENGTH_LONG).show();
+        return  true;
     }
 
     /**
@@ -168,21 +192,82 @@ public class LocationsFragment extends Fragment {
      * get the weather of the location
      * @param tLocation
      */
-    private void getWeather(final Location tLocation) {
-        if (!tLocation.getName().equals("No Locations")) {
+    private void getClick(final Location tLocation) {
+        if (!mDeleteFlag) {
+            if (!tLocation.getName().equals("No Locations")) {
+                AlertDialog alertDialog = new AlertDialog.Builder(getActivity()).create();
+                alertDialog.setTitle("Alert");
+                alertDialog.setMessage("Do you want to get the location's weather?");
+                alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "YES",
+                        (dialog, which) -> {
+                            displayWeather(tLocation);
+                            dialog.dismiss();
+                        });
+                alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "NO",
+                        (dialog, which) -> dialog.dismiss());
+                alertDialog.show();
+            } else {
+                alert("Cannot display any weather", getContext());
+            }
+        } else {
             AlertDialog alertDialog = new AlertDialog.Builder(getActivity()).create();
             alertDialog.setTitle("Alert");
-            alertDialog.setMessage("Do you want to get the location's weather?");
+            alertDialog.setMessage("Do you want to delete the location?");
             alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "YES",
                     (dialog, which) -> {
-                        displayWeather(tLocation);
+                        deleteLocation(tLocation);
                         dialog.dismiss();
                     });
             alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "NO",
                     (dialog, which) -> dialog.dismiss());
             alertDialog.show();
-        } else {
-            alert("Cannot display any weather", getContext());
+        }
+    }
+
+    private void deleteLocation(final Location tLocation) {
+        mLocations.remove(tLocation);
+        mRv.setAdapter(new MyLocationsRecyclerViewAdapter(mLocations
+                , this::getClick));
+        setToast("Deleted " + tLocation.getName());
+
+        JSONObject msg = new JSONObject();
+
+        try {
+            msg.put("email", mEmail);
+            msg.put("name", tLocation.getName());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        Uri uri = new Uri.Builder()
+                .scheme("https")
+                .appendPath(getString(ep_base_url))
+                .appendPath(getString(ep_weather))
+                .appendPath(getString(ep_delete))
+                .build();
+
+        sendPostAsyncTaskHelper(uri, msg, this::endOfDeleteLocationTask, mJwToken);
+    }
+
+    /**
+     * handling the deleting of Location
+     * @param result the given result
+     */
+    private void endOfDeleteLocationTask(final String result) {
+        try {
+            //This is the result from the web service
+            JSONObject res = new JSONObject(result);
+
+            if(res.has("success")  && !res.getBoolean("success")) {
+                alert("Delete unsuccessful", getContext());
+                Log.d("delete failed", result);
+            } else {
+                alert("Delete successful", getContext());
+                Log.d("delete success", result);
+            }
+
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
     }
 
