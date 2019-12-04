@@ -20,14 +20,18 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.TextView;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 import edu.uw.tcss450.tcss450_group4.MobileNavigationDirections;
 import edu.uw.tcss450.tcss450_group4.R;
 import edu.uw.tcss450.tcss450_group4.model.ConnectionItem;
 import edu.uw.tcss450.tcss450_group4.model.Message;
+import edu.uw.tcss450.tcss450_group4.utils.GetAsyncTask;
 import edu.uw.tcss450.tcss450_group4.utils.SendPostAsyncTask;
 
 import java.util.ArrayList;
@@ -57,7 +61,6 @@ public class CreateChatFragment extends Fragment implements View.OnClickListener
     private String mJwToken;
     private String mEmail;
     private String mChatId;
-    private Bundle mBundle;
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
@@ -78,20 +81,25 @@ public class CreateChatFragment extends Fragment implements View.OnClickListener
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mBundle = new Bundle();
-        mFriendIDList = MyCreateChatRecyclerViewAdapter.getFriendIDList();
-        CreateChatFragmentArgs args = CreateChatFragmentArgs.fromBundle(getArguments());
-        mFriendList = new ArrayList<>(Arrays.asList(args.getFriendList()));
-        mJwToken = getArguments().getString("jwt");
-        mFriendIDList.add(args.getMemberId());
-        mEmail = args.getEmail();
+
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_createchat_list, container, false);
+        TextView txt = view.findViewById(R.id.txt_display_no_connection);
 
+            mFriendIDList = MyCreateChatRecyclerViewAdapter.getFriendIDList();
+            CreateChatFragmentArgs args = CreateChatFragmentArgs.fromBundle(getArguments());
+            mFriendList = new ArrayList<>(Arrays.asList(args.getFriendList()));
+            mJwToken = getArguments().getString("jwt");
+            mFriendIDList.add(args.getMemberId());
+            mEmail = args.getEmail();
+            int size = mFriendIDList.size();
+        if(mFriendList.size() != 0) {
+            txt.setVisibility(View.INVISIBLE);
+        }
         return view;
     }
 
@@ -114,7 +122,7 @@ public class CreateChatFragment extends Fragment implements View.OnClickListener
 
 
         }
-        Button btn_create_new_chat = (Button) view.findViewById(R.id.button_create_new_chat);
+        ImageButton btn_create_new_chat = view.findViewById(R.id.button_create_new_chat);
         btn_create_new_chat.setOnClickListener(this::onClick);
     }
 
@@ -122,13 +130,18 @@ public class CreateChatFragment extends Fragment implements View.OnClickListener
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.button_create_new_chat:
+                EditText editText_ChatName = getActivity().findViewById(R.id.editText_chatName);
                 createNewChat();
                 addFriendToNewChat();
-//                InputMethodManager inputManager = (InputMethodManager)
-//                        getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-//
-//                inputManager.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(),
-//                        InputMethodManager.HIDE_NOT_ALWAYS);
+                getNewestChatId();
+
+                if (editText_ChatName.getText().length() != 0) {
+                    InputMethodManager inputManager = (InputMethodManager)
+                            getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+
+                    inputManager.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(),
+                            InputMethodManager.HIDE_NOT_ALWAYS);
+                }
 //                final Bundle bundle = new Bundle();
 //                bundle.putString("chatid", mChatId);
 //                bundle.putString("email", mEmail);
@@ -142,7 +155,7 @@ public class CreateChatFragment extends Fragment implements View.OnClickListener
 //                directions.setJwt(mJwToken);
 //                directions.setChatId(mChatId);
 //                Navigation.findNavController(getActivity(), nav_host_fragment).navigate(directions);
-                mFriendIDList = new ArrayList<>();
+                MyCreateChatRecyclerViewAdapter.getFriendIDList().clear();
                 break;
         }
     }
@@ -177,11 +190,10 @@ public class CreateChatFragment extends Fragment implements View.OnClickListener
                 .appendPath(getString(ep_add_friend_to_new_chat))
                 .build();
         try {
-            for (int i = 0; i < mFriendIDList.size()-1; i++) {
+            for (int i = 0; i < mFriendIDList.size(); i++) {
                 JSONObject msgBody = new JSONObject();
                 msgBody.put("contactID", mFriendIDList.get(i));
                 new SendPostAsyncTask.Builder(uriCreateChat.toString(), msgBody)
-                        .onPostExecute(this::handleCreateChatOnPost)
                         .onCancelled(error -> Log.e("ADD FRIEND TO NEW CHAT FRAG", error))
                         .addHeaderField("authorization", mJwToken)
                         .build().execute();
@@ -193,9 +205,7 @@ public class CreateChatFragment extends Fragment implements View.OnClickListener
 
     }
 
-    private void handleCreateChatOnPre() {
-        getActivity().findViewById(R.id.layout_createChat_wait).setVisibility(View.VISIBLE);
-    }
+
     private void handleCreateChatOnPost (String result) {
         try {
             JSONObject resultJSON = new JSONObject(result);
@@ -212,6 +222,39 @@ public class CreateChatFragment extends Fragment implements View.OnClickListener
 //                directions.setChatId(mChatId);
 //                Navigation.findNavController(getActivity(), nav_host_fragment).navigate(directions);
 
+            }
+        } catch (JSONException e) {
+            Log.wtf("JSON_PARSE_ERROR", "Error creating JSON: " + e.getMessage());
+        }
+    }
+
+    private void getNewestChatId() {
+        Uri uriGetNewestChatId = new Uri.Builder()
+                .scheme("https")
+                .appendPath(getString(ep_base_url))
+                .appendPath(getString(ep_chats))
+                .appendPath(getString(R.string.ep_chats_get_newest_chatId))
+                .build();
+        new GetAsyncTask.Builder(uriGetNewestChatId.toString())
+                .onPostExecute(this::handleGetNewestChatIdOnPost)
+                .onCancelled(error -> Log.e("GET NEWEST CHAT ID TO VIEW CHAT FRAG", error))
+                .addHeaderField("authorization", mJwToken)
+                .build().execute();
+    }
+
+    private void handleGetNewestChatIdOnPost(final String result) {
+        try {
+            JSONObject resultJSON = new JSONObject(result);
+            boolean success = resultJSON.getBoolean("success");
+            if (success) {
+                mChatId = resultJSON.getString("chatid");
+                Message[] message = new Message[0];
+                MobileNavigationDirections.ActionGlobalNavViewChat directions;
+                directions = ViewChatFragmentDirections.actionGlobalNavViewChat(message);
+                directions.setEmail(mEmail);
+                directions.setJwt(mJwToken);
+                directions.setChatId(mChatId);
+                Navigation.findNavController(getActivity(), nav_host_fragment).navigate(directions);
             }
         } catch (JSONException e) {
             Log.wtf("JSON_PARSE_ERROR", "Error creating JSON: " + e.getMessage());

@@ -56,4 +56,6 @@
     <string name="keys_json_timezone">timezone</string>
     <string name="edit_chat_name">Chat Name</string>
     <string name="chat_object">chat</string>
+    <string name="display_no_chat">There is no chat right now, make one!</string>
+    <string name="display_no_connection">There is no connection, make one!</string>
 </resources>

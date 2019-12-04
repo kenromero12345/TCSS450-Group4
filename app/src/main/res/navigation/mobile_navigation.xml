@@ -167,6 +167,10 @@
             android:name="chatId"
             app:argType="string"
             android:defaultValue='""' />
+        <argument
+            android:name="memberId"
+            app:argType="integer"
+            android:defaultValue="-1" />
     </fragment>
     <action
         android:id="@+id/action_global_nav_chat_list"

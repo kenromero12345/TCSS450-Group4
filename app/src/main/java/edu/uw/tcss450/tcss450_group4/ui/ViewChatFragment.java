@@ -80,6 +80,7 @@ public class ViewChatFragment extends Fragment {
 //            mJwToken = getArguments().getString("jwt");
 //            mMessageList = (List<Message>) getArguments().getSerializable("List");
             mEmail = args.getEmail();
+
             mJwToken = args.getJwt();
             mMessageList = new ArrayList<>(Arrays.asList(args.getMessageList()));
             CHAT_ID = args.getChatId();
@@ -120,7 +121,7 @@ public class ViewChatFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 //        mUsesrnameOutputTextView = view.findViewById(R.id.txt_friendUserName);
 //        mMessageOutputTextView = view.findViewById(R.id.txt_theirMessage);
-//        mMessageInputEditText = view.findViewById(R.id.editText_chat_message_input);
+        mMessageInputEditText = view.findViewById(R.id.editText_chat_message_input);
         RecyclerView rv = view.findViewById(R.id.list);
         if (rv instanceof RecyclerView) {
             Context context = rv.getContext();

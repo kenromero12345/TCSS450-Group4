@@ -17,6 +17,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.TextView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -100,7 +102,10 @@ public class ChatFragment extends Fragment implements View.OnClickListener {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_chat_list, container, false);
-
+        TextView txt = view.findViewById(R.id.txt_display_no_chat);
+        if(mChats.size() != 0) {
+            txt.setVisibility(View.INVISIBLE);
+        }
         return view;
     }
 
@@ -108,7 +113,8 @@ public class ChatFragment extends Fragment implements View.OnClickListener {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         RecyclerView rv = view.findViewById(R.id.list);
-        Button btnCreateChat = view.findViewById(R.id.button_create_chat);
+        MyChatRecyclerViewAdapter mChatAdapter = new MyChatRecyclerViewAdapter(mChats, this:: displayChat);
+        ImageButton btnCreateChat = view.findViewById(R.id.button_create_chat);
         // Set the adapter
         if (rv instanceof RecyclerView) {
             Context context = rv.getContext();
@@ -118,7 +124,8 @@ public class ChatFragment extends Fragment implements View.OnClickListener {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            recyclerView.setAdapter(new MyChatRecyclerViewAdapter(mChats, this::displayChat));
+            mChatAdapter.notifyDataSetChanged();
+            recyclerView.setAdapter(mChatAdapter);
         }
         btnCreateChat.setOnClickListener(this::onClick);
     }
@@ -126,6 +133,7 @@ public class ChatFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onClick(View v) {
         gotoConnection();
+        MyCreateChatRecyclerViewAdapter.getFriendIDList().clear();
     }
     private void gotoConnection() {
         Uri uriConnection = new Uri.Builder()

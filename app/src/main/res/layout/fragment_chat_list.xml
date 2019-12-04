@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:layout_width="match_parent">
 
-    <Button
+    <ImageButton
         android:id="@+id/button_create_chat"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -14,10 +14,23 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentRight="true"
         android:layout_marginEnd="8dp"
-        android:text="@string/button_create_chat"
+        android:background="@drawable/ic_new_chat"
         android:textSize="30dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/txt_display_no_chat"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="@string/display_no_chat"
+        android:textSize="20dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.119" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/list"
@@ -33,5 +46,6 @@
         app:layout_constraintTop_toBottomOf="@+id/button_create_chat"
         tools:context=".ui.ChatFragment"
         tools:listitem="@layout/fragment_chat" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
