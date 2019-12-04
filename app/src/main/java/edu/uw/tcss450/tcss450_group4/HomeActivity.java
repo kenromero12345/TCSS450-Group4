@@ -30,6 +30,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -63,6 +64,8 @@ import edu.uw.tcss450.tcss450_group4.model.LocationViewModel;
 import edu.uw.tcss450.tcss450_group4.model.Weather;
 import edu.uw.tcss450.tcss450_group4.ui.ChatFragmentDirections;
 import edu.uw.tcss450.tcss450_group4.ui.ConnectionGUIFragmentDirections;
+import edu.uw.tcss450.tcss450_group4.ui.HomeFragment;
+import edu.uw.tcss450.tcss450_group4.ui.ViewChatFragment;
 import edu.uw.tcss450.tcss450_group4.ui.WeatherFragmentDirections;
 import edu.uw.tcss450.tcss450_group4.utils.SendPostAsyncTask;
 import me.pushy.sdk.Pushy;
@@ -1002,5 +1005,16 @@ public class HomeActivity extends AppCompatActivity {
 //            finish();
         }
     }
+//    @Override
+//    public void onBackPressed() {
+//        Fragment f = getSupportFragmentManager().findFragmentById(id.nav_view_chat);
+//        if (f instanceof ViewChatFragment) {
+//
+//            Navigation.findNavController().navigate(id.action_nav_view_chat_to_nav_chat_list);
+//        } else {
+//            super.onBackPressed();
+//        }
+//
+//    }
 
 }

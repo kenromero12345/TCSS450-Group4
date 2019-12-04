@@ -7,28 +7,23 @@
     <fragment
         android:id="@+id/nav_home"
         android:name="edu.uw.tcss450.tcss450_group4.ui.HomeFragment"
-        android:label="fragment_home"
-        tools:layout="@layout/fragment_home" >
+        android:label="Home"
+        tools:layout="@layout/fragment_home">
         <argument
             android:name="weather"
+            android:defaultValue="@null"
             app:argType="edu.uw.tcss450.tcss450_group4.model.Weather"
-            app:nullable="true"
-            android:defaultValue="@null" />
+            app:nullable="true" />
         <argument
             android:name="jwt"
-            app:argType="string"
-            android:defaultValue='""' />
+            android:defaultValue='""'
+            app:argType="string" />
         <argument
             android:name="memberId"
-            app:argType="integer"
-            android:defaultValue="0" />
+            android:defaultValue="0"
+            app:argType="integer" />
     </fragment>
-    <fragment
-        android:id="@+id/nav_chat"
-        android:name="edu.uw.tcss450.tcss450_group4.ui.ChatFragment"
-        android:label="fragment_chat"
-        tools:layout="@layout/fragment_chat" />
-<!--    <fragment-->
+    <!--    <fragment-->
 <!--        android:id="@+id/nav_connections"-->
 <!--        android:name="edu.uw.tcss450.tcss450_group4.ui.ConnectionsFragment"-->
 <!--        android:label="fragment_connection"-->
@@ -140,25 +135,25 @@
     </fragment>
 
 
-  <fragment
+    <fragment
         android:id="@+id/nav_connectionGUI"
         android:name="edu.uw.tcss450.tcss450_group4.ui.ConnectionGUIFragment"
-        android:label="fragment_connectiongui_list"
-        tools:layout="@layout/fragment_connectiongui_list" >
+        android:label="Connections"
+        tools:layout="@layout/fragment_connectiongui_list">
         <argument
             android:name="connectionitems"
             app:argType="edu.uw.tcss450.tcss450_group4.model.ConnectionItem[]" />
         <argument
             android:name="jwt"
-            app:argType="string"
-            android:defaultValue='""' />
+            android:defaultValue='""'
+            app:argType="string" />
         <action
             android:id="@+id/action_nav_connectionGUI_to_viewConnectionFragment"
             app:destination="@id/viewConnectionFragment" />
         <argument
             android:name="memberid"
-            app:argType="integer"
-            android:defaultValue="0" />
+            android:defaultValue="0"
+            app:argType="integer" />
         <action
             android:id="@+id/action_nav_connectionGUI_to_nav_connection_add"
             app:destination="@id/nav_connection_add" />
@@ -195,23 +190,26 @@
     <fragment
         android:id="@+id/nav_view_chat"
         android:name="edu.uw.tcss450.tcss450_group4.ui.ViewChatFragment"
-        android:label="fragment_view_chat"
-        tools:layout="@layout/fragment_view_chat" >
+        android:label="Messaging"
+        tools:layout="@layout/fragment_view_chat">
         <argument
             android:name="email"
-            app:argType="string"
-            android:defaultValue='""' />
+            android:defaultValue='""'
+            app:argType="string" />
         <argument
             android:name="jwt"
-            app:argType="string"
-            android:defaultValue='""' />
+            android:defaultValue='""'
+            app:argType="string" />
         <argument
             android:name="messageList"
             app:argType="edu.uw.tcss450.tcss450_group4.model.Message[]" />
         <argument
             android:name="chatId"
-            app:argType="string"
-            android:defaultValue='""' />
+            android:defaultValue='""'
+            app:argType="string" />
+        <action
+            android:id="@+id/action_nav_view_chat_to_nav_chat_list"
+            app:destination="@id/nav_chat_list" />
     </fragment>
     <action
         android:id="@+id/action_global_nav_chat_list"
@@ -221,19 +219,19 @@
     <fragment
         android:id="@+id/viewConnectionFragment"
         android:name="edu.uw.tcss450.tcss450_group4.ui.ViewConnectionFragment"
-        android:label="fragment_view_connection"
-        tools:layout="@layout/fragment_view_connection" >
+        android:label="Profile Information"
+        tools:layout="@layout/fragment_view_connection">
         <argument
             android:name="jwt"
-            app:argType="string"
-            android:defaultValue='""' />
+            android:defaultValue='""'
+            app:argType="string" />
     </fragment>
     <action android:id="@+id/action_global_nav_home" app:destination="@id/nav_home"/>
     <fragment
         android:id="@+id/nav_create_chat"
         android:name="edu.uw.tcss450.tcss450_group4.ui.CreateChatFragment"
-        android:label="fragment_createchat_list"
-        tools:layout="@layout/fragment_createchat_list" >
+        android:label="Create Chat"
+        tools:layout="@layout/fragment_createchat_list">
         <action
             android:id="@+id/action_nav_create_chat_to_nav_view_chat"
             app:destination="@id/nav_view_chat" />
@@ -242,16 +240,16 @@
             app:argType="edu.uw.tcss450.tcss450_group4.model.ConnectionItem[]" />
         <argument
             android:name="memberId"
-            app:argType="integer"
-            android:defaultValue="0" />
+            android:defaultValue="0"
+            app:argType="integer" />
         <argument
             android:name="jwt"
-            app:argType="string"
-            android:defaultValue='""' />
+            android:defaultValue='""'
+            app:argType="string" />
         <argument
             android:name="email"
-            app:argType="string"
-            android:defaultValue='""' />
+            android:defaultValue='""'
+            app:argType="string" />
     </fragment>
     <action
         android:id="@+id/action_global_nav_create_chat"
@@ -260,13 +258,13 @@
     <fragment
         android:id="@+id/nav_connection_add"
         android:name="edu.uw.tcss450.tcss450_group4.ui.ConnectionAddFragment"
-        android:label="fragment_connection_add"
+        android:label="Search"
         tools:layout="@layout/fragment_connection_add" />
     <!-- <fragment
         android:id="@+id/blankFragment2"
         android:name="edu.uw.tcss450.tcss450_group4.BlankFragment"
         android:label="fragment_blank"
         tools:layout="@layout/fragment_blank" /> -->
-        <action app:destination="@id/nav_create_chat" />
+<!--        <action android:id="@+id/action_global_nav_create_chat" app:destination="@id/nav_create_chat" />-->
         <action android:id="@+id/action_global_nav_view_chat" app:destination="@id/nav_view_chat"/>
 </navigation>

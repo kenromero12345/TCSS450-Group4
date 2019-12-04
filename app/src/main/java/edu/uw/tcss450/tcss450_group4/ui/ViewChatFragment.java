@@ -139,6 +139,7 @@ public class ViewChatFragment extends Fragment {
 
     private void handleSendClick(final View theButton) {
         String msg = mMessageInputEditText.getText().toString();
+        Log.d("MESSAGE", "CLICKED");
 
         JSONObject messageJson = new JSONObject();
         try {

@@ -49,8 +49,11 @@
             app:argType="integer"
             android:defaultValue="-1" />
         <argument
-            android:name="profileuri"
             android:name="email"
+            app:argType="string"
+            android:defaultValue='""' />
+        <argument
+            android:name="profileuri"
             app:argType="string"
             android:defaultValue='""' />
     </activity>
