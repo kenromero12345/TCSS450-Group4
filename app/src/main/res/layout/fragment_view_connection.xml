@@ -87,9 +87,7 @@
         android:layout_height="45dp"
         android:layout_marginStart="80dp"
         android:layout_marginTop="36dp"
-        android:layout_marginEnd="80dp"
         android:visibility="visible"
-        app:layout_constraintEnd_toStartOf="@+id/fullDelete"
         app:layout_constraintStart_toEndOf="@+id/fullChat"
         app:layout_constraintTop_toBottomOf="@+id/linearLayout3" />
 
@@ -99,9 +97,7 @@
         android:layout_height="45dp"
         android:layout_marginStart="80dp"
         android:layout_marginTop="36dp"
-        android:layout_marginEnd="80dp"
         android:visibility="visible"
-        app:layout_constraintEnd_toStartOf="@+id/fullDelete"
         app:layout_constraintStart_toEndOf="@+id/fullChat"
         app:layout_constraintTop_toBottomOf="@+id/linearLayout3"
         app:srcCompat="@drawable/ic_cloud_upload_black_24dp" />
@@ -112,9 +108,7 @@
         android:layout_height="45dp"
         android:layout_marginStart="80dp"
         android:layout_marginTop="36dp"
-        android:layout_marginEnd="80dp"
         android:visibility="visible"
-        app:layout_constraintEnd_toStartOf="@+id/fullDelete"
         app:layout_constraintStart_toEndOf="@+id/fullChat"
         app:layout_constraintTop_toBottomOf="@+id/linearLayout3"
         app:srcCompat="@drawable/ic_cloud_download_black_24dp" />
@@ -125,9 +119,7 @@
         android:layout_height="45dp"
         android:layout_marginStart="80dp"
         android:layout_marginTop="36dp"
-        android:layout_marginEnd="80dp"
         android:visibility="visible"
-        app:layout_constraintEnd_toStartOf="@+id/fullDelete"
         app:layout_constraintStart_toEndOf="@+id/fullChat"
         app:layout_constraintTop_toBottomOf="@+id/linearLayout3"
         app:srcCompat="@drawable/ic_location_searching_black_24dp" />
