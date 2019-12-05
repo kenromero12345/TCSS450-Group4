@@ -6,48 +6,54 @@
     android:layout_height="match_parent">
 
 
-    <Button
-        android:id="@+id/connectionRequest"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="15dp"
-        android:layout_marginEnd="20dp"
-        android:text="Recieved"
-        android:textSize="10sp"
-        app:layout_constraintEnd_toStartOf="@+id/connectionSent"
-        app:layout_constraintTop_toTopOf="parent" />
 
-    <!--    <Button-->
-    <!--        android:id="@+id/connectionSent"-->
-    <!--        android:layout_width="wrap_content"-->
-    <!--        android:layout_height="wrap_content"-->
-    <!--        android:layout_marginEnd="44dp"-->
-    <!--        android:text="Sent Requests"-->
-    <!--        android:textSize="10sp"-->
-    <!--        app:layout_constraintEnd_toStartOf="@+id/connectionRequest"-->
-    <!--        app:layout_constraintTop_toTopOf="parent" />-->
-
-    <Button
-        android:id="@+id/connectionSent"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+    <ImageView
+        android:id="@+id/confirmImage"
+        android:layout_width="100dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="31dp"
         android:layout_marginTop="15dp"
-        android:text="Sent"
-        android:textSize="10sp"
+        android:visibility="visible"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/connection_request_received_image" />
+
+    <ImageView
+        android:id="@+id/sentImage"
+        android:layout_width="100dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="15dp"
+        android:visibility="visible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/connection_sent_image" />
 
-    <Button
-        android:id="@+id/connectionSearchButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+
+    <ImageView
+        android:id="@+id/searchImage"
+        android:layout_width="35dp"
+        android:layout_height="50dp"
         android:layout_marginStart="20dp"
         android:layout_marginTop="15dp"
-        android:text="Search"
-        android:textSize="10sp"
-        app:layout_constraintStart_toEndOf="@+id/connectionSent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_marginEnd="41dp"
+        android:layout_marginBottom="7dp"
+        android:visibility="visible"
+        app:layout_constraintBottom_toTopOf="@+id/connectionGuiList"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/sentImage"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/connection_search_image" />
+
+<!--    <Button-->
+<!--        android:id="@+id/connectionSearchButton"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_marginTop="15dp"-->
+<!--        android:text="Search"-->
+<!--        android:textSize="10sp"-->
+<!--        app:layout_constraintTop_toTopOf="parent"-->
+<!--        tools:layout_editor_absoluteX="270dp" />-->
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/connectionGuiList"
@@ -58,12 +64,12 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentBottom="true"
         android:layout_marginStart="30dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="30dp"
         app:layoutManager="LinearLayoutManager"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/connectionRequest"
+        app:layout_constraintTop_toBottomOf="@+id/confirmImage"
         tools:context=".ui.ConnectionGUIFragment"
         tools:listitem="@layout/fragment_connectiongui">
 

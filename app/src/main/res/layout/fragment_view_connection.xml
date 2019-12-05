@@ -74,39 +74,29 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/fullUsername"
-        app:srcCompat="@drawable/ic_location_searching_black_24dp" />
-
-    <ImageView
-        android:id="@+id/verifiedImage"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_marginTop="20dp"
-        android:visibility="visible"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/fullUsername" />
+        app:srcCompat="@drawable/connection_request_image" />
 
     <ImageView
         android:id="@+id/sentImage"
-        android:layout_width="50dp"
+        android:layout_width="100dp"
         android:layout_height="50dp"
         android:layout_marginTop="20dp"
         android:visibility="visible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/fullUsername"
-        app:srcCompat="@drawable/ic_cloud_upload_black_24dp" />
+        app:srcCompat="@drawable/connection_sent_image" />
 
     <ImageView
         android:id="@+id/confirmImage"
-        android:layout_width="50dp"
+        android:layout_width="100dp"
         android:layout_height="50dp"
         android:layout_marginTop="20dp"
         android:visibility="visible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/fullUsername"
-        app:srcCompat="@drawable/ic_cloud_download_black_24dp" />
+        app:srcCompat="@drawable/connection_request_received_image" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/layout_viewConnection_dummy"
@@ -144,6 +134,20 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <ImageView
+        android:id="@+id/verifiedImage"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_marginTop="7dp"
+        android:layout_marginEnd="70dp"
+        android:layout_marginBottom="60dp"
+        android:visibility="visible"
+        app:layout_constraintBottom_toTopOf="@+id/fullDelete"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/layout_viewConnection_background"
+        app:srcCompat="@drawable/connection_verified_image" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

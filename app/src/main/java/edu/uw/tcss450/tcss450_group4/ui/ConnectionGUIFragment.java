@@ -1,6 +1,7 @@
 package edu.uw.tcss450.tcss450_group4.ui;
 
 import android.content.Context;
+import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -17,6 +18,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -97,9 +99,9 @@ public class ConnectionGUIFragment extends Fragment implements View.OnClickListe
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        Button button_chat = (Button) view.findViewById(R.id.connectionSearchButton);
-        Button button_sent = (Button) view.findViewById(R.id.connectionSent);
-        Button button_received = (Button) view.findViewById(R.id.connectionRequest);
+        ImageView button_chat = (ImageView) view.findViewById(R.id.searchImage);
+        ImageView button_sent = (ImageView) view.findViewById(R.id.sentImage);
+        ImageView button_received = (ImageView) view.findViewById(R.id.confirmImage);
         button_chat.setOnClickListener(this::onClick);
         button_sent.setOnClickListener(this::onClick);
         button_received.setOnClickListener(this::onClick);
@@ -122,19 +124,19 @@ public class ConnectionGUIFragment extends Fragment implements View.OnClickListe
 
         switch (v.getId()) {
 
-            case R.id.connectionSearchButton:
+            case R.id.searchImage:
                 addConnection();
                 //navigate to chat
                 break;
 
 
-            case R.id.connectionSent:
+            case R.id.sentImage:
                 sentConnection();
 
                 break;
 
 
-            case R.id.connectionRequest:
+            case R.id.confirmImage:
                 requestConnection();
 
                 break;

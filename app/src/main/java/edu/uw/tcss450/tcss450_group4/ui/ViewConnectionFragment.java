@@ -70,11 +70,10 @@ public class ViewConnectionFragment extends Fragment implements View.OnClickList
             ((TextView) getActivity().findViewById(R.id.fullUsername))
                     .setText("Username : " + mConnectionItem.getContactUserName());
         }
-        Log.e("Verified", String.valueOf(mVerified));
         if(mVerified == 1) {
             //set verified check
             ImageView img = getActivity().findViewById(R.id.verifiedImage);
-            img.setImageResource(R.drawable.charles_angels_icon);
+//            img.setImageResource(R.drawable.charles_angels_icon);
 
             //confirm and set image not visible
             (getActivity().findViewById(R.id.sentImage))
@@ -122,6 +121,8 @@ public class ViewConnectionFragment extends Fragment implements View.OnClickList
             (getActivity().findViewById(R.id.sentImage))
                     .setVisibility(View.GONE);
             (getActivity().findViewById(R.id.confirmImage))
+                    .setVisibility(View.GONE);
+            (getActivity().findViewById(R.id.fullDelete))
                     .setVisibility(View.GONE);
         }
     }
