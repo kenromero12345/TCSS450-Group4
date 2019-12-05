@@ -70,6 +70,7 @@ import static edu.uw.tcss450.tcss450_group4.model.WeatherHelper.sendPostAsyncTas
 /**
  * Fragment for displaying a map and choosing a location from it
  * A simple {@link Fragment} subclass.
+ * @author Ken Gil Romero kgmr@uw.edu
  */
 public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleMap.OnMapClickListener {
     /**

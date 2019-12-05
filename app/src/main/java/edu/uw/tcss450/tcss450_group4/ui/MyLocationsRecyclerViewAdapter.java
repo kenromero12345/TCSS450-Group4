@@ -37,6 +37,10 @@ public class MyLocationsRecyclerViewAdapter extends RecyclerView.Adapter<MyLocat
         mListener = listener;
     }
 
+    public void toggleColor() {
+
+    }
+
     /**
      *
      * @param parent

@@ -122,21 +122,30 @@ public class HomeActivity extends AppCompatActivity {
     // A constant int for the permissions request code. Must be a 16 bit number
     private static final int MY_PERMISSIONS_LOCATIONS = 8414;
 //    private static final String TAG = "WEATHER_FRAG";
+    // the jw token for authorization
     private String mJwToken;
     private Credentials mCredentials;
+    // the email given
     private String mEmail;
     private int mMemberId;
     private String mProfileURI;
     private ChatMessageNotification mChatMessage;
     private AppBarConfiguration mAppBarConfiguration;
+    // the weather given
     private Weather mWeather;
+    //the weather 10d given
     private Weather[] mWeathers10d;
+    //the weather 24h given
     private Weather[] mWeathers24h;
     //Use a FusedLocationProviderClient to request the location
     private FusedLocationProviderClient mFusedLocationClient;
+    // the location of the mobile device
     private Location mLocations;
+    // the location request support
     private LocationRequest mLocationRequest;
-
+//    private double mLat;
+//    private double mLon;
+    // flag if weather is updated
     private boolean mUpdateWeather;
 
     private ConnectionItem[] mConnectionItems;
@@ -169,7 +178,7 @@ public class HomeActivity extends AppCompatActivity {
         }
     }
 
-        /**
+    /**
      * Removes location updates from the FusedLocationApi.
      */
     private void stopLocationUpdates() {
@@ -179,6 +188,9 @@ public class HomeActivity extends AppCompatActivity {
         mFusedLocationClient.removeLocationUpdates(mLocationCallback);
     }
 
+    /**
+     * what happens on onResume lifecycle
+     */
     @Override
     protected void onResume() {
         super.onResume();
@@ -193,6 +205,9 @@ public class HomeActivity extends AppCompatActivity {
 //        }
     }
 
+    /**
+     * what happens on onpause lifecycle
+     */
     @Override
     protected void onPause() {
         super.onPause();
@@ -202,6 +217,10 @@ public class HomeActivity extends AppCompatActivity {
     // Will use this call back to decide what to do when a location change is detected
     private LocationCallback mLocationCallback;
 
+    /**
+     * what happens on oncreate lifecycle
+     * @param savedInstanceState the saved instance state
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -348,14 +367,17 @@ public class HomeActivity extends AppCompatActivity {
                 || super.onSupportNavigateUp();
     }
 
+    /**
+     * what happens when a menuitem is clicked
+     * @param menuItem the given menuitem to be clicked
+     * @return true if a menuitem is selected
+     */
     private boolean onNavigationSelected(final MenuItem menuItem) {
         NavController navController =
                 Navigation.findNavController(this, nav_host_fragment);
         /* Use the ViewModel's factory method to gain access to the ViewModel */
         LocationViewModel model =
                 LocationViewModel.getFactory().create(LocationViewModel.class);
-        // add an observer to the LiveData found in the ViewModel
-        Location loc = model.getCurrentLocation().getValue();
         switch (menuItem.getItemId()) {
             case nav_home:
 //                if(Objects.requireNonNull(navController.getCurrentDestination()).getId() != nav_weather) {
@@ -420,6 +442,10 @@ public class HomeActivity extends AppCompatActivity {
                 .build().execute();
     }
 
+    /**
+     * when the weather is clicked
+     * @param navController the navigation helper
+     */
     private void clickWeather(NavController navController) {
 //        ((DrawerLayout) findViewById(drawer_layout)).openDrawer();
 //        Runnable r = () -> {
@@ -508,6 +534,9 @@ public class HomeActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * check if user has already allowed the use of Locations
+     */
     private void checkLocationPermission() {
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
@@ -626,6 +655,10 @@ public class HomeActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * getting the weather
+     * @param location the location given
+     */
     private void getWeather(Location location) {
 //        mLon = location.getLongitude();
 //        mLat = location.getLatitude();
@@ -678,6 +711,10 @@ public class HomeActivity extends AppCompatActivity {
         sendPostAsyncTaskHelper(uri3, msg, this::handleWeather24hGetOnPostExecute, mJwToken);
     }
 
+    /**
+     * handling the 24h weather result given
+     * @param result the given result
+     */
     private void handleWeather24hGetOnPostExecute(final String result) {
         try {
             boolean hasHourly = false;
@@ -748,6 +785,10 @@ public class HomeActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * handling the 10d weather result given
+     * @param result the given result
+     */
     private void handleWeather10dGetOnPostExecute(final String result) {
         try {
             boolean hasData = false;
@@ -782,6 +823,10 @@ public class HomeActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * handling the weather result given
+     * @param result the given result
+     */
     private void handleWeatherGetOnPostExecute(final String result) {
         try {
             boolean hasWeather = false;
@@ -881,6 +926,9 @@ public class HomeActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * logout from the app
+     */
     private void logout() {
         new DeleteTokenAsyncTask(this).execute();
 //        SharedPreferences prefs =
@@ -901,6 +949,9 @@ public class HomeActivity extends AppCompatActivity {
 //        finish();
     }
 
+    /**
+     * logout and quit the app
+     */
     private void logoutAndFinish() {
         SharedPreferences prefs =
                 getSharedPreferences(
@@ -914,6 +965,11 @@ public class HomeActivity extends AppCompatActivity {
         finishAndRemoveTask();
     }
 
+    /**
+     * the option's item clicked
+     * @param item from the option
+     * @return a bolean if a optiona item is clicked
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -931,7 +987,12 @@ public class HomeActivity extends AppCompatActivity {
     }
 
 
-
+    /**
+     * requests a permission
+     * @param requestCode the code for requests
+     * @param permissions the permision string lisr
+     * @param grantResults the grant results
+     */
     @Override
     public void onRequestPermissionsResult(int requestCode,
                                            @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -977,6 +1038,9 @@ public class HomeActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * requests a location
+     */
     private void requestLocation() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED

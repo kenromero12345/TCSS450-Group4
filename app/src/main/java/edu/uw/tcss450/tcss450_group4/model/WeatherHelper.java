@@ -174,6 +174,11 @@ public class WeatherHelper {
         return msg;
     }
 
+    /**
+     *
+     * @param tZip the given zip
+     * @return the a given jsonobject zip
+     */
     public static JSONObject getJsonObjectZip(String tZip) {
         JSONObject msg = new JSONObject();
         try {

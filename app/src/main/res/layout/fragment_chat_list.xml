@@ -10,7 +10,7 @@
         android:id="@+id/button_create_chat"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/list"
+        android:layout_above="@+id/location_list"
         android:layout_alignParentTop="true"
         android:layout_alignParentRight="true"
         android:layout_marginTop="5dp"
@@ -21,7 +21,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/list"
+        android:id="@+id/location_list"
         android:name="edu.uw.tcss450.tcss450_group4.ui.ChatFragment"
         android:layout_width="0dp"
         android:layout_height="wrap_content"

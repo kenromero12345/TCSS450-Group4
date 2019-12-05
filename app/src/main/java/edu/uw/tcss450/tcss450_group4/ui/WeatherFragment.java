@@ -106,26 +106,61 @@ import static edu.uw.tcss450.tcss450_group4.model.WeatherHelper.tempFromKelvinTo
 // * create an instance of this fragment.
 // */
 public class WeatherFragment extends Fragment {
+
+    // the tag for weather
     private static final String TAG = "WEATHER_FRAG";
+
+    //degree char
     private static final char DEGREE = (char) 0x00B0;
+
+    //current weather
     private Weather mWeather;
+
+    //10d weather
     private Weather[] mWeathers10d;
+
+    //24h weather
     private Weather[] mWeathers24h;
+
+    //the home weather
     private Weather mHomeWeather;
+
+    //the home 10d weather
     private Weather[] mHomeWeathers10d;
+
+    //the home 24h weather
     private Weather[] mHomeWeathers24h;
+
+    //the fragment view
     private View mView;
+
+    //the email for database
     private String mEmail;
+
+    //the jwtoken for authorization
     private String mJwToken;
+
+    //floating buttons
     private FloatingActionButton mFab_main, mFab_getSavedWeather, mFab_gotoLocations
             , mFab_saveWeather, mFab_getCurrentLocationWeather;
-    private Animation mFab_open, mFab_close, mFab_clock, mFab_anticlock;
-    private boolean mIsOpen;
-    private boolean isCountryNull;
 
+    //animation of the fab
+    private Animation mFab_open, mFab_close, mFab_clock, mFab_anticlock;
+
+    //flag if fab is opens
+    private boolean mIsOpen;
+//    private boolean isCountryNull;
+
+    //the temp location count
     private int mTempLocationsCount;
+
+    //the location count
     private int mLocationsCount;
+
+    // check if rows is updated
     private boolean mRowsUpdated;
+
+    // check if weather
     private boolean mIfWeatherSuccess;
 //    private int mTempLocationsNum;
 //    private boolean mSuccessSave;
@@ -133,9 +168,9 @@ public class WeatherFragment extends Fragment {
 //    private boolean mAlertSave;
 
     /**
-     *
-     * @param view
-     * @param savedInstanceState
+     * when view is created
+     * @param view the view of the fragment
+     * @param savedInstanceState the saved instance state
      */
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
@@ -145,7 +180,21 @@ public class WeatherFragment extends Fragment {
     }
 
     /**
-     *
+     * When pausing, make the flag for rows updated false
+     */
+    @Override
+    public void onPause() {
+        super.onPause();
+        mRowsUpdated = false;
+    }
+
+//    @Override
+//    public void onResume() {
+//        super.onResume();
+//    }
+
+    /**
+     * initialization of the fields
      * @param view
      */
     private void initialization(@NonNull View view) {
@@ -226,6 +275,12 @@ public class WeatherFragment extends Fragment {
         setWeather();
     }
 
+    /**
+     * the linstener for the zip key
+     * @param tView the view of the fragment
+     * @param tKey the key
+     * @return the boolean if successful
+     */
     public boolean zipKeyListener(View tView, int tKey) {
         if (tKey == KeyEvent.KEYCODE_ENTER || tKey == KeyEvent.KEYCODE_DPAD_CENTER) {
             attemptGetWeatherZip();
@@ -348,6 +403,9 @@ public class WeatherFragment extends Fragment {
         }
     }
 
+    /**
+     * if fab is open, close it
+     */
     private void ifFabOpenCloseIt() {
         if (mIsOpen) {
             toggleMainFab();
@@ -504,6 +562,9 @@ public class WeatherFragment extends Fragment {
         ((TextView) mView.findViewById(weather_day10)).setText(sdf.format(todayPlus9));
     }
 
+    /**
+     * set the what temperature unit of the wethers
+     */
     private void setTemperature() {
         ifFabOpenCloseIt();
         TextView temp = mView.findViewById(weather_temperature);
@@ -523,6 +584,9 @@ public class WeatherFragment extends Fragment {
         }
     }
 
+    /**
+     * set the hours to fahrenheit
+     */
     private void setTempHoursTextToFahrenheit() {
         TextView tempHour1 = mView.findViewById(weather_hour1Temp);
         TextView tempHour2 = mView.findViewById(weather_hour2Temp);
@@ -575,6 +639,7 @@ public class WeatherFragment extends Fragment {
         tempHour24.setText(tempFromKelvinToFahrenheitString(mWeathers24h[23].getTemp()));
     }
 
+    // set the days to fahrenheit
     private void setTempDaysTextToFahrenheit() {
         TextView tempDay1 = mView.findViewById(weather_day1Temp);
         TextView tempDay2 = mView.findViewById(weather_day2Temp);
@@ -605,7 +670,7 @@ public class WeatherFragment extends Fragment {
 //    }
 
     /**
-     *
+     * attempt to save the weather
      */
     private void attemptSaveWeather() {
         JSONObject msg = new JSONObject();
@@ -637,6 +702,9 @@ public class WeatherFragment extends Fragment {
         sendPostAsyncTaskHelper(uri, msg, this::endOfSaveWeatherTask, mJwToken);
     }
 
+    /**
+     * get the number of rows of save weathers
+     */
     private void getRowsWeather() {
         Uri uri = new Uri.Builder()
             .scheme("https")
@@ -661,6 +729,10 @@ public class WeatherFragment extends Fragment {
                 .build().execute();
     }
 
+    /**
+     * handling the get rows weather
+     * @param result the given result
+     */
     private void endOfGetRowsWeather(final String result) {
         try {
             Log.d(TAG, result);
@@ -689,8 +761,8 @@ public class WeatherFragment extends Fragment {
     }
 
     /**
-     *
-     * @param result
+     * handling the saving of weather
+     * @param result the given result
      */
     private void endOfSaveWeatherTask(final String result) {
         try {
@@ -710,7 +782,7 @@ public class WeatherFragment extends Fragment {
     }
 
     /**
-     *
+     * go to the recycler view of the saved locations
      */
     private void gotoSavedWeatherRecyclerView() {
         Uri uri = new Uri.Builder()
@@ -737,7 +809,7 @@ public class WeatherFragment extends Fragment {
     }
 
     /**
-     *
+     * attempt to get the weather zip
      */
     private void attemptGetWeatherZip() {
         boolean success = true;
@@ -755,7 +827,7 @@ public class WeatherFragment extends Fragment {
     }
 
     /**
-     *
+     * sets the current weather texts
      */
     private void setWeather() {
         mWeathers24h[0].setTemp(mWeather.getTemp());
@@ -826,6 +898,7 @@ public class WeatherFragment extends Fragment {
 //        setTempHoursTextToCelsius();
     }
 
+    //set hours to celsius
     private void setTempHoursTextToCelsius() {
         TextView tempHour1 = mView.findViewById(weather_hour1Temp);
         TextView tempHour2 = mView.findViewById(weather_hour2Temp);
@@ -878,6 +951,7 @@ public class WeatherFragment extends Fragment {
         tempHour24.setText(tempFromKelvinToCelsiusString(mWeathers24h[23].getTemp()));
     }
 
+    //set days to celsius
     private void setTempDaysTextToCelsius() {
         TextView tempDay1 = mView.findViewById(weather_day1Temp);
         TextView tempDay2 = mView.findViewById(weather_day2Temp);
@@ -902,7 +976,7 @@ public class WeatherFragment extends Fragment {
         tempDay10.setText(tempFromKelvinToCelsiusString(mWeathers10d[9].getTemp()));
     }
 
-    //TODO
+    //set weather images
     private void setWeatherImages() {
         ImageView imgView = mView.findViewById(weather_conditionIcon);
         Picasso.get().load(getImgUrl(mWeather.getIcon())).resize(120, 120)
@@ -1032,8 +1106,8 @@ public class WeatherFragment extends Fragment {
     }
 
     /**
-     *
-     * @param savedInstanceState
+     * what happens on oncreate lifecycle
+     * @param savedInstanceState the saved instance state
      */
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -1045,13 +1119,6 @@ public class WeatherFragment extends Fragment {
 //        getRowsWeather();
     }
 
-    /**
-     *
-     * @param inflater
-     * @param container
-     * @param savedInstanceState
-     * @return
-     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -1060,7 +1127,7 @@ public class WeatherFragment extends Fragment {
     }
 
     /**
-     *
+     * gets the weather zip
      */
     private void getWeatherZip() {
         String zip = ((EditText)mView.findViewById(weather_zipEditText)).getText().toString().trim();
@@ -1129,8 +1196,8 @@ public class WeatherFragment extends Fragment {
     }
 
     /**
-     *
-     * @param result
+     * handling the 10d weather result given
+     * @param result the given result
      */
     private void endOfGetWeathers10dTask(String result) {
         try {
@@ -1171,8 +1238,8 @@ public class WeatherFragment extends Fragment {
     }
 
     /**
-     *
-     * @param result
+     * handling the 24h weather result given
+     * @param result the given result
      */
     private void endOfGetWeathers24hTask(final String result) {
         try {
@@ -1223,8 +1290,8 @@ public class WeatherFragment extends Fragment {
     }
 
     /**
-     *
-     * @param result
+     * handling the weather saving
+     * @param result the given result
      */
     private void endOfGetSavedWeathersTask(final String result) {
 //        Log.d("GETSAVED", "success");
@@ -1269,8 +1336,8 @@ public class WeatherFragment extends Fragment {
     }
 
     /**
-     *
-     * @param result
+     * handling the weather result given
+     * @param result the given result
      */
     private void endOfGetWeatherTask(final String result) {
         try {

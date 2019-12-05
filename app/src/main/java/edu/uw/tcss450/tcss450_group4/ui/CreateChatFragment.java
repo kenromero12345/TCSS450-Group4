@@ -3,6 +3,13 @@ package edu.uw.tcss450.tcss450_group4.ui;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.EditText;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -33,6 +40,11 @@ import edu.uw.tcss450.tcss450_group4.utils.SendPostAsyncTask;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
+
+import edu.uw.tcss450.tcss450_group4.R;
+import edu.uw.tcss450.tcss450_group4.model.ConnectionItem;
+import edu.uw.tcss450.tcss450_group4.utils.SendPostAsyncTask;
 
 import static edu.uw.tcss450.tcss450_group4.R.id.nav_host_fragment;
 import static edu.uw.tcss450.tcss450_group4.R.string.ep_add_friend_to_new_chat;
@@ -80,7 +92,7 @@ public class CreateChatFragment extends Fragment implements View.OnClickListener
         super.onCreate(savedInstanceState);
         mBundle = new Bundle();
         mFriendIDList = MyCreateChatRecyclerViewAdapter.getFriendIDList();
-        CreateChatFragmentArgs args = CreateChatFragmentArgs.fromBundle(getArguments());
+        CreateChatFragmentArgs args = CreateChatFragmentArgs.fromBundle(Objects.requireNonNull(getArguments()));
         mFriendList = new ArrayList<>(Arrays.asList(args.getFriendList()));
         mJwToken = getArguments().getString("jwt");
         mFriendIDList.add(args.getMemberId());
