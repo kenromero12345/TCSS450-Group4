@@ -255,6 +255,7 @@ public class ChatFragment extends Fragment implements View.OnClickListener {
                 directions.setEmail(mEmail);
                 directions.setJwt(mJwToken);
                 directions.setChatId(mChat.getChatId());
+                directions.setMemberId(mMemberId);
                 Navigation.findNavController(getActivity(), nav_host_fragment).navigate(directions);
             } else {
                 Log.e("ERROR!", "No response");
