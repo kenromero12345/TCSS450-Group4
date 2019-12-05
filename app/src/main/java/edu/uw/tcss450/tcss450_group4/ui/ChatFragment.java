@@ -41,6 +41,7 @@ import java.util.List;
 
 import static edu.uw.tcss450.tcss450_group4.R.id.nav_host_fragment;
 import static edu.uw.tcss450.tcss450_group4.R.string.ep_base_url;
+import static edu.uw.tcss450.tcss450_group4.R.string.ep_chats;
 import static edu.uw.tcss450.tcss450_group4.R.string.ep_connection;
 import static edu.uw.tcss450.tcss450_group4.R.string.ep_getall;
 import static edu.uw.tcss450.tcss450_group4.R.string.ep_messaging_base;
@@ -50,6 +51,7 @@ import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_connection_firstn
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_connection_lastname;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_connection_memberid;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_connection_username;
+import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_login_success;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_messaging_success;
 
 /**
@@ -286,6 +288,7 @@ public class ChatFragment extends Fragment implements View.OnClickListener {
     public int getmMemberId() {
         return mMemberId;
     }
+
 
     /**
      * This interface must be implemented by activities that contain this

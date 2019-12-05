@@ -45,11 +45,9 @@ public class ViewChatFragment extends Fragment {
     private static final String ARG_COLUMN_COUNT = "column-count";
     private static final String TAG = "CHAT_FRAG";
     private int mColumnCount = 1;
-    private TextView mUsesrnameOutputTextView;
-    private TextView mMessageOutputTextView;
+    private int mMemberId;
     private EditText mMessageInputEditText;
     private String CHAT_ID = "";
-    private String mEmail;
     private String mJwToken;
     private String mSendUrl;
     private PushMessageReceiver mPushMessageReciever;
@@ -79,8 +77,7 @@ public class ViewChatFragment extends Fragment {
 //            mEmail = getArguments().getString("email");
 //            mJwToken = getArguments().getString("jwt");
 //            mMessageList = (List<Message>) getArguments().getSerializable("List");
-            mEmail = args.getEmail();
-
+            mMemberId = args.getMemberId();
             mJwToken = args.getJwt();
             mMessageList = new ArrayList<>(Arrays.asList(args.getMessageList()));
             CHAT_ID = args.getChatId();
@@ -119,8 +116,6 @@ public class ViewChatFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-//        mUsesrnameOutputTextView = view.findViewById(R.id.txt_friendUserName);
-//        mMessageOutputTextView = view.findViewById(R.id.txt_theirMessage);
         mMessageInputEditText = view.findViewById(R.id.editText_chat_message_input);
         RecyclerView rv = view.findViewById(R.id.list);
         if (rv instanceof RecyclerView) {
@@ -145,7 +140,7 @@ public class ViewChatFragment extends Fragment {
 
         JSONObject messageJson = new JSONObject();
         try {
-            messageJson.put("email", mEmail);
+            messageJson.put("memberId", mMemberId);
             messageJson.put("message", msg);
             messageJson.put("chatId", CHAT_ID);
         } catch (JSONException e) {
