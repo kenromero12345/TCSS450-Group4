@@ -845,7 +845,7 @@ public class WeatherFragment extends Fragment {
         }
         // Here 1 represent max location result to returned, by documents it recommended 1 to 5
 
-        mView.findViewById(layout_weather_wait).setVisibility(View.VISIBLE);
+        mView.findViewById(layout_weatherHome_wait).setVisibility(View.VISIBLE);
 //        mView.findViewById(weather_saveButton).setVisibility(View.INVISIBLE); TODO check
         mView.findViewById(weather_temperatureSwitch).setVisibility(View.GONE);
         setHours();
@@ -1090,14 +1090,14 @@ public class WeatherFragment extends Fragment {
                 .into(imgViewHour24, new Callback() {
                     @Override
                     public void onSuccess() {
-                        mView.findViewById(layout_weather_wait).setVisibility(View.GONE);
+                        mView.findViewById(layout_weatherHome_wait).setVisibility(View.GONE);
                         mView.findViewById(weather_mainFab).setVisibility(View.VISIBLE);
                         mView.findViewById(weather_temperatureSwitch).setVisibility(View.VISIBLE);
                     }
 
                     @Override
                     public void onError(Exception e) {
-                        mView.findViewById(layout_weather_wait).setVisibility(View.GONE);
+                        mView.findViewById(layout_weatherHome_wait).setVisibility(View.GONE);
                         mView.findViewById(weather_mainFab).setVisibility(View.VISIBLE);
                         mView.findViewById(weather_temperatureSwitch).setVisibility(View.VISIBLE);
                         alert("There are some images that were not able to load", getContext());

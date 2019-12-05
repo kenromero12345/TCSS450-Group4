@@ -8,13 +8,26 @@
     tools:context=".ui.ConnectionAddFragment">
 
 
+<!--    <Button-->
+<!--        android:id="@+id/connectionAddButton"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_marginStart="100dp"-->
+<!--        android:layout_marginTop="360dp"-->
+<!--        android:layout_marginEnd="100dp"-->
+<!--        android:text="Add"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintHorizontal_bias="0.504"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toTopOf="parent" />-->
+
     <EditText
         android:id="@+id/connectionUserNameText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="102dp"
+        android:layout_marginStart="100dp"
         android:layout_marginTop="43dp"
-        android:layout_marginEnd="96dp"
+        android:layout_marginEnd="100dp"
         android:layout_marginBottom="26dp"
         android:ems="10"
         android:hint="Enter Username"
@@ -30,20 +43,19 @@
         android:id="@+id/connectionSearchButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="147dp"
-        android:layout_marginTop="44dp"
-        android:layout_marginEnd="176dp"
+        android:layout_marginStart="100dp"
+        android:layout_marginTop="30dp"
+        android:layout_marginEnd="100dp"
         android:text="@android:string/search_go"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/connectionUserNameText" />
 
     <LinearLayout
-        android:id="@+id/linearLayout2"
-        android:layout_width="370dp"
-        android:layout_height="68dp"
-        android:layout_marginTop="75dp"
+        android:id="@+id/addLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
         android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -51,7 +63,7 @@
 
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="72dp"
             android:layout_marginTop="16dp"
             android:layout_marginBottom="16dp"
             app:cardBackgroundColor="@color/uwGold"
@@ -62,8 +74,8 @@
                 android:layout_width="380dp"
                 android:layout_height="match_parent"
                 android:orientation="horizontal"
-                app:layout_constraintBottom_toTopOf="@+id/connection_memberid"
-                app:layout_constraintTop_toTopOf="@+id/connection_memberid">
+                app:layout_constraintBottom_toTopOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
 
 
                 <!--                <TextView-->
@@ -82,20 +94,32 @@
                 <!--                    tools:layout_conversion_absoluteHeight="27dp"-->
                 <!--                    tools:layout_conversion_absoluteWidth="0dp" />-->
 
+                <ImageView
+                    android:id="@+id/profileImageAdd"
+                    android:layout_width="59dp"
+                    android:layout_height="45dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="12dp"
+                    android:layout_marginBottom="12dp"
+                    android:visibility="visible"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0.666" />
+
                 <TextView
                     android:id="@+id/connection_firstname"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="76dp"
+                    android:layout_marginStart="96dp"
                     android:layout_marginTop="8dp"
                     android:layout_marginBottom="8dp"
-                    android:text="hello yo"
                     android:textAppearance="?attr/textAppearanceListItem"
                     android:textSize="15sp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_bias="1.0"
+                    app:layout_constraintVertical_bias="0.166"
                     tools:layout_conversion_absoluteHeight="27dp"
                     tools:layout_conversion_absoluteWidth="0dp" />
 
@@ -103,39 +127,17 @@
                     android:id="@+id/connection_username"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="21dp"
                     android:layout_marginTop="8dp"
                     android:layout_marginBottom="8dp"
                     android:textAppearance="?attr/textAppearanceListItem"
                     android:textSize="15sp"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.46"
-                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/profileImageAdd"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_bias="0.0"
+                    app:layout_constraintVertical_bias="0.861"
                     tools:layout_conversion_absoluteHeight="27dp"
                     tools:layout_conversion_absoluteWidth="0dp" />
-
-                <TextView
-                    android:id="@+id/connection_memberid"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginEnd="260dp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toStartOf="@+id/connectionAddButton"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <Button
-                    android:id="@+id/connectionAddButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="16dp"
-                    android:text="Add"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 

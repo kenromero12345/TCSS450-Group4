@@ -7,6 +7,9 @@
     <string name="keys_json_login_success">success</string>
     <string name="keys_json_login_jwt">token</string>
     <string name="keys_json_login_memberId">memberid</string>
+    <string name="keys_json_login_lastname">lastname</string>
+    <string name="keys_json_login_firstname">firstname</string>
+    <string name="keys_json_login_username">username</string>
     <string name="keys_json_login_profileuri">profileuri</string>
 
 
@@ -76,7 +79,9 @@
     <string name="keys_json_connection_username">username</string>
     <string name="keys_json_connection_verified">verified</string>
     <string name="keys_json_connection_connections">connections</string>
-    <string name="keys_json_connection_success">sucess</string>
+    <string name="keys_json_connection_connection">connection</string>
+    <string name="keys_json_connection_success">success</string>
+    <string name="keys_json_connection_image">profileuri</string>
     <string name="keys_connection_view">connectionview</string>
     <string name="keys_connection_jwt">jwt</string>
     <string name="keys_connection_item">jwt</string>
@@ -87,4 +92,5 @@
     <string name="keys_json_chats_data">names</string>
     <string name="keys_json_chats_chatid">ChatID</string>
     <string name="keys_json_chats_name">Name</string>
+    <string name="keys_json_messaging_success">success</string>
 </resources>

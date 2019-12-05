@@ -9,28 +9,25 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.location.Location;
-import android.media.Image;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
-import android.provider.MediaStore;
-import android.util.AttributeSet;
 import android.util.Base64;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
@@ -40,15 +37,12 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.material.navigation.NavigationView;
-import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -57,13 +51,16 @@ import java.util.Date;
 import java.util.Objects;
 
 import edu.uw.tcss450.tcss450_group4.model.Chat;
+import edu.uw.tcss450.tcss450_group4.model.ChatMessageNotification;
 import edu.uw.tcss450.tcss450_group4.model.ConnectionItem;
+import edu.uw.tcss450.tcss450_group4.model.Credentials;
 import edu.uw.tcss450.tcss450_group4.model.LocationViewModel;
 import edu.uw.tcss450.tcss450_group4.model.Weather;
 import edu.uw.tcss450.tcss450_group4.ui.ChatFragmentDirections;
 import edu.uw.tcss450.tcss450_group4.ui.ConnectionGUIFragmentDirections;
 import edu.uw.tcss450.tcss450_group4.ui.WeatherFragmentDirections;
 import edu.uw.tcss450.tcss450_group4.utils.SendPostAsyncTask;
+import me.pushy.sdk.Pushy;
 
 import static edu.uw.tcss450.tcss450_group4.R.id;
 import static edu.uw.tcss450.tcss450_group4.R.id.action_logout;
@@ -84,6 +81,7 @@ import static edu.uw.tcss450.tcss450_group4.R.string.ep_connection;
 import static edu.uw.tcss450.tcss450_group4.R.string.ep_getall;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_connection_connections;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_connection_firstname;
+import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_connection_image;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_connection_lastname;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_connection_memberid;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_connection_username;
@@ -126,10 +124,12 @@ public class HomeActivity extends AppCompatActivity {
 //    private static final String TAG = "WEATHER_FRAG";
     // the jw token for authorization
     private String mJwToken;
+    private Credentials mCredentials;
     // the email given
     private String mEmail;
     private int mMemberId;
     private String mProfileURI;
+    private ChatMessageNotification mChatMessage;
     private AppBarConfiguration mAppBarConfiguration;
     // the weather given
     private Weather mWeather;
@@ -195,6 +195,14 @@ public class HomeActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         startLocationUpdates();
+//        if (getIntent().getExtras().containsKey("type")) {
+//            String msg = getIntent().getExtras().getString("message");
+//            String sender = getIntent().getExtras().getString("sender");
+//            String memberId = getIntent().getExtras().getString("memberId");
+//            mChatMessage =
+//                    new ChatMessageNotification.Builder(sender, msg, memberId).build();
+//            gotoChat();
+//        }
     }
 
     /**
@@ -216,9 +224,16 @@ public class HomeActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Pushy.listen(this);
 //        gotoConnection();
         checkLocationPermission();
         setContentView(layout.activity_home);
+
+//        if (getIntent().getExtras() != null) {
+//                Navigation.findNavController(this, R.id.nav_host_fragment)
+//                        .setGraph(R.navigation.mobile_navigation, getIntent().getExtras());
+//        }
+
         Toolbar toolbar = findViewById(id.toolbar);
         setSupportActionBar(toolbar);
         DrawerLayout drawer = findViewById(drawer_layout);
@@ -257,20 +272,35 @@ public class HomeActivity extends AppCompatActivity {
 
         navController.setGraph(navigation.mobile_navigation, getIntent().getExtras());
         NavigationUI.setupWithNavController(navigationView, navController);
-        if (getIntent().getExtras() != null) {
+//        if (getIntent().getExtras() != null) {
             HomeActivityArgs args = HomeActivityArgs.fromBundle(getIntent().getExtras());
             mJwToken = args.getJwt();
+            mCredentials = args.getCredentials();
             mEmail = args.getCredentials().getEmail();
             mMemberId = args.getMemberId();
             mProfileURI = args.getProfileuri();
+            mChatMessage = args.getChatMessage();
+
+            Log.e("CHAT HOME", mChatMessage + "");
+
             View header = navigationView.getHeaderView(0);
-            ImageView profileHome = header.findViewById(id.profileHome);
+            ImageView profileHome = header.findViewById(id.imageView_home_profile);
+            TextView nameHome = header.findViewById(id.textView_home_name);
+            nameHome.setText(mCredentials.getFirstName() + " " + mCredentials.getLastName());
+            TextView usernameHome = header.findViewById(id.textView_home_username);
+            usernameHome.setText(mCredentials.getUsername());
             String cleanImage = mProfileURI.replace("data:image/png;base64,", "").replace("data:image/jpeg;base64,","");
             byte[] decodedString = Base64.decode(cleanImage, Base64.DEFAULT);
             Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
             profileHome.setImageBitmap(decodedByte);
-        }
-        navigationView.setNavigationItemSelectedListener(this::onNavigationSelected);
+//            Log.e("BITMAP", decodedByte.toString());
+//        }
+//        navigationView.setNavigationItemSelectedListener(this::onNavigationSelected);
+//        if (args.getChatMessage() != null) {
+//            gotoChat();
+//        } else {
+            navigationView.setNavigationItemSelectedListener(this::onNavigationSelected);
+//        }
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         mLocationCallback = new LocationCallback() {
             @Override
@@ -357,6 +387,7 @@ public class HomeActivity extends AppCompatActivity {
                         directions.setWeather(mWeather);
                         directions.setMemberId(mMemberId);
                         directions.setJwt(mJwToken);
+                        directions.setChatMessage(mChatMessage);
 //                        directions.setConnectionItems(mConnectionItems);
                         navController.navigate(directions);
                     }
@@ -365,22 +396,7 @@ public class HomeActivity extends AppCompatActivity {
 
                 break;
             case nav_chat_list:
-                JSONObject memberId = new JSONObject();
-                try {
-                    memberId.put("memberId", mMemberId);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                Uri uriChats = new Uri.Builder()
-                        .scheme("https")
-                        .appendPath(getString(ep_base_url))
-                        .appendPath(getString(ep_chats))
-                        .build();
-                new SendPostAsyncTask.Builder(uriChats.toString(), memberId)
-                        .onPostExecute(this::handleChatsGetOnPostExecute)
-                        .addHeaderField("authorization", mJwToken)
-                        .onCancelled(this::handleErrorsInTask)
-                        .build().execute();
+                gotoChat();
                 break;
             case nav_connectionGUI:
 //                mGoToConnection = true;
@@ -399,11 +415,31 @@ public class HomeActivity extends AppCompatActivity {
                 break;
             case nav_logout:
                 logout();
+                break;
 
         }
         //Close the drawer
         ((DrawerLayout) findViewById(drawer_layout)).closeDrawers();
         return true;
+    }
+
+    private void gotoChat() {
+        JSONObject memberId = new JSONObject();
+        try {
+            memberId.put("memberId", mMemberId);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        Uri uriChats = new Uri.Builder()
+                .scheme("https")
+                .appendPath(getString(ep_base_url))
+                .appendPath(getString(ep_chats))
+                .build();
+        new SendPostAsyncTask.Builder(uriChats.toString(), memberId)
+                .onPostExecute(this::handleChatsGetOnPostExecute)
+                .addHeaderField("authorization", mJwToken)
+                .onCancelled(this::handleErrorsInTask)
+                .build().execute();
     }
 
     /**
@@ -479,7 +515,11 @@ public class HomeActivity extends AppCompatActivity {
                 MobileNavigationDirections.ActionGlobalNavChatList directions
                         = ChatFragmentDirections.actionGlobalNavChatList(chats);
                 directions.setMemberId(mMemberId);
+                Log.e("MESSAGE", "homeactivity " + mMemberId);
                 directions.setJwt(mJwToken);
+//                directions.setChats(chats);
+//                directions.setEmail(mEmail);
+                directions.setChatMessage(mChatMessage);
                 Navigation.findNavController(this, nav_host_fragment)
                         .navigate(directions);
 //                }    else {
@@ -567,6 +607,7 @@ public class HomeActivity extends AppCompatActivity {
                 Log.e("ERROR!", "No connection");
             }
 
+
             if (hasConnection){
                 JSONArray connectionJArray = root.getJSONArray(
                         getString(keys_json_connection_connections));
@@ -582,8 +623,12 @@ public class HomeActivity extends AppCompatActivity {
                             , jsonConnection.getString(
                             getString(keys_json_connection_lastname))
                             ,jsonConnection.getString(
-                            getString(keys_json_connection_username)));
+                            getString(keys_json_connection_username)),
+                            jsonConnection.getString(
+                                    getString(keys_json_connection_image)));
                 }
+//                Log.e("profile pic", conItem[0].getContactImage());
+
 
 
 //                if (mGoToConnection) {
@@ -885,23 +930,23 @@ public class HomeActivity extends AppCompatActivity {
      * logout from the app
      */
     private void logout() {
-        SharedPreferences prefs =
-                getSharedPreferences(
-                        getString(keys_shared_prefs),
-                        Context.MODE_PRIVATE);
-        //remove the saved credentials from StoredPrefs
-        prefs.edit().remove(getString(keys_prefs_password)).apply();
-        prefs.edit().remove(getString(keys_prefs_email)).apply();
-
-        //close the app
-        //finishAndRemoveTask();
-
-        //or close this activity and bring back the Login
-        Intent i = new Intent(this, MainActivity.class);
-        startActivity(i);
-        //End this Activity and remove it from the Activity back stack.
-        finish();
-//        findViewById(layout_login_wait).setVisibility(View.GONE);
+        new DeleteTokenAsyncTask(this).execute();
+//        SharedPreferences prefs =
+//                getSharedPreferences(
+//                        getString(keys_shared_prefs),
+//                        Context.MODE_PRIVATE);
+//        //remove the saved credentials from StoredPrefs
+//        prefs.edit().remove(getString(keys_prefs_password)).apply();
+//        prefs.edit().remove(getString(keys_prefs_email)).apply();
+//
+//        //close the app
+//        //finishAndRemoveTask();
+//
+//        //or close this activity and bring back the Login
+//        Intent i = new Intent(this, MainActivity.class);
+//        startActivity(i);
+//        //End this Activity and remove it from the Activity back stack.
+//        finish();
     }
 
     /**
@@ -1021,4 +1066,64 @@ public class HomeActivity extends AppCompatActivity {
                     });
         }
     }
+
+    // Deleting the Pushy device token must be done asynchronously. Good thing
+    // we have something that allows us to do that.
+    class DeleteTokenAsyncTask extends AsyncTask<Void, Void, Void> {
+
+        private HomeActivity mHomeActivity;
+
+        public DeleteTokenAsyncTask(HomeActivity homeActivity) {
+            mHomeActivity = homeActivity;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+
+            //since we are already doing stuff in the background, go ahead
+            //and remove the credentials from shared prefs here.
+            SharedPreferences prefs =
+                    getSharedPreferences(
+                            getString(R.string.keys_shared_prefs),
+                            Context.MODE_PRIVATE);
+
+            prefs.edit().remove(getString(R.string.keys_prefs_password)).apply();
+            prefs.edit().remove(getString(R.string.keys_prefs_email)).apply();
+
+            //unregister the device from the Pushy servers
+            Pushy.unregister(HomeActivity.this);
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            //close the app
+//            finishAndRemoveTask();
+
+            //or close this activity and bring back the Login
+            Intent i = new Intent(mHomeActivity, MainActivity.class);
+            startActivity(i);
+            //Ends this Activity and removes it from the Activity back stack.
+            finish();
+        }
+    }
+//    @Override
+//    public void onBackPressed() {
+//        Fragment f = getSupportFragmentManager().findFragmentById(id.nav_view_chat);
+//        if (f instanceof ViewChatFragment) {
+//
+//            Navigation.findNavController().navigate(id.action_nav_view_chat_to_nav_chat_list);
+//        } else {
+//            super.onBackPressed();
+//        }
+//
+//    }
+
 }

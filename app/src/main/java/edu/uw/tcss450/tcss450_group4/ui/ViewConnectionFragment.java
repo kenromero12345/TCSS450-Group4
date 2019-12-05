@@ -1,6 +1,10 @@
 package edu.uw.tcss450.tcss450_group4.ui;
 
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -9,6 +13,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 
+import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -42,15 +47,6 @@ public class ViewConnectionFragment extends Fragment implements View.OnClickList
         // Required empty public constructor
     }
 
-//    @Override
-//    public void onCreate(Bundle savedInstanceState){
-//        super.onCreate(savedInstanceState);
-//        ViewConnectionFragmentArgs args = ViewConnectionFragmentArgs.fromBundle(getArguments());
-//        mJwToken = args.getJwt();
-//
-//
-//    }
-
 
     @Override
     public void onStart(){
@@ -62,21 +58,67 @@ public class ViewConnectionFragment extends Fragment implements View.OnClickList
             mConnectionItem = (ConnectionItem)
                     getArguments().get(getString(R.string.keys_connection_view));
             mVerified = mConnectionItem.getVerified();
+            ImageView img = getActivity().findViewById(R.id.profileImageFull);
+            String cleanImage = mConnectionItem.getContactImage().replace("data:image/png;base64,", "").replace("data:image/jpeg;base64,","");
+            byte[] decodedString = Base64.decode(cleanImage, Base64.DEFAULT);
+            Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+            img.setImageBitmap(decodedByte);
 
 
             ((TextView) getActivity().findViewById(R.id.fullName))
                     .setText("Name: " + mConnectionItem.getFirstName() + " " + mConnectionItem.getLastName());
-            ((TextView) getActivity().findViewById(R.id.fullID))
-                    .setText("ID: " + mConnectionItem.getContactId()) ;
             ((TextView) getActivity().findViewById(R.id.fullUsername))
                     .setText("Username : " + mConnectionItem.getContactUserName());
         }
-        if(mVerified != 0) {
+        Log.e("Verified", String.valueOf(mVerified));
+        if(mVerified == 1) {
+            //set verified check
+            ImageView img = getActivity().findViewById(R.id.verifiedImage);
+            img.setImageResource(R.drawable.charles_angels_icon);
+
+            //confirm and set image not visible
+            (getActivity().findViewById(R.id.sentImage))
+                    .setVisibility(View.GONE);
+            (getActivity().findViewById(R.id.confirmImage))
+                    .setVisibility(View.GONE);
+            (getActivity().findViewById(R.id.addImage))
+                    .setVisibility(View.GONE);
+        }
+        else if(mVerified == 2){
+            //set sent request image
+            ImageView img = getActivity().findViewById(R.id.sentImage);
+//            img.setImageResource(R.drawable.charles_angels_icon);
+
+            //set verified and confirm not visible
             (getActivity().findViewById(R.id.verifiedImage))
                     .setVisibility(View.GONE);
-        } else {
+            (getActivity().findViewById(R.id.confirmImage))
+                    .setVisibility(View.GONE);
+            (getActivity().findViewById(R.id.addImage))
+                    .setVisibility(View.GONE);
+        }
+        else if(mVerified == 3){
+            //set received image
+            ImageView img = getActivity().findViewById(R.id.confirmImage);
+//            img.setImageResource(R.drawable.charles_angels_icon);
+
+            //set verified and sent not visible.
             (getActivity().findViewById(R.id.verifiedImage))
-                    .setVisibility(View.VISIBLE);
+                    .setVisibility(View.GONE);
+            (getActivity().findViewById(R.id.sentImage))
+                    .setVisibility(View.GONE);
+            (getActivity().findViewById(R.id.addImage))
+                    .setVisibility(View.GONE);
+        }
+        else {
+//            (getActivity().findViewById(R.id.addImage))
+//                    .setVisibility(View.VISIBLE);
+            (getActivity().findViewById(R.id.verifiedImage))
+                    .setVisibility(View.GONE);
+            (getActivity().findViewById(R.id.sentImage))
+                    .setVisibility(View.GONE);
+            (getActivity().findViewById(R.id.confirmImage))
+                    .setVisibility(View.GONE);
         }
     }
 
@@ -95,6 +137,15 @@ public class ViewConnectionFragment extends Fragment implements View.OnClickList
 
         Button button_delete = (Button) view.findViewById(R.id.fullDelete);
         button_delete.setOnClickListener(this::onClick);
+
+        ImageView sent_image = view.findViewById(R.id.sentImage);
+        sent_image.setOnClickListener(this::onClick);
+
+        ImageView confirm_image = view.findViewById(R.id.confirmImage);
+        confirm_image.setOnClickListener(this::onClick);
+
+        ImageView add_image = view.findViewById(R.id.addImage);
+        add_image.setOnClickListener(this::onClick);
     }
 
 
@@ -103,21 +154,190 @@ public class ViewConnectionFragment extends Fragment implements View.OnClickList
     public void onClick(View v) {
 
         switch (v.getId()) {
+
+            case R.id.addImage:
+                addImage();
+                break;
+
             case R.id.fullDelete:
                 removeConnection();
-                //navigate to chat
                 break;
-            case R.id.fullChat:
-//                Log.d("DEBUG", "entered");
-//                Navigation.findNavController(getView())
-//                        .navigate(R.id.action_nav_login_to_nav_register);
+                
+            case R.id.sentImage:
+                sentImage();
+                break;
+                
+            case R.id.confirmImage:
+                confirmImage();
+                break;
 
+            case R.id.fullChat:
                 break;
         }
 
     }
 
-        private void removeConnection() {
+    private void addImage() {
+        Uri uriSearch = new Uri.Builder()
+                .scheme("https")
+                .appendPath(getString(R.string.ep_base_url))
+                .appendPath(getString(R.string.ep_connection))
+                .appendPath(getString(R.string.ep_add))
+                .build();
+//        Log.e("name", String.valueOf(username));
+        JSONObject msgBody = new JSONObject();
+        try{
+            msgBody.put("memberIdUser", mMemberId);
+            msgBody.put("memberIdOther", mConnectionItem.getContactId());
+        } catch (JSONException e) {
+            Log.wtf("username", "Error creating JSON: " + e.getMessage());
+
+        }
+        new SendPostAsyncTask.Builder(uriSearch.toString(), msgBody)
+                .onPostExecute(this::handleAddOnPostExecute)
+                .onCancelled(error -> Log.e("CONNECTION FRAG", error))
+                .addHeaderField("authorization", mJwToken)  //add the JWT as header
+                .build().execute();
+    }
+
+    private void handleAddOnPostExecute(String result) {
+        //parse JSON
+        try {
+            boolean hasSuccess = false;
+            JSONObject root = new JSONObject(result);
+            Log.e("root!", String.valueOf(root));
+            Log.e("Success!", String.valueOf(root.getBoolean("success")));
+            boolean success = root.getBoolean("success");
+            if (root.has("success")){
+                hasSuccess = true;
+            } else {
+                Log.e("ERROR!", "No Success");
+            }
+
+            if (hasSuccess){
+                if (success == true) {
+                    showAddSuccessDialogButtonClicked();
+                } else {
+                    showAddUnsuccessDialogButtonClicked();
+
+                }
+            }
+
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+
+    private void sentImage() {
+        showSentDialogButtonClicked();
+    }
+
+    private void confirmImage() {
+        showConfirmDialogButtonClicked();
+    }
+
+    private void showAddSuccessDialogButtonClicked() {
+        // setup the alert builder
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setTitle("Add Friend");
+        builder.setMessage("Added!");
+
+        builder.setNegativeButton("OK", null);
+
+        // create and show the alert dialog
+        AlertDialog dialog = builder.create();
+        dialog.show();
+
+    }
+
+    private void showAddUnsuccessDialogButtonClicked() {
+        // setup the alert builder
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setTitle("Add Friend");
+        builder.setMessage("Already Added!");
+
+        builder.setNegativeButton("OK", null);
+
+        // create and show the alert dialog
+        AlertDialog dialog = builder.create();
+        dialog.show();
+
+    }
+
+    private void showConfirmDialogButtonClicked() {
+        // setup the alert builder
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setTitle("Confirm Request");
+        builder.setMessage("Are you sure you want to confirm this request?");
+
+        // add the buttons
+        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+                // do something like...
+                confirmConnection();
+            }
+        });
+        builder.setNegativeButton("Cancel", null);
+
+        // create and show the alert dialog
+        AlertDialog dialog = builder.create();
+        dialog.show();
+
+    }
+
+    public void showSentDialogButtonClicked() {
+
+        // setup the alert builder
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setTitle("Remove Sent Request");
+        builder.setMessage("Are you sure you want to cancel your sent request?");
+
+        // add the buttons
+        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+                // do something like...
+                removeConnection();
+            }
+        });
+        builder.setNegativeButton("Cancel", null);
+
+        // create and show the alert dialog
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
+    private void confirmConnection() {
+        Uri uriConnection = new Uri.Builder()
+                .scheme("https")
+                .appendPath(getString(R.string.ep_base_url))
+                .appendPath(getString(R.string.ep_connection))
+                .appendPath(getString(R.string.ep_confirm))
+                .build();
+        JSONObject msgBody = new JSONObject();
+        try{
+            msgBody.put("memberIdUser", mMemberId);
+            msgBody.put("memberIdOther", mConnectionItem.getContactId());
+        } catch (JSONException e) {
+            Log.wtf("MEMBERID", "Error creating JSON: " + e.getMessage());
+
+        }
+        new SendPostAsyncTask.Builder(uriConnection.toString(), msgBody)
+                .onPostExecute(this::handleRemoveOnPostExecute)
+                .onCancelled(error -> Log.e("CONNECTION FRAG", error))
+                .addHeaderField("authorization", mJwToken)  //add the JWT as header
+                .build().execute();
+
+
+    }
+
+    private void removeConnection() {
         Uri uriConnection = new Uri.Builder()
                 .scheme("https")
                 .appendPath(getString(R.string.ep_base_url))
@@ -193,7 +413,8 @@ public class ViewConnectionFragment extends Fragment implements View.OnClickList
                             , jsonConnection.getString(
                             getString(R.string.keys_json_connection_lastname))
                             ,jsonConnection.getString(
-                            getString(R.string.keys_json_connection_username)));
+                            getString(R.string.keys_json_connection_username)),
+                            jsonConnection.getString(getString(R.string.keys_json_connection_image)));
                 }
 
                 MobileNavigationDirections.ActionGlobalNavConnectionGUI directions
@@ -211,46 +432,6 @@ public class ViewConnectionFragment extends Fragment implements View.OnClickList
             e.printStackTrace();
         }
 
-//        JSONArray connectionJArray = root.getJSONArray();
-//        try {
-//            JSONObject root = new JSONObject(result);
-//            if (root.has(getString(R.string.keys_json_connection_response))) {
-//                JSONObject response = root.getJSONObject(
-//                        getString(R.string.keys_json_connection_response));
-//                if (response.has(getString(R.string.keys_json_connection_data))) {
-//                    JSONArray data = response.getJSONArray(
-//                            getString(R.string.keys_json_connection_data));
-//                    ConnectionItem[] connection = new ConnectionItem[data.length()];
-//                    for(int i = 0; i < data.length(); i++) {
-//                        JSONObject jsonConnection = data.getJSONObject(i);
-//
-//                        connection[i] = (new ConnectionItem.Builder(
-//                                jsonConnection.getString(
-//                                        getString(R.string.keys_json_connection_firstname)),
-//                                jsonConnection.getString(
-//                                        getString(R.string.keys_json_connection_username)))
-//                                .build());
-//                    }
-//                    MobileNavigationDirections.ActionGlobalNavConnectionGUI directionsC
-//                            = ConnectionGUIFragmentDirections.actionGlobalNavConnectionGUI(connection);
-//                    Navigation.findNavController(this, R.id.nav_host_fragment)
-//                            .navigate(directionsC);
-
-//                    MobileNavigationDirections.ActionGlobalNavWeather directions
-//                            = WeatherFragmentDirections.actionGlobalNavWeather(weather);
-//
-//                    Navigation.findNavController(this, R.id.nav_host_fragment)
-//                            .navigate(directions);
-//                } else {
-//                    Log.e("ERROR!", "No data array");
-//                }
-//            } else {
-//                Log.e("ERROR!", "No response");
-//            }
-//        } catch (JSONException e) {
-//            e.printStackTrace();
-//            Log.e("ERROR!", e.getMessage());
-//        }
     }
 
 
