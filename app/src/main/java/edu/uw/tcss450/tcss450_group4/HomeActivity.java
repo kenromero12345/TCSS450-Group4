@@ -214,6 +214,7 @@ public class HomeActivity extends AppCompatActivity {
         stopLocationUpdates();
     }
 
+
     // Will use this call back to decide what to do when a location change is detected
     private LocationCallback mLocationCallback;
 

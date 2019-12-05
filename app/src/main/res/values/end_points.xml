@@ -37,6 +37,7 @@
     <string name="ep_remove">remove</string>
     <string name="ep_chats">chats</string>
     <string name="ep_create_chat">createChat</string>
+    <string name="ep_chats_get_newest_chatId">getNewestChatId</string>
     <string name="ep_add_friend_to_new_chat">addFriendToChat</string>
     <string name="ep_pushy">pushy</string>
     <string name="ep_messaging_base">messaging</string>

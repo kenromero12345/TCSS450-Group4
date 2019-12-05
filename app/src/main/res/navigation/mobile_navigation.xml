@@ -28,11 +28,11 @@
             app:nullable="true"
             android:defaultValue="@null" />
     </fragment>
-    <!--    <fragment-->
-<!--        android:id="@+id/nav_connections"-->
-<!--        android:name="edu.uw.tcss450.tcss450_group4.ui.ConnectionsFragment"-->
-<!--        android:label="fragment_connection"-->
-<!--        tools:layout="@layout/fragment_connection" />-->
+    <fragment
+        android:id="@+id/nav_connections"
+        android:name="edu.uw.tcss450.tcss450_group4.ui.ConnectionsFragment"
+        android:label="fragment_connection"
+        tools:layout="@layout/fragment_connection" />
     <fragment
         android:id="@+id/nav_weather"
         android:name="edu.uw.tcss450.tcss450_group4.ui.WeatherFragment"
@@ -301,5 +301,6 @@
     </fragment>
     <action
         android:id="@+id/action_global_nav_connection_request"
-        app:destination="@+id/nav_connection_request" /><action android:id="@+id/action_global_nav_view_chat" app:destination="@id/nav_view_chat"/>
+        app:destination="@+id/nav_connection_request" />
+    <action android:id="@+id/action_global_nav_view_chat" app:destination="@id/nav_view_chat"/>
 </navigation>

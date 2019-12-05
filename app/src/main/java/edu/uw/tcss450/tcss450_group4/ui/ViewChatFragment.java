@@ -45,8 +45,7 @@ public class ViewChatFragment extends Fragment {
     private static final String ARG_COLUMN_COUNT = "column-count";
     private static final String TAG = "CHAT_FRAG";
     private int mColumnCount = 1;
-    private TextView mUsesrnameOutputTextView;
-    private TextView mMessageOutputTextView;
+    private int mMemberId;
     private EditText mMessageInputEditText;
     private String CHAT_ID = "";
 //    private String mEmail;
@@ -75,12 +74,14 @@ public class ViewChatFragment extends Fragment {
 
         ViewChatFragmentArgs args = ViewChatFragmentArgs.fromBundle(getArguments());
         //mEmail = args.getEmail();
+
         if(getArguments() != null) {
 //            Chat chat = (Chat) getArguments().getSerializable(getString(R.string.chat_object));
 //            mEmail = getArguments().getString("email");
 //            mJwToken = getArguments().getString("jwt");
 //            mMessageList = (List<Message>) getArguments().getSerializable("List");
 //            mEmail = args.getEmail();
+            mMemberId = args.getMemberId();
             mJwToken = args.getJwt();
             mMessageList = new ArrayList<>(Arrays.asList(args.getMessageList()));
             CHAT_ID = args.getChatId();
@@ -120,9 +121,9 @@ public class ViewChatFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        setRetainInstance(true);
-        mUsesrnameOutputTextView = view.findViewById(R.id.txt_friendUserName);
-        mMessageOutputTextView = view.findViewById(R.id.txt_theirMessage);
+        // setRetainInstance(true);
+        // mUsesrnameOutputTextView = view.findViewById(R.id.txt_friendUserName);
+        // mMessageOutputTextView = view.findViewById(R.id.txt_theirMessage);
         mMessageInputEditText = view.findViewById(R.id.editText_chat_message_input);
         mMessageCount = mMessageList.size() - 1;
         RecyclerView rv = view.findViewById(R.id.viewChatList);
@@ -138,6 +139,8 @@ public class ViewChatFragment extends Fragment {
             }
             mMessageAdapter = new MyMessageListRecyclerViewAdapter(mMessageList, null);
             recyclerView.setAdapter(mMessageAdapter);
+
+
         }
 //
         view.findViewById(R.id.button_chat_send).setOnClickListener(this::handleSendClick);
@@ -262,6 +265,7 @@ public class ViewChatFragment extends Fragment {
 //                mMessageOutputTextView.append(System.lineSeparator());
 //                mMessageOutputTextView.append(System.lineSeparator());
             }
+
         }
     }
 

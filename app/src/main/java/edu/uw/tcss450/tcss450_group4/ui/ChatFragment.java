@@ -17,6 +17,14 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.TextView;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -44,6 +52,7 @@ import java.util.List;
 import static edu.uw.tcss450.tcss450_group4.R.id.layout_homeActivity_wait;
 import static edu.uw.tcss450.tcss450_group4.R.id.nav_host_fragment;
 import static edu.uw.tcss450.tcss450_group4.R.string.ep_base_url;
+import static edu.uw.tcss450.tcss450_group4.R.string.ep_chats;
 import static edu.uw.tcss450.tcss450_group4.R.string.ep_connection;
 import static edu.uw.tcss450.tcss450_group4.R.string.ep_getall;
 import static edu.uw.tcss450.tcss450_group4.R.string.ep_messaging_base;
@@ -54,6 +63,7 @@ import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_connection_image;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_connection_lastname;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_connection_memberid;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_connection_username;
+import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_login_success;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_messaging_success;
 
 /**
@@ -109,7 +119,10 @@ public class ChatFragment extends Fragment implements View.OnClickListener {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_chat_list, container, false);
-        setRetainInstance(true);
+        TextView txt = view.findViewById(R.id.txt_display_no_chat);
+        if(mChats.size() != 0) {
+            txt.setVisibility(View.INVISIBLE);
+        }
         return view;
     }
 
@@ -118,6 +131,7 @@ public class ChatFragment extends Fragment implements View.OnClickListener {
         super.onViewCreated(view, savedInstanceState);
         RecyclerView rv = view.findViewById(R.id.chatList);
         Button btnCreateChat = view.findViewById(R.id.button_create_chat);
+        MyChatRecyclerViewAdapter mChatAdapter = new MyChatRecyclerViewAdapter(mChats, chat -> displayChat(chat.getChatId()));
         // Set the adapter
         if (rv instanceof RecyclerView) {
             Context context = rv.getContext();
@@ -127,7 +141,8 @@ public class ChatFragment extends Fragment implements View.OnClickListener {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            recyclerView.setAdapter(new MyChatRecyclerViewAdapter(mChats, chat -> displayChat(chat.getChatId())));
+            mChatAdapter.notifyDataSetChanged();
+            recyclerView.setAdapter(mChatAdapter);
         }
         btnCreateChat.setOnClickListener(this::onClick);
         if (mChatMessage != null) {
@@ -139,6 +154,7 @@ public class ChatFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onClick(View v) {
         gotoConnection();
+        MyCreateChatRecyclerViewAdapter.getFriendIDList().clear();
     }
     private void gotoConnection() {
         Uri uriConnection = new Uri.Builder()
@@ -196,6 +212,7 @@ public class ChatFragment extends Fragment implements View.OnClickListener {
                 MobileNavigationDirections.ActionGlobalNavCreateChat directions
                         = CreateChatFragmentDirections.actionGlobalNavCreateChat(conItem);
                 directions.setJwt(mJwToken);
+                directions.setEmail(mEmail);
                 directions.setMemberId(getmMemberId());
 
                 Navigation.findNavController(getActivity(), nav_host_fragment)
@@ -297,6 +314,7 @@ public class ChatFragment extends Fragment implements View.OnClickListener {
     public int getmMemberId() {
         return mMemberId;
     }
+
 
     /**
      * This interface must be implemented by activities that contain this
