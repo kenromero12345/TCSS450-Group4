@@ -48,12 +48,14 @@ import edu.uw.tcss450.tcss450_group4.R;
 import edu.uw.tcss450.tcss450_group4.model.Chat;
 import edu.uw.tcss450.tcss450_group4.model.ChatMessageNotification;
 import edu.uw.tcss450.tcss450_group4.model.ConnectionItem;
+import edu.uw.tcss450.tcss450_group4.model.Message;
 import edu.uw.tcss450.tcss450_group4.model.State;
 import edu.uw.tcss450.tcss450_group4.model.Weather;
 import edu.uw.tcss450.tcss450_group4.utils.SendPostAsyncTask;
 
 import static edu.uw.tcss450.tcss450_group4.R.color.redviolet;
 import static edu.uw.tcss450.tcss450_group4.R.color.uwPurple;
+import static edu.uw.tcss450.tcss450_group4.R.id.button_home_requests;
 import static edu.uw.tcss450.tcss450_group4.R.id.layout_chat_wait;
 import static edu.uw.tcss450.tcss450_group4.R.id.layout_connection_wait;
 import static edu.uw.tcss450.tcss450_group4.R.id.layout_weather_wait;
@@ -71,9 +73,17 @@ import static edu.uw.tcss450.tcss450_group4.R.id.weather_windSpeed;
 import static edu.uw.tcss450.tcss450_group4.R.string.ep_base_url;
 import static edu.uw.tcss450.tcss450_group4.R.string.ep_chats;
 import static edu.uw.tcss450.tcss450_group4.R.string.ep_connection;
+import static edu.uw.tcss450.tcss450_group4.R.string.ep_messaging_base;
+import static edu.uw.tcss450.tcss450_group4.R.string.ep_messaging_getAll;
 import static edu.uw.tcss450.tcss450_group4.R.string.ep_requestsReceived;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_connection_connections;
+import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_connection_firstname;
+import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_connection_image;
+import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_connection_lastname;
+import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_connection_memberid;
+import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_connection_username;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_login_success;
+import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_messaging_success;
 import static edu.uw.tcss450.tcss450_group4.model.WeatherHelper.getImgUrl;
 import static edu.uw.tcss450.tcss450_group4.model.WeatherHelper.tempFromKelvinToCelsiusString;
 import static edu.uw.tcss450.tcss450_group4.model.WeatherHelper.tempFromKelvinToFahrenheitString;
@@ -90,6 +100,7 @@ public class HomeFragment extends Fragment {
     private Chat[] mChats;
     private String mJwToken;
     private int mMemberId;
+    private String mChatId;
     private String mEmail;
     private ChatMessageNotification mChatMessage;
 
@@ -116,6 +127,8 @@ public class HomeFragment extends Fragment {
 //        mConnectionItem = new ArrayList<>(Arrays.asList(args.getConnectionitems()));
         View view = inflater.inflate(R.layout.fragment_home, container, false);
         view.setClipToOutline(true);
+
+        view.findViewById(button_home_requests).setOnClickListener(this::requestConnection);
         return view;
     }
 
@@ -149,7 +162,78 @@ public class HomeFragment extends Fragment {
 
 
 
+
 //        mConnectionItem = new ArrayList<>(Arrays.asList(args.getConnectionItems()));
+    }
+
+
+    private void requestConnection(View view) {
+
+        Uri uriConnection = new Uri.Builder()
+                .scheme("https")
+                .appendPath(getString(R.string.ep_base_url))
+                .appendPath(getString(R.string.ep_connection))
+                .appendPath(getString(R.string.ep_requestsReceived))
+                .build();
+        JSONObject msgBody = new JSONObject();
+        try{
+            msgBody.put("memberId", mMemberId);
+        } catch (JSONException e) {
+            Log.wtf("MEMBERID", "Error creating JSON: " + e.getMessage());
+
+        }
+        new SendPostAsyncTask.Builder(uriConnection.toString(), msgBody)
+                .onPostExecute(this::handleReceivedOnPostExecute)
+                .onCancelled(error -> Log.e("CONNECTION FRAG", error))
+                .addHeaderField("authorization", mJwToken)  //add the JWT as header
+                .build().execute();
+
+    }
+
+    private void handleReceivedOnPostExecute(String result) {
+        //parse JSON
+        try {
+            boolean hasConnection = false;
+            JSONObject root = new JSONObject(result);
+            if (root.has(getString(R.string.keys_json_connection_connections))){
+                hasConnection = true;
+            } else {
+                Log.e("ERROR!", "No connection");
+            }
+
+            if (hasConnection){
+
+                JSONArray connectionJArray = root.getJSONArray(
+                        getString(keys_json_connection_connections));
+                ConnectionItem[] conItem = new ConnectionItem[connectionJArray.length()];
+                for(int i = 0; i < connectionJArray.length(); i++){
+                    JSONObject jsonConnection = connectionJArray.getJSONObject(i);
+                    conItem[i] = new ConnectionItem(
+                            jsonConnection.getInt(
+                                    getString(keys_json_connection_memberid))
+                            , jsonConnection.getString(
+                            getString(keys_json_connection_firstname))
+                            , jsonConnection.getString(
+                            getString(keys_json_connection_lastname))
+                            ,jsonConnection.getString(
+                            getString(keys_json_connection_username)),
+                            jsonConnection.getString(
+                                    getString(keys_json_connection_image)));
+                }
+
+                MobileNavigationDirections.ActionGlobalNavConnectionRequest directions
+                        = ConnectionRequestFragmentDirections.actionGlobalNavConnectionRequest(conItem);
+                directions.setJwt(mJwToken);
+                directions.setMemberid(mMemberId);
+
+                Navigation.findNavController(getActivity(), nav_host_fragment)
+                        .navigate(directions);
+            }
+
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     private void getRecentChats() {
@@ -210,7 +294,7 @@ public class HomeFragment extends Fragment {
                     } else {
                         recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
                     }
-                    recyclerView.setAdapter(new MyChatRecyclerViewAdapter(new ArrayList<>(Arrays.asList(mChats)), this::displayChat));
+                    recyclerView.setAdapter(new MyChatRecyclerViewAdapter(new ArrayList<>(Arrays.asList(mChats)), chat -> displayChat(chat.getChatId())));
                 }
                 getView().findViewById(layout_chat_wait).setVisibility(View.INVISIBLE);
             } else {
@@ -229,8 +313,66 @@ public class HomeFragment extends Fragment {
         Log.e("ASYNC_TASK_ERROR", result);
     }
 
-    private void displayChat(Chat chat) {
+    private void displayChat(final String chatId){
 
+        mChatId = chatId;
+        JSONObject msgBody = new JSONObject();
+        try {
+            msgBody.put("chatId", chatId);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        Uri uriChats = new Uri.Builder()
+                .scheme("https")
+                .appendPath(getString(ep_base_url))
+                .appendPath(getString(ep_messaging_base))
+                .appendPath(getString(ep_messaging_getAll))
+                .build();
+        new SendPostAsyncTask.Builder(uriChats.toString(), msgBody)
+                .onPostExecute(this::handleMessageGetOnPostExecute)
+                .addHeaderField("authorization", mJwToken)
+                .onCancelled(this::handleErrorsInTask)
+                .build().execute();
+
+//        final Bundle args = new Bundle();
+//        args.putSerializable(getString(R.string.chat_object), chat);
+//        args.putString("email", mEmail);
+//        args.putString("jwt", mJwToken);
+//        args.putSerializable("List", mMessageList);
+        //Navigation.findNavController(getView()).navigate(R.id.action_nav_chat_list_to_nav_view_chat, args);
+    }
+
+    private void handleMessageGetOnPostExecute(final String result) {
+        try {
+            JSONObject root = new JSONObject(result);
+            if (root.has("success") && root.getBoolean(getString(keys_json_messaging_success))) {
+                JSONArray data = root.getJSONArray("messages");
+//                if (response.has(getString(R.string.keys_json_chats_data))) {
+//                    JSONArray data = response.getJSONArray(getString(R.string.keys_json_chats_data));
+                Message[] messages = new Message[data.length()];
+                for (int i = 0; i < data.length(); i++) {
+                    JSONObject jsonChatLists = data.getJSONObject(i);
+
+                    messages[i] = (new Message.Builder(jsonChatLists.getString("username"),
+                            jsonChatLists.getString("message"),
+                            convertTimeStampToDate(jsonChatLists.getString("timestamp")))
+                            .build());
+                }
+//                mMessageList = new ArrayList<Message>(Arrays.asList(messages));
+                MobileNavigationDirections.ActionGlobalNavViewChat directions;
+                directions = ViewChatFragmentDirections.actionGlobalNavViewChat(messages);
+//                directions.setEmail(mEmail);
+                directions.setMemberId(mMemberId);
+                directions.setJwt(mJwToken);
+                directions.setChatId(mChatId);
+                Navigation.findNavController(getActivity(), nav_host_fragment).navigate(directions);
+            } else {
+                Log.e("ERROR!", "No response");
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+            Log.e("ERROR!", e.getMessage());
+        }
     }
 
     private String convertTimeStampToDate(String timestamp) {
@@ -379,7 +521,7 @@ public class HomeFragment extends Fragment {
                     public void onSuccess() {
                         mView.findViewById(layout_weather_wait).setVisibility(View.GONE);
                         mView.findViewById(weather_temperatureSwitch).setVisibility(View.VISIBLE);
-                        
+
 //        }
                     }
 

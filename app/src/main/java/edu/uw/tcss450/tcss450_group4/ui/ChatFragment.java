@@ -49,6 +49,7 @@ import static edu.uw.tcss450.tcss450_group4.R.string.ep_messaging_base;
 import static edu.uw.tcss450.tcss450_group4.R.string.ep_messaging_getAll;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_connection_connections;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_connection_firstname;
+import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_connection_image;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_connection_lastname;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_connection_memberid;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_connection_username;
@@ -185,7 +186,10 @@ public class ChatFragment extends Fragment implements View.OnClickListener {
                             , jsonConnection.getString(
                             getString(keys_json_connection_lastname))
                             ,jsonConnection.getString(
-                            getString(keys_json_connection_username)));
+                            getString(keys_json_connection_username))
+                            ,jsonConnection.getString(
+                            getString(keys_json_connection_image))
+                    );
                 }
 
                 MobileNavigationDirections.ActionGlobalNavCreateChat directions

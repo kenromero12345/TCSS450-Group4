@@ -9,28 +9,22 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.location.Location;
-import android.media.Image;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.provider.MediaStore;
-import android.util.AttributeSet;
 import android.util.Base64;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -42,15 +36,12 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.material.navigation.NavigationView;
-import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -62,12 +53,9 @@ import edu.uw.tcss450.tcss450_group4.model.Chat;
 import edu.uw.tcss450.tcss450_group4.model.ChatMessageNotification;
 import edu.uw.tcss450.tcss450_group4.model.ConnectionItem;
 import edu.uw.tcss450.tcss450_group4.model.LocationViewModel;
-import edu.uw.tcss450.tcss450_group4.model.Message;
 import edu.uw.tcss450.tcss450_group4.model.Weather;
 import edu.uw.tcss450.tcss450_group4.ui.ChatFragmentDirections;
 import edu.uw.tcss450.tcss450_group4.ui.ConnectionGUIFragmentDirections;
-import edu.uw.tcss450.tcss450_group4.ui.HomeFragment;
-import edu.uw.tcss450.tcss450_group4.ui.ViewChatFragment;
 import edu.uw.tcss450.tcss450_group4.ui.WeatherFragmentDirections;
 import edu.uw.tcss450.tcss450_group4.utils.SendPostAsyncTask;
 import me.pushy.sdk.Pushy;
@@ -256,7 +244,11 @@ public class HomeActivity extends AppCompatActivity {
             mProfileURI = args.getProfileuri();
             mChatMessage = args.getChatMessage();
             View header = navigationView.getHeaderView(0);
-            ImageView profileHome = header.findViewById(id.profileHome);
+            ImageView profileHome = header.findViewById(id.imageView_home_profile);
+            TextView nameHome = header.findViewById(id.textView_home_name);
+            nameHome.setText("");
+            TextView usernameHome = header.findViewById(id.textView_home_username);
+            usernameHome.setText();
             String cleanImage = mProfileURI.replace("data:image/png;base64,", "").replace("data:image/jpeg;base64,","");
             byte[] decodedString = Base64.decode(cleanImage, Base64.DEFAULT);
             Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
@@ -585,7 +577,7 @@ public class HomeActivity extends AppCompatActivity {
                             jsonConnection.getString(
                                     getString(keys_json_connection_image)));
                 }
-                Log.e("profile pic", conItem[0].getContactImage());
+//                Log.e("profile pic", conItem[0].getContactImage());
 
 
 
