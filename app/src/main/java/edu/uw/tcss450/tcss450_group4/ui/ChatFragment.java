@@ -130,7 +130,7 @@ public class ChatFragment extends Fragment implements View.OnClickListener {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         RecyclerView rv = view.findViewById(R.id.chatList);
-        Button btnCreateChat = view.findViewById(R.id.button_create_chat);
+        ImageButton btnCreateChat = view.findViewById(R.id.button_create_chat);
         MyChatRecyclerViewAdapter mChatAdapter = new MyChatRecyclerViewAdapter(mChats, chat -> displayChat(chat.getChatId()));
         // Set the adapter
         if (rv instanceof RecyclerView) {
@@ -212,7 +212,7 @@ public class ChatFragment extends Fragment implements View.OnClickListener {
                 MobileNavigationDirections.ActionGlobalNavCreateChat directions
                         = CreateChatFragmentDirections.actionGlobalNavCreateChat(conItem);
                 directions.setJwt(mJwToken);
-                directions.setEmail(mEmail);
+//                directions.setEmail(mEmail);
                 directions.setMemberId(getmMemberId());
 
                 Navigation.findNavController(getActivity(), nav_host_fragment)

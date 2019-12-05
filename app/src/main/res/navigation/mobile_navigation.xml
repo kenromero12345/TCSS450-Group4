@@ -28,11 +28,11 @@
             app:nullable="true"
             android:defaultValue="@null" />
     </fragment>
-    <fragment
-        android:id="@+id/nav_connections"
-        android:name="edu.uw.tcss450.tcss450_group4.ui.ConnectionsFragment"
-        android:label="fragment_connection"
-        tools:layout="@layout/fragment_connection" />
+<!--    <fragment-->
+<!--        android:id="@+id/nav_connections"-->
+<!--        android:name="edu.uw.tcss450.tcss450_group4.ui.ConnectionsFragment"-->
+<!--        android:label="fragment_connection"-->
+<!--        tools:layout="@layout/fragment_connection" />-->
     <fragment
         android:id="@+id/nav_weather"
         android:name="edu.uw.tcss450.tcss450_group4.ui.WeatherFragment"

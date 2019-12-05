@@ -49,7 +49,6 @@ public class ViewChatFragment extends Fragment {
     private EditText mMessageInputEditText;
     private String CHAT_ID = "";
 //    private String mEmail;
-    private int mMemberId;
     private String mJwToken;
     private String mSendUrl;
     private PushMessageReceiver mPushMessageReciever;

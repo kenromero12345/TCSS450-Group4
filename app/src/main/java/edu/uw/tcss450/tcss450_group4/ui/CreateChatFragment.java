@@ -107,7 +107,7 @@ public class CreateChatFragment extends Fragment implements View.OnClickListener
         super.onCreate(savedInstanceState);
 
         //TODO: check for BUG
-        mBundle = new Bundle();
+//        mBundle = new Bundle();
         mFriendIDList = MyCreateChatRecyclerViewAdapter.getFriendIDList();
         CreateChatFragmentArgs args = CreateChatFragmentArgs.fromBundle(Objects.requireNonNull(getArguments()));
         mFriendList = new ArrayList<>(Arrays.asList(args.getFriendList()));
@@ -148,7 +148,7 @@ public class CreateChatFragment extends Fragment implements View.OnClickListener
             mFriendList = new ArrayList<>(Arrays.asList(args.getFriendList()));
             mJwToken = getArguments().getString("jwt");
             mFriendIDList.add(args.getMemberId());
-            mEmail = args.getEmail();
+//            mEmail = args.getEmail();
             mMemberId = args.getMemberId();
             int size = mFriendIDList.size();
         if(mFriendList.size() != 0) {
@@ -352,7 +352,7 @@ public class CreateChatFragment extends Fragment implements View.OnClickListener
                         = ChatFragmentDirections.actionGlobalNavChatList(chats);
                 directions.setMemberId(mMemberId);
                 directions.setJwt(mJwToken);
-                directions.setEmail(mEmail);
+//                directions.setEmail(mEmail);
                 Navigation.findNavController(getActivity(), nav_host_fragment)
                         .navigate(directions);
             } else {
