@@ -333,9 +333,9 @@ public class ConnectionGUIFragment extends Fragment implements View.OnClickListe
 
             Log.e("root", String.valueOf(root));
             Log.e("Status!", root.getString("status"));
-            Log.e("Status!", String.valueOf(root.getString("status") == "already connected"));
-            String status = root.getString("status");
-            Log.e("Status variable! boolean", String.valueOf(status.equals("already connected")));
+//            Log.e("Status!", String.valueOf(root.getString("status") == "already connected"));
+//            String status = root.getString("status");
+//            Log.e("Status variable! boolean", String.valueOf(status.equals("already connected")));
             if (hasConnection){
                 JSONObject connectionJObject = root.getJSONObject(
                         getString(R.string.keys_json_connection_connection));
@@ -349,7 +349,7 @@ public class ConnectionGUIFragment extends Fragment implements View.OnClickListe
                         getString(R.string.keys_json_connection_username))
                         ,1
                         , connectionJObject.getString(getString(R.string.keys_json_connection_image)));
-//                Log.e("verified!", String.valueOf(mConItem.getVerified()));
+                Log.e("verified!", String.valueOf(mConItem.getVerified()));
 
                 final Bundle args = new Bundle();
                 args.putSerializable(getString(R.string.keys_connection_view), mConItem);

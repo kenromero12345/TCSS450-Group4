@@ -76,11 +76,11 @@ public class ViewConnectionFragment extends Fragment implements View.OnClickList
 //            img.setImageResource(R.drawable.charles_angels_icon);
 
             //confirm and set image not visible
-            (getActivity().findViewById(R.id.sentImage))
+            (getActivity().findViewById(R.id.sentViewImage))
                     .setVisibility(View.GONE);
-            (getActivity().findViewById(R.id.confirmImage))
+            (getActivity().findViewById(R.id.confirmViewImage))
                     .setVisibility(View.GONE);
-            (getActivity().findViewById(R.id.addImage))
+            (getActivity().findViewById(R.id.addViewImage))
                     .setVisibility(View.GONE);
         }
         else if(mVerified == 2){
@@ -91,9 +91,9 @@ public class ViewConnectionFragment extends Fragment implements View.OnClickList
             //set verified and confirm not visible
             (getActivity().findViewById(R.id.verifiedImage))
                     .setVisibility(View.GONE);
-            (getActivity().findViewById(R.id.confirmImage))
+            (getActivity().findViewById(R.id.confirmViewImage))
                     .setVisibility(View.GONE);
-            (getActivity().findViewById(R.id.addImage))
+            (getActivity().findViewById(R.id.addViewImage))
                     .setVisibility(View.GONE);
             (getActivity().findViewById(R.id.fullDelete))
                     .setVisibility(View.GONE);
@@ -106,9 +106,9 @@ public class ViewConnectionFragment extends Fragment implements View.OnClickList
             //set verified and sent not visible.
             (getActivity().findViewById(R.id.verifiedImage))
                     .setVisibility(View.GONE);
-            (getActivity().findViewById(R.id.sentImage))
+            (getActivity().findViewById(R.id.sentViewImage))
                     .setVisibility(View.GONE);
-            (getActivity().findViewById(R.id.addImage))
+            (getActivity().findViewById(R.id.addViewImage))
                     .setVisibility(View.GONE);
             (getActivity().findViewById(R.id.fullDelete))
                     .setVisibility(View.GONE);
@@ -143,13 +143,13 @@ public class ViewConnectionFragment extends Fragment implements View.OnClickList
         Button button_delete = (Button) view.findViewById(R.id.fullDelete);
         button_delete.setOnClickListener(this::onClick);
 
-        ImageView sent_image = view.findViewById(R.id.sentImage);
+        ImageView sent_image = view.findViewById(R.id.sentViewImage);
         sent_image.setOnClickListener(this::onClick);
 
-        ImageView confirm_image = view.findViewById(R.id.confirmImage);
+        ImageView confirm_image = view.findViewById(R.id.confirmViewImage);
         confirm_image.setOnClickListener(this::onClick);
 
-        ImageView add_image = view.findViewById(R.id.addImage);
+        ImageView add_image = view.findViewById(R.id.addViewImage);
         add_image.setOnClickListener(this::onClick);
     }
 
@@ -160,7 +160,7 @@ public class ViewConnectionFragment extends Fragment implements View.OnClickList
 
         switch (v.getId()) {
 
-            case R.id.addImage:
+            case R.id.addViewImage:
                 addImage();
                 break;
 
@@ -168,11 +168,11 @@ public class ViewConnectionFragment extends Fragment implements View.OnClickList
                 showDeleteDialogButtonClicked();
                 break;
                 
-            case R.id.sentImage:
+            case R.id.sentViewImage:
                 sentImage();
                 break;
                 
-            case R.id.confirmImage:
+            case R.id.confirmViewImage:
                 confirmImage();
                 break;
 
