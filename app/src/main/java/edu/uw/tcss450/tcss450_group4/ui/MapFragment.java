@@ -91,6 +91,11 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
     private Weather mWeather;
 
     /**
+     * stores locations that are saved
+     */
+    private edu.uw.tcss450.tcss450_group4.model.Location[] mLocations;
+
+    /**
      * stores the 10day forecast
      */
     private Weather[] mWeathers10d;
@@ -133,6 +138,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
                 Objects.requireNonNull(getArguments()));
         mEmail =  args.getEmail();
         mJwToken = args.getJwt();
+        mLocations = args.getLocations();
     }
 
     /**
@@ -168,6 +174,11 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
         // Add a marker in the current device location and move the camera
         LatLng current = new LatLng(Objects.requireNonNull(l).getLatitude(), l.getLongitude());
         mMap.addMarker(new MarkerOptions().position(current).title("Current Location"));
+
+        for (edu.uw.tcss450.tcss450_group4.model.Location loc : mLocations) {
+            LatLng latLng = new LatLng(loc.getLat(), loc.getLon());
+            mMap.addMarker(new MarkerOptions().position(latLng).title(loc.getName()));
+        }
         //Zoom levels are from 2.0f (zoomed out) to 21.f (zoomed in)
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(current, 15.0f));
 

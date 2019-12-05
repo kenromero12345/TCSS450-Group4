@@ -234,8 +234,14 @@ public class WeatherFragment extends Fragment {
 //                setToast("Get the current weather condition and forecasts of the given zip code"));
         zipView.setOnLongClickListener(e ->
                 setToast("Get the current weather condition and forecasts of the given zip code"));
-        zipView.setOnClickListener(e -> ifFabOpenCloseIt());
-        zipView.setOnFocusChangeListener((v, hasFocus) -> ifFabOpenCloseIt());
+        zipView.setOnClickListener(e -> {
+            ifFabOpenCloseIt();
+            setToast("Get the current weather condition and forecasts of the given zip code");
+        });
+        zipView.setOnFocusChangeListener((v, hasFocus) -> {
+            ifFabOpenCloseIt();
+            setToast("Get the current weather condition and forecasts of the given zip code");
+        });
 //        mView.findViewById(weather_getZipButton).setOnLongClickListener(v ->
 //                setToast("Get the current weather condition and forecasts of the given zip code"));
 //        mView.findViewById(weather_getZipButton).setOnClickListener(v -> attemptGetWeatherZip());
@@ -297,6 +303,7 @@ public class WeatherFragment extends Fragment {
      * get current location weather and set the view
      */
     private void getCurrentLocationWeather() {
+        setToast("Get the current weather condition and forecasts from your current location");
         mWeather = mHomeWeather;
         mWeathers10d = mHomeWeathers10d.clone();
         mWeathers24h = mHomeWeathers24h.clone();
@@ -340,11 +347,59 @@ public class WeatherFragment extends Fragment {
      * When map fab is clicked, go to the map
      */
     private void gotoMap() {
+        setToast("Get the current weather condition and forecasts from the chosen location");
+
+        Uri uri = new Uri.Builder()
+                .scheme("https")
+                .appendPath(getString(ep_base_url))
+                .appendPath(getString(ep_weather))
+                .appendPath(getString(ep_get))
+                .build();
+
+        JSONObject msg = new JSONObject();
+
+        try {
+            msg.put("email", mEmail);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        sendPostAsyncTaskHelper(uri, msg, this::endOfGetSavedWeathersGoToMapTask, mJwToken);
         ifFabOpenCloseIt();
-        WeatherFragmentDirections.ActionNavWeatherToNavMap action =
-                WeatherFragmentDirections.actionNavWeatherToNavMap(mEmail, mJwToken, mHomeWeather
-                        , mHomeWeathers10d, mHomeWeathers24h);
-        Navigation.findNavController(Objects.requireNonNull(getView())).navigate(action);
+
+    }
+
+    /**
+     * handling the getting of saved weathers
+     * @param result
+     */
+    private void endOfGetSavedWeathersGoToMapTask(final String result) {
+        Log.d(TAG, result);
+        try {
+            JSONObject root = new JSONObject(result);
+            if (root.has("success") && root.get("success").equals("false")) {
+                alert("getting weathers failed", getContext());
+            }
+            JSONArray messages = root.getJSONArray(getString(keys_json_messages));
+
+            Location[] locations = new Location[messages.length()];
+            for(int i = 0; i < locations.length; i++) {
+                JSONObject message = messages.getJSONObject(i);
+                locations[i] = new Location(message.getDouble(getString(keys_json_long))
+                        , message.getDouble(getString(keys_json_lat))
+                        , message.getString(getString(keys_json_nickname)));
+            }
+
+            ifFabOpenCloseIt();
+
+            WeatherFragmentDirections.ActionNavWeatherToNavMap action =
+                    WeatherFragmentDirections.actionNavWeatherToNavMap(mEmail, mJwToken, mHomeWeather
+                            , mHomeWeathers10d, mHomeWeathers24h, locations);
+            Navigation.findNavController(Objects.requireNonNull(getView())).navigate(action);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -673,6 +728,7 @@ public class WeatherFragment extends Fragment {
      * attempt to save the weather
      */
     private void attemptSaveWeather() {
+        setToast("Save the current location");
         JSONObject msg = new JSONObject();
 
         try {
@@ -785,6 +841,7 @@ public class WeatherFragment extends Fragment {
      * go to the recycler view of the saved locations
      */
     private void gotoSavedWeatherRecyclerView() {
+        setToast("Get the list of saved locations");
         Uri uri = new Uri.Builder()
                 .scheme("https")
                 .appendPath(getString(ep_base_url))
