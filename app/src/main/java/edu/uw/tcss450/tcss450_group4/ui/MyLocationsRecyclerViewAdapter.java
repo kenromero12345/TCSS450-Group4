@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.HashMap;
@@ -33,7 +34,7 @@ public class MyLocationsRecyclerViewAdapter extends RecyclerView.Adapter<MyLocat
     private Map<Integer, View> mViews;
 
     private boolean mFlag;
-
+    public int mRow_index;
     /**
      * contructor for the recycler view of locations adapter
      * @param items the given locations
@@ -44,6 +45,7 @@ public class MyLocationsRecyclerViewAdapter extends RecyclerView.Adapter<MyLocat
         mListener = listener;
         mViews = new HashMap<>();
         mFlag = flag;
+        mRow_index = -1;
     }
 
 //    public void deleteColor(boolean tFlag) {
@@ -93,13 +95,40 @@ public class MyLocationsRecyclerViewAdapter extends RecyclerView.Adapter<MyLocat
 //        if (mValues.get(position).getZip() != -1) {
 //            holder.mZipView.setText(mValues.get(position).getZip());
 //        }
+//        holder.mView.seto((v, event) -> {
+//            Log.d("positionH", "" + position);
+//            mRow_index=position;
+//            return true;
+//        });
         holder.mView.setOnClickListener(v -> {
             if (null != mListener) {
                 // Notify the active callbacks interface (the activity, if the
                 // fragment is attached to one) that an item has been selected.
+//                mRow_index=position;
                 mListener.onListFragmentInteraction(holder.mItem);
             }
         });
+//        int color = Color.TRANSPARENT;
+//        Drawable background = holder.mCv.getBackground();
+//        if (background instanceof ColorDrawable) {
+//            color = ((ColorDrawable) background).getColor();
+//        }
+//        Log.d("row=", "" + (mRow_index==position));
+//        if(mRow_index==position){
+//            if (color == Color.parseColor("#4B2E83")) {
+//                holder.mCv.setBackgroundColor(Color.parseColor("#554b2e83"));
+//            } else if (color == Color.parseColor("#85754D")) {
+//                holder.mCv.setBackgroundColor(Color.parseColor("#7785754D"));
+//            }
+//        }
+//        else
+//        {
+//            if (color == Color.parseColor("#554b2e83")) {
+//                holder.mCv.setBackgroundColor(Color.parseColor("#4B2E83"));
+//            } else if (color == Color.parseColor("#7785754D")) {
+//                holder.mCv.setBackgroundColor(Color.parseColor("#85754D"));
+//            }
+//        }
 
         Log.d("positionR", "" + position);
     }
@@ -122,11 +151,14 @@ public class MyLocationsRecyclerViewAdapter extends RecyclerView.Adapter<MyLocat
 //        public final TextView mLatLonView;
 //        public final TextView mZipView;
         public Location mItem;
+        public int mRow_index = -1;
+        public final CardView mCv;
 
         public ViewHolder(View view) {
             super(view);
             mView = view;
             mNicknameView = view.findViewById(R.id.weather_nickname);
+            mCv = view.findViewById(R.id.location_card);
 //            mLatLonView = (TextView) view.findViewById(R.id.weather_latLon);
 //            mZipView = (TextView) view.findViewById(R.id.weather_zip);
         }

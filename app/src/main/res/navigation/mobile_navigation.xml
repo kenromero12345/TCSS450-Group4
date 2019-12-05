@@ -142,6 +142,9 @@
         <argument
             android:name="weathersHome24h"
             app:argType="edu.uw.tcss450.tcss450_group4.model.Weather[]" />
+        <argument
+            android:name="locations"
+            app:argType="edu.uw.tcss450.tcss450_group4.model.Location[]" />
     </fragment>
 
 
