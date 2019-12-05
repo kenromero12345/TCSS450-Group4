@@ -270,17 +270,19 @@ public class LocationsFragment extends Fragment {
                 alert("Cannot display any weather", getContext());
             }
         } else {
-            AlertDialog alertDialog = new AlertDialog.Builder(getActivity()).create();
-            alertDialog.setTitle("Alert");
-            alertDialog.setMessage("Do you want to delete the location?");
-            alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "YES",
-                    (dialog, which) -> {
-                        deleteLocation(tLocation);
-                        dialog.dismiss();
-                    });
-            alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "NO",
-                    (dialog, which) -> dialog.dismiss());
-            alertDialog.show();
+            if (!tLocation.getName().equals("No Locations")) {
+                AlertDialog alertDialog = new AlertDialog.Builder(getActivity()).create();
+                alertDialog.setTitle("Alert");
+                alertDialog.setMessage("Do you want to delete the location?");
+                alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "YES",
+                        (dialog, which) -> {
+                            deleteLocation(tLocation);
+                            dialog.dismiss();
+                        });
+                alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "NO",
+                        (dialog, which) -> dialog.dismiss());
+                alertDialog.show();
+            }
         }
     }
 
