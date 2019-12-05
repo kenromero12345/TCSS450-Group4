@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#b7a57a</color>
+    <color name="colorPrimary">#B7A57A</color>
     <color name="colorPrimaryDark">#33006F</color>
     <color name="colorAccent">#33006F</color>
 <!--    <color name="uwPurple">#33006F</color>-->

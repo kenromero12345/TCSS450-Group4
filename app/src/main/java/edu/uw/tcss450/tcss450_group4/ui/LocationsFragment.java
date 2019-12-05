@@ -2,6 +2,7 @@ package edu.uw.tcss450.tcss450_group4.ui;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -36,7 +37,30 @@ import edu.uw.tcss450.tcss450_group4.model.Weather;
 import edu.uw.tcss450.tcss450_group4.model.WeatherHelper;
 
 import static edu.uw.tcss450.tcss450_group4.R.layout;
-import static edu.uw.tcss450.tcss450_group4.R.string.*;
+import static edu.uw.tcss450.tcss450_group4.R.string.ep_base_url;
+import static edu.uw.tcss450.tcss450_group4.R.string.ep_delete;
+import static edu.uw.tcss450.tcss450_group4.R.string.ep_weather;
+import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_country;
+import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_data;
+import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_deg;
+import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_description;
+import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_hourly;
+import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_humidity;
+import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_icon;
+import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_latitude;
+import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_longitude;
+import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_main;
+import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_name;
+import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_pressure;
+import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_speed;
+import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_sys;
+import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_temp;
+import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_temp_max;
+import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_temp_min;
+import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_temperature;
+import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_timezone;
+import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_weather;
+import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_wind;
 import static edu.uw.tcss450.tcss450_group4.model.WeatherHelper.alert;
 import static edu.uw.tcss450.tcss450_group4.model.WeatherHelper.getNewIcon;
 import static edu.uw.tcss450.tcss450_group4.model.WeatherHelper.getUriWeather10dLatLon;
@@ -135,14 +159,26 @@ public class LocationsFragment extends Fragment {
                 return setToast("DELETE MODE: OFF");
             }
         });
-        fab.setOnClickListener(v -> toggleDelete());
+        fab.setOnClickListener(v -> toggleDelete(fab, view));
     }
 
-    private void toggleDelete() {
+    private void toggleDelete(FloatingActionButton tFab, View tView) {
         if (mDeleteFlag) {
+//            mRv.getAdapter().toggleColor();
+//            tFab.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(
+//                    Objects.requireNonNull(getContext()), R.color.uwMetallicGold)));
+            tView.setBackgroundColor(Color.WHITE);
             mDeleteFlag = false;
+            setToast("DELETE MODE: OFF");
         } else {
+//            mRv.getAdapter().toggleColor();
+//            mRv.setAdapter(new MyLocationsRecyclerViewAdapter(mLocations
+//                    , this::getClick));
+//            tFab.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(
+//                    Objects.requireNonNull(getContext()), R.color.uwPurple)));
+            tView.setBackgroundColor(Color.BLACK);
             mDeleteFlag = true;
+            setToast("DELETE MODE: ON");
         }
     }
 

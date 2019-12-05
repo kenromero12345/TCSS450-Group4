@@ -180,6 +180,20 @@ public class WeatherFragment extends Fragment {
     }
 
     /**
+     * When pausing, make the flag for rows updated false
+     */
+    @Override
+    public void onPause() {
+        super.onPause();
+        mRowsUpdated = false;
+    }
+
+//    @Override
+//    public void onResume() {
+//        super.onResume();
+//    }
+
+    /**
      * initialization of the fields
      * @param view
      */
