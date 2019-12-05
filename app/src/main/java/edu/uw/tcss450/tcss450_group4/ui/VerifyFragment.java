@@ -4,10 +4,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-import androidx.navigation.Navigation;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +11,9 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+
+import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -29,6 +28,8 @@ public class VerifyFragment extends Fragment {
     private Credentials mCredentials;
 
     private String mJwt = "";
+
+    private int tries = 0;
 
     public VerifyFragment() {
         // Required empty public constructor
@@ -65,12 +66,12 @@ public class VerifyFragment extends Fragment {
         Button b = v.findViewById(R.id.verify_button);
         b.setOnClickListener(view -> validVerify(v));
         b = v.findViewById(R.id.verify_resend);
-        b.setOnClickListener(view -> resendVerify(v));
+        b.setOnClickListener(view -> resendVerify());
 
         return v;
     }
 
-    private void resendVerify(View v) {
+    private void resendVerify() {
         Uri uri = new Uri.Builder()
                 .scheme("https")
                 .appendPath(getString(R.string.ep_base_url))
@@ -104,7 +105,7 @@ public class VerifyFragment extends Fragment {
                 ((EditText) getView().findViewById(R.id.verify_textView))
                         .setError("Verification Unsuccessful");
             }
-            getActivity().findViewById(R.id.verify_resendCode).setVisibility(View.VISIBLE);
+            getActivity().findViewById(R.id.verify_note).setVisibility(View.VISIBLE);
             getActivity().findViewById(R.id.verify_resend).setEnabled(true);
             getActivity().findViewById(R.id.verify_button).setEnabled(true);
         } catch (JSONException e) {
@@ -113,7 +114,7 @@ public class VerifyFragment extends Fragment {
             Log.e("JSON_PARSE_ERROR", result
                     + System.lineSeparator()
                     + e.getMessage());
-            getActivity().findViewById(R.id.verify_resendCode).setVisibility(View.VISIBLE);
+            getActivity().findViewById(R.id.verify_note).setVisibility(View.VISIBLE);
             getActivity().findViewById(R.id.verify_resend).setEnabled(true);
             getActivity().findViewById(R.id.verify_button).setEnabled(true);
             ((TextView) getView().findViewById(R.id.verify_textView))
@@ -122,7 +123,7 @@ public class VerifyFragment extends Fragment {
     }
 
     private void handleResendOnPre() {
-        getActivity().findViewById(R.id.verify_resendCode).setVisibility(View.INVISIBLE);
+        getActivity().findViewById(R.id.verify_note).setVisibility(View.INVISIBLE);
         getActivity().findViewById(R.id.verify_resend).setEnabled(false);
         getActivity().findViewById(R.id.verify_button).setEnabled(false);
     }
@@ -195,8 +196,9 @@ public class VerifyFragment extends Fragment {
             if (success) {
                 VerifyFragmentDirections.ActionNavVerifyToNavHomeActivity homeActivity =
                         VerifyFragmentDirections.actionNavVerifyToNavHomeActivity(mCredentials);
-                homeActivity.setMemberId(resultsJSON.getInt(getString(R.string.keys_json_register_memberId)));
+                homeActivity.setMemberId(resultsJSON.getInt(getString(R.string.keys_json_verify_memberId)));
                 homeActivity.setJwt(mJwt);
+                homeActivity.setProfileuri(resultsJSON.getString(getString(R.string.keys_json_verify_profileuri)));
                 saveCredentials(mCredentials);
                 Navigation.findNavController(getView()).navigate(homeActivity);
                 //Remove this Activity from the back stack. Do not allow back navigation to login
@@ -205,8 +207,18 @@ public class VerifyFragment extends Fragment {
             } else {
                 //Login was unsuccessful. Don’t switch fragments and
                 // inform the user
-                ((EditText) getView().findViewById(R.id.verify_textView))
-                        .setError("Verification Unsuccessful");
+                if (tries >= 2) {
+                    tries = 0;
+                    ((EditText) getView().findViewById(R.id.verify_textView))
+                            .setError("Verification unsuccessful. You have made 3 attempts.\n" +
+                                        "A new code has been sent to your email");
+                    resendVerify();
+                } else {
+                    tries++;
+                    ((EditText) getView().findViewById(R.id.verify_textView))
+                            .setError("Verification Unsuccessful\n"+ tries + " out of 3 tries");
+                }
+
             }
             getActivity().findViewById(R.id.layout_verify_wait)
                     .setVisibility(View.GONE);

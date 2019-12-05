@@ -1,7 +1,6 @@
 package edu.uw.tcss450.tcss450_group4.ui;
 
-import android.content.Context;
-import android.net.Uri;
+
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -12,24 +11,22 @@ import android.view.ViewGroup;
 
 import edu.uw.tcss450.tcss450_group4.R;
 
+/**
+ * A simple {@link Fragment} subclass.
+ */
+public class BlankFragment extends Fragment {
 
-public class TestFragment extends Fragment {
 
-    public TestFragment() {
+    public BlankFragment() {
         // Required empty public constructor
     }
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_test, container, false);
+        return inflater.inflate(R.layout.fragment_blank, container, false);
     }
-
 
 }

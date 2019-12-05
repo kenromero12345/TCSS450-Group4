@@ -24,6 +24,7 @@
     <string name="ep_blog">blog</string>
     <string name="ep_setlists">setlists</string>
     <string name="ep_recent">recent</string>
+    <string name="ep_rows">rows</string>
 
     <string name="ep_connection">connections</string>
     <string name="ep_getall">getAll</string>
@@ -35,6 +36,12 @@
     <string name="ep_getPerson">getPerson</string>
     <string name="ep_remove">remove</string>
     <string name="ep_chats">chats</string>
-
+    <string name="ep_create_chat">createChat</string>
+    <string name="ep_chats_get_newest_chatId">getNewestChatId</string>
+    <string name="ep_add_friend_to_new_chat">addFriendToChat</string>
+    <string name="ep_pushy">pushy</string>
+    <string name="ep_messaging_base">messaging</string>
+    <string name="ep_messaging_send">send</string>
+    <string name="ep_messaging_getAll">getAll</string>
+    <string name="ep_delete">delete</string>
 </resources>
-

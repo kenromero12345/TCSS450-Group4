@@ -21,45 +21,48 @@
 <!--        app:layout_constraintStart_toStartOf="parent"-->
 <!--        app:layout_constraintTop_toTopOf="parent" />-->
 
-    <EditText
-        android:id="@+id/connectionUserNameText"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraintLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="100dp"
-        android:layout_marginTop="43dp"
-        android:layout_marginEnd="100dp"
-        android:layout_marginBottom="26dp"
-        android:ems="10"
-        android:hint="Enter Username"
-        android:inputType="textPersonName"
-        app:layout_constraintBottom_toTopOf="@+id/connectionSearchButton"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0" />
-
-    <Button
-        android:id="@+id/connectionSearchButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="100dp"
+        android:layout_marginStart="10dp"
         android:layout_marginTop="30dp"
-        android:layout_marginEnd="100dp"
-        android:text="@android:string/search_go"
+        android:layout_marginEnd="10dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/connectionUserNameText" />
+        app:layout_constraintTop_toTopOf="parent">
+
+        <Button
+            android:id="@+id/connectionSearchButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:text="@android:string/search_go"
+            app:layout_constraintBottom_toBottomOf="@+id/connectionUserNameText"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/connectionUserNameText"
+            app:layout_constraintTop_toTopOf="@+id/connectionUserNameText" />
+
+        <EditText
+            android:id="@+id/connectionUserNameText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="Enter Username"
+            android:inputType="textPersonName"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <LinearLayout
         android:id="@+id/addLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="10dp"
         android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/connectionSearchButton">
+        app:layout_constraintTop_toBottomOf="@+id/constraintLayout">
 
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"

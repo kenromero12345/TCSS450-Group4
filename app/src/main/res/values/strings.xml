@@ -4,7 +4,7 @@
     // register fragment ids
     <string name="register_firstName">First Name</string>
     <string name="register_lastName">Last Name</string>
-    <string name="register_nickname">Nickname</string>
+    <string name="register_username">Username</string>
     <string name="register_email">Email</string>
     <string name="register_password">Password</string>
     <string name="register_retypePassword">Retype Password</string>
@@ -52,6 +52,10 @@
     <string name="formatString">{0}{1}</string>
     <string name="title_activity_maps">Map</string>
     <string name="button_create_chat">+</string>
+    <string name="button_create_new_chat">Create</string>
     <string name="keys_json_timezone">timezone</string>
-
+    <string name="edit_chat_name">Chat Name</string>
+    <string name="chat_object">chat</string>
+    <string name="display_no_chat">There is no chat right now, make one!</string>
+    <string name="display_no_connection">You do not have any connection right now, please make one in Connections!</string>
 </resources>

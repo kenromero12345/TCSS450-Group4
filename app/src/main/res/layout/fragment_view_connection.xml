@@ -2,126 +2,148 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/frameLayout3"
+    android:id="@+id/layout_viewConnection"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/linearLayout3"
-        android:layout_width="396dp"
-        android:layout_height="293dp"
-        android:layout_marginStart="9dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginEnd="9dp"
+        android:id="@+id/layout_viewConnection_background"
+        android:layout_width="0dp"
+        android:layout_height="150dp"
         android:layout_marginBottom="20dp"
-        android:background="@color/uwGold"
+        android:background="@drawable/profile_background"
         app:layout_constraintBottom_toTopOf="@+id/fullChat"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0">
 
-
-        <ImageView
-            android:id="@+id/profileImageFull"
-            android:layout_width="59dp"
-            android:layout_height="45dp"
-            android:layout_marginStart="169dp"
-            android:layout_marginTop="69dp"
-            android:layout_marginEnd="169dp"
-            android:layout_marginBottom="179dp"
-            android:visibility="visible"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.0" />
-
-        <TextView
-            android:id="@+id/fullName"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="125dp"
-            android:layout_marginTop="128dp"
-            android:textSize="25sp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/fullUsername"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="125dp"
-            android:layout_marginBottom="68dp"
-            android:textSize="25sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <TextView
+        android:id="@+id/fullName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:textSize="25sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/layout_viewConnection_profile" />
+
+    <TextView
+        android:id="@+id/fullUsername"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:textSize="25sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/fullName" />
 
 
     <Button
         android:id="@+id/fullChat"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="36dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="30dp"
         android:backgroundTint="@color/uwGold"
         android:text="@string/menu_chat"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout3" />
+        app:layout_constraintEnd_toStartOf="@+id/layout_viewConnection_dummy"
+        app:layout_constraintTop_toBottomOf="@+id/fullUsername" />
 
     <Button
         android:id="@+id/fullDelete"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="36dp"
-        android:layout_marginEnd="8dp"
+        android:layout_marginStart="30dp"
+        android:layout_marginTop="20dp"
         android:backgroundTint="?attr/colorError"
         android:text="Delete"
+        app:layout_constraintStart_toEndOf="@+id/layout_viewConnection_dummy"
+        app:layout_constraintTop_toBottomOf="@+id/fullUsername" />
+
+    <ImageView
+        android:id="@+id/addImage"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="20dp"
+        android:visibility="visible"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout3" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/fullUsername"
+        app:srcCompat="@drawable/ic_location_searching_black_24dp" />
 
     <ImageView
         android:id="@+id/verifiedImage"
-        android:layout_width="59dp"
-        android:layout_height="45dp"
-        android:layout_marginStart="80dp"
-        android:layout_marginTop="36dp"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="20dp"
         android:visibility="visible"
-        app:layout_constraintStart_toEndOf="@+id/fullChat"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout3" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/fullUsername" />
 
     <ImageView
         android:id="@+id/sentImage"
-        android:layout_width="59dp"
-        android:layout_height="45dp"
-        android:layout_marginStart="80dp"
-        android:layout_marginTop="36dp"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="20dp"
         android:visibility="visible"
-        app:layout_constraintStart_toEndOf="@+id/fullChat"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout3"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/fullUsername"
         app:srcCompat="@drawable/ic_cloud_upload_black_24dp" />
 
     <ImageView
         android:id="@+id/confirmImage"
-        android:layout_width="59dp"
-        android:layout_height="45dp"
-        android:layout_marginStart="80dp"
-        android:layout_marginTop="36dp"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="20dp"
         android:visibility="visible"
-        app:layout_constraintStart_toEndOf="@+id/fullChat"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout3"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/fullUsername"
         app:srcCompat="@drawable/ic_cloud_download_black_24dp" />
 
-    <ImageView
-        android:id="@+id/addImage"
-        android:layout_width="59dp"
-        android:layout_height="45dp"
-        android:layout_marginStart="80dp"
-        android:layout_marginTop="36dp"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/layout_viewConnection_dummy"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="20dp"
         android:visibility="visible"
-        app:layout_constraintStart_toEndOf="@+id/fullChat"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout3"
-        app:srcCompat="@drawable/ic_location_searching_black_24dp" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/fullUsername">
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/layout_viewConnection_profile"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="95dp"
+        android:animationCache="false"
+        android:background="@drawable/round_profile"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/layout_viewConnection_background">
+
+        <ImageView
+            android:id="@+id/profileImageFull"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="5dp"
+            android:layout_marginBottom="5dp"
+            android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

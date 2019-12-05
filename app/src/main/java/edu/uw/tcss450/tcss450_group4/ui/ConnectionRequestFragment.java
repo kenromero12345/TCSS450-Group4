@@ -84,7 +84,7 @@ public class ConnectionRequestFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        RecyclerView rv = view.findViewById(R.id.requestlist);
+        RecyclerView rv = view.findViewById(R.id.connectionRequestList);
         if (rv instanceof RecyclerView ) {
             Context context = rv.getContext();
             RecyclerView recyclerView = (RecyclerView) rv;

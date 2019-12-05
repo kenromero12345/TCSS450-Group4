@@ -6,12 +6,19 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Base64;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -20,6 +27,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
@@ -34,6 +42,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+
+import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -41,18 +51,21 @@ import java.util.Date;
 import java.util.Objects;
 
 import edu.uw.tcss450.tcss450_group4.model.Chat;
+import edu.uw.tcss450.tcss450_group4.model.ChatMessageNotification;
 import edu.uw.tcss450.tcss450_group4.model.ConnectionItem;
+import edu.uw.tcss450.tcss450_group4.model.Credentials;
 import edu.uw.tcss450.tcss450_group4.model.LocationViewModel;
 import edu.uw.tcss450.tcss450_group4.model.Weather;
 import edu.uw.tcss450.tcss450_group4.ui.ChatFragmentDirections;
 import edu.uw.tcss450.tcss450_group4.ui.ConnectionGUIFragmentDirections;
 import edu.uw.tcss450.tcss450_group4.ui.WeatherFragmentDirections;
 import edu.uw.tcss450.tcss450_group4.utils.SendPostAsyncTask;
+import me.pushy.sdk.Pushy;
 
 import static edu.uw.tcss450.tcss450_group4.R.id;
 import static edu.uw.tcss450.tcss450_group4.R.id.action_logout;
+import static edu.uw.tcss450.tcss450_group4.R.id.activity_loading;
 import static edu.uw.tcss450.tcss450_group4.R.id.drawer_layout;
-import static edu.uw.tcss450.tcss450_group4.R.id.nav_chat;
 import static edu.uw.tcss450.tcss450_group4.R.id.nav_chat_list;
 import static edu.uw.tcss450.tcss450_group4.R.id.nav_connectionGUI;
 import static edu.uw.tcss450.tcss450_group4.R.id.nav_home;
@@ -62,21 +75,16 @@ import static edu.uw.tcss450.tcss450_group4.R.id.nav_view;
 import static edu.uw.tcss450.tcss450_group4.R.id.nav_weather;
 import static edu.uw.tcss450.tcss450_group4.R.layout;
 import static edu.uw.tcss450.tcss450_group4.R.navigation;
-import static edu.uw.tcss450.tcss450_group4.R.string.ep_10d;
-import static edu.uw.tcss450.tcss450_group4.R.string.ep_24h;
 import static edu.uw.tcss450.tcss450_group4.R.string.ep_base_url;
 import static edu.uw.tcss450.tcss450_group4.R.string.ep_chats;
 import static edu.uw.tcss450.tcss450_group4.R.string.ep_connection;
 import static edu.uw.tcss450.tcss450_group4.R.string.ep_getall;
-import static edu.uw.tcss450.tcss450_group4.R.string.ep_latLon;
-import static edu.uw.tcss450.tcss450_group4.R.string.ep_weather;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_connection_connections;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_connection_firstname;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_connection_image;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_connection_lastname;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_connection_memberid;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_connection_username;
-import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_coord;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_country;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_data;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_deg;
@@ -84,9 +92,9 @@ import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_description;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_hourly;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_humidity;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_icon;
-import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_lat;
+import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_latitude;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_login_success;
-import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_lon;
+import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_longitude;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_main;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_name;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_pressure;
@@ -103,23 +111,45 @@ import static edu.uw.tcss450.tcss450_group4.R.string.keys_prefs_email;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_prefs_password;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_shared_prefs;
 import static edu.uw.tcss450.tcss450_group4.model.WeatherHelper.alert;
+import static edu.uw.tcss450.tcss450_group4.model.WeatherHelper.getJsonObjectLatLon;
 import static edu.uw.tcss450.tcss450_group4.model.WeatherHelper.getNewIcon;
+import static edu.uw.tcss450.tcss450_group4.model.WeatherHelper.getUriWeather10dLatLon;
+import static edu.uw.tcss450.tcss450_group4.model.WeatherHelper.getUriWeather24hLatLon;
+import static edu.uw.tcss450.tcss450_group4.model.WeatherHelper.getUriWeatherCurrentLatLon;
+import static edu.uw.tcss450.tcss450_group4.model.WeatherHelper.sendPostAsyncTaskHelper;
 
 public class HomeActivity extends AppCompatActivity {
     // A constant int for the permissions request code. Must be a 16 bit number
     private static final int MY_PERMISSIONS_LOCATIONS = 8414;
-    private static final String TAG = "WEATHER_FRAG";
+//    private static final String TAG = "WEATHER_FRAG";
+    // the jw token for authorization
     private String mJwToken;
+    private Credentials mCredentials;
+    // the email given
     private String mEmail;
     private int mMemberId;
+    private String mProfileURI;
+    private ChatMessageNotification mChatMessage;
     private AppBarConfiguration mAppBarConfiguration;
+    // the weather given
     private Weather mWeather;
+    //the weather 10d given
     private Weather[] mWeathers10d;
+    //the weather 24h given
     private Weather[] mWeathers24h;
     //Use a FusedLocationProviderClient to request the location
     private FusedLocationProviderClient mFusedLocationClient;
+    // the location of the mobile device
     private Location mLocations;
+    // the location request support
     private LocationRequest mLocationRequest;
+//    private double mLat;
+//    private double mLon;
+    // flag if weather is updated
+    private boolean mUpdateWeather;
+
+    private ConnectionItem[] mConnectionItems;
+//    private boolean mGoToConnection;
 //    private View mView;
     /**
      * The desired interval for location updates. Inexact. Updates may be more or less frequent.
@@ -148,7 +178,7 @@ public class HomeActivity extends AppCompatActivity {
         }
     }
 
-        /**
+    /**
      * Removes location updates from the FusedLocationApi.
      */
     private void stopLocationUpdates() {
@@ -158,34 +188,82 @@ public class HomeActivity extends AppCompatActivity {
         mFusedLocationClient.removeLocationUpdates(mLocationCallback);
     }
 
+    /**
+     * what happens on onResume lifecycle
+     */
     @Override
     protected void onResume() {
         super.onResume();
         startLocationUpdates();
+//        if (getIntent().getExtras().containsKey("type")) {
+//            String msg = getIntent().getExtras().getString("message");
+//            String sender = getIntent().getExtras().getString("sender");
+//            String memberId = getIntent().getExtras().getString("memberId");
+//            mChatMessage =
+//                    new ChatMessageNotification.Builder(sender, msg, memberId).build();
+//            gotoChat();
+//        }
     }
 
+    /**
+     * what happens on onpause lifecycle
+     */
     @Override
     protected void onPause() {
         super.onPause();
         stopLocationUpdates();
     }
 
+
     // Will use this call back to decide what to do when a location change is detected
     private LocationCallback mLocationCallback;
 
+    /**
+     * what happens on oncreate lifecycle
+     * @param savedInstanceState the saved instance state
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Pushy.listen(this);
+//        gotoConnection();
         checkLocationPermission();
         setContentView(layout.activity_home);
+
+//        if (getIntent().getExtras() != null) {
+//                Navigation.findNavController(this, R.id.nav_host_fragment)
+//                        .setGraph(R.navigation.mobile_navigation, getIntent().getExtras());
+//        }
+
         Toolbar toolbar = findViewById(id.toolbar);
         setSupportActionBar(toolbar);
         DrawerLayout drawer = findViewById(drawer_layout);
+        drawer.addDrawerListener(new DrawerLayout.DrawerListener() {
+            @Override
+            public void onDrawerSlide(@NonNull View drawerView, float slideOffset) {
+
+            }
+
+            @Override
+            public void onDrawerOpened(@NonNull View drawerView) {
+//                findViewById(activity_loading).setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onDrawerClosed(@NonNull View drawerView) {
+                findViewById(activity_loading).setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onDrawerStateChanged(int newState) {
+
+            }
+        });
         NavigationView navigationView = findViewById(nav_view);
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         mAppBarConfiguration = new AppBarConfiguration.Builder(
-                nav_home, nav_connectionGUI, nav_chat, nav_weather, nav_logout)
+                nav_home, nav_connectionGUI, nav_chat_list, nav_weather, nav_logout)
                 .setDrawerLayout(drawer)
                 .build();
         NavController navController = Navigation.findNavController(this
@@ -193,26 +271,37 @@ public class HomeActivity extends AppCompatActivity {
         NavigationUI.setupActionBarWithNavController(this, navController
                 , mAppBarConfiguration);
 
-
-//        getIntent().getExtras().putString("Weather", "");
-//        Bundle bundle = new Bundle();
-//        bundle.putParcelable("weather", weather);
-////        getIntent().getExtras().putString("String", "String text");
-
-//        navController.setGraph(navigation.mobile_navigation, getIntent().getExtras());
-//        Bundle bundle = new Bundle();
-//        bundle.putDouble(getString(keys_json_lat), location.getLatitude());
-//        bundle.putDouble(getString(keys_json_lon), location.getLongitude());
         navController.setGraph(navigation.mobile_navigation, getIntent().getExtras());
         NavigationUI.setupWithNavController(navigationView, navController);
-        if (getIntent().getExtras() != null) {
+//        if (getIntent().getExtras() != null) {
             HomeActivityArgs args = HomeActivityArgs.fromBundle(getIntent().getExtras());
             mJwToken = args.getJwt();
+            mCredentials = args.getCredentials();
             mEmail = args.getCredentials().getEmail();
             mMemberId = args.getMemberId();
-        }
-        navigationView.setNavigationItemSelectedListener(this::onNavigationSelected);
+            mProfileURI = args.getProfileuri();
+            mChatMessage = args.getChatMessage();
 
+            Log.e("CHAT HOME", mChatMessage + "");
+
+            View header = navigationView.getHeaderView(0);
+            ImageView profileHome = header.findViewById(id.imageView_home_profile);
+            TextView nameHome = header.findViewById(id.textView_home_name);
+            nameHome.setText(mCredentials.getFirstName() + " " + mCredentials.getLastName());
+            TextView usernameHome = header.findViewById(id.textView_home_username);
+            usernameHome.setText(mCredentials.getUsername());
+            String cleanImage = mProfileURI.replace("data:image/png;base64,", "").replace("data:image/jpeg;base64,","");
+            byte[] decodedString = Base64.decode(cleanImage, Base64.DEFAULT);
+            Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+            profileHome.setImageBitmap(decodedByte);
+//            Log.e("BITMAP", decodedByte.toString());
+//        }
+//        navigationView.setNavigationItemSelectedListener(this::onNavigationSelected);
+//        if (args.getChatMessage() != null) {
+//            gotoChat();
+//        } else {
+            navigationView.setNavigationItemSelectedListener(this::onNavigationSelected);
+//        }
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         mLocationCallback = new LocationCallback() {
             @Override
@@ -232,6 +321,18 @@ public class HomeActivity extends AppCompatActivity {
         };
         createLocationRequest();
     }
+
+
+    //    @Override
+//    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+//                             Bundle savedInstanceState) {
+//        View view = inflater.inflate(R.layout.fragment_connectiongui_list, container, false);
+//
+//        // Set the adapter
+//
+//        return view;
+//    }
+
 
     /**
      * Create and configure a Location Request used when retrieving location updates
@@ -267,14 +368,17 @@ public class HomeActivity extends AppCompatActivity {
                 || super.onSupportNavigateUp();
     }
 
+    /**
+     * what happens when a menuitem is clicked
+     * @param menuItem the given menuitem to be clicked
+     * @return true if a menuitem is selected
+     */
     private boolean onNavigationSelected(final MenuItem menuItem) {
         NavController navController =
                 Navigation.findNavController(this, nav_host_fragment);
         /* Use the ViewModel's factory method to gain access to the ViewModel */
         LocationViewModel model =
                 LocationViewModel.getFactory().create(LocationViewModel.class);
-        // add an observer to the LiveData found in the ViewModel
-        Location loc = model.getCurrentLocation().getValue();
         switch (menuItem.getItemId()) {
             case nav_home:
 //                if(Objects.requireNonNull(navController.getCurrentDestination()).getId() != nav_weather) {
@@ -282,48 +386,101 @@ public class HomeActivity extends AppCompatActivity {
                         MobileNavigationDirections.ActionGlobalNavHome directions
                                 = WeatherFragmentDirections.actionGlobalNavHome();
                         directions.setWeather(mWeather);
+                        directions.setMemberId(mMemberId);
+                        directions.setJwt(mJwToken);
+                        directions.setChatMessage(mChatMessage);
+//                        directions.setConnectionItems(mConnectionItems);
                         navController.navigate(directions);
                     }
+//                    mGoToConnection = false;
 //                }
 
                 break;
             case nav_chat_list:
-                JSONObject memberId = new JSONObject();
-                try {
-                    memberId.put("memberId", mMemberId);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                Uri uriChats = new Uri.Builder()
-                        .scheme("https")
-                        .appendPath(getString(ep_base_url))
-                        .appendPath(getString(ep_chats))
-                        .build();
-                new SendPostAsyncTask.Builder(uriChats.toString(), memberId)
-                        .onPostExecute(this::handleChatsGetOnPostExecute)
-                        .addHeaderField("authorization", mJwToken)
-                        .onCancelled(this::handleErrorsInTask)
-                        .build().execute();
+                gotoChat();
                 break;
             case nav_connectionGUI:
+//                mGoToConnection = true;
                 gotoConnection();
                 break;
             case nav_weather:
-                if (Objects.requireNonNull(navController.getCurrentDestination()).getId() != nav_weather) {
-                    MobileNavigationDirections.ActionGlobalNavWeather directions2
-                            = WeatherFragmentDirections.actionGlobalNavWeather(mJwToken, mEmail,
-                            mWeather, mWeathers10d, mWeathers24h);
+//                if (Objects.requireNonNull(navController.getCurrentDestination()).getId() != nav_weather) {
+//                    MobileNavigationDirections.ActionGlobalNavWeather directions2
+//                            = WeatherFragmentDirections.actionGlobalNavWeather(mJwToken, mEmail,
+//                            mWeather, mWeathers10d, mWeathers24h);
+//
+//                    navController.navigate(directions2);
+//                }
+                clickWeather(navController);
 
-                    navController.navigate(directions2);
-                }
                 break;
             case nav_logout:
                 logout();
+                break;
 
         }
         //Close the drawer
         ((DrawerLayout) findViewById(drawer_layout)).closeDrawers();
         return true;
+    }
+
+    private void gotoChat() {
+        JSONObject memberId = new JSONObject();
+        try {
+            memberId.put("memberId", mMemberId);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        Uri uriChats = new Uri.Builder()
+                .scheme("https")
+                .appendPath(getString(ep_base_url))
+                .appendPath(getString(ep_chats))
+                .build();
+        new SendPostAsyncTask.Builder(uriChats.toString(), memberId)
+                .onPostExecute(this::handleChatsGetOnPostExecute)
+                .addHeaderField("authorization", mJwToken)
+                .onCancelled(this::handleErrorsInTask)
+                .build().execute();
+    }
+
+    /**
+     * when the weather is clicked
+     * @param navController the navigation helper
+     */
+    private void clickWeather(NavController navController) {
+//        ((DrawerLayout) findViewById(drawer_layout)).openDrawer();
+//        Runnable r = () -> {
+//        ((DrawerLayout) findViewById(drawer_layout)).closeDrawers();
+//        };
+//        final Thread t = new Thread(r);
+//        t.start();
+//        if(Objects.requireNonNull(navController.getCurrentDestination()).getId() == nav_home){
+//            findViewById(layout_weather_wait).setVisibility(View.VISIBLE);
+//        }
+        findViewById(activity_loading).setVisibility(View.VISIBLE);
+
+        mUpdateWeather = true;
+        Log.d("weather", "update");
+        Location location = Objects.requireNonNull(LocationViewModel.getFactory()
+                .create(LocationViewModel.class)
+                .getCurrentLocation().getValue());
+        BigDecimal newLat = new BigDecimal(location.getLatitude())
+                .setScale(4, BigDecimal.ROUND_DOWN);
+        BigDecimal oldLat = new BigDecimal(mLocations.getLatitude())
+                .setScale(4, BigDecimal.ROUND_DOWN);
+        BigDecimal newLon = new BigDecimal(location.getLongitude())
+                .setScale(4, BigDecimal.ROUND_DOWN);
+        BigDecimal oldLon = new BigDecimal(mLocations.getLongitude())
+                .setScale(4, BigDecimal.ROUND_DOWN);
+        if (newLat.equals(oldLat) && newLon.equals(oldLon)) {
+            MobileNavigationDirections.ActionGlobalNavWeather directions
+                    = WeatherFragmentDirections.actionGlobalNavWeather
+                    (mJwToken, mEmail,mWeather, mWeathers10d, mWeathers24h, mWeather
+                            , mWeathers10d.clone(), mWeathers24h.clone());
+            navController.navigate(directions);
+        } else {
+            getWeather(location);
+        }
     }
 
     private void handleErrorsInTask(final String result) {
@@ -358,6 +515,12 @@ public class HomeActivity extends AppCompatActivity {
                 }
                 MobileNavigationDirections.ActionGlobalNavChatList directions
                         = ChatFragmentDirections.actionGlobalNavChatList(chats);
+                directions.setMemberId(mMemberId);
+                Log.e("MESSAGE", "homeactivity " + mMemberId);
+                directions.setJwt(mJwToken);
+//                directions.setChats(chats);
+//                directions.setEmail(mEmail);
+                directions.setChatMessage(mChatMessage);
                 Navigation.findNavController(this, nav_host_fragment)
                         .navigate(directions);
 //                }    else {
@@ -372,6 +535,9 @@ public class HomeActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * check if user has already allowed the use of Locations
+     */
     private void checkLocationPermission() {
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
@@ -446,10 +612,11 @@ public class HomeActivity extends AppCompatActivity {
             if (hasConnection){
                 JSONArray connectionJArray = root.getJSONArray(
                         getString(keys_json_connection_connections));
-                ConnectionItem[] conItem = new ConnectionItem[connectionJArray.length()];
+//                ConnectionItem[] conItem = new ConnectionItem[connectionJArray.length()];
+                mConnectionItems = new ConnectionItem[connectionJArray.length()];
                 for(int i = 0; i < connectionJArray.length(); i++){
                     JSONObject jsonConnection = connectionJArray.getJSONObject(i);
-                    conItem[i] = new ConnectionItem(
+                    mConnectionItems[i] = new ConnectionItem(
                             jsonConnection.getInt(
                                     getString(keys_json_connection_memberid))
                             , jsonConnection.getString(
@@ -461,16 +628,25 @@ public class HomeActivity extends AppCompatActivity {
                             jsonConnection.getString(
                                     getString(keys_json_connection_image)));
                 }
-                Log.e("profile pic", conItem[0].getContactImage());
+//                Log.e("profile pic", conItem[0].getContactImage());
 
 
-                MobileNavigationDirections.ActionGlobalNavConnectionGUI directions
-                        = ConnectionGUIFragmentDirections.actionGlobalNavConnectionGUI(conItem);
-                directions.setJwt(mJwToken);
-                directions.setMemberid(mMemberId);
 
-                Navigation.findNavController(this, nav_host_fragment)
-                        .navigate(directions);
+//                if (mGoToConnection) {
+                    MobileNavigationDirections.ActionGlobalNavConnectionGUI directions
+                            = ConnectionGUIFragmentDirections.actionGlobalNavConnectionGUI(mConnectionItems);
+                    directions.setJwt(mJwToken);
+                    directions.setMemberid(mMemberId);
+                    Navigation.findNavController(this, nav_host_fragment)
+                            .navigate(directions);
+//                }
+//                else {
+//                    MobileNavigationDirections.ActionGlobalNavHome directions
+//                            = MobileNavigationDirections.actionGlobalNavHome();
+//                    directions.set
+//                    directions.setConnectionItems(mConnectionItems);
+//                }
+
 
             }
 
@@ -480,60 +656,66 @@ public class HomeActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * getting the weather
+     * @param location the location given
+     */
     private void getWeather(Location location) {
-        double longitude = location.getLongitude();
-        double latitude = location.getLatitude();
+//        mLon = location.getLongitude();
+//        mLat = location.getLatitude();
 
-        Uri uri = new Uri.Builder()
-                .scheme("https")
-                .appendPath(getString(ep_base_url))
-                .appendPath(getString(ep_weather))
-                .appendPath(getString(ep_latLon))
-                .build();
+        Uri uri = getUriWeatherCurrentLatLon(this);
 
-        Uri uri2 = new Uri.Builder()
-                .scheme("https")
-                .appendPath(getString(ep_base_url))
-                .appendPath(getString(ep_weather))
-                .appendPath(getString(ep_latLon))
-                .appendPath(getString(ep_10d))
-                .build();
+        Uri uri2 = getUriWeather10dLatLon(this);
 
-        Uri uri3 = new Uri.Builder()
-                .scheme("https")
-                .appendPath(getString(ep_base_url))
-                .appendPath(getString(ep_weather))
-                .appendPath(getString(ep_latLon))
-                .appendPath(getString(ep_24h))
-                .build();
+        Uri uri3 = getUriWeather24hLatLon(this);
 
-        JSONObject msg = new JSONObject();
-        try {
-            msg.put("lon", longitude);
-            msg.put("lat", latitude);
-        } catch (JSONException e) {
-            Log.wtf("LONG/LAT", "Error creating JSON: " + e.getMessage());
-        }
+//        Uri uri = new Uri.Builder()
+//                .scheme("https")
+//                .appendPath(getString(ep_base_url))
+//                .appendPath(getString(ep_weather))
+//                .appendPath(getString(ep_latLon))
+//                .build();
+//
+//        Uri uri2 = new Uri.Builder()
+//                .scheme("https")
+//                .appendPath(getString(ep_base_url))
+//                .appendPath(getString(ep_weather))
+//                .appendPath(getString(ep_latLon))
+//                .appendPath(getString(ep_10d))
+//                .build();
+//
+//        Uri uri3 = new Uri.Builder()
+//                .scheme("https")
+//                .appendPath(getString(ep_base_url))
+//                .appendPath(getString(ep_weather))
+//                .appendPath(getString(ep_latLon))
+//                .appendPath(getString(ep_24h))
+//                .build();
 
-        new SendPostAsyncTask.Builder(uri.toString(), msg)
-                .onPostExecute(this::handleWeatherGetOnPostExecute)
-                .onCancelled(error -> Log.e(TAG, error))
-                .addHeaderField("authorization", mJwToken) //add the JWT as a header
-                .build().execute();
+        JSONObject msg = getJsonObjectLatLon(location.getLatitude(), location.getLongitude());
 
-        new SendPostAsyncTask.Builder(uri2.toString(), msg)
-                .onPostExecute(this::handleWeather10dGetOnPostExecute)
-                .onCancelled(error -> Log.e(TAG, error))
-                .addHeaderField("authorization", mJwToken) //add the JWT as a header
-                .build().execute();
-
-        new SendPostAsyncTask.Builder(uri3.toString(), msg)
-                .onPostExecute(this::handleWeather24hGetOnPostExecute)
-                .onCancelled(error -> Log.e(TAG, error))
-                .addHeaderField("authorization", mJwToken) //add the JWT as a header
-                .build().execute();
+//        JSONObject msg = new JSONObject();
+//        try {
+//            msg.put("lon", mLon);
+//            msg.put("lat", mLat);
+//        } catch (JSONException e) {
+//            Log.wtf("LONG/LAT", "Error creating JSON: " + e.getMessage());
+//        }
+//        new SendPostAsyncTask.Builder(uri.toString(), msg)
+//                .onProgressUpdate(((DrawerLayout) findViewById(drawer_layout)).closeDrawers())
+//                .onCancelled(error -> Log.e("W", error))
+//                .addHeaderField("authorization", mJwToken) //add the JWT as a header
+//                .build().execute();
+        sendPostAsyncTaskHelper(uri, msg, this::handleWeatherGetOnPostExecute, mJwToken);
+        sendPostAsyncTaskHelper(uri2, msg, this::handleWeather10dGetOnPostExecute, mJwToken);
+        sendPostAsyncTaskHelper(uri3, msg, this::handleWeather24hGetOnPostExecute, mJwToken);
     }
 
+    /**
+     * handling the 24h weather result given
+     * @param result the given result
+     */
     private void handleWeather24hGetOnPostExecute(final String result) {
         try {
             boolean hasHourly = false;
@@ -549,12 +731,24 @@ public class HomeActivity extends AppCompatActivity {
                         getString(keys_json_hourly));
                 JSONArray dataJArray = hourlyJObject.getJSONArray(
                         getString(keys_json_data));
-
+                mWeather.setLat(root.getDouble(getString(keys_json_latitude)));
+                mWeather.setLon(root.getDouble(getString(keys_json_longitude)));
+                mWeather.setTimezoneID(root.getString(getString(keys_json_timezone)));
                 Weather[] weathers = new Weather[24];
+
                 for (int i = 0; i < 24; i++) {
                     JSONObject dataJSONObject = dataJArray.getJSONObject(i);
-                    Weather weather = new Weather(getNewIcon(dataJSONObject.getString(
-                            getString(keys_json_icon)))
+//                    String icon = "";
+//                    if (dataJSONObject.getString(getString(keys_json_icon)).equals("fog")) {
+//                        if () {
+//                            icon = getNewIcon("fogd");
+//                        } else {
+//                            icon = getNewIcon("fogn");
+//                        }
+//                    } else {
+//                        icon = getNewIcon(dataJSONObject.getString(getString(keys_json_icon)));
+//                    }
+                    Weather weather = new Weather(getNewIcon(dataJSONObject.getString(getString(keys_json_icon)))//icon
                             , ((dataJSONObject.getDouble(getString(keys_json_temperature))
                             - 32) * 5 / 9) + 273.15);
                     weathers[i] = weather;
@@ -562,6 +756,26 @@ public class HomeActivity extends AppCompatActivity {
                 }
 
                 mWeathers24h = weathers;
+
+                if (mUpdateWeather) {
+                    MobileNavigationDirections.ActionGlobalNavWeather directions2
+                            = WeatherFragmentDirections.actionGlobalNavWeather
+                            (mJwToken, mEmail,mWeather, mWeathers10d, mWeathers24h, mWeather
+                                    , mWeathers10d.clone(), mWeathers24h.clone());
+
+                    NavController navController =
+                            Navigation.findNavController(this, nav_host_fragment);
+                    navController.navigate(directions2);
+                } else {
+                    MobileNavigationDirections.ActionGlobalNavHome directions
+                            = WeatherFragmentDirections.actionGlobalNavHome();
+                    directions.setWeather(mWeather);
+                    directions.setMemberId(mMemberId);
+                    directions.setJwt(mJwToken);
+//                    Log.e("DEBUG", mConnectionItems.toString());
+//                    directions.setConnectionItems(mConnectionItems);
+                    Navigation.findNavController(this, nav_host_fragment).navigate(directions);
+                }
 
             } else {
                 alert("Can't load current 24-h forecast", this);
@@ -572,6 +786,10 @@ public class HomeActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * handling the 10d weather result given
+     * @param result the given result
+     */
     private void handleWeather10dGetOnPostExecute(final String result) {
         try {
             boolean hasData = false;
@@ -585,7 +803,8 @@ public class HomeActivity extends AppCompatActivity {
             if (hasData) {
                 JSONArray dataJArray = root.getJSONArray(
                         getString(keys_json_data));
-
+//                mWeather.setLat(root.getDouble(getString(keys_json_lat)));
+//                mWeather.setLon(root.getDouble(getString(keys_json_lon)));
                 Weather[] weathers = new Weather[10];
                 for (int i = 0; i < 10; i++) {
                     JSONObject dataJSONObject = dataJArray.getJSONObject(i);
@@ -595,7 +814,6 @@ public class HomeActivity extends AppCompatActivity {
                             , dataJSONObject.getDouble(getString(keys_json_temp)) +  273.15 );
                     weathers[i] = weather;
                 }
-
                 mWeathers10d = weathers;
             } else {
                 alert("Can't load current 10-day forecast", this);
@@ -606,12 +824,15 @@ public class HomeActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * handling the weather result given
+     * @param result the given result
+     */
     private void handleWeatherGetOnPostExecute(final String result) {
         try {
             boolean hasWeather = false;
             boolean hasMain = false;
             boolean hasWind = false;
-            boolean hasCoord = false;
             boolean hasSys = false;
             boolean hasName = false;
             boolean hasTimezone = false;
@@ -631,11 +852,6 @@ public class HomeActivity extends AppCompatActivity {
             } else {
                 Log.e("ERROR!", "No wind");
             }
-            if (root.has(getString(keys_json_coord))) {
-                hasCoord = true;
-            } else {
-                Log.e("ERROR!", "No coord");
-            }
             if (root.has(getString(keys_json_name))) {
                 hasName = true;
             } else {
@@ -652,7 +868,7 @@ public class HomeActivity extends AppCompatActivity {
                 Log.e("ERROR!", "No timezone");
             }
 
-            if (hasCoord && hasMain && hasName && hasSys && hasWeather && hasWind && hasTimezone) {
+            if (hasMain && hasName && hasSys && hasWeather && hasWind && hasTimezone) {
                 JSONArray weatherJArray = root.getJSONArray(
                         getString(keys_json_weather));
                 JSONObject mainJObject = root.getJSONObject(
@@ -661,8 +877,6 @@ public class HomeActivity extends AppCompatActivity {
                         getString(keys_json_name));
                 JSONObject sysJObject = root.getJSONObject(
                         getString(keys_json_sys));
-                JSONObject coordJObject = root.getJSONObject(
-                        getString(keys_json_coord));
                 JSONObject windJObject = root.getJSONObject(
                         getString(keys_json_wind));
                 long timezoneJObject = root.getLong(getString(keys_json_timezone));
@@ -673,10 +887,6 @@ public class HomeActivity extends AppCompatActivity {
                                 keys_json_description))
                         , getNewIcon(weatherJObject.getString(getString(
                                 keys_json_icon)))
-                        , coordJObject.getDouble(getString(
-                                keys_json_lon))
-                        , coordJObject.getDouble(getString(
-                                keys_json_lat))
                         , mainJObject.getDouble(getString(
                                 keys_json_temp))
                         ,  mainJObject.getInt(getString(
@@ -706,10 +916,6 @@ public class HomeActivity extends AppCompatActivity {
                     weather.setMain(weatherJObject.getString(getString(keys_json_main)));
                 }
                 mWeather = weather;
-                MobileNavigationDirections.ActionGlobalNavHome directions
-                        = WeatherFragmentDirections.actionGlobalNavHome();
-                directions.setWeather(mWeather);
-                Navigation.findNavController(this,  nav_host_fragment).navigate(directions);
             } else {
                 alert("Can't load current weather", this);
             }
@@ -721,25 +927,32 @@ public class HomeActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * logout from the app
+     */
     private void logout() {
-        SharedPreferences prefs =
-                getSharedPreferences(
-                        getString(keys_shared_prefs),
-                        Context.MODE_PRIVATE);
-        //remove the saved credentials from StoredPrefs
-        prefs.edit().remove(getString(keys_prefs_password)).apply();
-        prefs.edit().remove(getString(keys_prefs_email)).apply();
-
-        //close the app
-        //finishAndRemoveTask();
-
-        //or close this activity and bring back the Login
-        Intent i = new Intent(this, MainActivity.class);
-        startActivity(i);
-        //End this Activity and remove it from the Activity back stack.
-        finish();
+        new DeleteTokenAsyncTask(this).execute();
+//        SharedPreferences prefs =
+//                getSharedPreferences(
+//                        getString(keys_shared_prefs),
+//                        Context.MODE_PRIVATE);
+//        //remove the saved credentials from StoredPrefs
+//        prefs.edit().remove(getString(keys_prefs_password)).apply();
+//        prefs.edit().remove(getString(keys_prefs_email)).apply();
+//
+//        //close the app
+//        //finishAndRemoveTask();
+//
+//        //or close this activity and bring back the Login
+//        Intent i = new Intent(this, MainActivity.class);
+//        startActivity(i);
+//        //End this Activity and remove it from the Activity back stack.
+//        finish();
     }
 
+    /**
+     * logout and quit the app
+     */
     private void logoutAndFinish() {
         SharedPreferences prefs =
                 getSharedPreferences(
@@ -753,6 +966,11 @@ public class HomeActivity extends AppCompatActivity {
         finishAndRemoveTask();
     }
 
+    /**
+     * the option's item clicked
+     * @param item from the option
+     * @return a bolean if a optiona item is clicked
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -769,6 +987,13 @@ public class HomeActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+
+    /**
+     * requests a permission
+     * @param requestCode the code for requests
+     * @param permissions the permision string lisr
+     * @param grantResults the grant results
+     */
     @Override
     public void onRequestPermissionsResult(int requestCode,
                                            @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -814,6 +1039,9 @@ public class HomeActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * requests a location
+     */
     private void requestLocation() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED
@@ -832,10 +1060,71 @@ public class HomeActivity extends AppCompatActivity {
                             if (mLocations == null || mLocations.getLatitude() == location.getLatitude()
                                     && mLocations.getLongitude() == location.getLongitude()) {
                                 mLocations = location;
+//                                gotoConnection();
                                 getWeather(location);
                             }
                         }
                     });
         }
     }
+
+    // Deleting the Pushy device token must be done asynchronously. Good thing
+    // we have something that allows us to do that.
+    class DeleteTokenAsyncTask extends AsyncTask<Void, Void, Void> {
+
+        private HomeActivity mHomeActivity;
+
+        public DeleteTokenAsyncTask(HomeActivity homeActivity) {
+            mHomeActivity = homeActivity;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+
+            //since we are already doing stuff in the background, go ahead
+            //and remove the credentials from shared prefs here.
+            SharedPreferences prefs =
+                    getSharedPreferences(
+                            getString(R.string.keys_shared_prefs),
+                            Context.MODE_PRIVATE);
+
+            prefs.edit().remove(getString(R.string.keys_prefs_password)).apply();
+            prefs.edit().remove(getString(R.string.keys_prefs_email)).apply();
+
+            //unregister the device from the Pushy servers
+            Pushy.unregister(HomeActivity.this);
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            //close the app
+//            finishAndRemoveTask();
+
+            //or close this activity and bring back the Login
+            Intent i = new Intent(mHomeActivity, MainActivity.class);
+            startActivity(i);
+            //Ends this Activity and removes it from the Activity back stack.
+            finish();
+        }
+    }
+//    @Override
+//    public void onBackPressed() {
+//        Fragment f = getSupportFragmentManager().findFragmentById(id.nav_view_chat);
+//        if (f instanceof ViewChatFragment) {
+//
+//            Navigation.findNavController().navigate(id.action_nav_view_chat_to_nav_chat_list);
+//        } else {
+//            super.onBackPressed();
+//        }
+//
+//    }
+
 }
