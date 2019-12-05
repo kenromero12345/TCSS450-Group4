@@ -1,5 +1,6 @@
 package edu.uw.tcss450.tcss450_group4.ui;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,7 +9,9 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import edu.uw.tcss450.tcss450_group4.R;
 import edu.uw.tcss450.tcss450_group4.model.Location;
@@ -27,19 +30,34 @@ public class MyLocationsRecyclerViewAdapter extends RecyclerView.Adapter<MyLocat
      */
     private final OnListFragmentInteractionListener mListener;
 
+    private Map<Integer, View> mViews;
+
+    private boolean mFlag;
+
     /**
      * contructor for the recycler view of locations adapter
      * @param items the given locations
      * @param listener the given listener
      */
-    public MyLocationsRecyclerViewAdapter(List<Location> items, OnListFragmentInteractionListener listener) {
+    public MyLocationsRecyclerViewAdapter(List<Location> items, OnListFragmentInteractionListener listener, boolean flag) {
         mValues = items;
         mListener = listener;
+        mViews = new HashMap<>();
+        mFlag = flag;
     }
 
-    public void toggleColor() {
-
-    }
+//    public void deleteColor(boolean tFlag) {
+//        int color;
+//        if (!tFlag) {
+//            color = Color.parseColor("#85754d");
+//        } else {
+//            color = Color.parseColor("#4b2e83");
+//        }
+//
+//        for (Map.Entry<Integer,View> entry : mViews.entrySet()) {
+//            entry.getValue().setBackgroundColor(color);
+//        }
+//    }
 
     /**
      *
@@ -50,8 +68,14 @@ public class MyLocationsRecyclerViewAdapter extends RecyclerView.Adapter<MyLocat
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.fragment_locations, parent, false);
+        View view;
+        if (!mFlag) {
+            view = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.fragment_locations_delete, parent, false);
+        } else {
+            view = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.fragment_locations, parent, false);
+        }
         return new ViewHolder(view);
     }
 
@@ -64,20 +88,20 @@ public class MyLocationsRecyclerViewAdapter extends RecyclerView.Adapter<MyLocat
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mItem = mValues.get(position);
         holder.mNicknameView.setText(mValues.get(position).getName());
+        mViews.put(position, holder.mView.findViewById(R.id.location_card));
 //        holder.mLatLonView.setText(mValues.get(position).getLat() + " | " + mValues.get(position).getLon());
 //        if (mValues.get(position).getZip() != -1) {
 //            holder.mZipView.setText(mValues.get(position).getZip());
 //        }
-        holder.mView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (null != mListener) {
-                    // Notify the active callbacks interface (the activity, if the
-                    // fragment is attached to one) that an item has been selected.
-                    mListener.onListFragmentInteraction(holder.mItem);
-                }
+        holder.mView.setOnClickListener(v -> {
+            if (null != mListener) {
+                // Notify the active callbacks interface (the activity, if the
+                // fragment is attached to one) that an item has been selected.
+                mListener.onListFragmentInteraction(holder.mItem);
             }
         });
+
+        Log.d("positionR", "" + position);
     }
 
     /**

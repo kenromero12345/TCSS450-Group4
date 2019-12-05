@@ -2,6 +2,7 @@ package edu.uw.tcss450.tcss450_group4.ui;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
@@ -13,6 +14,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -148,7 +150,7 @@ public class LocationsFragment extends Fragment {
                 mRv.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
             mRv.setAdapter(new MyLocationsRecyclerViewAdapter(mLocations
-                    , this::getClick));
+                    , this::getClick, true));
         }
         mDeleteFlag = false;
         FloatingActionButton fab = view.findViewById(R.id.locations_closeButton);
@@ -164,18 +166,40 @@ public class LocationsFragment extends Fragment {
 
     private void toggleDelete(FloatingActionButton tFab, View tView) {
         if (mDeleteFlag) {
-//            mRv.getAdapter().toggleColor();
-//            tFab.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(
-//                    Objects.requireNonNull(getContext()), R.color.uwMetallicGold)));
+//            RecyclerView root = getView().findViewById(R.id.location_list);
+//            Log.d("childnum", root.getChildCount() + "");
+//            for (int i = 0; i < root.getChildCount(); i++) {
+//                View v = root.getChildAt(i).findViewById(R.id.location_card);
+//                v.setBackgroundColor(ContextCompat.getColor(
+//                            Objects.requireNonNull(getContext()), R.color.uwPurple));
+//
+//            }
+//            mRv.post(new Runnable() {
+//                @Override
+//                public void run() {
+//                    mRv.scrollToPosition(mRv.getAdapter().getItemCount() - 1);
+//                    // Here adapter.getItemCount()== child count
+//                }
+//            });
+            mRv.setAdapter(new MyLocationsRecyclerViewAdapter(mLocations
+                    , this::getClick, true));
+            tFab.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(
+                    Objects.requireNonNull(getContext()), R.color.uwMetallicGold)));
             tView.setBackgroundColor(Color.WHITE);
             mDeleteFlag = false;
             setToast("DELETE MODE: OFF");
         } else {
-//            mRv.getAdapter().toggleColor();
-//            mRv.setAdapter(new MyLocationsRecyclerViewAdapter(mLocations
-//                    , this::getClick));
-//            tFab.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(
-//                    Objects.requireNonNull(getContext()), R.color.uwPurple)));
+            mRv.setAdapter(new MyLocationsRecyclerViewAdapter(mLocations
+                    , this::getClick, false));
+//            RecyclerView root = getView().findViewById(R.id.location_list);
+//            for (int i = 0; i < root.getChildCount(); i++) {
+//                View v = root.getChildAt(i).findViewById(R.id.location_card);
+//                v.setBackgroundColor(ContextCompat.getColor(
+//                            Objects.requireNonNull(getContext()), R.color.uwMetallicGold));
+//
+//            }
+            tFab.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(
+                    Objects.requireNonNull(getContext()), R.color.uwPurple)));
             tView.setBackgroundColor(Color.BLACK);
             mDeleteFlag = true;
             setToast("DELETE MODE: ON");
@@ -263,7 +287,7 @@ public class LocationsFragment extends Fragment {
     private void deleteLocation(final Location tLocation) {
         mLocations.remove(tLocation);
         mRv.setAdapter(new MyLocationsRecyclerViewAdapter(mLocations
-                , this::getClick));
+                , this::getClick, mDeleteFlag));
         setToast("Deleted " + tLocation.getName());
 
         JSONObject msg = new JSONObject();
