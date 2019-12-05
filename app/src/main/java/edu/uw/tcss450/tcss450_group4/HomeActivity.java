@@ -52,6 +52,7 @@ import java.util.Objects;
 import edu.uw.tcss450.tcss450_group4.model.Chat;
 import edu.uw.tcss450.tcss450_group4.model.ChatMessageNotification;
 import edu.uw.tcss450.tcss450_group4.model.ConnectionItem;
+import edu.uw.tcss450.tcss450_group4.model.Credentials;
 import edu.uw.tcss450.tcss450_group4.model.LocationViewModel;
 import edu.uw.tcss450.tcss450_group4.model.Weather;
 import edu.uw.tcss450.tcss450_group4.ui.ChatFragmentDirections;
@@ -121,6 +122,7 @@ public class HomeActivity extends AppCompatActivity {
     private static final int MY_PERMISSIONS_LOCATIONS = 8414;
 //    private static final String TAG = "WEATHER_FRAG";
     private String mJwToken;
+    private Credentials mCredentials;
     private String mEmail;
     private int mMemberId;
     private String mProfileURI;
@@ -180,6 +182,14 @@ public class HomeActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         startLocationUpdates();
+//        if (getIntent().getExtras().containsKey("type")) {
+//            String msg = getIntent().getExtras().getString("message");
+//            String sender = getIntent().getExtras().getString("sender");
+//            String memberId = getIntent().getExtras().getString("memberId");
+//            mChatMessage =
+//                    new ChatMessageNotification.Builder(sender, msg, memberId).build();
+//            gotoChat();
+//        }
     }
 
     @Override
@@ -194,10 +204,18 @@ public class HomeActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Pushy.listen(this);
 
 //        gotoConnection();
         checkLocationPermission();
         setContentView(layout.activity_home);
+        if (getIntent().getExtras() != null) {
+            if (getIntent().getExtras().containsKey("type")) {
+                Navigation.findNavController(this, R.id.nav_host_fragment)
+                        .setGraph(R.navigation.login_navigation, getIntent().getExtras());
+            }
+        }
+
         Toolbar toolbar = findViewById(id.toolbar);
         setSupportActionBar(toolbar);
         DrawerLayout drawer = findViewById(drawer_layout);
@@ -239,6 +257,7 @@ public class HomeActivity extends AppCompatActivity {
 //        if (getIntent().getExtras() != null) {
             HomeActivityArgs args = HomeActivityArgs.fromBundle(getIntent().getExtras());
             mJwToken = args.getJwt();
+            mCredentials = args.getCredentials();
             mEmail = args.getCredentials().getEmail();
             mMemberId = args.getMemberId();
             mProfileURI = args.getProfileuri();
@@ -246,9 +265,9 @@ public class HomeActivity extends AppCompatActivity {
             View header = navigationView.getHeaderView(0);
             ImageView profileHome = header.findViewById(id.imageView_home_profile);
             TextView nameHome = header.findViewById(id.textView_home_name);
-            nameHome.setText("");
+            nameHome.setText(mCredentials.getFirstName() + " " + mCredentials.getLastName());
             TextView usernameHome = header.findViewById(id.textView_home_username);
-            usernameHome.setText();
+            usernameHome.setText(mCredentials.getUsername());
             String cleanImage = mProfileURI.replace("data:image/png;base64,", "").replace("data:image/jpeg;base64,","");
             byte[] decodedString = Base64.decode(cleanImage, Base64.DEFAULT);
             Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);

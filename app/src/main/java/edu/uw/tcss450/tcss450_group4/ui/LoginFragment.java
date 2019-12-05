@@ -406,6 +406,14 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
                 Log.d("Member ID",String.valueOf(resultsJSON.getInt(getString(R.string.keys_json_login_memberId))));
 
                 if (success) {
+                    mCrendentials = new Credentials.Builder(
+                            mCrendentials.getEmail(),
+                            mCrendentials.getPassword())
+                            .addFirstName(resultsJSON.getString(getString(R.string.keys_json_login_firstname)))
+                            .addLastName(resultsJSON.getString(getString(R.string.keys_json_login_lastname)))
+                            .addUsername(resultsJSON.getString(getString(R.string.keys_json_login_username)))
+                            .build();
+
                     saveCredentials(mCrendentials);
 
                     //Login was successful. Switch to the SuccessFragment.

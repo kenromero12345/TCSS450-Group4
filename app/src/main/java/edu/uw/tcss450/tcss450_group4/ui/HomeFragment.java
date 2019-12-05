@@ -58,6 +58,7 @@ import static edu.uw.tcss450.tcss450_group4.R.color.uwPurple;
 import static edu.uw.tcss450.tcss450_group4.R.id.button_home_requests;
 import static edu.uw.tcss450.tcss450_group4.R.id.layout_chat_wait;
 import static edu.uw.tcss450.tcss450_group4.R.id.layout_connection_wait;
+import static edu.uw.tcss450.tcss450_group4.R.id.layout_homeActivity_wait;
 import static edu.uw.tcss450.tcss450_group4.R.id.layout_weather_wait;
 import static edu.uw.tcss450.tcss450_group4.R.id.nav_host_fragment;
 import static edu.uw.tcss450.tcss450_group4.R.id.requestCount;
@@ -149,16 +150,21 @@ public class HomeFragment extends Fragment {
 //        if (mChatMessage != null) {
 //            gotoChat();
 //        } else {
-            view.findViewById(layout_weather_wait).setVisibility(View.VISIBLE);
-            view.findViewById(weather_temperatureSwitch).setVisibility(View.INVISIBLE);
-            initialization(view);
-
-
-            view.findViewById(layout_connection_wait).setVisibility(View.VISIBLE);
-            view.findViewById(layout_chat_wait).setVisibility(View.VISIBLE);
-            getConnectionRequestCount();
-            getRecentChats();
+//            view.findViewById(layout_weather_wait).setVisibility(View.VISIBLE);
+//            view.findViewById(weather_temperatureSwitch).setVisibility(View.INVISIBLE);
+//            initialization(view);
+//
+//
+//            view.findViewById(layout_connection_wait).setVisibility(View.VISIBLE);
+//            view.findViewById(layout_chat_wait).setVisibility(View.VISIBLE);
+//            getConnectionRequestCount();
+//            getRecentChats();
 //        }
+        if (mChatMessage != null) {
+//            getView().findViewById(layout_chat_wait).setVisibility(View.VISIBLE);
+            getActivity().findViewById(layout_homeActivity_wait).setVisibility(View.VISIBLE);
+            gotoChat();
+        }
 
 
 

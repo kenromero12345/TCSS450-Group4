@@ -41,6 +41,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import static edu.uw.tcss450.tcss450_group4.R.id.layout_homeActivity_wait;
 import static edu.uw.tcss450.tcss450_group4.R.id.nav_host_fragment;
 import static edu.uw.tcss450.tcss450_group4.R.string.ep_base_url;
 import static edu.uw.tcss450.tcss450_group4.R.string.ep_connection;
@@ -260,15 +261,19 @@ public class ChatFragment extends Fragment implements View.OnClickListener {
                 directions.setJwt(mJwToken);
                 directions.setChatId(mChatId);
                 Navigation.findNavController(getActivity(), nav_host_fragment).navigate(directions);
+
             } else {
                 Log.e("ERROR!", "No response");
             }
+            getActivity().findViewById(layout_homeActivity_wait).setVisibility(View.GONE);
         } catch (JSONException e) {
             e.printStackTrace();
+            getActivity().findViewById(layout_homeActivity_wait).setVisibility(View.GONE);
             Log.e("ERROR!", e.getMessage());
         }
     }
     private void handleErrorsInTask(final String result) {
+        getActivity().findViewById(layout_homeActivity_wait).setVisibility(View.GONE);
         Log.e("ASYNC_TASK_ERROR", result);
     }
     private String convertTimeStampToDate(String timestamp) {
