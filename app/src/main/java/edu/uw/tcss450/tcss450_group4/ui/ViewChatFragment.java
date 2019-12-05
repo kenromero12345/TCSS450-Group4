@@ -56,6 +56,7 @@ public class ViewChatFragment extends Fragment {
     private MyMessageListRecyclerViewAdapter mMessageAdapter;
     private List<Message> mMessageList;
     private int mMessageCount;
+    private RecyclerView mRecyclerView;
     public ViewChatFragment() {
         // Required empty public constructor
     }
@@ -128,17 +129,16 @@ public class ViewChatFragment extends Fragment {
         RecyclerView rv = view.findViewById(R.id.viewChatList);
         if (rv instanceof RecyclerView) {
             Context context = rv.getContext();
-            RecyclerView recyclerView = rv;
+            mRecyclerView = rv;
             if (mColumnCount <= 1) {
                 LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
                 linearLayoutManager.setStackFromEnd(true);
                 recyclerView.setLayoutManager(linearLayoutManager);
             } else {
-                recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
+                mRecyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
             mMessageAdapter = new MyMessageListRecyclerViewAdapter(mMessageList, null);
-            recyclerView.setAdapter(mMessageAdapter);
-
+            mRecyclerView.setAdapter(mMessageAdapter);
 
         }
 //
@@ -172,6 +172,12 @@ public class ViewChatFragment extends Fragment {
                 InputMethodManager.HIDE_NOT_ALWAYS);
         mMessageAdapter.notifyDataSetChanged();
 
+        mRecyclerView.post(new Runnable() {
+            @Override
+            public void run() {
+                mRecyclerView.smoothScrollToPosition(mMessageAdapter.getItemCount() - 1);
+            }
+        });
     }
 
     private void endOfSendMsgTask(final String result) {
