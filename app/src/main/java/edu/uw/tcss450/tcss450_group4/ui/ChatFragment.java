@@ -135,7 +135,6 @@ public class ChatFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onResume() {
         super.onResume();
-        reloadChatRecyclerView();
     }
 
     @Override
@@ -296,67 +295,6 @@ public class ChatFragment extends Fragment implements View.OnClickListener {
         return mMemberId;
     }
 
-    private void reloadChatRecyclerView() {
-        JSONObject memberId = new JSONObject();
-        try {
-            memberId.put("memberId", mMemberId);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        Uri uriChats = new Uri.Builder()
-                .scheme("https")
-                .appendPath(getString(ep_base_url))
-                .appendPath(getString(ep_chats))
-                .build();
-        new SendPostAsyncTask.Builder(uriChats.toString(), memberId)
-                .onPostExecute(this::handleChatsGetOnPostExecute)
-                .addHeaderField("authorization", mJwToken)
-                .onCancelled(this::handleErrorsInTask)
-                .build().execute();
-    }
-
-    private void handleChatsGetOnPostExecute(final String result) {
-        try {
-            JSONObject root = new JSONObject(result);
-            if (root.has("success") && root.getBoolean(getString(keys_json_login_success))) {
-                JSONArray data = root.getJSONArray("names");
-//                if (response.has(getString(R.string.keys_json_chats_data))) {
-//                    JSONArray data = response.getJSONArray(getString(R.string.keys_json_chats_data));
-                Chat[] chats = new Chat[data.length()];
-                for (int i = 0; i < data.length(); i++) {
-                    JSONObject jsonChatLists = data.getJSONObject(i);
-
-                    String recentMessage = jsonChatLists.getString("message");
-                    if (recentMessage != "null") {
-                        chats[i] = (new Chat.Builder(jsonChatLists.getString("chatid"),
-                                jsonChatLists.getString("name"),
-                                jsonChatLists.getString("message"),
-                                convertTimeStampToDate(jsonChatLists.getString("timestamp")))
-                                .build());
-                    } else {
-                        chats[i] = (new Chat.Builder(jsonChatLists.getString("chatid"),
-                                jsonChatLists.getString("name"),
-                                "",
-                                "")
-                                .build());
-                    }
-                }
-//                mChats = new ArrayList<>(Arrays.asList(chats));
-//                MobileNavigationDirections.ActionGlobalNavChatList directions
-//                        = ChatFragmentDirections.actionGlobalNavChatList(chats);
-//                directions.setMemberId(mMemberId);
-//                directions.setJwt(mJwToken);
-//                directions.setEmail(mEmail);
-//                Navigation.findNavController(getActivity(), nav_host_fragment)
-//                        .navigate(directions);
-            } else {
-                Log.e("ERROR!", "No response");
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-            Log.e("ERROR!", e.getMessage());
-        }
-    }
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
