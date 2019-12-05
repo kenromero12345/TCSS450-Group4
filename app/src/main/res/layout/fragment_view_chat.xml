@@ -13,11 +13,13 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/list"
         android:name="edu.uw.tcss450.tcss450_group4.ui.ViewChatFragment"
-        app:layoutManager="LinearLayoutManager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_above="@+id/layout_chatbox"
+        android:layout_marginBottom="0dp"
+        app:layoutManager="LinearLayoutManager"
         tools:context=".ui.ViewChatFragment"
-        tools:listitem="@layout/their_message"/>
+        tools:listitem="@layout/their_message" />
 
     <!-- A horizontal line between the chatbox and RecyclerView -->
     <View
