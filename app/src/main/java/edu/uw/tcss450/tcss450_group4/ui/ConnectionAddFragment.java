@@ -194,7 +194,7 @@ public class ConnectionAddFragment extends Fragment implements View.OnClickListe
 
 
 
-        Button button_search = (Button) view.findViewById(R.id.connectionSearchButton);
+        ImageView button_search = (ImageView) view.findViewById(R.id.connectionSearchButton);
         button_search.setOnClickListener(this::onClick);
 
     }

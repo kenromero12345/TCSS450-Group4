@@ -32,16 +32,30 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <Button
+
+        <!--        <Button-->
+<!--            android:id="@+id/connectionSearchButton"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginStart="10dp"-->
+<!--            android:text="@android:string/search_go"-->
+<!--            app:layout_constraintBottom_toBottomOf="@+id/connectionUserNameText"-->
+<!--            app:layout_constraintEnd_toEndOf="parent"-->
+<!--            app:layout_constraintStart_toEndOf="@+id/connectionUserNameText"-->
+<!--            app:layout_constraintTop_toTopOf="@+id/connectionUserNameText" />-->
+
+        <ImageView
             android:id="@+id/connectionSearchButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-            android:text="@android:string/search_go"
-            app:layout_constraintBottom_toBottomOf="@+id/connectionUserNameText"
+            android:layout_width="35dp"
+            android:layout_height="50dp"
+            android:layout_marginStart="16dp"
+            android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/connectionUserNameText"
-            app:layout_constraintTop_toTopOf="@+id/connectionUserNameText" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0"
+            app:srcCompat="@drawable/connection_search_image" />
 
         <EditText
             android:id="@+id/connectionUserNameText"

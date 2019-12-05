@@ -70,11 +70,10 @@ public class ViewConnectionFragment extends Fragment implements View.OnClickList
             ((TextView) getActivity().findViewById(R.id.fullUsername))
                     .setText("Username : " + mConnectionItem.getContactUserName());
         }
-        Log.e("Verified", String.valueOf(mVerified));
         if(mVerified == 1) {
             //set verified check
             ImageView img = getActivity().findViewById(R.id.verifiedImage);
-            img.setImageResource(R.drawable.charles_angels_icon);
+//            img.setImageResource(R.drawable.charles_angels_icon);
 
             //confirm and set image not visible
             (getActivity().findViewById(R.id.sentImage))
@@ -96,6 +95,8 @@ public class ViewConnectionFragment extends Fragment implements View.OnClickList
                     .setVisibility(View.GONE);
             (getActivity().findViewById(R.id.addImage))
                     .setVisibility(View.GONE);
+            (getActivity().findViewById(R.id.fullDelete))
+                    .setVisibility(View.GONE);
         }
         else if(mVerified == 3){
             //set received image
@@ -109,6 +110,8 @@ public class ViewConnectionFragment extends Fragment implements View.OnClickList
                     .setVisibility(View.GONE);
             (getActivity().findViewById(R.id.addImage))
                     .setVisibility(View.GONE);
+            (getActivity().findViewById(R.id.fullDelete))
+                    .setVisibility(View.GONE);
         }
         else {
 //            (getActivity().findViewById(R.id.addImage))
@@ -118,6 +121,8 @@ public class ViewConnectionFragment extends Fragment implements View.OnClickList
             (getActivity().findViewById(R.id.sentImage))
                     .setVisibility(View.GONE);
             (getActivity().findViewById(R.id.confirmImage))
+                    .setVisibility(View.GONE);
+            (getActivity().findViewById(R.id.fullDelete))
                     .setVisibility(View.GONE);
         }
     }
@@ -160,7 +165,7 @@ public class ViewConnectionFragment extends Fragment implements View.OnClickList
                 break;
 
             case R.id.fullDelete:
-                removeConnection();
+                showDeleteDialogButtonClicked();
                 break;
                 
             case R.id.sentImage:
@@ -288,6 +293,29 @@ public class ViewConnectionFragment extends Fragment implements View.OnClickList
         AlertDialog dialog = builder.create();
         dialog.show();
 
+    }
+
+    public void showDeleteDialogButtonClicked() {
+
+        // setup the alert builder
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setTitle("Remove Connection");
+        builder.setMessage("Are you sure you want to remove this connection?");
+
+        // add the buttons
+        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+                // do something like...
+                removeConnection();
+            }
+        });
+        builder.setNegativeButton("Cancel", null);
+
+        // create and show the alert dialog
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
 
     public void showSentDialogButtonClicked() {
