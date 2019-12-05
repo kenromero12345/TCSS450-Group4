@@ -133,7 +133,7 @@ public class ViewChatFragment extends Fragment {
             if (mColumnCount <= 1) {
                 LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
                 linearLayoutManager.setStackFromEnd(true);
-                recyclerView.setLayoutManager(linearLayoutManager);
+                mRecyclerView.setLayoutManager(linearLayoutManager);
             } else {
                 mRecyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
