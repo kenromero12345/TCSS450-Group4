@@ -111,7 +111,7 @@ public class CreateChatFragment extends Fragment implements View.OnClickListener
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        RecyclerView rv = view.findViewById(R.id.list);
+        RecyclerView rv = view.findViewById(R.id.createChatList);
         // Set the adapter
         if (rv instanceof RecyclerView) {
             Context context = rv.getContext();

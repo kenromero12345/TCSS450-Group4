@@ -137,7 +137,7 @@ public class LocationsFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        RecyclerView rv = view.findViewById(R.id.location_list);
+        RecyclerView rv = view.findViewById(R.id.locationsList);
         // Set the adapter
         if (rv instanceof RecyclerView) {
             Context context = rv.getContext();

@@ -125,7 +125,7 @@ public class ViewChatFragment extends Fragment {
         mMessageOutputTextView = view.findViewById(R.id.txt_theirMessage);
         mMessageInputEditText = view.findViewById(R.id.editText_chat_message_input);
         mMessageCount = mMessageList.size() - 1;
-        RecyclerView rv = view.findViewById(R.id.list);
+        RecyclerView rv = view.findViewById(R.id.viewChatList);
         if (rv instanceof RecyclerView) {
             Context context = rv.getContext();
             RecyclerView recyclerView = rv;
@@ -186,7 +186,7 @@ public class ViewChatFragment extends Fragment {
                 mMessageCount++;
 
                 Log.e("SCROLL", mMessageCount + "");
-                ((RecyclerView) getView().findViewById(R.id.list)).smoothScrollToPosition(mMessageCount);
+                ((RecyclerView) getView().findViewById(R.id.viewChatList)).smoothScrollToPosition(mMessageCount);
             }
         } catch (JSONException e) {
             e.printStackTrace();

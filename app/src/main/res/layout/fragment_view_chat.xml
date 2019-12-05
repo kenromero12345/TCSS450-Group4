@@ -12,7 +12,7 @@
     <!-- A horizontal line between the chatbox and RecyclerView -->
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/list"
+        android:id="@+id/viewChatList"
         android:name="edu.uw.tcss450.tcss450_group4.ui.ViewChatFragment"
         android:layout_width="0dp"
         android:layout_height="0dp"
