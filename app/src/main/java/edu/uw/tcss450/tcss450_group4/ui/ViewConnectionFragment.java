@@ -69,6 +69,7 @@ public class ViewConnectionFragment extends Fragment implements View.OnClickList
                     .setText("Name: " + mConnectionItem.getFirstName() + " " + mConnectionItem.getLastName());
             ((TextView) getActivity().findViewById(R.id.fullUsername))
                     .setText("Username : " + mConnectionItem.getContactUserName());
+            Log.e("verified", String.valueOf(mVerified));
         }
         if(mVerified == 1) {
             //set verified check
@@ -100,7 +101,7 @@ public class ViewConnectionFragment extends Fragment implements View.OnClickList
         }
         else if(mVerified == 3){
             //set received image
-            ImageView img = getActivity().findViewById(R.id.confirmImage);
+//            ImageView img = getActivity().findViewById(R.id.confirmImage);
 //            img.setImageResource(R.drawable.charles_angels_icon);
 
             //set verified and sent not visible.
@@ -118,9 +119,9 @@ public class ViewConnectionFragment extends Fragment implements View.OnClickList
 //                    .setVisibility(View.VISIBLE);
             (getActivity().findViewById(R.id.verifiedImage))
                     .setVisibility(View.GONE);
-            (getActivity().findViewById(R.id.sentImage))
+            (getActivity().findViewById(R.id.sentViewImage))
                     .setVisibility(View.GONE);
-            (getActivity().findViewById(R.id.confirmImage))
+            (getActivity().findViewById(R.id.confirmViewImage))
                     .setVisibility(View.GONE);
             (getActivity().findViewById(R.id.fullDelete))
                     .setVisibility(View.GONE);
