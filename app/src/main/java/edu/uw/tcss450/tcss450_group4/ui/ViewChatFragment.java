@@ -57,6 +57,7 @@ public class ViewChatFragment extends Fragment {
     private RecyclerView mMessageRecycler;
     private MyMessageListRecyclerViewAdapter mMessageAdapter;
     private List<Message> mMessageList;
+    private int mMessageCount;
     public ViewChatFragment() {
         // Required empty public constructor
     }
@@ -119,22 +120,26 @@ public class ViewChatFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        setRetainInstance(true);
         mUsesrnameOutputTextView = view.findViewById(R.id.txt_friendUserName);
         mMessageOutputTextView = view.findViewById(R.id.txt_theirMessage);
         mMessageInputEditText = view.findViewById(R.id.editText_chat_message_input);
+        mMessageCount = mMessageList.size() - 1;
         RecyclerView rv = view.findViewById(R.id.list);
         if (rv instanceof RecyclerView) {
             Context context = rv.getContext();
             RecyclerView recyclerView = rv;
             if (mColumnCount <= 1) {
-                recyclerView.setLayoutManager(new LinearLayoutManager(context));
+                LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
+                linearLayoutManager.setStackFromEnd(true);
+                recyclerView.setLayoutManager(linearLayoutManager);
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
             mMessageAdapter = new MyMessageListRecyclerViewAdapter(mMessageList, null);
             recyclerView.setAdapter(mMessageAdapter);
-
         }
+//
         view.findViewById(R.id.button_chat_send).setOnClickListener(this::handleSendClick);
 
     }
@@ -178,6 +183,10 @@ public class ViewChatFragment extends Fragment {
 
                 //its up to you to decide if you want to send the message to the output here
                 //or wait for the message to come back from the web service.
+                mMessageCount++;
+
+                Log.e("SCROLL", mMessageCount + "");
+                ((RecyclerView) getView().findViewById(R.id.list)).smoothScrollToPosition(mMessageCount);
             }
         } catch (JSONException e) {
             e.printStackTrace();

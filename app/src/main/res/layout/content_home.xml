@@ -27,7 +27,7 @@
         android:background="@color/colorPrimary"
         android:visibility="gone">
         <ProgressBar
-            android:id="@+id/progressBar"
+            android:id="@+id/chatHomeProgressBar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             style="?android:attr/progressBarStyle"

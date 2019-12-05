@@ -109,13 +109,14 @@ public class ChatFragment extends Fragment implements View.OnClickListener {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_chat_list, container, false);
-
+        setRetainInstance(true);
         return view;
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        setRetainInstance(true);
         RecyclerView rv = view.findViewById(R.id.list);
         Button btnCreateChat = view.findViewById(R.id.button_create_chat);
         // Set the adapter

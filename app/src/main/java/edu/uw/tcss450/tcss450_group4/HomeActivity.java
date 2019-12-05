@@ -27,6 +27,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
@@ -205,16 +206,14 @@ public class HomeActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Pushy.listen(this);
-
 //        gotoConnection();
         checkLocationPermission();
         setContentView(layout.activity_home);
-        if (getIntent().getExtras() != null) {
-            if (getIntent().getExtras().containsKey("type")) {
-                Navigation.findNavController(this, R.id.nav_host_fragment)
-                        .setGraph(R.navigation.login_navigation, getIntent().getExtras());
-            }
-        }
+
+//        if (getIntent().getExtras() != null) {
+//                Navigation.findNavController(this, R.id.nav_host_fragment)
+//                        .setGraph(R.navigation.mobile_navigation, getIntent().getExtras());
+//        }
 
         Toolbar toolbar = findViewById(id.toolbar);
         setSupportActionBar(toolbar);
@@ -262,6 +261,9 @@ public class HomeActivity extends AppCompatActivity {
             mMemberId = args.getMemberId();
             mProfileURI = args.getProfileuri();
             mChatMessage = args.getChatMessage();
+
+            Log.e("CHAT HOME", mChatMessage + "");
+
             View header = navigationView.getHeaderView(0);
             ImageView profileHome = header.findViewById(id.imageView_home_profile);
             TextView nameHome = header.findViewById(id.textView_home_name);

@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/relativeLayout3"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -9,37 +10,40 @@
         android:id="@+id/button_create_new_chat"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
         android:layout_marginTop="5dp"
-        android:layout_marginEnd="0dp"
-        android:text="@string/button_create_new_chat" />
+        android:layout_marginEnd="10dp"
+        android:text="@string/button_create_new_chat"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
+        android:id="@+id/editText_chatName"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="10dp"
+        android:ems="10"
+        android:hint="@string/edit_chat_name"
+        android:inputType="textPersonName"
+        app:layout_constraintBottom_toBottomOf="@+id/button_create_new_chat"
+        app:layout_constraintEnd_toStartOf="@+id/button_create_new_chat"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/list"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
 
-        android:layout_below="@+id/button_create_new_chat"
-        android:layout_alignParentStart="true"
         android:layout_marginStart="10dp"
-        android:layout_marginTop="15dp"
-        app:layoutManager="LinearLayoutManager"
-        tools:listitem="@layout/fragment_createchat" />
-
-    <EditText
-        android:id="@+id/editText_chatName"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="10dp"
         android:layout_marginEnd="10dp"
-        android:layout_toStartOf="@+id/button_create_new_chat"
-        android:ems="10"
-        android:hint="@string/edit_chat_name"
-        android:inputType="textPersonName" />
+        app:layoutManager="LinearLayoutManager"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/button_create_new_chat"
+        tools:listitem="@layout/fragment_createchat" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/layout_createChat_wait"
@@ -47,6 +51,8 @@
         android:layout_height="match_parent"
         android:background="@color/uwGold"
         android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
@@ -60,4 +66,4 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
-</RelativeLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

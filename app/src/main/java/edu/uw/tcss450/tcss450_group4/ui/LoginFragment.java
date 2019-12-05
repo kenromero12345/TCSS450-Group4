@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -96,6 +97,12 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
             EditText passwordEdit = getActivity().findViewById(R.id.editText_password);
             passwordEdit.setText(password);
 
+//            InputMethodManager inputManager = (InputMethodManager)
+//                    getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+//
+//            inputManager.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(),
+//                    InputMethodManager.HIDE_NOT_ALWAYS);
+
             doLogin(new Credentials.Builder(
                     emailEdit.getText().toString(),
                     passwordEdit.getText().toString())
@@ -141,6 +148,11 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
 
     @Override
     public void onClick(View v) {
+        InputMethodManager inputManager = (InputMethodManager)
+                getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+
+        inputManager.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(),
+                InputMethodManager.HIDE_NOT_ALWAYS);
         switch (v.getId()) {
             case R.id.button_signin:
                 attemptLogin(v.findViewById(R.id.button_signin));
