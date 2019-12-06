@@ -223,7 +223,8 @@ public class ViewChatFragment extends Fragment {
                 String messageText = intent.getStringExtra("MESSAGE");
                 String chatid = intent.getStringExtra("CHATID");
                 int senderId = intent.getIntExtra("SENDERID", -1);
-                mMessageAdapter.addMessage(sender, senderId, messageText, "", null);
+                String profileUri = intent.getStringExtra("PROFILEURI");
+                mMessageAdapter.addMessage(sender, senderId, messageText, "", profileUri);
                 mMessageAdapter.notifyDataSetChanged();
                 ((RecyclerView) getView().findViewById(R.id.viewChatList)).smoothScrollToPosition(mMessageAdapter.getItemCount());
             }
