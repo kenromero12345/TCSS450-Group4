@@ -430,8 +430,11 @@ public class HomeActivity extends AppCompatActivity {
                         directions.setMemberId(mMemberId);
                         directions.setJwt(mJwToken);
                         directions.setChatMessage(mChatMessage);
+                        directions.setConnectionRequest(mConnectionRequest);
 //                        directions.setConnectionItems(mConnectionItems);
                         navController.navigate(directions);
+                        mChatMessage = null;
+                        mConnectionRequest = null;
 //                    }
 //                    mGoToConnection = false;
 //                }
@@ -566,6 +569,7 @@ public class HomeActivity extends AppCompatActivity {
                 directions.setChatMessage(mChatMessage);
                 Navigation.findNavController(this, nav_host_fragment)
                         .navigate(directions);
+                mChatMessage = null;
 //                }    else {
 //                    Log.e("ERROR!", "No data array");
 //                }
@@ -681,8 +685,10 @@ public class HomeActivity extends AppCompatActivity {
                             = ConnectionGUIFragmentDirections.actionGlobalNavConnectionGUI(mConnectionItems);
                     directions.setJwt(mJwToken);
                     directions.setMemberid(mMemberId);
+                    directions.setConnectionRequest(mConnectionRequest);
                     Navigation.findNavController(this, nav_host_fragment)
                             .navigate(directions);
+                    mConnectionRequest = null;
 //                }
 //                else {
 //                    MobileNavigationDirections.ActionGlobalNavHome directions
@@ -817,9 +823,12 @@ public class HomeActivity extends AppCompatActivity {
                     directions.setMemberId(mMemberId);
                     directions.setJwt(mJwToken);
                     directions.setChatMessage(mChatMessage);
+                    directions.setConnectionRequest(mConnectionRequest);
 //                    Log.e("DEBUG", mConnectionItems.toString());
 //                    directions.setConnectionItems(mConnectionItems);
                     Navigation.findNavController(this, nav_host_fragment).navigate(directions);
+                    mChatMessage = null;
+                    mConnectionRequest = null;
                 }
 
             } else {
@@ -1176,7 +1185,6 @@ public class HomeActivity extends AppCompatActivity {
                 directions.setWeather(mWeather);
                 directions.setMemberId(mMemberId);
                 directions.setJwt(mJwToken);
-                directions.setChatMessage(mChatMessage);
 //                        directions.setConnectionItems(mConnectionItems);
                 nc.navigate(directions);
             } else if (nd.getId() == nav_chat_list) {

@@ -46,6 +46,7 @@ import edu.uw.tcss450.tcss450_group4.R;
 import edu.uw.tcss450.tcss450_group4.model.Chat;
 import edu.uw.tcss450.tcss450_group4.model.ChatMessageNotification;
 import edu.uw.tcss450.tcss450_group4.model.ConnectionItem;
+import edu.uw.tcss450.tcss450_group4.model.ConnectionRequestNotification;
 import edu.uw.tcss450.tcss450_group4.model.Message;
 import edu.uw.tcss450.tcss450_group4.model.State;
 import edu.uw.tcss450.tcss450_group4.model.Weather;
@@ -56,7 +57,6 @@ import static edu.uw.tcss450.tcss450_group4.R.color.uwPurple;
 import static edu.uw.tcss450.tcss450_group4.R.id.button_home_requests;
 import static edu.uw.tcss450.tcss450_group4.R.id.layout_chatHome_wait;
 import static edu.uw.tcss450.tcss450_group4.R.id.layout_connectionHome_wait;
-import static edu.uw.tcss450.tcss450_group4.R.id.layout_homeActivity_wait;
 import static edu.uw.tcss450.tcss450_group4.R.id.layout_home_wait;
 import static edu.uw.tcss450.tcss450_group4.R.id.layout_weatherHome_wait;
 import static edu.uw.tcss450.tcss450_group4.R.id.nav_host_fragment;
@@ -73,6 +73,7 @@ import static edu.uw.tcss450.tcss450_group4.R.id.weather_windSpeed;
 import static edu.uw.tcss450.tcss450_group4.R.string.ep_base_url;
 import static edu.uw.tcss450.tcss450_group4.R.string.ep_chats;
 import static edu.uw.tcss450.tcss450_group4.R.string.ep_connection;
+import static edu.uw.tcss450.tcss450_group4.R.string.ep_getall;
 import static edu.uw.tcss450.tcss450_group4.R.string.ep_messaging_base;
 import static edu.uw.tcss450.tcss450_group4.R.string.ep_messaging_getAll;
 import static edu.uw.tcss450.tcss450_group4.R.string.ep_requestsReceived;
@@ -107,6 +108,7 @@ public class HomeFragment extends Fragment {
     private String mChatId;
     private String mEmail;
     private ChatMessageNotification mChatMessage;
+    private ConnectionRequestNotification mConnectionRequest;
     private boolean mConnectionDone, mChatDone, mWeatherDone;
 
     private int mConnectionCount = 0;
@@ -150,7 +152,8 @@ public class HomeFragment extends Fragment {
         mJwToken = args.getJwt();
         mMemberId = args.getMemberId();
         mChatMessage = args.getChatMessage();
-        if (mChatMessage != null) {
+        mConnectionRequest = args.getConnectionRequest();
+        if (mChatMessage != null || mConnectionRequest != null) {
             view.findViewById(layout_home_wait).setVisibility(View.VISIBLE);
         }
         view.findViewById(layout_weatherHome_wait).setVisibility(View.VISIBLE);
@@ -295,6 +298,8 @@ public class HomeFragment extends Fragment {
                 if (mChatMessage != null) {
                     gotoChat();
 //                    mChatMessage = null;
+                } else if (mConnectionRequest != null) {
+                    gotoConnection();
                 }
             } else {
                 getView().findViewById(layout_chatHome_wait).setVisibility(View.GONE);
@@ -416,8 +421,8 @@ public class HomeFragment extends Fragment {
 
         }
         new SendPostAsyncTask.Builder(uriConnection.toString(), msgBody)
-                .onPostExecute(this::handleConnectionOnPostExecute)
-                .onCancelled(this::handleConnectionErrorsInTask)
+                .onPostExecute(this::handleConnectionRequestCountOnPostExecute)
+                .onCancelled(this::handleConnectionRequestCountErrorsInTask)
                 .addHeaderField("authorization", mJwToken)  //add the JWT as header
                 .build().execute();
 
@@ -427,7 +432,7 @@ public class HomeFragment extends Fragment {
      * Helper method that handles errors when getting connection count fails
      * @param result
      */
-    private void handleConnectionErrorsInTask(final String result) {
+    private void handleConnectionRequestCountErrorsInTask(final String result) {
         getView().findViewById(layout_connectionHome_wait).setVisibility(View.GONE);
         getView().findViewById(layout_chatHome_wait).setVisibility(View.GONE);
         Log.e("ASYNC_TASK_ERROR", result);
@@ -438,7 +443,7 @@ public class HomeFragment extends Fragment {
      * has been successfully retrieved
      * @param result
      */
-    private void handleConnectionOnPostExecute(final String result) {
+    private void handleConnectionRequestCountOnPostExecute(final String result) {
         try {
             boolean hasConnection = false;
             JSONObject root = new JSONObject(result);
@@ -635,6 +640,7 @@ public class HomeFragment extends Fragment {
                 directions.setChatMessage(mChatMessage);
                 Navigation.findNavController(getActivity(), nav_host_fragment)
                         .navigate(directions);
+                mChatMessage = null;
             } else {
                 Log.e("ERROR!", "No response");
                 getView().findViewById(layout_home_wait).setVisibility(View.GONE);
@@ -643,6 +649,76 @@ public class HomeFragment extends Fragment {
             e.printStackTrace();
             getView().findViewById(layout_home_wait).setVisibility(View.GONE);
             Log.e("ERROR!", e.getMessage());
+        }
+    }
+
+    private void gotoConnection() {
+        Uri uriConnection = new Uri.Builder()
+                .scheme("https")
+                .appendPath(getString(ep_base_url))
+                .appendPath(getString(ep_connection))
+                .appendPath(getString(ep_getall))
+                .build();
+        JSONObject msgBody = new JSONObject();
+        try{
+            msgBody.put("memberId", mMemberId);
+        } catch (JSONException e) {
+            Log.wtf("MEMBERID", "Error creating JSON: " + e.getMessage());
+
+        }
+        new SendPostAsyncTask.Builder(uriConnection.toString(), msgBody)
+                .onPostExecute(this::handleConnectionOnPostExecute)
+                .onCancelled(error -> Log.e("CONNECTION FRAG", error))
+                .addHeaderField("authorization", mJwToken)  //add the JWT as header
+                .build().execute();
+
+    }
+
+    private void handleConnectionOnPostExecute(final String result) {
+        //parse JSON
+        try {
+            boolean hasConnection = false;
+            JSONObject root = new JSONObject(result);
+            if (root.has(getString(keys_json_connection_connections))){
+                hasConnection = true;
+            } else {
+                Log.e("ERROR!", "No connection");
+            }
+
+
+            if (hasConnection){
+                JSONArray connectionJArray = root.getJSONArray(
+                        getString(keys_json_connection_connections));
+//                ConnectionItem[] conItem = new ConnectionItem[connectionJArray.length()];
+                mConnectionItems = new ConnectionItem[connectionJArray.length()];
+                for(int i = 0; i < connectionJArray.length(); i++){
+                    JSONObject jsonConnection = connectionJArray.getJSONObject(i);
+                    mConnectionItems[i] = new ConnectionItem(
+                            jsonConnection.getInt(
+                                    getString(keys_json_connection_memberid))
+                            , jsonConnection.getString(
+                            getString(keys_json_connection_firstname))
+                            , jsonConnection.getString(
+                            getString(keys_json_connection_lastname))
+                            ,jsonConnection.getString(
+                            getString(keys_json_connection_username)),
+                            jsonConnection.getString(
+                                    getString(keys_json_connection_image)));
+                }
+                MobileNavigationDirections.ActionGlobalNavConnectionGUI directions
+                        = ConnectionGUIFragmentDirections.actionGlobalNavConnectionGUI(mConnectionItems);
+                directions.setJwt(mJwToken);
+                directions.setMemberid(mMemberId);
+                directions.setConnectionRequest(mConnectionRequest);
+                Navigation.findNavController(getActivity(), nav_host_fragment)
+                        .navigate(directions);
+                mConnectionRequest = null;
+                getView().findViewById(layout_home_wait).setVisibility(View.GONE);
+            }
+
+
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
     }
 }
