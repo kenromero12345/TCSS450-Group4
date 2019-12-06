@@ -96,8 +96,8 @@ public class ViewConnectionFragment extends Fragment implements View.OnClickList
                     .setVisibility(View.GONE);
             (getActivity().findViewById(R.id.addViewImage))
                     .setVisibility(View.GONE);
-            (getActivity().findViewById(R.id.fullDelete))
-                    .setVisibility(View.GONE);
+//            (getActivity().findViewById(R.id.fullDelete))
+//                    .setVisibility(View.GONE);
             (getActivity().findViewById(R.id.fullChat))
                     .setVisibility(View.GONE);
         }
@@ -113,8 +113,8 @@ public class ViewConnectionFragment extends Fragment implements View.OnClickList
                     .setVisibility(View.GONE);
             (getActivity().findViewById(R.id.addViewImage))
                     .setVisibility(View.GONE);
-            (getActivity().findViewById(R.id.fullDelete))
-                    .setVisibility(View.GONE);
+//            (getActivity().findViewById(R.id.fullDelete))
+//                    .setVisibility(View.GONE);
             (getActivity().findViewById(R.id.fullChat))
                     .setVisibility(View.GONE);
         }
@@ -329,19 +329,19 @@ public class ViewConnectionFragment extends Fragment implements View.OnClickList
 
         // setup the alert builder
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setTitle("Remove Sent Request");
-        builder.setMessage("Are you sure you want to cancel your sent request?");
+        builder.setTitle("Sent Request");
+        builder.setMessage("You sent a request to this user");
 
         // add the buttons
-        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-
-                // do something like...
-                removeConnection();
-            }
-        });
-        builder.setNegativeButton("Cancel", null);
+//        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+//            @Override
+//            public void onClick(DialogInterface dialog, int which) {
+//
+//                // do something like...
+//                removeConnection();
+//            }
+//        });
+        builder.setNegativeButton("OK", null);
 
         // create and show the alert dialog
         AlertDialog dialog = builder.create();
