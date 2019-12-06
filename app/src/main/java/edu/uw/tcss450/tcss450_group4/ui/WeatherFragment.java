@@ -894,7 +894,7 @@ public class WeatherFragment extends Fragment {
 ////                        .getIdentifier("weather_zipEditText", null
 ////                                , null))).setError("empty!!");
 //                et.findViewById(weather_zipEditText)
-//                et.setError("empty!!");
+
                 setToast("empty!");
         }
 
