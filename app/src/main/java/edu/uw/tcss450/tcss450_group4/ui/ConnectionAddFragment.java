@@ -228,6 +228,7 @@ public class ConnectionAddFragment extends Fragment implements View.OnClickListe
         JSONObject msgBody = new JSONObject();
         try{
             msgBody.put("username", username);
+            msgBody.put("memberId", mMemberId);
         } catch (JSONException e) {
             Log.wtf("username", "Error creating JSON: " + e.getMessage());
 
