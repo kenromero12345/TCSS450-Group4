@@ -61,6 +61,26 @@
         android:padding="16dp">
 
 
+        <SearchView
+            android:id="@+id/weather_zipEditText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:layout_alignTop="@+id/weather_conditionIcon"
+            android:layout_alignBottom="@+id/weather_conditionIcon"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="0dp"
+            android:layout_marginEnd="0dp"
+            android:layout_marginBottom="0dp"
+            android:ems="10"
+
+            android:hint="@string/edit_zip_code"
+            android:inputType="textPersonName"
+            app:actionViewClass="android.support.v7.widget.SearchView"
+            app:defaultQueryHint="@string/edit_zip_code"
+            app:queryHint="@string/edit_zip_code"
+            app:showAsAction="ifRoom|collapseActionView" />
+
         <LinearLayout
             android:id="@+id/weather_layoutDays2"
             android:layout_width="match_parent"
@@ -1398,19 +1418,6 @@
         <!--        android:background="@color/uwMetallicGold"-->
         <!--        android:text="@string/button_get" />-->
 
-        <EditText
-            android:id="@+id/weather_zipEditText"
-            android:layout_width="202dp"
-            android:layout_height="wrap_content"
-
-            android:layout_alignParentStart="true"
-            android:layout_alignParentBottom="true"
-            android:layout_marginStart="0dp"
-            android:layout_marginBottom="0dp"
-            android:ems="10"
-            android:hint="@string/edit_zip_code"
-            android:inputType="textPersonName" />
-
         <!--    <Button-->
         <!--        android:id="@+id/weather_saveButton"-->
         <!--        android:layout_width="wrap_content"-->
@@ -1455,7 +1462,7 @@
             android:layout_marginEnd="0dp"
             android:layout_marginBottom="10dp"
             android:clickable="true"
-            android:visibility="visible"
+            android:visibility="gone"
             app:backgroundTint="@color/uwMetallicGold"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/ic_save_black_24dp" />
@@ -1499,7 +1506,7 @@
             android:layout_marginEnd="0dp"
             android:layout_marginBottom="10dp"
             android:clickable="true"
-            android:visibility="visible"
+            android:visibility="gone"
             app:backgroundTint="@color/uwMetallicGold"
             app:srcCompat="@drawable/ic_cloud_download_black_24dp" />
 
@@ -1779,7 +1786,7 @@
             android:layout_marginEnd="0dp"
             android:layout_marginBottom="10dp"
             android:clickable="true"
-            android:visibility="visible"
+            android:visibility="gone"
             app:backgroundTint="@color/uwMetallicGold"
             app:srcCompat="@drawable/ic_my_location_black_24dp" />
 
@@ -1794,7 +1801,7 @@
             android:layout_marginEnd="0dp"
             android:layout_marginBottom="10dp"
             android:clickable="true"
-            android:visibility="visible"
+            android:visibility="gone"
             app:backgroundTint="@color/uwMetallicGold"
             app:srcCompat="@drawable/ic_map_black_24dp" />
 

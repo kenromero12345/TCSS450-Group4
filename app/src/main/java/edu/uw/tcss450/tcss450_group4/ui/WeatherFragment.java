@@ -17,6 +17,7 @@ import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.SearchView;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -227,7 +228,7 @@ public class WeatherFragment extends Fragment {
     private void setComponents() {
         //TODO don't need to always do, just once
         mView.findViewById(layout_weather_clickable).setOnClickListener(e -> toggleMainFab());
-        View zipView = mView.findViewById(weather_zipEditText);
+        SearchView zipView = mView.findViewById(weather_zipEditText);
         zipView.setOnKeyListener((v, keyCode, event) ->
                 zipKeyListener(v, keyCode));
 //        zipView.setOnClickListener(e ->
