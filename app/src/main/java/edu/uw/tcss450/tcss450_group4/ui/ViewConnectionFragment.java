@@ -98,6 +98,8 @@ public class ViewConnectionFragment extends Fragment implements View.OnClickList
                     .setVisibility(View.GONE);
             (getActivity().findViewById(R.id.fullDelete))
                     .setVisibility(View.GONE);
+            (getActivity().findViewById(R.id.fullChat))
+                    .setVisibility(View.GONE);
         }
         else if(mVerified == 3){
             //set received image
@@ -113,6 +115,8 @@ public class ViewConnectionFragment extends Fragment implements View.OnClickList
                     .setVisibility(View.GONE);
             (getActivity().findViewById(R.id.fullDelete))
                     .setVisibility(View.GONE);
+            (getActivity().findViewById(R.id.fullChat))
+                    .setVisibility(View.GONE);
         }
         else {
 //            (getActivity().findViewById(R.id.addImage))
@@ -124,6 +128,8 @@ public class ViewConnectionFragment extends Fragment implements View.OnClickList
             (getActivity().findViewById(R.id.confirmViewImage))
                     .setVisibility(View.GONE);
             (getActivity().findViewById(R.id.fullDelete))
+                    .setVisibility(View.GONE);
+            (getActivity().findViewById(R.id.fullChat))
                     .setVisibility(View.GONE);
         }
     }
