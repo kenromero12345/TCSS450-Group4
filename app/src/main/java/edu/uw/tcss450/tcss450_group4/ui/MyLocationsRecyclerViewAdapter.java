@@ -10,9 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import edu.uw.tcss450.tcss450_group4.R;
 import edu.uw.tcss450.tcss450_group4.model.Location;
@@ -31,19 +29,27 @@ public class MyLocationsRecyclerViewAdapter extends RecyclerView.Adapter<MyLocat
      */
     private final OnListFragmentInteractionListener mListener;
 
-    private Map<Integer, View> mViews;
 
+//    private Map<Integer, View> mViews;
+
+    /**
+     * flag when view is on delete mode
+     */
     private boolean mFlag;
-    public int mRow_index;
+
+    /**
+     * check what the index of item is clicked
+     */
+    private int mRow_index;
     /**
      * contructor for the recycler view of locations adapter
      * @param items the given locations
      * @param listener the given listener
      */
-    public MyLocationsRecyclerViewAdapter(List<Location> items, OnListFragmentInteractionListener listener, boolean flag) {
+    MyLocationsRecyclerViewAdapter(List<Location> items, OnListFragmentInteractionListener listener, boolean flag) {
         mValues = items;
         mListener = listener;
-        mViews = new HashMap<>();
+//        mViews = new HashMap<>();
         mFlag = flag;
         mRow_index = -1;
     }
@@ -63,13 +69,13 @@ public class MyLocationsRecyclerViewAdapter extends RecyclerView.Adapter<MyLocat
 
     /**
      *
-     * @param parent
-     * @param viewType
-     * @return
+     * @param parent the parent group
+     * @param viewType the type of view
+     * @return of the holder
      */
     @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view;
         if (!mFlag) {
             view = LayoutInflater.from(parent.getContext())
@@ -82,15 +88,15 @@ public class MyLocationsRecyclerViewAdapter extends RecyclerView.Adapter<MyLocat
     }
 
     /**
-     *
-     * @param holder
-     * @param position
+     * the binding of holder
+     * @param holder the holder
+     * @param position the position of the item
      */
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mItem = mValues.get(position);
         holder.mNicknameView.setText(mValues.get(position).getName());
-        mViews.put(position, holder.mView.findViewById(R.id.location_card));
+//        mViews.put(position, holder.mView.findViewById(R.id.location_card));
 //        holder.mLatLonView.setText(mValues.get(position).getLat() + " | " + mValues.get(position).getLon());
 //        if (mValues.get(position).getZip() != -1) {
 //            holder.mZipView.setText(mValues.get(position).getZip());
@@ -135,7 +141,7 @@ public class MyLocationsRecyclerViewAdapter extends RecyclerView.Adapter<MyLocat
 
     /**
      *
-     * @return
+     * @return the item count of the list
      */
     @Override
     public int getItemCount() {
@@ -143,18 +149,34 @@ public class MyLocationsRecyclerViewAdapter extends RecyclerView.Adapter<MyLocat
     }
 
     /**
-     *
+     * holder class
      */
     public class ViewHolder extends RecyclerView.ViewHolder {
-        public final View mView;
-        public final TextView mNicknameView;
+        /**
+         * the view of the holder
+         */
+        final View mView;
+        /**
+         * the nickname view
+         */
+        final TextView mNicknameView;
 //        public final TextView mLatLonView;
 //        public final TextView mZipView;
-        public Location mItem;
-        public int mRow_index = -1;
-        public final CardView mCv;
+        /**
+         * the item location
+         */
+        Location mItem;
+//        public int mRow_index = -1;
+        /**
+         * the card view of the
+         */
+        final CardView mCv;
 
-        public ViewHolder(View view) {
+        /**
+         * the view holder constructor
+         * @param view the view
+         */
+        ViewHolder(View view) {
             super(view);
             mView = view;
             mNicknameView = view.findViewById(R.id.weather_nickname);
@@ -165,8 +187,9 @@ public class MyLocationsRecyclerViewAdapter extends RecyclerView.Adapter<MyLocat
 
         /**
          *
-         * @return
+         * @return the string of the view holder
          */
+        @NonNull
         @Override
         public String toString() {
             return super.toString() + " '" + mNicknameView.getText() + "'";

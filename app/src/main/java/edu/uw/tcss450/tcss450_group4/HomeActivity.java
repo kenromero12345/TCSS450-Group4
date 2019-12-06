@@ -10,7 +10,6 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.graphics.ColorFilter;
 import android.graphics.PorterDuff;
 import android.location.Location;
@@ -33,7 +32,6 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.navigation.NavController;
 import androidx.navigation.NavDestination;
 import androidx.navigation.Navigation;
-import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
@@ -47,7 +45,6 @@ import com.google.android.material.navigation.NavigationView;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 
 import java.math.BigDecimal;
 import java.text.DateFormat;
@@ -65,7 +62,6 @@ import edu.uw.tcss450.tcss450_group4.model.LocationViewModel;
 import edu.uw.tcss450.tcss450_group4.model.Weather;
 import edu.uw.tcss450.tcss450_group4.ui.ChatFragmentDirections;
 import edu.uw.tcss450.tcss450_group4.ui.ConnectionGUIFragmentDirections;
-import edu.uw.tcss450.tcss450_group4.ui.HomeFragment;
 import edu.uw.tcss450.tcss450_group4.ui.HomeFragmentDirections;
 import edu.uw.tcss450.tcss450_group4.ui.WeatherFragmentDirections;
 import edu.uw.tcss450.tcss450_group4.utils.PushReceiver;
@@ -82,7 +78,6 @@ import static edu.uw.tcss450.tcss450_group4.R.id.nav_home;
 import static edu.uw.tcss450.tcss450_group4.R.id.nav_host_fragment;
 import static edu.uw.tcss450.tcss450_group4.R.id.nav_logout;
 import static edu.uw.tcss450.tcss450_group4.R.id.nav_view;
-import static edu.uw.tcss450.tcss450_group4.R.id.nav_view_chat;
 import static edu.uw.tcss450.tcss450_group4.R.id.nav_weather;
 import static edu.uw.tcss450.tcss450_group4.R.layout;
 import static edu.uw.tcss450.tcss450_group4.R.navigation;
@@ -129,6 +124,10 @@ import static edu.uw.tcss450.tcss450_group4.model.WeatherHelper.getUriWeather24h
 import static edu.uw.tcss450.tcss450_group4.model.WeatherHelper.getUriWeatherCurrentLatLon;
 import static edu.uw.tcss450.tcss450_group4.model.WeatherHelper.sendPostAsyncTaskHelper;
 
+/**
+ * The activity for when you login
+ * @author Ken Gil Romer kgmr@uw.edu
+ */
 public class HomeActivity extends AppCompatActivity {
     // A constant int for the permissions request code. Must be a 16 bit number
     private static final int MY_PERMISSIONS_LOCATIONS = 8414;
@@ -395,6 +394,11 @@ public class HomeActivity extends AppCompatActivity {
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
     }
 
+    /**
+     * the options menu when creatd
+     * @param menu the menu
+     * @return boolean if  created
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -402,6 +406,10 @@ public class HomeActivity extends AppCompatActivity {
         return true;
     }
 
+    /**
+     *
+     * @return true for navigating up
+     */
     @Override
     public boolean onSupportNavigateUp() {
         NavController navController = Navigation.findNavController(this

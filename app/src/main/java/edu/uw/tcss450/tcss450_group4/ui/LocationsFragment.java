@@ -93,9 +93,12 @@ public class LocationsFragment extends Fragment {
      */
     private Weather[] mWeathers10d;
 
-    // TODO: Customize parameter argument names
+    /**
+     * the column string
+     */
     private static final String ARG_COLUMN_COUNT = "column-count";
-    // TODO: Customize parameters
+
+    //the column count
     private int mColumnCount = 1;
 
     /**
@@ -120,15 +123,18 @@ public class LocationsFragment extends Fragment {
     public LocationsFragment() {
     }
 
-    // TODO: Customize parameter initialization
-    @SuppressWarnings("unused")
-    public static LocationsFragment newInstance(int columnCount) {
-        LocationsFragment fragment = new LocationsFragment();
-        Bundle args = new Bundle();
-        args.putInt(ARG_COLUMN_COUNT, columnCount);
-        fragment.setArguments(args);
-        return fragment;
-    }
+//    /**
+//     *
+//     * @param columnCount
+//     * @return
+//     */
+//    public static LocationsFragment newInstance(int columnCount) {
+//        LocationsFragment fragment = new LocationsFragment();
+//        Bundle args = new Bundle();
+//        args.putInt(ARG_COLUMN_COUNT, columnCount);
+//        fragment.setArguments(args);
+//        return fragment;
+//    }
 
 //    @Override
 //    public void onCreate(Bundle savedInstanceState) {
@@ -139,16 +145,25 @@ public class LocationsFragment extends Fragment {
 //        }
 //    }
 
-
+    /**
+     *
+     * @param inflater to inflate the view
+     * @param container the contatiner of the list
+     * @param savedInstanceState the saved instance state
+     * @return view list
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(layout.fragment_locations_list, container
+        return inflater.inflate(layout.fragment_locations_list, container
                 , false);
-
-        return view;
     }
 
+    /**
+     * when view is created
+     * @param view the view
+     * @param savedInstanceState the saved instance state
+     */
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -177,6 +192,11 @@ public class LocationsFragment extends Fragment {
         fab.setOnClickListener(v -> toggleDelete(fab, view));
     }
 
+    /**
+     *
+     * @param tFab the fab toggled
+     * @param tView the view changed
+     */
     private void toggleDelete(FloatingActionButton tFab, View tView) {
         if (mDeleteFlag) {
 //            RecyclerView root = getView().findViewById(R.id.location_list);
@@ -266,7 +286,7 @@ public class LocationsFragment extends Fragment {
 
     /**
      * get the weather of the location
-     * @param tLocation
+     * @param tLocation the location of the clicked
      */
     private void getClick(final Location tLocation) {
         if (!mDeleteFlag) {
@@ -302,6 +322,10 @@ public class LocationsFragment extends Fragment {
         }
     }
 
+    /**
+     * delete the location
+     * @param tLocation the location to be deleted
+     */
     private void deleteLocation(final Location tLocation) {
         mLocations.remove(tLocation);
         mRv.setAdapter(new MyLocationsRecyclerViewAdapter(mLocations
@@ -354,7 +378,7 @@ public class LocationsFragment extends Fragment {
      * @param tLocation the given location
      */
     private void displayWeather(final Location tLocation) {
-        //TODO use zip
+
         Uri uri = getUriWeatherCurrentLatLon(Objects.requireNonNull(getContext()));
 
         Uri uri2 = getUriWeather10dLatLon(getContext());
