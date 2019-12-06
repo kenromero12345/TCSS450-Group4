@@ -168,7 +168,7 @@ public class ViewChatFragment extends Fragment {
         inputManager.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(),
                 InputMethodManager.HIDE_NOT_ALWAYS);
 //        mMessageAdapter.notifyDataSetChanged();
-        ((RecyclerView) getView().findViewById(R.id.viewChatList)).smoothScrollToPosition(mMessageAdapter.getItemCount() -1);
+
     }
 
     private void endOfSendMsgTask(final String result) {
@@ -210,37 +210,6 @@ public class ViewChatFragment extends Fragment {
         }
     }
 
-//    private List<Message> getMessageList(String chatId) {
-//        Uri uriGetAllMessages = new Uri.Builder()
-//                .scheme("https")
-//                .appendPath(getString(R.string.ep_base_url))
-//                .appendPath(getString(R.string.ep_messaging_base))
-//                .appendPath(getString(R.string.ep_messaging_getAll))
-//                .build();
-//        try {
-//            JSONObject msgBody = new JSONObject();
-//            msgBody.put("chatId", CHAT_ID);
-//
-//            new SendPostAsyncTask.Builder(uriGetAllMessages.toString(), msgBody)
-//                    .onPostExecute(this::handleGetAllMessageOnPostExecute)
-//                    .onCancelled(error -> Log.e("GET ALL MESSAGES", error))
-//                    .addHeaderField("authorization", mJwToken)
-//                    .build().execute();
-//        } catch (JSONException e) {
-//            Log.wtf("get messages", "Error creating JSON: " + e.getMessage());
-//        }
-//    }
-//    private void handleGetAllMessageOnPostExecute(final String result) {
-//        try {
-//            JSONObject root = new JSONObject(result);
-//            if (root.has("success") && root.getBoolean("success")) {
-//                JSONArray data = root.getJSONArray("messages");
-//
-//            }
-//        } catch (JSONException e) {
-//            e.printStackTrace();
-//        }
-//    }
     /**
      * A BroadcastReceiver that listens for messages sent from PushReceiver
      */
@@ -256,6 +225,7 @@ public class ViewChatFragment extends Fragment {
                 int senderId = intent.getIntExtra("SENDERID", -1);
                 mMessageAdapter.addMessage(sender, senderId, messageText, "");
                 mMessageAdapter.notifyDataSetChanged();
+                ((RecyclerView) getView().findViewById(R.id.viewChatList)).smoothScrollToPosition(mMessageAdapter.getItemCount());
             }
 
         }
