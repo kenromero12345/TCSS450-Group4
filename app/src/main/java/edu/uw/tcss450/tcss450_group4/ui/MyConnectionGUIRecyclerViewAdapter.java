@@ -19,16 +19,19 @@ import edu.uw.tcss450.tcss450_group4.ui.ConnectionGUIFragment.OnListFragmentInte
 
 import java.util.List;
 
-///**
-// * {@link RecyclerView.Adapter} that can display a {@link connection} and makes a call to the
-// * specified {@link OnListFragmentInteractionListener}.
-// * TODO: Replace the implementation with code for your data type.
-// */
+/**
+ * This is the recycler view for displaying all your connections.
+ */
 public class MyConnectionGUIRecyclerViewAdapter extends RecyclerView.Adapter<MyConnectionGUIRecyclerViewAdapter.ViewHolder> {
 
     private final List<ConnectionItem> mValues;
     private final OnListFragmentInteractionListener mListener;
 
+    /**
+     * Public constructor that initializes the values and listener.
+     * @param items the item.
+     * @param listener the listener.
+     */
     public MyConnectionGUIRecyclerViewAdapter(List<ConnectionItem> items, OnListFragmentInteractionListener listener) {
         mValues = items;
         mListener = listener;
@@ -41,6 +44,11 @@ public class MyConnectionGUIRecyclerViewAdapter extends RecyclerView.Adapter<MyC
         return new ViewHolder(view);
     }
 
+    /**
+     * Sets all the text for the fragment.
+     * @param holder the holder.
+     * @param position the position.
+     */
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mItem = mValues.get(position);
@@ -69,6 +77,10 @@ public class MyConnectionGUIRecyclerViewAdapter extends RecyclerView.Adapter<MyC
 
     }
 
+    /**
+     * This method initalizes each item in the fragment to a variable.
+     * @return
+     */
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
         public final TextView lastname;
@@ -86,6 +98,10 @@ public class MyConnectionGUIRecyclerViewAdapter extends RecyclerView.Adapter<MyC
             profileimage = view.findViewById(R.id.profileImageGUI);
         }
 
+        /**
+         * To string method.
+         * @return the string.
+         */
         @Override
         public String toString() {
             return super.toString() + " '" + userName.getText() + "'";

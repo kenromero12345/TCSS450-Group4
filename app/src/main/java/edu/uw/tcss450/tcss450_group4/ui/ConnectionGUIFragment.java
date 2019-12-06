@@ -1,7 +1,6 @@
 package edu.uw.tcss450.tcss450_group4.ui;
 
 import android.content.Context;
-import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -17,7 +16,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 
 import org.json.JSONArray;
@@ -43,10 +41,7 @@ import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_connection_member
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_connection_username;
 
 /**
- * A fragment representing a list of Items.
- * <p/>
- * Activities containing this fragment MUST implement the {@link OnListFragmentInteractionListener}
- * interface.
+ * A fragment representing a list of connection items.
  */
 public class ConnectionGUIFragment extends Fragment implements View.OnClickListener{
 
@@ -79,6 +74,10 @@ public class ConnectionGUIFragment extends Fragment implements View.OnClickListe
         return fragment;
     }
 
+    /**
+     * onCreate method to initialize data to be used for other methods.
+     * @param savedInstanceState
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -89,6 +88,13 @@ public class ConnectionGUIFragment extends Fragment implements View.OnClickListe
         mConnectionRequest = args.getConnectionRequest();
     }
 
+    /**
+     * This initializes the view of of the layout.
+     * @param inflater
+     * @param container
+     * @param savedInstanceState
+     * @return
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -99,6 +105,11 @@ public class ConnectionGUIFragment extends Fragment implements View.OnClickListe
         return view;
     }
 
+    /**
+     * This method initializes the buttons and sets an onclick for each button.
+     * @param view the View
+     * @param savedInstanceState the saved instance.
+     */
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -126,6 +137,10 @@ public class ConnectionGUIFragment extends Fragment implements View.OnClickListe
         }
     }
 
+    /**
+     * Method to handle on clicks of each button.
+     * @param v the View
+     */
     @Override
     public void onClick(View v) {
 
@@ -151,6 +166,9 @@ public class ConnectionGUIFragment extends Fragment implements View.OnClickListe
 
     }
 
+    /**
+     * Method for when clicking a sent button.
+     */
     private void sentConnection() {
 
         Uri uriConnection = new Uri.Builder()
@@ -175,6 +193,9 @@ public class ConnectionGUIFragment extends Fragment implements View.OnClickListe
 
     }
 
+    /**
+     * Method for when clicking a request button.
+     */
     private void requestConnection() {
 
         Uri uriConnection = new Uri.Builder()
@@ -198,6 +219,10 @@ public class ConnectionGUIFragment extends Fragment implements View.OnClickListe
 
     }
 
+    /**
+     * Method handling a received on post execute
+     * @param result the json response.
+     */
     private void handleReceivedOnPostExecute(String result) {
         //parse JSON
         try {
@@ -245,6 +270,9 @@ public class ConnectionGUIFragment extends Fragment implements View.OnClickListe
     }
 
 
+    /**
+     * Helper method to navigate from connection GUI to add connection.
+     */
     private void addConnection() {
         final Bundle args = new Bundle();
         args.putString("jwt", mJwToken);
@@ -253,6 +281,10 @@ public class ConnectionGUIFragment extends Fragment implements View.OnClickListe
                 .navigate(R.id.action_nav_connectionGUI_to_nav_connection_add, args);
     }
 
+    /**
+     * Method handling a request on post execute
+     * @param result the json response.
+     */
     private void handleRequestOnPostExecute(String result) {
         //parse JSON
         try {
@@ -300,7 +332,10 @@ public class ConnectionGUIFragment extends Fragment implements View.OnClickListe
     }
 
 
-
+    /**
+     * This displays the connection when clicked on.
+     * @param theConnection the connection item.
+     */
     private void displayConnection(ConnectionItem theConnection) {
 
         Uri uriConnection = new Uri.Builder()
@@ -327,6 +362,10 @@ public class ConnectionGUIFragment extends Fragment implements View.OnClickListe
 
     }
 
+    /**
+     * Method handling a display connection on post execute
+     * @param result the json response.
+     */
     private void handleDisplayOnPostExecute(String result) {
         //parse JSON
         try {

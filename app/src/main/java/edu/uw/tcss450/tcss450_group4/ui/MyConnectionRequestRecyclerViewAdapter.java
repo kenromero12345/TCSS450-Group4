@@ -14,20 +14,25 @@ import android.widget.TextView;
 import edu.uw.tcss450.tcss450_group4.R;
 import edu.uw.tcss450.tcss450_group4.model.ConnectionItem;
 import edu.uw.tcss450.tcss450_group4.ui.ConnectionRequestFragment.OnListFragmentInteractionListener;
-//import edu.uw.tcss450.tcss450_group4.ui.dummy.DummyContent.DummyItem;
 
 import java.util.List;
 
-///**
-// * {@link RecyclerView.Adapter} that can display a {@link DummyItem} and makes a call to the
-// * specified {@link OnListFragmentInteractionListener}.
-// * TODO: Replace the implementation with code for your data type.
-// */
+/**
+ * This class is the recycler adapter for the requests.
+ */
 public class MyConnectionRequestRecyclerViewAdapter extends RecyclerView.Adapter<MyConnectionRequestRecyclerViewAdapter.ViewHolder> {
 
+    /**
+     * Instance field for the variables to be used throughout the class.
+     */
     private final List<ConnectionItem> mValues;
     private final OnListFragmentInteractionListener mListener;
 
+    /**
+     * Public constructor that initializes the values and listener.
+     * @param items the item.
+     * @param listener the listener.
+     */
     public MyConnectionRequestRecyclerViewAdapter(List<ConnectionItem> items, OnListFragmentInteractionListener listener) {
         mValues = items;
         mListener = listener;
@@ -40,6 +45,11 @@ public class MyConnectionRequestRecyclerViewAdapter extends RecyclerView.Adapter
         return new ViewHolder(view);
     }
 
+    /**
+     * Sets all the text for the fragment.
+     * @param holder the holder.
+     * @param position the position.
+     */
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mItem = mValues.get(position);
@@ -63,11 +73,16 @@ public class MyConnectionRequestRecyclerViewAdapter extends RecyclerView.Adapter
         });
     }
 
+
     @Override
     public int getItemCount() {
         return mValues.size();
     }
 
+    /**
+     * This method initalizes each item in the fragment to a variable.
+     * @return
+     */
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
         public final TextView lastName;
@@ -85,6 +100,10 @@ public class MyConnectionRequestRecyclerViewAdapter extends RecyclerView.Adapter
             profileimage = view.findViewById(R.id.profileImageFull);
         }
 
+        /**
+         * To string method.
+         * @return the string.
+         */
         @Override
         public String toString() {
             return super.toString() + " '" + userName.getText() + "'";
