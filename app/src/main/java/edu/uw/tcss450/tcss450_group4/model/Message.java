@@ -7,7 +7,7 @@ import java.io.Serializable;
 
 public class Message implements Serializable, Parcelable {
     private String mMessage;
-    private String mMemberId;
+    private int mMemberId;
     private String mUsername;
     private String mTimeStamp;
 //    private String mUserName;
@@ -18,7 +18,7 @@ public class Message implements Serializable, Parcelable {
         mMessage = in.readString();
         mUsername = in.readString();
         mTimeStamp = in.readString();
-        mMemberId = in.readString();
+        mMemberId = in.readInt();
     }
 
     public static final Creator<Message> CREATOR = new Creator<Message>() {
@@ -43,7 +43,7 @@ public class Message implements Serializable, Parcelable {
         dest.writeString(mMessage);
         dest.writeString(mUsername);
         dest.writeString(mTimeStamp);
-        dest.writeString(mMemberId);
+        dest.writeInt(mMemberId);
     }
 
 
@@ -51,8 +51,8 @@ public class Message implements Serializable, Parcelable {
         private final String mEmail;
         private final String mMessage;
         private final String mTimeStamp;
-        private final String mMemberId;
-        public Builder(String chatId, String memberId, String message, String timeStamp) {
+        private final int mMemberId;
+        public Builder(String chatId, int memberId, String message, String timeStamp) {
             this.mEmail = chatId;
             this.mMessage = message;
             this.mTimeStamp = timeStamp;
@@ -96,7 +96,7 @@ public class Message implements Serializable, Parcelable {
         this.mTimeStamp = timeStamp;
     }
 
-    public String getMemberId() {
+    public int getMemberId() {
         return mMemberId;
     }
 }

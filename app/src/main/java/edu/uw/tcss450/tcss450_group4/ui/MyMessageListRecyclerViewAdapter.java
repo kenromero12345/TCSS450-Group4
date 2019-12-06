@@ -66,7 +66,7 @@ public class MyMessageListRecyclerViewAdapter extends RecyclerView.Adapter<MyMes
         return mValues.size();
     }
 
-    public void addMessage(String userName, String memberId, String message, String timeStamp) {
+    public void addMessage(String userName, int memberId, String message, String timeStamp) {
         Message newMess = new Message.Builder(userName, memberId, message, timeStamp).build();
         mValues.add(newMess);
     }
