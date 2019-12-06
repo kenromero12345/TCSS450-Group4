@@ -31,6 +31,7 @@ import java.net.URL;
 
 import edu.uw.tcss450.tcss450_group4.R;
 import edu.uw.tcss450.tcss450_group4.model.ChatMessageNotification;
+import edu.uw.tcss450.tcss450_group4.model.ConnectionRequestNotification;
 import edu.uw.tcss450.tcss450_group4.model.Credentials;
 import edu.uw.tcss450.tcss450_group4.utils.SendPostAsyncTask;
 import me.pushy.sdk.Pushy;
@@ -445,6 +446,12 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
                                 ChatMessageNotification chat =
                                         new ChatMessageNotification.Builder(sender, msg, chatId).build();
                                 homeActivity.setChatMessage(chat);
+                            } else if (getArguments().getString("type").equals("request")) {
+                                String memberId = getArguments().getString("memberid");
+                                ConnectionRequestNotification connection =
+                                        new ConnectionRequestNotification.Builder(memberId).build();
+                                homeActivity.setConnectionRequest(connection);
+
                             }
                         }
                     }

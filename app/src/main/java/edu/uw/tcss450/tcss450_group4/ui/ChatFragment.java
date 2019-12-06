@@ -107,6 +107,8 @@ public class ChatFragment extends Fragment implements View.OnClickListener {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        Log.e("ViewChat", getArguments() + "");
+
         ChatFragmentArgs args = ChatFragmentArgs.fromBundle(getArguments());
         mChats = new ArrayList<>(Arrays.asList(args.getChats()));
         mMemberId = args.getMemberId();
@@ -146,7 +148,9 @@ public class ChatFragment extends Fragment implements View.OnClickListener {
         }
         btnCreateChat.setOnClickListener(this::onClick);
         if (mChatMessage != null) {
+
             displayChat(mChatMessage.getChatId());
+            mChatMessage = null;
 
         }
     }

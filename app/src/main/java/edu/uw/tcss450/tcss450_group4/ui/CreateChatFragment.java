@@ -108,11 +108,11 @@ public class CreateChatFragment extends Fragment implements View.OnClickListener
 
         //TODO: check for BUG
 //        mBundle = new Bundle();
-        mFriendIDList = MyCreateChatRecyclerViewAdapter.getFriendIDList();
-        CreateChatFragmentArgs args = CreateChatFragmentArgs.fromBundle(Objects.requireNonNull(getArguments()));
-        mFriendList = new ArrayList<>(Arrays.asList(args.getFriendList()));
-        mJwToken = getArguments().getString("jwt");
-        mFriendIDList.add(args.getMemberId());
+//        mFriendIDList = MyCreateChatRecyclerViewAdapter.getFriendIDList();
+//        CreateChatFragmentArgs args = CreateChatFragmentArgs.fromBundle(Objects.requireNonNull(getArguments()));
+//        mFriendList = new ArrayList<>(Arrays.asList(args.getFriendList()));
+//        mJwToken = getArguments().getString("jwt");
+//        mFriendIDList.add(args.getMemberId());
 //        mEmail = args.getEmail();
 
     }

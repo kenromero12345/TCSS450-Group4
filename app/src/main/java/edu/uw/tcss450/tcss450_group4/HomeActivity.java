@@ -2,12 +2,17 @@ package edu.uw.tcss450.tcss450_group4;
 
 import android.Manifest;
 import android.app.AlertDialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.graphics.ColorFilter;
+import android.graphics.PorterDuff;
 import android.location.Location;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -26,6 +31,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.navigation.NavController;
+import androidx.navigation.NavDestination;
 import androidx.navigation.Navigation;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -53,12 +59,16 @@ import java.util.Objects;
 import edu.uw.tcss450.tcss450_group4.model.Chat;
 import edu.uw.tcss450.tcss450_group4.model.ChatMessageNotification;
 import edu.uw.tcss450.tcss450_group4.model.ConnectionItem;
+import edu.uw.tcss450.tcss450_group4.model.ConnectionRequestNotification;
 import edu.uw.tcss450.tcss450_group4.model.Credentials;
 import edu.uw.tcss450.tcss450_group4.model.LocationViewModel;
 import edu.uw.tcss450.tcss450_group4.model.Weather;
 import edu.uw.tcss450.tcss450_group4.ui.ChatFragmentDirections;
 import edu.uw.tcss450.tcss450_group4.ui.ConnectionGUIFragmentDirections;
+import edu.uw.tcss450.tcss450_group4.ui.HomeFragment;
+import edu.uw.tcss450.tcss450_group4.ui.HomeFragmentDirections;
 import edu.uw.tcss450.tcss450_group4.ui.WeatherFragmentDirections;
+import edu.uw.tcss450.tcss450_group4.utils.PushReceiver;
 import edu.uw.tcss450.tcss450_group4.utils.SendPostAsyncTask;
 import me.pushy.sdk.Pushy;
 
@@ -72,6 +82,7 @@ import static edu.uw.tcss450.tcss450_group4.R.id.nav_home;
 import static edu.uw.tcss450.tcss450_group4.R.id.nav_host_fragment;
 import static edu.uw.tcss450.tcss450_group4.R.id.nav_logout;
 import static edu.uw.tcss450.tcss450_group4.R.id.nav_view;
+import static edu.uw.tcss450.tcss450_group4.R.id.nav_view_chat;
 import static edu.uw.tcss450.tcss450_group4.R.id.nav_weather;
 import static edu.uw.tcss450.tcss450_group4.R.layout;
 import static edu.uw.tcss450.tcss450_group4.R.navigation;
@@ -148,7 +159,12 @@ public class HomeActivity extends AppCompatActivity {
     // flag if weather is updated
     private boolean mUpdateWeather;
 
+    private ColorFilter mDefault;
+    private HomePushMessageReceiver mPushMessageReciever;
+
     private ConnectionItem[] mConnectionItems;
+
+    private ConnectionRequestNotification mConnectionRequest;
 //    private boolean mGoToConnection;
 //    private View mView;
     /**
@@ -195,6 +211,11 @@ public class HomeActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         startLocationUpdates();
+        if (mPushMessageReciever == null) {
+            mPushMessageReciever = new HomePushMessageReceiver();
+        }
+        IntentFilter iFilter = new IntentFilter(PushReceiver.RECEIVED_NEW_MESSAGE);
+        registerReceiver(mPushMessageReciever, iFilter);
 //        if (getIntent().getExtras().containsKey("type")) {
 //            String msg = getIntent().getExtras().getString("message");
 //            String sender = getIntent().getExtras().getString("sender");
@@ -212,6 +233,10 @@ public class HomeActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         stopLocationUpdates();
+        if (mPushMessageReciever != null){
+            unregisterReceiver(mPushMessageReciever);
+        }
+
     }
 
 
@@ -226,14 +251,20 @@ public class HomeActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Pushy.listen(this);
+
 //        gotoConnection();
         checkLocationPermission();
         setContentView(layout.activity_home);
 
-//        if (getIntent().getExtras() != null) {
-//                Navigation.findNavController(this, R.id.nav_host_fragment)
-//                        .setGraph(R.navigation.mobile_navigation, getIntent().getExtras());
-//        }
+        HomeActivityArgs args = HomeActivityArgs.fromBundle(getIntent().getExtras());
+        mJwToken = args.getJwt();
+        mCredentials = args.getCredentials();
+        mEmail = args.getCredentials().getEmail();
+        mMemberId = args.getMemberId();
+        mProfileURI = args.getProfileuri();
+        mChatMessage = args.getChatMessage();
+        mConnectionRequest = args.getConnectionRequest();
+
 
         Toolbar toolbar = findViewById(id.toolbar);
         setSupportActionBar(toolbar);
@@ -271,18 +302,27 @@ public class HomeActivity extends AppCompatActivity {
         NavigationUI.setupActionBarWithNavController(this, navController
                 , mAppBarConfiguration);
 
-        navController.setGraph(navigation.mobile_navigation, getIntent().getExtras());
+        Log.e("CHAT HOME", mChatMessage + "");
+
+//        if (mChatMessage != null) {
+//            Bundle bundle = getIntent().getExtras();
+//            bundle.putSerializable("type", mChatMessage);
+//            Log.e("BUNDLE", bundle + "");
+//            Navigation.findNavController(this, R.id.nav_host_fragment)
+//                    .setGraph(navigation.mobile_navigation, bundle);
+//        } else if (mConnectionRequest != null) {
+//            Bundle bundle = getIntent().getExtras();
+//            bundle.putSerializable("type", mChatMessage);
+//            Log.e("BUNDLE", bundle + "");
+//            Navigation.findNavController(this, R.id.nav_host_fragment)
+//                    .setGraph(navigation.mobile_navigation, bundle);
+//        } else {
+            navController.setGraph(navigation.mobile_navigation, getIntent().getExtras());
+//        }
+
         NavigationUI.setupWithNavController(navigationView, navController);
 //        if (getIntent().getExtras() != null) {
-            HomeActivityArgs args = HomeActivityArgs.fromBundle(getIntent().getExtras());
-            mJwToken = args.getJwt();
-            mCredentials = args.getCredentials();
-            mEmail = args.getCredentials().getEmail();
-            mMemberId = args.getMemberId();
-            mProfileURI = args.getProfileuri();
-            mChatMessage = args.getChatMessage();
 
-            Log.e("CHAT HOME", mChatMessage + "");
 
             View header = navigationView.getHeaderView(0);
             ImageView profileHome = header.findViewById(id.imageView_home_profile);
@@ -319,6 +359,7 @@ public class HomeActivity extends AppCompatActivity {
                 }
             }
         };
+        mDefault = toolbar.getNavigationIcon().getColorFilter();
         createLocationRequest();
     }
 
@@ -382,21 +423,23 @@ public class HomeActivity extends AppCompatActivity {
         switch (menuItem.getItemId()) {
             case nav_home:
 //                if(Objects.requireNonNull(navController.getCurrentDestination()).getId() != nav_weather) {
-                    if (mWeather != null) {
+//                    if (mWeather != null) {
                         MobileNavigationDirections.ActionGlobalNavHome directions
-                                = WeatherFragmentDirections.actionGlobalNavHome();
+                                = HomeFragmentDirections.actionGlobalNavHome();
                         directions.setWeather(mWeather);
                         directions.setMemberId(mMemberId);
                         directions.setJwt(mJwToken);
                         directions.setChatMessage(mChatMessage);
 //                        directions.setConnectionItems(mConnectionItems);
                         navController.navigate(directions);
-                    }
+//                    }
 //                    mGoToConnection = false;
 //                }
 
                 break;
             case nav_chat_list:
+                // We've clicked on chat, reset the hamburger icon color
+                ((Toolbar) findViewById(R.id.toolbar)).getNavigationIcon().setColorFilter(mDefault);
                 gotoChat();
                 break;
             case nav_connectionGUI:
@@ -586,10 +629,11 @@ public class HomeActivity extends AppCompatActivity {
         //Date showDate = new Date();
         DateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
         DateFormat timeFormat = new SimpleDateFormat("HH:mm");
+        DateFormat daysFormat = new SimpleDateFormat("MMM dd yyyy hh:mm a");
         //DateFormat dateFormat = new SimpleDateFormat("MM-dd");
         try {
             date = format.parse(timestamp);
-            a = timeFormat.format(date.getTime());
+            a = daysFormat.format(date.getTime());
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -772,6 +816,7 @@ public class HomeActivity extends AppCompatActivity {
                     directions.setWeather(mWeather);
                     directions.setMemberId(mMemberId);
                     directions.setJwt(mJwToken);
+                    directions.setChatMessage(mChatMessage);
 //                    Log.e("DEBUG", mConnectionItems.toString());
 //                    directions.setConnectionItems(mConnectionItems);
                     Navigation.findNavController(this, nav_host_fragment).navigate(directions);
@@ -1115,16 +1160,38 @@ public class HomeActivity extends AppCompatActivity {
             finish();
         }
     }
-//    @Override
-//    public void onBackPressed() {
-//        Fragment f = getSupportFragmentManager().findFragmentById(id.nav_view_chat);
-//        if (f instanceof ViewChatFragment) {
-//
-//            Navigation.findNavController().navigate(id.action_nav_view_chat_to_nav_chat_list);
-//        } else {
-//            super.onBackPressed();
-//        }
-//
-//    }
+
+    /**
+     * A BroadcastReceiver that listens for messages sent from PushReceiver
+     */
+    private class HomePushMessageReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            NavController nc =
+                    Navigation.findNavController(HomeActivity.this, R.id.nav_host_fragment);
+            NavDestination nd = nc.getCurrentDestination();
+            if (nd.getId() == nav_home) {
+                MobileNavigationDirections.ActionGlobalNavHome directions
+                        = HomeFragmentDirections.actionGlobalNavHome();
+                directions.setWeather(mWeather);
+                directions.setMemberId(mMemberId);
+                directions.setJwt(mJwToken);
+                directions.setChatMessage(mChatMessage);
+//                        directions.setConnectionItems(mConnectionItems);
+                nc.navigate(directions);
+            } else if (nd.getId() == nav_chat_list) {
+                gotoChat();
+            } else if (nd.getId() != nav_chat_list) {
+                if (intent.hasExtra("SENDER") && intent.hasExtra("MESSAGE")) {
+                    String sender = intent.getStringExtra("SENDER");
+                    String messageText = intent.getStringExtra("MESSAGE");
+                    //change the hamburger icon to red alerting the user of the notification
+                    ((Toolbar) findViewById(R.id.toolbar)).getNavigationIcon()
+                            .setColorFilter(getColor(R.color.uwPurple), PorterDuff.Mode.SRC_IN);
+                    Log.d("HOME", sender + ": " + messageText);
+                }
+            }
+        }
+    }
 
 }
