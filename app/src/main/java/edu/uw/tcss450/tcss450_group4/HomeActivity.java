@@ -158,7 +158,8 @@ public class HomeActivity extends AppCompatActivity {
 //    private double mLon;
     // flag if weather is updated
     private boolean mUpdateWeather;
-
+    private boolean mChatNotification;
+    private boolean mConnectionNotification;
     private ColorFilter mDefault;
     private HomePushMessageReceiver mPushMessageReciever;
 
@@ -442,11 +443,18 @@ public class HomeActivity extends AppCompatActivity {
                 break;
             case nav_chat_list:
                 // We've clicked on chat, reset the hamburger icon color
-                ((Toolbar) findViewById(R.id.toolbar)).getNavigationIcon().setColorFilter(mDefault);
+                if (mChatNotification) {
+                    mChatNotification = false;
+                    ((Toolbar) findViewById(R.id.toolbar)).getNavigationIcon().setColorFilter(mDefault);
+                }
+
                 gotoChat();
                 break;
             case nav_connectionGUI:
-//                mGoToConnection = true;
+                if (mConnectionNotification) {
+                    mConnectionNotification = false;
+                    ((Toolbar) findViewById(R.id.toolbar)).getNavigationIcon().setColorFilter(mDefault);
+                }
                 gotoConnection();
                 break;
             case nav_weather:
@@ -1187,17 +1195,27 @@ public class HomeActivity extends AppCompatActivity {
                 directions.setJwt(mJwToken);
 //                        directions.setConnectionItems(mConnectionItems);
                 nc.navigate(directions);
-            } else if (nd.getId() == nav_chat_list) {
+            } else if (intent.hasExtra("SENDER")
+                        && intent.hasExtra("MESSAGE")
+                        && nd.getId() != nav_chat_list) {
+                String sender = intent.getStringExtra("SENDER");
+                String messageText = intent.getStringExtra("MESSAGE");
+                //change the hamburger icon to red alerting the user of the notification
+                ((Toolbar) findViewById(R.id.toolbar)).getNavigationIcon()
+                        .setColorFilter(getColor(R.color.uwPurple), PorterDuff.Mode.SRC_IN);
+                Log.d("HOME", sender + ": " + messageText);
+                mChatNotification = true;
+                Log.e("CONNECTION", "notify");
+            } else if (intent.hasExtra("SENDER")
+                        && intent.hasExtra("MESSAGE")
+                        && nd.getId() == nav_chat_list) {
                 gotoChat();
-            } else if (nd.getId() != nav_chat_list) {
-                if (intent.hasExtra("SENDER") && intent.hasExtra("MESSAGE")) {
-                    String sender = intent.getStringExtra("SENDER");
-                    String messageText = intent.getStringExtra("MESSAGE");
-                    //change the hamburger icon to red alerting the user of the notification
-                    ((Toolbar) findViewById(R.id.toolbar)).getNavigationIcon()
-                            .setColorFilter(getColor(R.color.uwPurple), PorterDuff.Mode.SRC_IN);
-                    Log.d("HOME", sender + ": " + messageText);
-                }
+            } else if (nd.getId() == nav_connectionGUI) {
+                gotoConnection();
+            } else {
+                ((Toolbar) findViewById(R.id.toolbar)).getNavigationIcon()
+                        .setColorFilter(getColor(R.color.uwPurple), PorterDuff.Mode.SRC_IN);
+                mConnectionNotification = true;
             }
         }
     }

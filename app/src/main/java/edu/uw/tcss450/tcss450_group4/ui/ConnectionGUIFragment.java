@@ -31,6 +31,7 @@ import java.util.List;
 import edu.uw.tcss450.tcss450_group4.MobileNavigationDirections;
 import edu.uw.tcss450.tcss450_group4.R;
 import edu.uw.tcss450.tcss450_group4.model.ConnectionItem;
+import edu.uw.tcss450.tcss450_group4.model.ConnectionRequestNotification;
 import edu.uw.tcss450.tcss450_group4.utils.SendPostAsyncTask;
 
 import static edu.uw.tcss450.tcss450_group4.R.id.nav_host_fragment;
@@ -53,6 +54,7 @@ public class ConnectionGUIFragment extends Fragment implements View.OnClickListe
     private String mJwToken;
     private int mMemberId;
     private ConnectionItem mConItem;
+    private ConnectionRequestNotification mConnectionRequest;
 
     // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
@@ -84,6 +86,7 @@ public class ConnectionGUIFragment extends Fragment implements View.OnClickListe
         mJwToken = args.getJwt();
         mMemberId = args.getMemberid();
         mConnectionItem = new ArrayList<>(Arrays.asList(args.getConnectionitems()));
+        mConnectionRequest = args.getConnectionRequest();
     }
 
     @Override
@@ -116,6 +119,10 @@ public class ConnectionGUIFragment extends Fragment implements View.OnClickListe
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
             recyclerView.setAdapter(new MyConnectionGUIRecyclerViewAdapter(mConnectionItem, this::displayConnection));
+        }
+        if (mConnectionRequest != null) {
+            requestConnection();
+            mConnectionRequest = null;
         }
     }
 

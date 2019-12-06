@@ -391,10 +391,11 @@ public class HomeFragment extends Fragment {
         //Date showDate = new Date();
         DateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
         DateFormat timeFormat = new SimpleDateFormat("HH:mm");
+        DateFormat daysFormat = new SimpleDateFormat("MMM dd yyyy hh:mm a");
         //DateFormat dateFormat = new SimpleDateFormat("MM-dd");
         try {
             date = format.parse(timestamp);
-            a = timeFormat.format(date.getTime());
+            a = daysFormat.format(date.getTime());
         } catch (ParseException e) {
             e.printStackTrace();
         }

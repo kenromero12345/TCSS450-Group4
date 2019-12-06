@@ -304,20 +304,21 @@ public class ChatFragment extends Fragment implements View.OnClickListener {
     }
     private String convertTimeStampToDate(String timestamp) {
         Date date = new Date();
-        String result = "";
+        String a = "";
         //Date showTime = new Date();
         //Date showDate = new Date();
         DateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
         DateFormat timeFormat = new SimpleDateFormat("HH:mm");
+        DateFormat daysFormat = new SimpleDateFormat("MMM dd yyyy hh:mm a");
         //DateFormat dateFormat = new SimpleDateFormat("MM-dd");
         try {
             date = format.parse(timestamp);
-            result = timeFormat.format(date.getTime());
+            a = daysFormat.format(date.getTime());
         } catch (ParseException e) {
             e.printStackTrace();
         }
 
-        return result;
+        return a;
     }
 
     public int getmMemberId() {
