@@ -68,6 +68,7 @@ public class MyMessageListRecyclerViewAdapter extends RecyclerView.Adapter<MyMes
 
     public void addMessage(String userName, String memberId, String message, String timeStamp) {
         Message newMess = new Message.Builder(userName, memberId, message, timeStamp).build();
+
         mValues.add(newMess);
     }
     // Determines the appropriate ViewType according to the sender of the message.
