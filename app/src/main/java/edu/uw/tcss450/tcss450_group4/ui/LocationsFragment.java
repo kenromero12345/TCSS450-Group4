@@ -97,8 +97,21 @@ public class LocationsFragment extends Fragment {
     private static final String ARG_COLUMN_COUNT = "column-count";
     // TODO: Customize parameters
     private int mColumnCount = 1;
+
+    /**
+     * the recycler view
+     */
     private RecyclerView mRv;
+
+    /**
+     * a flag if delete mode is on
+     */
     private boolean mDeleteFlag;
+
+    /**
+     * a flag if there is no location
+     */
+    private boolean mNoLocation;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -188,7 +201,7 @@ public class LocationsFragment extends Fragment {
             tView.setBackgroundColor(Color.WHITE);
             mDeleteFlag = false;
             setToast("DELETE MODE: OFF");
-        } else {
+        } else if (!mNoLocation){
             mRv.setAdapter(new MyLocationsRecyclerViewAdapter(mLocations
                     , this::getClick, false));
 //            RecyclerView root = getView().findViewById(R.id.location_list);
@@ -201,8 +214,10 @@ public class LocationsFragment extends Fragment {
             tFab.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(
                     Objects.requireNonNull(getContext()), R.color.uwPurple)));
             tView.setBackgroundColor(Color.BLACK);
-            mDeleteFlag = true;
+            mDeleteFlag = true;;
             setToast("DELETE MODE: ON");
+        } else {
+            setToast("DELETE MODE: OFF, You can't delete a location when there is no location");
         }
     }
 
@@ -229,6 +244,7 @@ public class LocationsFragment extends Fragment {
         LocationsFragmentArgs args = LocationsFragmentArgs.fromBundle(
                 Objects.requireNonNull(getArguments()));
         mLocations = new ArrayList<>(Arrays.asList(args.getLocations()));
+        mNoLocation = mLocations.size() == 0;
         mEmail =  args.getEmail();
         mJwToken = args.getJwt();
     }
@@ -269,7 +285,7 @@ public class LocationsFragment extends Fragment {
             } else {
                 alert("Cannot display any weather", getContext());
             }
-        } else {
+        } else if (!mNoLocation){
             if (!tLocation.getName().equals("No Locations")) {
                 AlertDialog alertDialog = new AlertDialog.Builder(getActivity()).create();
                 alertDialog.setTitle("Alert");
@@ -289,7 +305,7 @@ public class LocationsFragment extends Fragment {
     private void deleteLocation(final Location tLocation) {
         mLocations.remove(tLocation);
         mRv.setAdapter(new MyLocationsRecyclerViewAdapter(mLocations
-                , this::getClick, mDeleteFlag));
+                , this::getClick, false));
         setToast("Deleted " + tLocation.getName());
 
         JSONObject msg = new JSONObject();
