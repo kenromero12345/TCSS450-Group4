@@ -1,5 +1,8 @@
 package edu.uw.tcss450.tcss450_group4.ui;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -51,6 +54,8 @@ public class MyMessageListRecyclerViewAdapter extends RecyclerView.Adapter<MyMes
                 holder.mItem = mValues.get(position);
                 holder.mUsername.setText(mValues.get(position).getUsername());
                 holder.mMessage.setText(mValues.get(position).getMessage());
+
+                holder.mAvatar.setImageBitmap(convertToBitmap(mValues.get(position).getProfileUri()));
                 break;
             case 1:
                 holder.mItem = mValues.get(position);
@@ -61,13 +66,21 @@ public class MyMessageListRecyclerViewAdapter extends RecyclerView.Adapter<MyMes
 
     }
 
+    private Bitmap convertToBitmap (String profileUri) {
+        String cleanImage = profileUri.replace("data:image/png;base64,", "").replace("data:image/jpeg;base64,","");
+        byte[] decodedString = Base64.decode(cleanImage, Base64.DEFAULT);
+        Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+        return decodedByte;
+    }
+
     @Override
     public int getItemCount() {
         return mValues.size();
     }
 
-    public void addMessage(String userName, int memberId, String message, String timeStamp) {
-        Message newMess = new Message.Builder(userName, memberId, message, timeStamp).build();
+
+    public void addMessage(String userName, int memberId, String message, String timeStamp, String profileUri) {
+        Message newMess = new Message.Builder(userName, memberId, message, timeStamp, profileUri).build();
 
         mValues.add(newMess);
     }
