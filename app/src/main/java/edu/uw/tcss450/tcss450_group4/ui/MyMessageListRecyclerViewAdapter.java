@@ -55,6 +55,7 @@ public class MyMessageListRecyclerViewAdapter extends RecyclerView.Adapter<MyMes
             case 1:
                 holder.mItem = mValues.get(position);
                 holder.mMessage.setText(mValues.get(position).getMessage());
+                break;
         }
         Log.d("MESSAGE", "onBindViewHolder() position: " + position);
 
@@ -121,37 +122,37 @@ public class MyMessageListRecyclerViewAdapter extends RecyclerView.Adapter<MyMes
             return super.toString() + mUsername.getText() + " '" + mMessage.getText() + "'";
         }
     }
-
-    private class SentMessageHolder extends RecyclerView.ViewHolder {
-        public final TextView mMessage;
-        public Message mItem;
-        SentMessageHolder(View itemView) {
-            super(itemView);
-
-            mMessage = (TextView) itemView.findViewById(R.id.txt_myMessage);
-//            timeText = (TextView) itemView.findViewById(R.id.text_message_time);
-        }
-
-        void bind(Message message) {
-            mMessage.setText(message.getMessage());
-
-        }
-    }
-
-    private class ReceivedMessageHolder extends RecyclerView.ViewHolder {
-        public final TextView mMessage, mUsername;
-        public Message mItem;
-        ReceivedMessageHolder(View itemView) {
-            super(itemView);
-
-            mMessage = (TextView) itemView.findViewById(R.id.txt_theirMessage);
-            mUsername = (TextView) itemView.findViewById(R.id.txt_friendUserName);
-        }
-
-        void bind(Message message) {
-            mMessage.setText(message.getMessage());
-
-            mUsername.setText(message.getUsername());
-        }
-    }
+//
+//    private class SentMessageHolder extends RecyclerView.ViewHolder {
+//        public final TextView mMessage;
+//        public Message mItem;
+//        SentMessageHolder(View itemView) {
+//            super(itemView);
+//
+//            mMessage = (TextView) itemView.findViewById(R.id.txt_myMessage);
+////            timeText = (TextView) itemView.findViewById(R.id.text_message_time);
+//        }
+//
+//        void bind(Message message) {
+//            mMessage.setText(message.getMessage());
+//
+//        }
+//    }
+//
+//    private class ReceivedMessageHolder extends RecyclerView.ViewHolder {
+//        public final TextView mMessage, mUsername;
+//        public Message mItem;
+//        ReceivedMessageHolder(View itemView) {
+//            super(itemView);
+//
+//            mMessage = (TextView) itemView.findViewById(R.id.txt_theirMessage);
+//            mUsername = (TextView) itemView.findViewById(R.id.txt_friendUserName);
+//        }
+//
+//        void bind(Message message) {
+//            mMessage.setText(message.getMessage());
+//
+//            mUsername.setText(message.getUsername());
+//        }
+//    }
 }
