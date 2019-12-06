@@ -27,6 +27,11 @@
             app:argType="edu.uw.tcss450.tcss450_group4.model.ChatMessageNotification"
             app:nullable="true"
             android:defaultValue="@null" />
+        <argument
+            android:name="connectionRequest"
+            app:argType="edu.uw.tcss450.tcss450_group4.model.ConnectionRequestNotification"
+            app:nullable="true"
+            android:defaultValue="@null" />
     </fragment>
 <!--    <fragment-->
 <!--        android:id="@+id/nav_connections"-->
@@ -92,6 +97,11 @@
             app:argType="edu.uw.tcss450.tcss450_group4.model.ChatMessageNotification"
             app:nullable="true"
             android:defaultValue="@null" />
+        <argument
+            android:name="connectionRequest"
+            app:argType="edu.uw.tcss450.tcss450_group4.model.ConnectionRequestNotification"
+            app:nullable="true"
+            android:defaultValue="@null" />
     </activity>
     <fragment
 
@@ -142,6 +152,9 @@
         <argument
             android:name="weathersHome24h"
             app:argType="edu.uw.tcss450.tcss450_group4.model.Weather[]" />
+        <argument
+            android:name="locations"
+            app:argType="edu.uw.tcss450.tcss450_group4.model.Location[]" />
     </fragment>
 
 
@@ -170,6 +183,11 @@
         <action
             android:id="@+id/action_nav_connectionGUI_to_nav_connection_request"
             app:destination="@id/nav_connection_request" />
+        <argument
+            android:name="connectionRequest"
+            app:argType="edu.uw.tcss450.tcss450_group4.model.ConnectionRequestNotification"
+            app:nullable="true"
+            android:defaultValue="@null" />
     </fragment><action android:id="@+id/action_global_nav_connectionGUI" app:destination="@id/nav_connectionGUI"/>
 
 
@@ -303,4 +321,14 @@
         android:id="@+id/action_global_nav_connection_request"
         app:destination="@+id/nav_connection_request" />
     <action android:id="@+id/action_global_nav_view_chat" app:destination="@id/nav_view_chat"/>
+    <fragment
+        android:id="@+id/blankFragment"
+        android:name="edu.uw.tcss450.tcss450_group4.ui.BlankFragment"
+        android:label="fragment_blank"
+        tools:layout="@layout/fragment_blank" >
+        <argument
+            android:name="jwt"
+            app:argType="string"
+            android:defaultValue='""' />
+    </fragment>
 </navigation>

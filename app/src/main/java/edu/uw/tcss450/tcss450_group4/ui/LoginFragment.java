@@ -31,6 +31,7 @@ import java.net.URL;
 
 import edu.uw.tcss450.tcss450_group4.R;
 import edu.uw.tcss450.tcss450_group4.model.ChatMessageNotification;
+import edu.uw.tcss450.tcss450_group4.model.ConnectionRequestNotification;
 import edu.uw.tcss450.tcss450_group4.model.Credentials;
 import edu.uw.tcss450.tcss450_group4.utils.SendPostAsyncTask;
 import me.pushy.sdk.Pushy;
@@ -148,11 +149,11 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
 
     @Override
     public void onClick(View v) {
-        InputMethodManager inputManager = (InputMethodManager)
-                getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-
-        inputManager.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(),
-                InputMethodManager.HIDE_NOT_ALWAYS);
+//        InputMethodManager inputManager = (InputMethodManager)
+//                getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+//
+//        inputManager.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(),
+//                InputMethodManager.HIDE_NOT_ALWAYS);
         switch (v.getId()) {
             case R.id.button_signin:
                 attemptLogin(v.findViewById(R.id.button_signin));
@@ -445,6 +446,12 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
                                 ChatMessageNotification chat =
                                         new ChatMessageNotification.Builder(sender, msg, chatId).build();
                                 homeActivity.setChatMessage(chat);
+                            } else if (getArguments().getString("type").equals("request")) {
+                                String memberId = getArguments().getString("memberid");
+                                ConnectionRequestNotification connection =
+                                        new ConnectionRequestNotification.Builder(memberId).build();
+                                homeActivity.setConnectionRequest(connection);
+
                             }
                         }
                     }

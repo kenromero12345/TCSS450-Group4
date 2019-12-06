@@ -57,6 +57,11 @@
             app:argType="edu.uw.tcss450.tcss450_group4.model.ChatMessageNotification"
             app:nullable="true"
             android:defaultValue="@null" />
+        <argument
+            android:name="connectionRequest"
+            app:argType="edu.uw.tcss450.tcss450_group4.model.ConnectionRequestNotification"
+            app:nullable="true"
+            android:defaultValue="@null" />
     </activity>
     <fragment
         android:id="@+id/nav_verify"

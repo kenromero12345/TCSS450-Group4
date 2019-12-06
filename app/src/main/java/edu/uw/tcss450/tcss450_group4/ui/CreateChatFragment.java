@@ -108,11 +108,11 @@ public class CreateChatFragment extends Fragment implements View.OnClickListener
 
         //TODO: check for BUG
 //        mBundle = new Bundle();
-        mFriendIDList = MyCreateChatRecyclerViewAdapter.getFriendIDList();
-        CreateChatFragmentArgs args = CreateChatFragmentArgs.fromBundle(Objects.requireNonNull(getArguments()));
-        mFriendList = new ArrayList<>(Arrays.asList(args.getFriendList()));
-        mJwToken = getArguments().getString("jwt");
-        mFriendIDList.add(args.getMemberId());
+//        mFriendIDList = MyCreateChatRecyclerViewAdapter.getFriendIDList();
+//        CreateChatFragmentArgs args = CreateChatFragmentArgs.fromBundle(Objects.requireNonNull(getArguments()));
+//        mFriendList = new ArrayList<>(Arrays.asList(args.getFriendList()));
+//        mJwToken = getArguments().getString("jwt");
+//        mFriendIDList.add(args.getMemberId());
 //        mEmail = args.getEmail();
 
     }
@@ -182,22 +182,30 @@ public class CreateChatFragment extends Fragment implements View.OnClickListener
 
     @Override
     public void onClick(View view) {
+        boolean hasError = false;
         switch (view.getId()) {
             case R.id.button_create_new_chat:
+
                 EditText editText_ChatName = getActivity().findViewById(R.id.editText_chatName);
-                createNewChat();
-                addFriendToNewChat();
-                getNewestChatId();
-
-                if (editText_ChatName.getText().length() != 0) {
-                    InputMethodManager inputManager = (InputMethodManager)
-                            getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-
-                    inputManager.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(),
-                            InputMethodManager.HIDE_NOT_ALWAYS);
+                if (editText_ChatName.getText().toString().isEmpty()){
+                    hasError = true;
+                    editText_ChatName.setError("Field must not be empty.");
                 }
-                MyCreateChatRecyclerViewAdapter.getFriendIDList().clear();
-                break;
+                if(!hasError) {
+                    createNewChat();
+                    addFriendToNewChat();
+                    getNewestChatId();
+
+                    if (editText_ChatName.getText().length() != 0) {
+                        InputMethodManager inputManager = (InputMethodManager)
+                                getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+
+                        inputManager.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(),
+                                InputMethodManager.HIDE_NOT_ALWAYS);
+                    }
+                    MyCreateChatRecyclerViewAdapter.getFriendIDList().clear();
+                    break;
+                }
         }
     }
 

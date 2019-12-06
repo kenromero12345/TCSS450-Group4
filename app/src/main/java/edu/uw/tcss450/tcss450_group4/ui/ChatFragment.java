@@ -107,6 +107,8 @@ public class ChatFragment extends Fragment implements View.OnClickListener {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        Log.e("ViewChat", getArguments() + "");
+
         ChatFragmentArgs args = ChatFragmentArgs.fromBundle(getArguments());
         mChats = new ArrayList<>(Arrays.asList(args.getChats()));
         mMemberId = args.getMemberId();
@@ -146,9 +148,16 @@ public class ChatFragment extends Fragment implements View.OnClickListener {
         }
         btnCreateChat.setOnClickListener(this::onClick);
         if (mChatMessage != null) {
+
             displayChat(mChatMessage.getChatId());
+            mChatMessage = null;
 
         }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
     }
 
     @Override
@@ -266,8 +275,10 @@ public class ChatFragment extends Fragment implements View.OnClickListener {
                     JSONObject jsonChatLists = data.getJSONObject(i);
 
                     messages[i] = (new Message.Builder(jsonChatLists.getString("username"),
+                                jsonChatLists.getInt("memberid"),
                                 jsonChatLists.getString("message"),
-                                convertTimeStampToDate(jsonChatLists.getString("timestamp")))
+                                convertTimeStampToDate(jsonChatLists.getString("timestamp")),
+                            jsonChatLists.getString("profileuri"))
                                 .build());
                 }
 //                mMessageList = new ArrayList<Message>(Arrays.asList(messages));
@@ -295,26 +306,26 @@ public class ChatFragment extends Fragment implements View.OnClickListener {
     }
     private String convertTimeStampToDate(String timestamp) {
         Date date = new Date();
-        String result = "";
+        String a = "";
         //Date showTime = new Date();
         //Date showDate = new Date();
         DateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
         DateFormat timeFormat = new SimpleDateFormat("HH:mm");
+        DateFormat daysFormat = new SimpleDateFormat("MMM dd yyyy hh:mm a");
         //DateFormat dateFormat = new SimpleDateFormat("MM-dd");
         try {
             date = format.parse(timestamp);
-            result = timeFormat.format(date.getTime());
+            a = daysFormat.format(date.getTime());
         } catch (ParseException e) {
             e.printStackTrace();
         }
 
-        return result;
+        return a;
     }
 
     public int getmMemberId() {
         return mMemberId;
     }
-
 
     /**
      * This interface must be implemented by activities that contain this

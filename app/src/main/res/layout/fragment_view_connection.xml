@@ -69,10 +69,10 @@
         android:id="@+id/addViewImage"
         android:layout_width="50dp"
         android:layout_height="50dp"
+        android:layout_marginStart="30dp"
         android:layout_marginTop="20dp"
         android:visibility="visible"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/layout_viewConnection_dummy"
         app:layout_constraintTop_toBottomOf="@+id/fullUsername"
         app:srcCompat="@drawable/connection_request_image" />
 
@@ -80,10 +80,10 @@
         android:id="@+id/sentViewImage"
         android:layout_width="100dp"
         android:layout_height="50dp"
+        android:layout_marginStart="30dp"
         android:layout_marginTop="20dp"
         android:visibility="visible"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/layout_viewConnection_dummy"
         app:layout_constraintTop_toBottomOf="@+id/fullUsername"
         app:srcCompat="@drawable/connection_sent_image" />
 
@@ -91,10 +91,10 @@
         android:id="@+id/confirmViewImage"
         android:layout_width="100dp"
         android:layout_height="50dp"
+        android:layout_marginStart="30dp"
         android:layout_marginTop="20dp"
         android:visibility="visible"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/layout_viewConnection_dummy"
         app:layout_constraintTop_toBottomOf="@+id/fullUsername"
         app:srcCompat="@drawable/connection_request_received_image" />
 

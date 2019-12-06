@@ -46,6 +46,7 @@ import edu.uw.tcss450.tcss450_group4.R;
 import edu.uw.tcss450.tcss450_group4.model.Chat;
 import edu.uw.tcss450.tcss450_group4.model.ChatMessageNotification;
 import edu.uw.tcss450.tcss450_group4.model.ConnectionItem;
+import edu.uw.tcss450.tcss450_group4.model.ConnectionRequestNotification;
 import edu.uw.tcss450.tcss450_group4.model.Message;
 import edu.uw.tcss450.tcss450_group4.model.State;
 import edu.uw.tcss450.tcss450_group4.model.Weather;
@@ -56,7 +57,7 @@ import static edu.uw.tcss450.tcss450_group4.R.color.uwPurple;
 import static edu.uw.tcss450.tcss450_group4.R.id.button_home_requests;
 import static edu.uw.tcss450.tcss450_group4.R.id.layout_chatHome_wait;
 import static edu.uw.tcss450.tcss450_group4.R.id.layout_connectionHome_wait;
-import static edu.uw.tcss450.tcss450_group4.R.id.layout_homeActivity_wait;
+import static edu.uw.tcss450.tcss450_group4.R.id.layout_home_wait;
 import static edu.uw.tcss450.tcss450_group4.R.id.layout_weatherHome_wait;
 import static edu.uw.tcss450.tcss450_group4.R.id.nav_host_fragment;
 import static edu.uw.tcss450.tcss450_group4.R.id.textView_home_requestCount;
@@ -72,6 +73,7 @@ import static edu.uw.tcss450.tcss450_group4.R.id.weather_windSpeed;
 import static edu.uw.tcss450.tcss450_group4.R.string.ep_base_url;
 import static edu.uw.tcss450.tcss450_group4.R.string.ep_chats;
 import static edu.uw.tcss450.tcss450_group4.R.string.ep_connection;
+import static edu.uw.tcss450.tcss450_group4.R.string.ep_getall;
 import static edu.uw.tcss450.tcss450_group4.R.string.ep_messaging_base;
 import static edu.uw.tcss450.tcss450_group4.R.string.ep_messaging_getAll;
 import static edu.uw.tcss450.tcss450_group4.R.string.ep_requestsReceived;
@@ -106,6 +108,7 @@ public class HomeFragment extends Fragment {
     private String mChatId;
     private String mEmail;
     private ChatMessageNotification mChatMessage;
+    private ConnectionRequestNotification mConnectionRequest;
     private boolean mConnectionDone, mChatDone, mWeatherDone;
 
     private int mConnectionCount = 0;
@@ -126,6 +129,11 @@ public class HomeFragment extends Fragment {
 //        mConnectionItem = new ArrayList<>(Arrays.asList(args.getConnectionitems()));
         View view = inflater.inflate(R.layout.fragment_home, container, false);
         view.setClipToOutline(true);
+//        Log.e("CHECK ChatMessage", getArguments() + "");
+//        if (getArguments().containsKey("type")) {
+//            mChatMessage = (ChatMessageNotification) getArguments().getSerializable("type");
+//            Log.e("ayye", "welcome");
+//        }
 
         view.findViewById(button_home_requests).setOnClickListener(this::requestConnection);
         return view;
@@ -143,25 +151,16 @@ public class HomeFragment extends Fragment {
         HomeFragmentArgs args = HomeFragmentArgs.fromBundle(getArguments());
         mJwToken = args.getJwt();
         mMemberId = args.getMemberId();
-//        mChatMessage = args.getChatMessage();
-//        if (mChatMessage != null) {
-//            Log.e("CHAT HOME FRAGMENT", mChatMessage.getMessage() + "");
-//        }
-//        HomeFragment.
-
-
-//        if (mChatMessage != null) {
-//            gotoChat();
-//        } else {
-            view.findViewById(layout_weatherHome_wait).setVisibility(View.VISIBLE);
-            view.findViewById(weather_temperatureSwitch).setVisibility(View.INVISIBLE);
-            initialization(view);
-//        }
-//        if (mChatMessage != null) {
-//            getActivity().findViewById(layout_homeActivity_wait).setVisibility(View.VISIBLE);
-//            gotoChat();
-//        }
-
+        mChatMessage = args.getChatMessage();
+        mConnectionRequest = args.getConnectionRequest();
+        if (mChatMessage != null || mConnectionRequest != null) {
+            view.findViewById(layout_home_wait).setVisibility(View.VISIBLE);
+        }
+        view.findViewById(layout_weatherHome_wait).setVisibility(View.VISIBLE);
+        view.findViewById(weather_temperatureSwitch).setVisibility(View.INVISIBLE);
+        view.findViewById(layout_connectionHome_wait).setVisibility(View.VISIBLE);
+        view.findViewById(layout_chatHome_wait).setVisibility(View.VISIBLE);
+        initialization(view);
 
 
 
@@ -244,6 +243,7 @@ public class HomeFragment extends Fragment {
             memberId.put("memberId", mMemberId);
         } catch (JSONException e) {
             e.printStackTrace();
+            getView().findViewById(layout_chatHome_wait).setVisibility(View.GONE);
         }
         Uri uriChats = new Uri.Builder()
                 .scheme("https")
@@ -251,7 +251,6 @@ public class HomeFragment extends Fragment {
                 .appendPath(getString(ep_chats))
                 .build();
         new SendPostAsyncTask.Builder(uriChats.toString(), memberId)
-                .onPreExecute(() -> getView().findViewById(layout_chatHome_wait).setVisibility(View.VISIBLE))
                 .onPostExecute(this::handleChatsGetFewOnPostExecute)
                 .addHeaderField("authorization", mJwToken)
                 .onCancelled(this::handleChatErrorsInTask)
@@ -263,11 +262,8 @@ public class HomeFragment extends Fragment {
             JSONObject root = new JSONObject(result);
             if (root.has("success") && root.getBoolean(getString(keys_json_login_success))) {
                 JSONArray data = root.getJSONArray("names");
-//                if (response.has(getString(R.string.keys_json_chats_data))) {
-//                    JSONArray data = response.getJSONArray(getString(R.string.keys_json_chats_data));
                 int size = Math.min(3, data.length());
                 mChats = new Chat[size];
-//                int size = Math.min(data.length(), 3);
                 for (int i = 0; i < size; i++) {
                     JSONObject jsonChatLists = data.getJSONObject(i);
 
@@ -298,23 +294,22 @@ public class HomeFragment extends Fragment {
                     }
                     recyclerView.setAdapter(new MyChatRecyclerViewAdapter(new ArrayList<>(Arrays.asList(mChats)), chat -> displayChat(chat.getChatId())));
                 }
-//                mChatDone = true;
                 getView().findViewById(layout_chatHome_wait).setVisibility(View.GONE);
                 if (mChatMessage != null) {
-                    getActivity().findViewById(layout_homeActivity_wait).setVisibility(View.VISIBLE);
                     gotoChat();
+//                    mChatMessage = null;
+                } else if (mConnectionRequest != null) {
+                    gotoConnection();
                 }
-//                getView().findViewById(layout_chatHome_wait).setVisibility(View.INVISIBLE);
             } else {
-//                getView().findViewById(layout_chatHome_wait).setVisibility(View.INVISIBLE);
+                getView().findViewById(layout_chatHome_wait).setVisibility(View.GONE);
                 Log.e("ERROR!", "No response");
             }
         } catch (JSONException e) {
             e.printStackTrace();
-//            getView().findViewById(layout_chatHome_wait).setVisibility(View.INVISIBLE);
+            getView().findViewById(layout_chatHome_wait).setVisibility(View.GONE);
             Log.e("ERROR!", e.getMessage());
         }
-        getView().findViewById(layout_chatHome_wait).setVisibility(View.GONE);
     }
 
     private void handleChatErrorsInTask(final String result) {
@@ -340,7 +335,7 @@ public class HomeFragment extends Fragment {
         new SendPostAsyncTask.Builder(uriChats.toString(), msgBody)
                 .onPostExecute(this::handleMessageGetOnPostExecute)
                 .addHeaderField("authorization", mJwToken)
-                .onCancelled(this::handleErrorsInTask)
+                .onCancelled(this::handleMessageErrorsInTask)
                 .build().execute();
 
 //        final Bundle args = new Bundle();
@@ -349,6 +344,11 @@ public class HomeFragment extends Fragment {
 //        args.putString("jwt", mJwToken);
 //        args.putSerializable("List", mMessageList);
         //Navigation.findNavController(getView()).navigate(R.id.action_nav_chat_list_to_nav_view_chat, args);
+    }
+
+    private void handleMessageErrorsInTask(final String result) {
+        getView().findViewById(layout_chatHome_wait).setVisibility(View.GONE);
+        Log.e("ASYNC_TASK_ERROR", result);
     }
 
     private void handleMessageGetOnPostExecute(final String result) {
@@ -363,8 +363,10 @@ public class HomeFragment extends Fragment {
                     JSONObject jsonChatLists = data.getJSONObject(i);
 
                     messages[i] = (new Message.Builder(jsonChatLists.getString("username"),
+                            jsonChatLists.getInt("memberid"),
                             jsonChatLists.getString("message"),
-                            convertTimeStampToDate(jsonChatLists.getString("timestamp")))
+                            convertTimeStampToDate(jsonChatLists.getString("timestamp")),
+                            jsonChatLists.getString("profileuri"))
                             .build());
                 }
 //                mMessageList = new ArrayList<Message>(Arrays.asList(messages));
@@ -391,10 +393,11 @@ public class HomeFragment extends Fragment {
         //Date showDate = new Date();
         DateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
         DateFormat timeFormat = new SimpleDateFormat("HH:mm");
+        DateFormat daysFormat = new SimpleDateFormat("MMM dd yyyy hh:mm a");
         //DateFormat dateFormat = new SimpleDateFormat("MM-dd");
         try {
             date = format.parse(timestamp);
-            a = timeFormat.format(date.getTime());
+            a = daysFormat.format(date.getTime());
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -421,9 +424,8 @@ public class HomeFragment extends Fragment {
 
         }
         new SendPostAsyncTask.Builder(uriConnection.toString(), msgBody)
-                .onPreExecute(() -> getView().findViewById(layout_connectionHome_wait).setVisibility(View.VISIBLE))
-                .onPostExecute(this::handleConnectionOnPostExecute)
-                .onCancelled(this::handleConnectionErrorsInTask)
+                .onPostExecute(this::handleConnectionRequestCountOnPostExecute)
+                .onCancelled(this::handleConnectionRequestCountErrorsInTask)
                 .addHeaderField("authorization", mJwToken)  //add the JWT as header
                 .build().execute();
 
@@ -433,8 +435,9 @@ public class HomeFragment extends Fragment {
      * Helper method that handles errors when getting connection count fails
      * @param result
      */
-    private void handleConnectionErrorsInTask(final String result) {
-        getView().findViewById(layout_connectionHome_wait).setVisibility(View.INVISIBLE);
+    private void handleConnectionRequestCountErrorsInTask(final String result) {
+        getView().findViewById(layout_connectionHome_wait).setVisibility(View.GONE);
+        getView().findViewById(layout_chatHome_wait).setVisibility(View.GONE);
         Log.e("ASYNC_TASK_ERROR", result);
     }
 
@@ -443,14 +446,15 @@ public class HomeFragment extends Fragment {
      * has been successfully retrieved
      * @param result
      */
-    private void handleConnectionOnPostExecute(final String result) {
+    private void handleConnectionRequestCountOnPostExecute(final String result) {
         try {
             boolean hasConnection = false;
             JSONObject root = new JSONObject(result);
             if (root.has(getString(keys_json_connection_connections))) {
                 hasConnection = true;
             } else {
-//                getView().findViewById(layout_connectionHome_wait).setVisibility(View.INVISIBLE);
+                getView().findViewById(layout_connectionHome_wait).setVisibility(View.GONE);
+                getView().findViewById(layout_chatHome_wait).setVisibility(View.GONE);
                 Log.e("ERROR!", "No connection");
             }
 
@@ -459,21 +463,15 @@ public class HomeFragment extends Fragment {
                         getString(keys_json_connection_connections));
                 mConnectionCount = connectionJArray.length();
                 ((TextView) getView().findViewById(textView_home_requestCount)).setText("You have " + mConnectionCount + " request(s)");
-//                getView().findViewById(layout_connectionHome_wait).setVisibility(View.INVISIBLE);
-//                mConnectionDone = true;
-//                if (mChatMessage != null && mWeatherDone && mConnectionDone && mChatDone) {
-//                    getActivity().findViewById(layout_homeActivity_wait).setVisibility(View.VISIBLE);
-//                    gotoChat();
-//                }
                 getView().findViewById(layout_connectionHome_wait).setVisibility(View.GONE);
                 getRecentChats();
             }
 
         } catch (JSONException e) {
-//            getView().findViewById(layout_connectionHome_wait).setVisibility(View.INVISIBLE);
+            getView().findViewById(layout_connectionHome_wait).setVisibility(View.GONE);
+            getView().findViewById(layout_chatHome_wait).setVisibility(View.GONE);
             e.printStackTrace();
         }
-        getView().findViewById(layout_connectionHome_wait).setVisibility(View.GONE);
     }
 
     /**
@@ -486,6 +484,10 @@ public class HomeFragment extends Fragment {
         mWeather = Objects.requireNonNull(args).getWeather();
         if (mWeather != null) {
             setComponents();
+        } else {
+            view.findViewById(layout_weatherHome_wait).setVisibility(View.GONE);
+            view.findViewById(layout_connectionHome_wait).setVisibility(View.GONE);
+            view.findViewById(layout_chatHome_wait).setVisibility(View.GONE);
         }
     }
 
@@ -511,6 +513,9 @@ public class HomeFragment extends Fragment {
             mWeather.setCity(addresses.get(0).getLocality());
             mWeather.setState(addresses.get(0).getAdminArea());
         } catch (IOException e) {
+            getView().findViewById(layout_weatherHome_wait).setVisibility(View.GONE);
+            getView().findViewById(layout_connectionHome_wait).setVisibility(View.GONE);
+            getView().findViewById(layout_chatHome_wait).setVisibility(View.GONE);
             e.printStackTrace();
         }
         TextView cityText = mView.findViewById(weather_cityCountry);
@@ -559,6 +564,9 @@ public class HomeFragment extends Fragment {
 
                     @Override
                     public void onError(Exception e) {
+                        getView().findViewById(layout_weatherHome_wait).setVisibility(View.GONE);
+                        getView().findViewById(layout_connectionHome_wait).setVisibility(View.GONE);
+                        getView().findViewById(layout_chatHome_wait).setVisibility(View.GONE);
 
                     }
                 });
@@ -595,11 +603,12 @@ public class HomeFragment extends Fragment {
         new SendPostAsyncTask.Builder(uriChats.toString(), memberId)
                 .onPostExecute(this::handleChatsGetOnPostExecute)
                 .addHeaderField("authorization", mJwToken)
-                .onCancelled(this::handleErrorsInTask)
+                .onCancelled(this::handleChatsGetErrorsInTask)
                 .build().execute();
     }
 
-    private void handleErrorsInTask(final String result) {
+    private void handleChatsGetErrorsInTask(final String result) {
+        getView().findViewById(layout_home_wait).setVisibility(View.GONE);
         Log.e("ASYNC_TASK_ERROR", result);
     }
 
@@ -608,8 +617,6 @@ public class HomeFragment extends Fragment {
             JSONObject root = new JSONObject(result);
             if (root.has("success") && root.getBoolean(getString(keys_json_login_success))) {
                 JSONArray data = root.getJSONArray("names");
-//                if (response.has(getString(R.string.keys_json_chats_data))) {
-//                    JSONArray data = response.getJSONArray(getString(R.string.keys_json_chats_data));
                 Chat[] chats = new Chat[data.length()];
                 for (int i = 0; i < data.length(); i++) {
                     JSONObject jsonChatLists = data.getJSONObject(i);
@@ -633,19 +640,88 @@ public class HomeFragment extends Fragment {
                         = ChatFragmentDirections.actionGlobalNavChatList(chats);
                 directions.setMemberId(mMemberId);
                 directions.setJwt(mJwToken);
-//                directions.setEmail(mEmail);
                 directions.setChatMessage(mChatMessage);
                 Navigation.findNavController(getActivity(), nav_host_fragment)
                         .navigate(directions);
-//                }    else {
-//                    Log.e("ERROR!", "No data array");
-//                }
+                mChatMessage = null;
             } else {
                 Log.e("ERROR!", "No response");
+                getView().findViewById(layout_home_wait).setVisibility(View.GONE);
             }
         } catch (JSONException e) {
             e.printStackTrace();
+            getView().findViewById(layout_home_wait).setVisibility(View.GONE);
             Log.e("ERROR!", e.getMessage());
+        }
+    }
+
+    private void gotoConnection() {
+        Uri uriConnection = new Uri.Builder()
+                .scheme("https")
+                .appendPath(getString(ep_base_url))
+                .appendPath(getString(ep_connection))
+                .appendPath(getString(ep_getall))
+                .build();
+        JSONObject msgBody = new JSONObject();
+        try{
+            msgBody.put("memberId", mMemberId);
+        } catch (JSONException e) {
+            Log.wtf("MEMBERID", "Error creating JSON: " + e.getMessage());
+
+        }
+        new SendPostAsyncTask.Builder(uriConnection.toString(), msgBody)
+                .onPostExecute(this::handleConnectionOnPostExecute)
+                .onCancelled(error -> Log.e("CONNECTION FRAG", error))
+                .addHeaderField("authorization", mJwToken)  //add the JWT as header
+                .build().execute();
+
+    }
+
+    private void handleConnectionOnPostExecute(final String result) {
+        //parse JSON
+        try {
+            boolean hasConnection = false;
+            JSONObject root = new JSONObject(result);
+            if (root.has(getString(keys_json_connection_connections))){
+                hasConnection = true;
+            } else {
+                Log.e("ERROR!", "No connection");
+            }
+
+
+            if (hasConnection){
+                JSONArray connectionJArray = root.getJSONArray(
+                        getString(keys_json_connection_connections));
+//                ConnectionItem[] conItem = new ConnectionItem[connectionJArray.length()];
+                mConnectionItems = new ConnectionItem[connectionJArray.length()];
+                for(int i = 0; i < connectionJArray.length(); i++){
+                    JSONObject jsonConnection = connectionJArray.getJSONObject(i);
+                    mConnectionItems[i] = new ConnectionItem(
+                            jsonConnection.getInt(
+                                    getString(keys_json_connection_memberid))
+                            , jsonConnection.getString(
+                            getString(keys_json_connection_firstname))
+                            , jsonConnection.getString(
+                            getString(keys_json_connection_lastname))
+                            ,jsonConnection.getString(
+                            getString(keys_json_connection_username)),
+                            jsonConnection.getString(
+                                    getString(keys_json_connection_image)));
+                }
+                MobileNavigationDirections.ActionGlobalNavConnectionGUI directions
+                        = ConnectionGUIFragmentDirections.actionGlobalNavConnectionGUI(mConnectionItems);
+                directions.setJwt(mJwToken);
+                directions.setMemberid(mMemberId);
+                directions.setConnectionRequest(mConnectionRequest);
+                Navigation.findNavController(getActivity(), nav_host_fragment)
+                        .navigate(directions);
+                mConnectionRequest = null;
+                getView().findViewById(layout_home_wait).setVisibility(View.GONE);
+            }
+
+
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
     }
 }

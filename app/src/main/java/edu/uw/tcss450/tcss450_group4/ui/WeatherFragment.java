@@ -1,22 +1,20 @@
 package edu.uw.tcss450.tcss450_group4.ui;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
 import android.graphics.Typeface;
 import android.location.Address;
 import android.location.Geocoder;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.SearchView;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -227,15 +225,37 @@ public class WeatherFragment extends Fragment {
     private void setComponents() {
         //TODO don't need to always do, just once
         mView.findViewById(layout_weather_clickable).setOnClickListener(e -> toggleMainFab());
-        View zipView = mView.findViewById(weather_zipEditText);
-        zipView.setOnKeyListener((v, keyCode, event) ->
-                zipKeyListener(v, keyCode));
-//        zipView.setOnClickListener(e ->
+        SearchView zipView = mView.findViewById(weather_zipEditText);
+        zipView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                attemptGetWeatherZip();
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                ifFabOpenCloseIt();
+                return false;
+            }
+        });
+        zipView.setOnSearchClickListener(v -> ifFabOpenCloseIt());
+//        zipView.setOnKeyListener((v, keyCode, event) ->
+//                zipKeyListener(v, keyCode));
+//        zipView.setOnClickListener(e -> {
+//                    ifFabOpenCloseIt();
+//                    setToast("Get the current weather condition and forecasts of the given zip code");
+//                });
+//        zipView.setOnLongClickListener(e ->
 //                setToast("Get the current weather condition and forecasts of the given zip code"));
-        zipView.setOnLongClickListener(e ->
-                setToast("Get the current weather condition and forecasts of the given zip code"));
-        zipView.setOnClickListener(e -> ifFabOpenCloseIt());
-        zipView.setOnFocusChangeListener((v, hasFocus) -> ifFabOpenCloseIt());
+//        zipView.setOnClickListener(e -> {
+//            ifFabOpenCloseIt();
+//            setToast("Get the current weather condition and forecasts of the given zip code");
+//        });
+//        zipView.setOnFocusChangeListener((v, hasFocus) -> {
+//            ifFabOpenCloseIt();
+//            setToast("Get the current weather condition and forecasts of the given zip code");
+//        });
 //        mView.findViewById(weather_getZipButton).setOnLongClickListener(v ->
 //                setToast("Get the current weather condition and forecasts of the given zip code"));
 //        mView.findViewById(weather_getZipButton).setOnClickListener(v -> attemptGetWeatherZip());
@@ -275,28 +295,29 @@ public class WeatherFragment extends Fragment {
         setWeather();
     }
 
-    /**
-     * the linstener for the zip key
-     * @param tView the view of the fragment
-     * @param tKey the key
-     * @return the boolean if successful
-     */
-    public boolean zipKeyListener(View tView, int tKey) {
-        if (tKey == KeyEvent.KEYCODE_ENTER || tKey == KeyEvent.KEYCODE_DPAD_CENTER) {
-            attemptGetWeatherZip();
-            InputMethodManager mgr = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-            mgr.hideSoftInputFromWindow(tView.getWindowToken(), 0);
-            return true;
-        } else {
-            ifFabOpenCloseIt();
-        }
-        return false;
-    }
+//    /**
+//     * the linstener for the zip key
+//     * @param tView the view of the fragment
+//     * @param tKey the key
+//     * @return the boolean if successful
+//     */
+//    public boolean zipKeyListener(View tView, int tKey) {
+//        if (tKey == KeyEvent.KEYCODE_ENTER || tKey == KeyEvent.KEYCODE_DPAD_CENTER) {
+//            attemptGetWeatherZip();
+//            InputMethodManager mgr = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+//            mgr.hideSoftInputFromWindow(tView.getWindowToken(), 0);
+//            return true;
+//        } else {
+//            ifFabOpenCloseIt();
+//        }
+//        return false;
+//    }
 
     /**
      * get current location weather and set the view
      */
     private void getCurrentLocationWeather() {
+        setToast("Get the current weather condition and forecasts from your current location");
         mWeather = mHomeWeather;
         mWeathers10d = mHomeWeathers10d.clone();
         mWeathers24h = mHomeWeathers24h.clone();
@@ -340,11 +361,59 @@ public class WeatherFragment extends Fragment {
      * When map fab is clicked, go to the map
      */
     private void gotoMap() {
+        setToast("Get the current weather condition and forecasts from the chosen location");
+
+        Uri uri = new Uri.Builder()
+                .scheme("https")
+                .appendPath(getString(ep_base_url))
+                .appendPath(getString(ep_weather))
+                .appendPath(getString(ep_get))
+                .build();
+
+        JSONObject msg = new JSONObject();
+
+        try {
+            msg.put("email", mEmail);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        sendPostAsyncTaskHelper(uri, msg, this::endOfGetSavedWeathersGoToMapTask, mJwToken);
         ifFabOpenCloseIt();
-        WeatherFragmentDirections.ActionNavWeatherToNavMap action =
-                WeatherFragmentDirections.actionNavWeatherToNavMap(mEmail, mJwToken, mHomeWeather
-                        , mHomeWeathers10d, mHomeWeathers24h);
-        Navigation.findNavController(Objects.requireNonNull(getView())).navigate(action);
+
+    }
+
+    /**
+     * handling the getting of saved weathers
+     * @param result
+     */
+    private void endOfGetSavedWeathersGoToMapTask(final String result) {
+        Log.d(TAG, result);
+        try {
+            JSONObject root = new JSONObject(result);
+            if (root.has("success") && root.get("success").equals("false")) {
+                alert("getting weathers failed", getContext());
+            }
+            JSONArray messages = root.getJSONArray(getString(keys_json_messages));
+
+            Location[] locations = new Location[messages.length()];
+            for(int i = 0; i < locations.length; i++) {
+                JSONObject message = messages.getJSONObject(i);
+                locations[i] = new Location(message.getDouble(getString(keys_json_long))
+                        , message.getDouble(getString(keys_json_lat))
+                        , message.getString(getString(keys_json_nickname)));
+            }
+
+            ifFabOpenCloseIt();
+
+            WeatherFragmentDirections.ActionNavWeatherToNavMap action =
+                    WeatherFragmentDirections.actionNavWeatherToNavMap(mEmail, mJwToken, mHomeWeather
+                            , mHomeWeathers10d, mHomeWeathers24h, locations);
+            Navigation.findNavController(Objects.requireNonNull(getView())).navigate(action);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -673,6 +742,7 @@ public class WeatherFragment extends Fragment {
      * attempt to save the weather
      */
     private void attemptSaveWeather() {
+        setToast("Save the current location");
         JSONObject msg = new JSONObject();
 
         try {
@@ -785,6 +855,7 @@ public class WeatherFragment extends Fragment {
      * go to the recycler view of the saved locations
      */
     private void gotoSavedWeatherRecyclerView() {
+        setToast("Get the list of saved locations");
         Uri uri = new Uri.Builder()
                 .scheme("https")
                 .appendPath(getString(ep_base_url))
@@ -813,16 +884,23 @@ public class WeatherFragment extends Fragment {
      */
     private void attemptGetWeatherZip() {
         boolean success = true;
-            EditText et = mView.findViewById(weather_zipEditText);
-            String zip = et.getText().toString().trim();
+            SearchView et = mView.findViewById(weather_zipEditText);
+            String zip = et.getQuery().toString().trim();
 
             if (zip.equals("")) {
                 success = false;
-                et.setError("empty!!");
+//                ((EditText) et.findViewById(et.getContext()
+////                        .getResources()
+////                        .getIdentifier("weather_zipEditText", null
+////                                , null))).setError("empty!!");
+//                et.findViewById(weather_zipEditText)
+
+                setToast("empty!");
         }
 
         if (success) {
-            getWeatherZip();
+            getWeatherZip(zip);
+            et.onActionViewCollapsed();
         }
     }
 
@@ -1129,8 +1207,8 @@ public class WeatherFragment extends Fragment {
     /**
      * gets the weather zip
      */
-    private void getWeatherZip() {
-        String zip = ((EditText)mView.findViewById(weather_zipEditText)).getText().toString().trim();
+    private void getWeatherZip(String tZip) {
+//        String zip = ((EditText)mView.findViewById(weather_zipEditText)).getText().toString().trim();
 //        Uri uri = getUriWeatherCurrentLatLon(getContext());
 //
 //        Uri uri2 = getUriWeather10dLatLon(getContext());
@@ -1165,7 +1243,7 @@ public class WeatherFragment extends Fragment {
 
         Uri uri3 = getUriWeather24hZip(getContext());
 
-        JSONObject msg = WeatherHelper.getJsonObjectZip(zip);
+        JSONObject msg = WeatherHelper.getJsonObjectZip(tZip);
 
 //        new SendPostAsyncTask.Builder(uri.toString(), msg)
 //                .onPostExecute(this::endOfGetWeatherTask)

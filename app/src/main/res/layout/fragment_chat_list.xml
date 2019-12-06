@@ -25,6 +25,7 @@
         android:id="@+id/txt_display_no_chat"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:background="#F9F9F9"
         android:gravity="center"
         android:text="@string/display_no_chat"
         android:textSize="20dp"
@@ -37,7 +38,7 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/chatList"
         android:name="edu.uw.tcss450.tcss450_group4.ui.ChatFragment"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="30dp"
         android:layout_marginTop="10dp"

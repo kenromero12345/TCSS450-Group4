@@ -56,6 +56,7 @@ public class ViewChatFragment extends Fragment {
     private MyMessageListRecyclerViewAdapter mMessageAdapter;
     private List<Message> mMessageList;
     private int mMessageCount;
+    private RecyclerView mRecyclerView;
     public ViewChatFragment() {
         // Required empty public constructor
     }
@@ -114,34 +115,31 @@ public class ViewChatFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+
         return inflater.inflate(R.layout.fragment_view_chat, container, false);
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        // setRetainInstance(true);
-        // mUsesrnameOutputTextView = view.findViewById(R.id.txt_friendUserName);
-        // mMessageOutputTextView = view.findViewById(R.id.txt_theirMessage);
         mMessageInputEditText = view.findViewById(R.id.editText_chat_message_input);
         mMessageCount = mMessageList.size() - 1;
         RecyclerView rv = view.findViewById(R.id.viewChatList);
+        mMessageAdapter = new MyMessageListRecyclerViewAdapter(mMessageList, mMemberId, null);
         if (rv instanceof RecyclerView) {
             Context context = rv.getContext();
-            RecyclerView recyclerView = rv;
+            mRecyclerView = rv;
             if (mColumnCount <= 1) {
                 LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
                 linearLayoutManager.setStackFromEnd(true);
-                recyclerView.setLayoutManager(linearLayoutManager);
+                mRecyclerView.setLayoutManager(linearLayoutManager);
             } else {
-                recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
+                mRecyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            mMessageAdapter = new MyMessageListRecyclerViewAdapter(mMessageList, null);
-            recyclerView.setAdapter(mMessageAdapter);
-
+            mRecyclerView.setAdapter(mMessageAdapter);
+//            recyclerView.smoothScrollToPosition(messageAdapter.getItemCount());
 
         }
-//
         view.findViewById(R.id.button_chat_send).setOnClickListener(this::handleSendClick);
 
     }
@@ -170,7 +168,7 @@ public class ViewChatFragment extends Fragment {
 
         inputManager.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(),
                 InputMethodManager.HIDE_NOT_ALWAYS);
-        mMessageAdapter.notifyDataSetChanged();
+//        mMessageAdapter.notifyDataSetChanged();
 
     }
 
@@ -188,7 +186,7 @@ public class ViewChatFragment extends Fragment {
                 mMessageCount++;
 
                 Log.e("SCROLL", mMessageCount + "");
-                ((RecyclerView) getView().findViewById(R.id.viewChatList)).smoothScrollToPosition(mMessageCount);
+
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -203,7 +201,6 @@ public class ViewChatFragment extends Fragment {
         }
         IntentFilter iFilter = new IntentFilter(PushReceiver.RECEIVED_NEW_MESSAGE);
         getActivity().registerReceiver(mPushMessageReciever, iFilter);
-
     }
 
     @Override
@@ -214,37 +211,6 @@ public class ViewChatFragment extends Fragment {
         }
     }
 
-//    private List<Message> getMessageList(String chatId) {
-//        Uri uriGetAllMessages = new Uri.Builder()
-//                .scheme("https")
-//                .appendPath(getString(R.string.ep_base_url))
-//                .appendPath(getString(R.string.ep_messaging_base))
-//                .appendPath(getString(R.string.ep_messaging_getAll))
-//                .build();
-//        try {
-//            JSONObject msgBody = new JSONObject();
-//            msgBody.put("chatId", CHAT_ID);
-//
-//            new SendPostAsyncTask.Builder(uriGetAllMessages.toString(), msgBody)
-//                    .onPostExecute(this::handleGetAllMessageOnPostExecute)
-//                    .onCancelled(error -> Log.e("GET ALL MESSAGES", error))
-//                    .addHeaderField("authorization", mJwToken)
-//                    .build().execute();
-//        } catch (JSONException e) {
-//            Log.wtf("get messages", "Error creating JSON: " + e.getMessage());
-//        }
-//    }
-//    private void handleGetAllMessageOnPostExecute(final String result) {
-//        try {
-//            JSONObject root = new JSONObject(result);
-//            if (root.has("success") && root.getBoolean("success")) {
-//                JSONArray data = root.getJSONArray("messages");
-//
-//            }
-//        } catch (JSONException e) {
-//            e.printStackTrace();
-//        }
-//    }
     /**
      * A BroadcastReceiver that listens for messages sent from PushReceiver
      */
@@ -252,17 +218,16 @@ public class ViewChatFragment extends Fragment {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            if(intent.hasExtra("SENDER") && intent.hasExtra("MESSAGE")) {
+            if(intent.hasExtra("SENDER") && intent.hasExtra("MESSAGE") && intent.hasExtra("SENDERID")) {
 
                 String sender = intent.getStringExtra("SENDER");
                 String messageText = intent.getStringExtra("MESSAGE");
-                mMessageAdapter.addMessage(sender, messageText, "");
+                String chatid = intent.getStringExtra("CHATID");
+                int senderId = intent.getIntExtra("SENDERID", -1);
+                String profileUri = intent.getStringExtra("PROFILEURI");
+                mMessageAdapter.addMessage(sender, senderId, messageText, "", profileUri);
                 mMessageAdapter.notifyDataSetChanged();
-//                mUsesrnameOutputTextView.append(sender+": ");
-//                mMessageOutputTextView.setText(messageText);
-//                mMessageOutputTextView.append(sender + ":" + messageText);
-//                mMessageOutputTextView.append(System.lineSeparator());
-//                mMessageOutputTextView.append(System.lineSeparator());
+                ((RecyclerView) getView().findViewById(R.id.viewChatList)).smoothScrollToPosition(mMessageAdapter.getItemCount());
             }
 
         }
