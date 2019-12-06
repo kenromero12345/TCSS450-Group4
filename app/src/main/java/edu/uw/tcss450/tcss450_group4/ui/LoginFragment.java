@@ -148,11 +148,11 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
 
     @Override
     public void onClick(View v) {
-        InputMethodManager inputManager = (InputMethodManager)
-                getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-
-        inputManager.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(),
-                InputMethodManager.HIDE_NOT_ALWAYS);
+//        InputMethodManager inputManager = (InputMethodManager)
+//                getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+//
+//        inputManager.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(),
+//                InputMethodManager.HIDE_NOT_ALWAYS);
         switch (v.getId()) {
             case R.id.button_signin:
                 attemptLogin(v.findViewById(R.id.button_signin));

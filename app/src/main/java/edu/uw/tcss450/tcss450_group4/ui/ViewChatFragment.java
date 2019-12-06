@@ -137,7 +137,7 @@ public class ViewChatFragment extends Fragment {
             } else {
                 mMessageRecycler.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            mMessageAdapter = new MyMessageListRecyclerViewAdapter(mMessageList, null);
+            mMessageAdapter = new MyMessageListRecyclerViewAdapter(mMessageList, mMemberId, null);
             mMessageRecycler.setAdapter(mMessageAdapter);
 //            recyclerView.smoothScrollToPosition(mMessageAdapter.getItemCount());
 
@@ -264,7 +264,7 @@ public class ViewChatFragment extends Fragment {
 
                 String sender = intent.getStringExtra("SENDER");
                 String messageText = intent.getStringExtra("MESSAGE");
-                mMessageAdapter.addMessage(sender, messageText, "");
+                mMessageAdapter.addMessage(sender, String.valueOf(mMemberId), messageText, "");
                 mMessageAdapter.notifyDataSetChanged();
 //                mUsesrnameOutputTextView.append(sender+": ");
 //                mMessageOutputTextView.setText(messageText);

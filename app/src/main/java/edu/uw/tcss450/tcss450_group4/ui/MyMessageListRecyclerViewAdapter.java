@@ -22,8 +22,9 @@ public class MyMessageListRecyclerViewAdapter extends RecyclerView.Adapter<MyMes
     private Context mContext;
     private static final int VIEW_TYPE_MESSAGE_SENT = 1;
     private static final int VIEW_TYPE_MESSAGE_RECEIVED = 2;
-
-    public MyMessageListRecyclerViewAdapter(List<Message> messageList, Context context ) {
+    private int mMemberId;
+    public MyMessageListRecyclerViewAdapter(List<Message> messageList, int memberId, Context context ) {
+        mMemberId = memberId;
         mContext = context;
         mValues = messageList;
     }
@@ -72,8 +73,8 @@ public class MyMessageListRecyclerViewAdapter extends RecyclerView.Adapter<MyMes
         return mValues.size();
     }
 
-    public void addMessage(String userName, String message, String timeStamp) {
-        Message newMess = new Message.Builder(userName, message, timeStamp).build();
+    public void addMessage(String userName, String memberId, String message, String timeStamp) {
+        Message newMess = new Message.Builder(userName, memberId, message, timeStamp).build();
         mValues.add(newMess);
     }
     // Determines the appropriate ViewType according to the sender of the message.
@@ -102,14 +103,15 @@ public class MyMessageListRecyclerViewAdapter extends RecyclerView.Adapter<MyMes
         public ViewHolder(View view) {
             super(view);
             mView = view;
-//            if (String.valueOf(mItem.getMemberId()).equals(chat.getmMemberId())) {
-//                mUsername = null;
-//                mMessage = view.findViewById(R.id.txt_myMessage);
-//            } else {
+            if(Integer.valueOf(mItem.getMemberId()) != mMemberId) {
                 mUsername = view.findViewById(R.id.txt_friendUserName);
                 mMessage = view.findViewById(R.id.txt_theirMessage);
                 mAvatar = view.findViewById(R.id.avatar);
-   //         }
+            } else {
+                mUsername = null;
+                mMessage = view.findViewById(R.id.txt_myMessage);
+                mAvatar = null;
+            }
 
         }
 

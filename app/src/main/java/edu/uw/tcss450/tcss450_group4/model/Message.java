@@ -51,12 +51,12 @@ public class Message implements Serializable, Parcelable {
         private final String mEmail;
         private final String mMessage;
         private final String mTimeStamp;
-//        private final String mMemberId;
-        public Builder(String chatId, String message, String timeStamp) {
+        private final String mMemberId;
+        public Builder(String chatId, String memberId, String message, String timeStamp) {
             this.mEmail = chatId;
             this.mMessage = message;
             this.mTimeStamp = timeStamp;
-            //this.mMemberId = memberId;
+            this.mMemberId = memberId;
         }
 
         public Message build() {
@@ -68,7 +68,7 @@ public class Message implements Serializable, Parcelable {
         this.mUsername = builder.mEmail;
         this.mMessage = builder.mMessage;
         this.mTimeStamp = builder.mTimeStamp;
-        //this.mMemberId = builder.mMemberId;
+        this.mMemberId = builder.mMemberId;
     }
 
     public String getMessage() {
