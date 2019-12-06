@@ -9,6 +9,9 @@ import java.util.ArrayList;
 public class ConnectionItem implements Serializable, Parcelable {
 
 
+    /**
+     * Instance field for all the required things for a connection item.
+     */
     private final String mContactId;
     private final String mContactName;
     private final String mContactLastName;
@@ -16,6 +19,14 @@ public class ConnectionItem implements Serializable, Parcelable {
     private final String mContactImage;
     private int mVerified;
 
+    /**
+     * Constructor for a connection item.
+     * @param tContactId The id of the contact.
+     * @param tContactName The contact name.
+     * @param tContactLastName The contact last name.
+     * @param tContactUsername The contact user name.
+     * @param tContactImage The contact image.
+     */
     public ConnectionItem(int tContactId, String tContactName, String tContactLastName, String tContactUsername,
                           String tContactImage){
         mContactId = Integer.toString(tContactId);
@@ -27,6 +38,15 @@ public class ConnectionItem implements Serializable, Parcelable {
 
     }
 
+    /**
+     *
+     * @param tContactId The id of the contact.
+     * @param tContactName The contact name.
+     * @param tContactLastName The contact last name.
+     * @param tContactUsername The contact user name.
+     * @param tVerfied The verification of the user.
+     * @param tContactImage The contact image.
+     */
     public ConnectionItem(int tContactId, String tContactName, String tContactLastName, String tContactUsername,
                           int tVerfied, String tContactImage){
         mContactId = Integer.toString(tContactId);
@@ -38,8 +58,10 @@ public class ConnectionItem implements Serializable, Parcelable {
     }
 
 
-
-
+    /**
+     * Method to read the information.
+     * @param in the Parcel.
+     */
     protected ConnectionItem(Parcel in) {
         mContactId = in.readString();
         mContactName = in.readString();
@@ -48,6 +70,7 @@ public class ConnectionItem implements Serializable, Parcelable {
         mVerified = in.readInt();
         mContactImage = in.readString();
     }
+
 
     public static final Creator<ConnectionItem> CREATOR = new Creator<ConnectionItem>() {
 
@@ -63,10 +86,12 @@ public class ConnectionItem implements Serializable, Parcelable {
         }
     };
 
+
     @Override
     public int describeContents() {
         return 0;
     }
+
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
@@ -78,39 +103,45 @@ public class ConnectionItem implements Serializable, Parcelable {
         dest.writeString(mContactImage);
     }
 
-//    public static class Builder {
-//        private String mName = "";
-//        private String mUserName = "";
-//
-//        public Builder(String name, String userName){
-//            mName = name;
-//            mUserName = userName;
-//        }
-//
-//        public ConnectionItem build() {return new ConnectionItem(this); }
-//
-//
-//    }
 
-//    private ConnectionItem(final ConnectionItem.Builder builder){
-//        this.mName = builder.mName;
-//        this.mUserName = builder.mUserName;
-//    }
-
+    /**
+     * Get the id.
+     * @return the contact id.
+     */
     public String getContactId() { return mContactId; }
 
+    /**
+     * Get the first name.
+     * @return the first name.
+     */
     public String getFirstName(){
         return mContactName;
     }
 
+    /**
+     * Get the last name.
+     * @return the last name.
+     */
     public String getLastName(){
         return mContactLastName;
     }
 
+    /**
+     * Get the user name.
+     * @return the user name.
+     */
     public String getContactUserName() { return mContactUserName; }
 
+    /**
+     * Get the verification of the user.
+     * @return the verification.
+     */
     public int getVerified() { return mVerified; }
 
+    /**
+     * Get the contact image.
+     * @return the image.
+     */
     public String getContactImage() { return mContactImage; }
 
 }

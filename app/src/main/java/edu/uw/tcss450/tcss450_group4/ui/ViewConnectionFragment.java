@@ -31,11 +31,15 @@ import edu.uw.tcss450.tcss450_group4.R;
 import edu.uw.tcss450.tcss450_group4.model.ConnectionItem;
 import edu.uw.tcss450.tcss450_group4.utils.SendPostAsyncTask;
 
+
 /**
  * A simple {@link Fragment} subclass.
+ * This class displays the full profile of a connection or user.
  */
 public class ViewConnectionFragment extends Fragment implements View.OnClickListener{
-//
+    /**
+     * Instance field for variables to be used throught the class.
+     */
 
     private String mJwToken;
     private int mMemberId;
@@ -43,16 +47,22 @@ public class ViewConnectionFragment extends Fragment implements View.OnClickList
     private int mVerified;
 
 
+    /**
+     * Public contructor.
+     */
     public ViewConnectionFragment() {
         // Required empty public constructor
     }
 
 
+    /**
+     * onStart method to initialize variables and the image. Also checks the verification
+     * to properly display each item in the fragment.
+     */
     @Override
     public void onStart(){
         super.onStart();
         if (getArguments() != null) {
-//            BlogPost blogPost = (BlogPost) getArguments().getSerializable(getString(R.string.blog_key));
             mJwToken = getArguments().getString("jwt");
             mMemberId = getArguments().getInt("memberid");
             mConnectionItem = (ConnectionItem)
@@ -74,9 +84,6 @@ public class ViewConnectionFragment extends Fragment implements View.OnClickList
         if(mVerified == 1) {
             //set verified check
             ImageView img = getActivity().findViewById(R.id.verifiedImage);
-//            img.setImageResource(R.drawable.charles_angels_icon);
-
-            //confirm and set image not visible
             (getActivity().findViewById(R.id.sentViewImage))
                     .setVisibility(View.GONE);
             (getActivity().findViewById(R.id.confirmViewImage))
@@ -87,24 +94,19 @@ public class ViewConnectionFragment extends Fragment implements View.OnClickList
         else if(mVerified == 2){
             //set sent request image
             ImageView img = getActivity().findViewById(R.id.sentImage);
-//            img.setImageResource(R.drawable.charles_angels_icon);
 
-            //set verified and confirm not visible
             (getActivity().findViewById(R.id.verifiedImage))
                     .setVisibility(View.GONE);
             (getActivity().findViewById(R.id.confirmViewImage))
                     .setVisibility(View.GONE);
             (getActivity().findViewById(R.id.addViewImage))
                     .setVisibility(View.GONE);
-//            (getActivity().findViewById(R.id.fullDelete))
-//                    .setVisibility(View.GONE);
+
             (getActivity().findViewById(R.id.fullChat))
                     .setVisibility(View.GONE);
         }
         else if(mVerified == 3){
             //set received image
-//            ImageView img = getActivity().findViewById(R.id.confirmImage);
-//            img.setImageResource(R.drawable.charles_angels_icon);
 
             //set verified and sent not visible.
             (getActivity().findViewById(R.id.verifiedImage))
@@ -113,14 +115,10 @@ public class ViewConnectionFragment extends Fragment implements View.OnClickList
                     .setVisibility(View.GONE);
             (getActivity().findViewById(R.id.addViewImage))
                     .setVisibility(View.GONE);
-//            (getActivity().findViewById(R.id.fullDelete))
-//                    .setVisibility(View.GONE);
             (getActivity().findViewById(R.id.fullChat))
                     .setVisibility(View.GONE);
         }
         else {
-//            (getActivity().findViewById(R.id.addImage))
-//                    .setVisibility(View.VISIBLE);
             (getActivity().findViewById(R.id.verifiedImage))
                     .setVisibility(View.GONE);
             (getActivity().findViewById(R.id.sentViewImage))
@@ -134,6 +132,7 @@ public class ViewConnectionFragment extends Fragment implements View.OnClickList
         }
     }
 
+
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
@@ -141,6 +140,11 @@ public class ViewConnectionFragment extends Fragment implements View.OnClickList
 
         }
 
+    /**
+     * This method puts an on click to each clickable item in the fragment.
+     * @param view the View
+     * @param savedInstanceState the Saved instance state.
+     */
     @Override
     public void onViewCreated (@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -161,7 +165,10 @@ public class ViewConnectionFragment extends Fragment implements View.OnClickList
     }
 
 
-
+    /**
+     * Method that handles each button clicked
+     * @param v the view.
+     */
     @Override
     public void onClick(View v) {
 
@@ -189,6 +196,9 @@ public class ViewConnectionFragment extends Fragment implements View.OnClickList
 
     }
 
+    /**
+     * Webservice call to add someone.
+     */
     private void addImage() {
         Uri uriSearch = new Uri.Builder()
                 .scheme("https")
@@ -196,7 +206,6 @@ public class ViewConnectionFragment extends Fragment implements View.OnClickList
                 .appendPath(getString(R.string.ep_connection))
                 .appendPath(getString(R.string.ep_add))
                 .build();
-//        Log.e("name", String.valueOf(username));
         JSONObject msgBody = new JSONObject();
         try{
             msgBody.put("memberIdUser", mMemberId);
@@ -212,6 +221,10 @@ public class ViewConnectionFragment extends Fragment implements View.OnClickList
                 .build().execute();
     }
 
+    /**
+     * Handles the add on post execution
+     * @param result the json response from the server.
+     */
     private void handleAddOnPostExecute(String result) {
         //parse JSON
         try {
@@ -229,12 +242,12 @@ public class ViewConnectionFragment extends Fragment implements View.OnClickList
             if (hasSuccess){
                 if (success == true) {
                     showAddSuccessDialogButtonClicked();
+
                 } else {
                     showAddUnsuccessDialogButtonClicked();
 
                 }
             }
-
 
         } catch (JSONException e) {
             e.printStackTrace();
@@ -243,28 +256,113 @@ public class ViewConnectionFragment extends Fragment implements View.OnClickList
     }
 
 
+    /**
+     * Method to handle the dialogue for a sent image.
+     */
     private void sentImage() {
         showSentDialogButtonClicked();
     }
 
+    /**
+     * Method to handle the dialogue for a confirm image.
+     */
     private void confirmImage() {
         showConfirmDialogButtonClicked();
     }
 
+    /**
+     * Method that shows the add dialogue on success.
+     */
     private void showAddSuccessDialogButtonClicked() {
         // setup the alert builder
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle("Add Friend");
         builder.setMessage("Added!");
 
-        builder.setNegativeButton("OK", null);
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
 
+                Uri uriConnection = new Uri.Builder()
+                        .scheme("https")
+                        .appendPath(getString(R.string.ep_base_url))
+                        .appendPath(getString(R.string.ep_connection))
+                        .appendPath(getString(R.string.ep_getall))
+                        .build();
+                JSONObject msgBody = new JSONObject();
+                try{
+                    msgBody.put("memberId", mMemberId);
+                } catch (JSONException e) {
+                    Log.wtf("MEMBERID", "Error creating JSON: " + e.getMessage());
+
+                }
+                new SendPostAsyncTask.Builder(uriConnection.toString(), msgBody)
+                        .onPostExecute(this::handleConnectionOnPostExecute)
+                        .onCancelled(error -> Log.e("CONNECTION FRAG", error))
+                        .addHeaderField("authorization", mJwToken)  //add the JWT as header
+                        .build().execute();
+
+            }
+
+            /**
+             * Method to go back to the main connection gui.
+             * @param result the result.
+             */
+            private void handleConnectionOnPostExecute(final String result) {
+                //parse JSON
+                try {
+                    boolean hasConnection = false;
+                    JSONObject root = new JSONObject(result);
+                    if (root.has(getString(R.string.keys_json_connection_connections))){
+                        hasConnection = true;
+                    } else {
+                        Log.e("ERROR!", "No connection");
+                    }
+
+                    if (hasConnection){
+                        JSONArray connectionJArray = root.getJSONArray(
+                                getString(R.string.keys_json_connection_connections));
+                        ConnectionItem[] conItem = new ConnectionItem[connectionJArray.length()];
+                        for(int i = 0; i < connectionJArray.length(); i++){
+                            JSONObject jsonConnection = connectionJArray.getJSONObject(i);
+                            conItem[i] = new ConnectionItem(
+                                    jsonConnection.getInt(
+                                            getString(R.string.keys_json_connection_memberid))
+                                    , jsonConnection.getString(
+                                    getString(R.string.keys_json_connection_firstname))
+                                    , jsonConnection.getString(
+                                    getString(R.string.keys_json_connection_lastname))
+                                    ,jsonConnection.getString(
+                                    getString(R.string.keys_json_connection_username)),
+                                    jsonConnection.getString(getString(R.string.keys_json_connection_image)));
+                        }
+
+                        MobileNavigationDirections.ActionGlobalNavConnectionGUI directions
+                                = ConnectionGUIFragmentDirections.actionGlobalNavConnectionGUI(conItem);
+                        directions.setJwt(mJwToken);
+                        directions.setMemberid(mMemberId);
+
+                        Navigation.findNavController(getActivity(), R.id.nav_host_fragment)
+                                .navigate(directions);
+
+                    }
+
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        });
         // create and show the alert dialog
         AlertDialog dialog = builder.create();
         dialog.show();
 
     }
 
+    /**
+     * Method that shows the add dialogue on unsuccessful.
+     */
     private void showAddUnsuccessDialogButtonClicked() {
         // setup the alert builder
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -279,6 +377,9 @@ public class ViewConnectionFragment extends Fragment implements View.OnClickList
 
     }
 
+    /**
+     * Method that shows the confirm dialogue on success.
+     */
     private void showConfirmDialogButtonClicked() {
         // setup the alert builder
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -302,6 +403,9 @@ public class ViewConnectionFragment extends Fragment implements View.OnClickList
 
     }
 
+    /**
+     * Method that shows the delete dialogue on success.
+     */
     public void showDeleteDialogButtonClicked() {
 
         // setup the alert builder
@@ -325,22 +429,15 @@ public class ViewConnectionFragment extends Fragment implements View.OnClickList
         dialog.show();
     }
 
+    /**
+     * Method that shows the sent dialogue on success.
+     */
     public void showSentDialogButtonClicked() {
 
         // setup the alert builder
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle("Sent Request");
         builder.setMessage("You sent a request to this user");
-
-        // add the buttons
-//        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-//            @Override
-//            public void onClick(DialogInterface dialog, int which) {
-//
-//                // do something like...
-//                removeConnection();
-//            }
-//        });
         builder.setNegativeButton("OK", null);
 
         // create and show the alert dialog
@@ -348,6 +445,9 @@ public class ViewConnectionFragment extends Fragment implements View.OnClickList
         dialog.show();
     }
 
+    /**
+     * Webservice call for confirming a request.
+     */
     private void confirmConnection() {
         Uri uriConnection = new Uri.Builder()
                 .scheme("https")
@@ -372,6 +472,9 @@ public class ViewConnectionFragment extends Fragment implements View.OnClickList
 
     }
 
+    /**
+     * Webservice call to remove a connection.
+     */
     private void removeConnection() {
         Uri uriConnection = new Uri.Builder()
                 .scheme("https")
@@ -397,7 +500,10 @@ public class ViewConnectionFragment extends Fragment implements View.OnClickList
     }
 
 
-
+    /**
+     * Method that handles a remove on post execute.
+     * @param result the json response from the web service.
+     */
     private void handleRemoveOnPostExecute(String result) {
 
         Uri uriConnection = new Uri.Builder()
@@ -423,6 +529,10 @@ public class ViewConnectionFragment extends Fragment implements View.OnClickList
 
 
 
+    /**
+     * Method that handles a connection on post execute.
+     * @param result the json response from the web service.
+     */
     private void handleConnectionOnPostExecute(final String result) {
         //parse JSON
         try {
@@ -468,7 +578,5 @@ public class ViewConnectionFragment extends Fragment implements View.OnClickList
         }
 
     }
-
-
 
 }

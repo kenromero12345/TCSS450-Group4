@@ -33,7 +33,7 @@ import edu.uw.tcss450.tcss450_group4.model.ConnectionItem;
 import edu.uw.tcss450.tcss450_group4.utils.SendPostAsyncTask;
 
 /**
- * A simple {@link Fragment} subclass.
+ * This class is the fragment to search and add a user.
  */
 public class ConnectionAddFragment extends Fragment implements View.OnClickListener{
     private String mJwToken;
@@ -43,11 +43,22 @@ public class ConnectionAddFragment extends Fragment implements View.OnClickListe
     private String mMessage;
 
 
+    /**
+     * Public constructor
+     */
     public ConnectionAddFragment() {
         // Required empty public constructor
     }
 
 
+    /**
+     * On view created method that initializes the view and the add layout. As well as
+     * handles an onclick
+     * @param inflater
+     * @param container
+     * @param savedInstanceState
+     * @return
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -65,6 +76,9 @@ public class ConnectionAddFragment extends Fragment implements View.OnClickListe
         return view;
     }
 
+    /**
+     * Web service call to display the connection.
+     */
     private void displayConnection() {
         Uri uriConnection = new Uri.Builder()
                 .scheme("https")
@@ -87,6 +101,10 @@ public class ConnectionAddFragment extends Fragment implements View.OnClickListe
                 .build().execute();
     }
 
+    /**
+     * Method handling a display connection on post execute
+     * @param result the json response.
+     */
     private void handleDisplayOnPostExecute(String result) {
         //parse JSON
         try {
@@ -170,6 +188,9 @@ public class ConnectionAddFragment extends Fragment implements View.OnClickListe
         }
     }
 
+    /**
+     * Method to do on start and initialize variables.
+     */
     @Override
     public void onStart(){
         super.onStart();
@@ -188,6 +209,11 @@ public class ConnectionAddFragment extends Fragment implements View.OnClickListe
     }
 
 
+    /**
+     * on view created method that initializes an onclick for the search.
+     * @param view
+     * @param savedInstanceState
+     */
     @Override
     public void onViewCreated (@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -199,6 +225,10 @@ public class ConnectionAddFragment extends Fragment implements View.OnClickListe
 
     }
 
+    /**
+     * Method to handle on click for the search.
+     * @param v the view.
+     */
     @Override
     public void onClick(View v) {
 
@@ -215,6 +245,9 @@ public class ConnectionAddFragment extends Fragment implements View.OnClickListe
 
     }
 
+    /**
+     * Webservice call to search for a connection.
+     */
     private void searchConnection() {
         EditText userNameText = getActivity().findViewById(R.id.connectionUserNameText);
         String username = userNameText.getText().toString();
@@ -242,6 +275,10 @@ public class ConnectionAddFragment extends Fragment implements View.OnClickListe
     }
 
 
+    /**
+     * Method handling a search on post execute
+     * @param result the json response.
+     */
     private void handleSearchOnPostExecute(String result) {
         //parse JSON
         try {
@@ -295,6 +332,9 @@ public class ConnectionAddFragment extends Fragment implements View.OnClickListe
 
     }
 
+    /**
+     * If there is no user, show this message dialogue.
+     */
         private void showNoUser() {
         // setup the alert builder
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
