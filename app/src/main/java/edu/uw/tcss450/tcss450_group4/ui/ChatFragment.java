@@ -275,8 +275,10 @@ public class ChatFragment extends Fragment implements View.OnClickListener {
                     JSONObject jsonChatLists = data.getJSONObject(i);
 
                     messages[i] = (new Message.Builder(jsonChatLists.getString("username"),
+                                jsonChatLists.getInt("memberid"),
                                 jsonChatLists.getString("message"),
-                                convertTimeStampToDate(jsonChatLists.getString("timestamp")))
+                                convertTimeStampToDate(jsonChatLists.getString("timestamp")),
+                            jsonChatLists.getString("profileuri"))
                                 .build());
                 }
 //                mMessageList = new ArrayList<Message>(Arrays.asList(messages));
