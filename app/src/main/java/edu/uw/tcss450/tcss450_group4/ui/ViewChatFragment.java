@@ -168,15 +168,7 @@ public class ViewChatFragment extends Fragment {
         inputManager.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(),
                 InputMethodManager.HIDE_NOT_ALWAYS);
 //        mMessageAdapter.notifyDataSetChanged();
-//        if(mMessageAdapter.getItemCount() != 0) {
-//            mMessageRecycler.post(new Runnable() {
-//                @Override
-//                public void run() {
-//                    // Call smooth scroll
-//                    mMessageRecycler.smoothScrollToPosition(mMessageAdapter.getItemCount());
-//                }
-//            });
-//        }
+        ((RecyclerView) getView().findViewById(R.id.viewChatList)).smoothScrollToPosition(mMessageAdapter.getItemCount() -1);
     }
 
     private void endOfSendMsgTask(final String result) {
@@ -193,7 +185,7 @@ public class ViewChatFragment extends Fragment {
                 mMessageCount++;
 
                 Log.e("SCROLL", mMessageCount + "");
-                ((RecyclerView) getView().findViewById(R.id.viewChatList)).smoothScrollToPosition(mMessageCount);
+
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -208,7 +200,6 @@ public class ViewChatFragment extends Fragment {
         }
         IntentFilter iFilter = new IntentFilter(PushReceiver.RECEIVED_NEW_MESSAGE);
         getActivity().registerReceiver(mPushMessageReciever, iFilter);
-
     }
 
     @Override
@@ -257,17 +248,14 @@ public class ViewChatFragment extends Fragment {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            if(intent.hasExtra("SENDER") && intent.hasExtra("MESSAGE")) {
+            if(intent.hasExtra("SENDER") && intent.hasExtra("MESSAGE") && intent.hasExtra("SENDERID")) {
 
                 String sender = intent.getStringExtra("SENDER");
                 String messageText = intent.getStringExtra("MESSAGE");
-                mMessageAdapter.addMessage(sender, String.valueOf(mMemberId), messageText, "");
+                String chatid = intent.getStringExtra("CHATID");
+                int senderId = intent.getIntExtra("SENDERID", -1);
+                mMessageAdapter.addMessage(sender, senderId, messageText, "");
                 mMessageAdapter.notifyDataSetChanged();
-//                mUsesrnameOutputTextView.append(sender+": ");
-//                mMessageOutputTextView.setText(messageText);
-//                mMessageOutputTextView.append(sender + ":" + messageText);
-//                mMessageOutputTextView.append(System.lineSeparator());
-//                mMessageOutputTextView.append(System.lineSeparator());
             }
 
         }
