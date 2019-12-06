@@ -71,11 +71,12 @@
             android:layout_alignParentEnd="true"
             android:layout_marginTop="0dp"
             android:layout_marginEnd="0dp"
-            android:layout_marginBottom="0dp"
+            android:layout_marginBottom="5dp"
             android:ems="10"
 
             android:hint="@string/edit_zip_code"
             android:inputType="textPersonName"
+            android:queryHint="@string/edit_zip_code"
             app:actionViewClass="android.support.v7.widget.SearchView"
             app:defaultQueryHint="@string/edit_zip_code"
             app:queryHint="@string/edit_zip_code"
@@ -1290,6 +1291,8 @@
             android:layout_alignTop="@+id/weather_conditionIcon"
             android:layout_marginStart="3dp"
             android:layout_marginTop="8dp"
+            android:layout_marginEnd="0dp"
+            android:layout_toStartOf="@+id/weather_zipEditText"
             android:layout_toEndOf="@+id/weather_conditionIcon" />
 
         <ImageView
