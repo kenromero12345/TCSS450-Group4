@@ -6,6 +6,9 @@ import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.util.Base64;
 import android.util.Log;
 
 import androidx.core.app.NotificationCompat;
@@ -37,28 +40,34 @@ public class PushReceiver extends BroadcastReceiver {
         String typeOfMessage = intent.getStringExtra("type");
 
         //The WS sent us the name of the sender
-        String sender = intent.getStringExtra("sender");
 
-        String messageText = intent.getStringExtra("message");
 
         ActivityManager.RunningAppProcessInfo appProcessInfo = new ActivityManager.RunningAppProcessInfo();
         ActivityManager.getMyMemoryState(appProcessInfo);
 
         if (appProcessInfo.importance == IMPORTANCE_FOREGROUND || appProcessInfo.importance == IMPORTANCE_VISIBLE) {
             //app is in the foreground so send the message to the active Activities
-            Log.d("PUSHY", "Message received in foreground: " + messageText);
-
-            //create an Intent to broadcast a message to other parts of the app.
+//            Log.d("PUSHY", "Message received in foreground: " + messageText);
             Intent i = new Intent(RECEIVED_NEW_MESSAGE);
-            i.putExtra("SENDER", sender);
-            i.putExtra("MESSAGE", messageText);
-            i.putExtras(intent.getExtras());
+            if (typeOfMessage.equals("msg")) {
+                String sender = intent.getStringExtra("sender");
+
+                String messageText = intent.getStringExtra("message");
+                //create an Intent to broadcast a message to other parts of the app.
+                i.putExtra("SENDER", sender);
+                i.putExtra("MESSAGE", messageText);
+                i.putExtras(intent.getExtras());
+            } else if (typeOfMessage.equals("request")) {
+                i.putExtra("REQUEST", "You got a connection request");
+                i.putExtras(intent.getExtras());
+            }
+
 
             context.sendBroadcast(i);
 
         } else {
             //app is in the background so create and post a notification
-            Log.d("PUSHY", "Message received in background: " + messageText);
+//            Log.d("PUSHY", "Message received in background: " + messageText);
 
             Intent i = new Intent(context, MainActivity.class);
             i.putExtras(intent.getExtras());
@@ -66,24 +75,58 @@ public class PushReceiver extends BroadcastReceiver {
             PendingIntent pendingIntent = PendingIntent.getActivity(context, 0,
                     i, PendingIntent.FLAG_UPDATE_CURRENT);
 
-            //research more on notifications the how to display them
-            //https://developer.android.com/guide/topics/ui/notifiers/notifications
-            NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
-                    .setAutoCancel(true)
-                    .setSmallIcon(R.drawable.ic_chat_gold_24dp)
-                    .setContentTitle("Message from: " + sender)
-                    .setContentText(messageText)
-                    .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                    .setContentIntent(pendingIntent);
+            if (typeOfMessage.equals("msg")) {
+                String sender = intent.getStringExtra("sender");
 
-            // Automatically configure a ChatMessageNotification Channel for devices running Android O+
-            Pushy.setNotificationChannel(builder, context);
+                String messageText = intent.getStringExtra("message");
+                //research more on notifications the how to display them
+                //https://developer.android.com/guide/topics/ui/notifiers/notifications
+                NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
+                        .setAutoCancel(true)
+                        .setSmallIcon(R.drawable.ic_chat_gold_24dp)
+                        .setContentTitle("Message from: " + sender)
+                        .setContentText(messageText)
+                        .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                        .setContentIntent(pendingIntent);
 
-            // Get an instance of the NotificationManager service
-            NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+                // Automatically configure a ChatMessageNotification Channel for devices running Android O+
+                Pushy.setNotificationChannel(builder, context);
 
-            // Build the notification and display it
-            notificationManager.notify(1, builder.build());
+                // Get an instance of the NotificationManager service
+                NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+
+                // Build the notification and display it
+                notificationManager.notify(1, builder.build());
+            } else if (typeOfMessage.equals("request")){
+                String username = intent.getStringExtra("username");
+//                String memberId = intent.getStringExtra("memberid");
+
+                String profileUri = intent.getStringExtra("profileuri");
+
+                String cleanImage = profileUri.replace("data:image/png;base64,", "").replace("data:image/jpeg;base64,","");
+                byte[] decodedString = Base64.decode(cleanImage, Base64.DEFAULT);
+                Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+                //research more on notifications the how to display them
+                //https://developer.android.com/guide/topics/ui/notifiers/notifications
+                NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
+                        .setAutoCancel(true)
+                        .setSmallIcon(R.drawable.ic_connections_gold_24dp)
+                        .setContentTitle("Request from: " + username)
+//                        .setContentText(messageText)
+                        .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                        .setContentIntent(pendingIntent);
+
+                // Automatically configure a ChatMessageNotification Channel for devices running Android O+
+                Pushy.setNotificationChannel(builder, context);
+
+                // Get an instance of the NotificationManager service
+                NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+
+                // Build the notification and display it
+                notificationManager.notify(1, builder.build());
+            }
+
+
         }
 
     }

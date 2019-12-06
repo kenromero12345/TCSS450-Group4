@@ -1210,9 +1210,11 @@ public class HomeActivity extends AppCompatActivity {
                         && intent.hasExtra("MESSAGE")
                         && nd.getId() == nav_chat_list) {
                 gotoChat();
-            } else if (nd.getId() == nav_connectionGUI) {
+            } else if (intent.hasExtra("REQUEST")
+                    && nd.getId() == nav_connectionGUI) {
                 gotoConnection();
-            } else {
+            } else if (intent.hasExtra("REQUEST")
+                    && nd.getId() != nav_connectionGUI) {
                 ((Toolbar) findViewById(R.id.toolbar)).getNavigationIcon()
                         .setColorFilter(getColor(R.color.uwPurple), PorterDuff.Mode.SRC_IN);
                 mConnectionNotification = true;
