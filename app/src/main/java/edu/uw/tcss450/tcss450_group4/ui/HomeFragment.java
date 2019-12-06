@@ -365,7 +365,8 @@ public class HomeFragment extends Fragment {
                     messages[i] = (new Message.Builder(jsonChatLists.getString("username"),
                             jsonChatLists.getInt("memberid"),
                             jsonChatLists.getString("message"),
-                            convertTimeStampToDate(jsonChatLists.getString("timestamp")))
+                            convertTimeStampToDate(jsonChatLists.getString("timestamp")),
+                            jsonChatLists.getString("profileuri"))
                             .build());
                 }
 //                mMessageList = new ArrayList<Message>(Arrays.asList(messages));

@@ -12,13 +12,14 @@ public class Message implements Serializable, Parcelable {
     private String mTimeStamp;
 //    private String mUserName;
 //    private long mCreatedAt;
-//    private String mProfileUrl;
+    private String mProfileUri;
 
     protected Message(Parcel in) {
         mMessage = in.readString();
         mUsername = in.readString();
         mTimeStamp = in.readString();
         mMemberId = in.readInt();
+        mProfileUri = in.readString();
     }
 
     public static final Creator<Message> CREATOR = new Creator<Message>() {
@@ -44,6 +45,7 @@ public class Message implements Serializable, Parcelable {
         dest.writeString(mUsername);
         dest.writeString(mTimeStamp);
         dest.writeInt(mMemberId);
+        dest.writeString(mProfileUri);
     }
 
 
@@ -52,11 +54,13 @@ public class Message implements Serializable, Parcelable {
         private final String mMessage;
         private final String mTimeStamp;
         private final int mMemberId;
-        public Builder(String chatId, int memberId, String message, String timeStamp) {
+        private final String mProfileUri;
+        public Builder(String chatId, int memberId, String message, String timeStamp, String profileUri) {
             this.mEmail = chatId;
             this.mMessage = message;
             this.mTimeStamp = timeStamp;
             this.mMemberId = memberId;
+            this.mProfileUri = profileUri;
         }
 
         public Message build() {
@@ -69,6 +73,7 @@ public class Message implements Serializable, Parcelable {
         this.mMessage = builder.mMessage;
         this.mTimeStamp = builder.mTimeStamp;
         this.mMemberId = builder.mMemberId;
+        this.mProfileUri = builder.mProfileUri;
     }
 
     public String getMessage() {
@@ -99,4 +104,6 @@ public class Message implements Serializable, Parcelable {
     public int getMemberId() {
         return mMemberId;
     }
+
+    public String getProfileUri() { return mProfileUri; }
 }
