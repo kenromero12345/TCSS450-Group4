@@ -121,25 +121,22 @@ public class ViewChatFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        // setRetainInstance(true);
-        // mUsesrnameOutputTextView = view.findViewById(R.id.txt_friendUserName);
-        // mMessageOutputTextView = view.findViewById(R.id.txt_theirMessage);
         mMessageInputEditText = view.findViewById(R.id.editText_chat_message_input);
         mMessageCount = mMessageList.size() - 1;
         RecyclerView rv = view.findViewById(R.id.viewChatList);
+        mMessageAdapter = new MyMessageListRecyclerViewAdapter(mMessageList, mMemberId, null);
         if (rv instanceof RecyclerView) {
             Context context = rv.getContext();
-            mMessageRecycler = rv;
+            mRecyclerView = rv;
             if (mColumnCount <= 1) {
                 LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
                 linearLayoutManager.setStackFromEnd(true);
-                mMessageRecycler.setLayoutManager(linearLayoutManager);
+                mRecyclerView.setLayoutManager(linearLayoutManager);
             } else {
-                mMessageRecycler.setLayoutManager(new GridLayoutManager(context, mColumnCount));
+                mRecyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            mMessageAdapter = new MyMessageListRecyclerViewAdapter(mMessageList, mMemberId, null);
-            mMessageRecycler.setAdapter(mMessageAdapter);
-//            recyclerView.smoothScrollToPosition(mMessageAdapter.getItemCount());
+            mRecyclerView.setAdapter(mMessageAdapter);
+//            recyclerView.smoothScrollToPosition(messageAdapter.getItemCount());
 
         }
         view.findViewById(R.id.button_chat_send).setOnClickListener(this::handleSendClick);
@@ -170,16 +167,16 @@ public class ViewChatFragment extends Fragment {
 
         inputManager.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(),
                 InputMethodManager.HIDE_NOT_ALWAYS);
-        mMessageAdapter.notifyDataSetChanged();
-        if(mMessageAdapter.getItemCount() != 0) {
-            mMessageRecycler.post(new Runnable() {
-                @Override
-                public void run() {
-                    // Call smooth scroll
-                    mMessageRecycler.smoothScrollToPosition(mMessageAdapter.getItemCount());
-                }
-            });
-        }
+//        mMessageAdapter.notifyDataSetChanged();
+//        if(mMessageAdapter.getItemCount() != 0) {
+//            mMessageRecycler.post(new Runnable() {
+//                @Override
+//                public void run() {
+//                    // Call smooth scroll
+//                    mMessageRecycler.smoothScrollToPosition(mMessageAdapter.getItemCount());
+//                }
+//            });
+//        }
     }
 
     private void endOfSendMsgTask(final String result) {

@@ -2,6 +2,7 @@ package edu.uw.tcss450.tcss450_group4.ui;
 
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -51,6 +52,7 @@ public class MyChatRecyclerViewAdapter extends RecyclerView.Adapter<MyChatRecycl
                 }
             }
         });
+        Log.d("CHAT", "onBindViewHolder() position: " + position);
     }
 
     @Override
