@@ -29,13 +29,16 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * A fragment representing a list of Items.
- * <p/>
+ * A fragment representing a list of requests.
+ *
  * Activities containing this fragment MUST implement the {@link OnListFragmentInteractionListener}
  * interface.
  */
 public class ConnectionRequestFragment extends Fragment {
 
+    /**
+     * Instance field for variables to be used throughout the class.
+     */
     private List<ConnectionItem> mConnectionItem;
     private String mJwToken;
     private int mMemberId;
@@ -54,8 +57,12 @@ public class ConnectionRequestFragment extends Fragment {
     public ConnectionRequestFragment() {
     }
 
-    // TODO: Customize parameter initialization
-    @SuppressWarnings("unused")
+
+    /**
+     * Initialize the arguments from the bundle.
+     * @param columnCount the column count.
+     * @return the fragment.
+     */
     public static ConnectionRequestFragment newInstance(int columnCount) {
         ConnectionRequestFragment fragment = new ConnectionRequestFragment();
         Bundle args = new Bundle();
@@ -64,6 +71,10 @@ public class ConnectionRequestFragment extends Fragment {
         return fragment;
     }
 
+    /**
+     * on create set the variables from the arguments from the bundle.
+     * @param savedInstanceState
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -80,6 +91,11 @@ public class ConnectionRequestFragment extends Fragment {
         return view;
     }
 
+    /**
+     * Sets the recycler view and a click for each item.
+     * @param view the View
+     * @param savedInstanceState the saved instance state.
+     */
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -98,6 +114,10 @@ public class ConnectionRequestFragment extends Fragment {
     }
 
 
+    /**
+     * Web service call to get a person.
+     * @param theConnection the connection item.
+     */
     private void displayConnection(ConnectionItem theConnection) {
 
         Uri uriConnection = new Uri.Builder()
@@ -124,6 +144,10 @@ public class ConnectionRequestFragment extends Fragment {
 
     }
 
+    /**
+     * Handles the display on post execute.
+     * @param result the json response from the web service.
+     */
     private void handleDisplayOnPostExecute(String result) {
         //parse JSON
         try {
