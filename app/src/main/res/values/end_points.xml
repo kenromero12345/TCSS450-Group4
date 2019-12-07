@@ -44,4 +44,5 @@
     <string name="ep_messaging_send">send</string>
     <string name="ep_messaging_getAll">getAll</string>
     <string name="ep_delete">delete</string>
+    <string name="ep_getIndividalChat">getIndividualChat</string>
 </resources>

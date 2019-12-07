@@ -78,12 +78,16 @@ import static edu.uw.tcss450.tcss450_group4.R.id.activity_loading;
 import static edu.uw.tcss450.tcss450_group4.R.id.drawer_layout;
 import static edu.uw.tcss450.tcss450_group4.R.id.nav_chat_list;
 import static edu.uw.tcss450.tcss450_group4.R.id.nav_connectionGUI;
+import static edu.uw.tcss450.tcss450_group4.R.id.nav_connection_add;
+import static edu.uw.tcss450.tcss450_group4.R.id.nav_connection_request;
+import static edu.uw.tcss450.tcss450_group4.R.id.nav_create_chat;
 import static edu.uw.tcss450.tcss450_group4.R.id.nav_home;
 import static edu.uw.tcss450.tcss450_group4.R.id.nav_host_fragment;
 import static edu.uw.tcss450.tcss450_group4.R.id.nav_logout;
 import static edu.uw.tcss450.tcss450_group4.R.id.nav_view;
 import static edu.uw.tcss450.tcss450_group4.R.id.nav_view_chat;
 import static edu.uw.tcss450.tcss450_group4.R.id.nav_weather;
+import static edu.uw.tcss450.tcss450_group4.R.id.viewConnectionFragment;
 import static edu.uw.tcss450.tcss450_group4.R.layout;
 import static edu.uw.tcss450.tcss450_group4.R.navigation;
 import static edu.uw.tcss450.tcss450_group4.R.string.ep_base_url;
@@ -1197,7 +1201,9 @@ public class HomeActivity extends AppCompatActivity {
                 nc.navigate(directions);
             } else if (intent.hasExtra("SENDER")
                         && intent.hasExtra("MESSAGE")
-                        && nd.getId() != nav_chat_list) {
+                        && nd.getId() != nav_chat_list
+                        && nd.getId() != nav_create_chat
+                        && nd.getId() != nav_view_chat) {
                 String sender = intent.getStringExtra("SENDER");
                 String messageText = intent.getStringExtra("MESSAGE");
                 //change the hamburger icon to red alerting the user of the notification
@@ -1214,7 +1220,10 @@ public class HomeActivity extends AppCompatActivity {
                     && nd.getId() == nav_connectionGUI) {
                 gotoConnection();
             } else if (intent.hasExtra("REQUEST")
-                    && nd.getId() != nav_connectionGUI) {
+                    && nd.getId() != nav_connectionGUI
+                    && nd.getId() != nav_connection_add
+                    && nd.getId() != nav_connection_request
+                    && nd.getId() != viewConnectionFragment) {
                 ((Toolbar) findViewById(R.id.toolbar)).getNavigationIcon()
                         .setColorFilter(getColor(R.color.uwPurple), PorterDuff.Mode.SRC_IN);
                 mConnectionNotification = true;
