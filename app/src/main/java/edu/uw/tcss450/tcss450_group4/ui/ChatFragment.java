@@ -67,10 +67,10 @@ import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_login_success;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_messaging_success;
 
 /**
- * A fragment representing a list of Items.
- * <p/>
- * Activities containing this fragment MUST implement the {@link OnListFragmentInteractionListener}
- * interface.
+ * This class used to display all the chats and the most recent message of that chat.
+ *
+ * @author Chinh Le
+ * @version Nov 1 2019
  */
 public class ChatFragment extends Fragment implements View.OnClickListener {
 
@@ -251,12 +251,6 @@ public class ChatFragment extends Fragment implements View.OnClickListener {
                 .onCancelled(this::handleErrorsInTask)
                 .build().execute();
 
-//        final Bundle args = new Bundle();
-//        args.putSerializable(getString(R.string.chat_object), chat);
-//        args.putString("email", mEmail);
-//        args.putString("jwt", mJwToken);
-//        args.putSerializable("List", mMessageList);
-        //Navigation.findNavController(getView()).navigate(R.id.action_nav_chat_list_to_nav_view_chat, args);
     }
 
     private void handleMessageGetOnPostExecute(final String result) {
@@ -264,8 +258,6 @@ public class ChatFragment extends Fragment implements View.OnClickListener {
             JSONObject root = new JSONObject(result);
             if (root.has("success") && root.getBoolean(getString(keys_json_messaging_success))) {
                 JSONArray data = root.getJSONArray("messages");
-//                if (response.has(getString(R.string.keys_json_chats_data))) {
-//                    JSONArray data = response.getJSONArray(getString(R.string.keys_json_chats_data));
                 Message[] messages = new Message[data.length()];
                 for (int i = 0; i < data.length(); i++) {
                     JSONObject jsonChatLists = data.getJSONObject(i);
@@ -277,10 +269,8 @@ public class ChatFragment extends Fragment implements View.OnClickListener {
                             jsonChatLists.getString("profileuri"))
                                 .build());
                 }
-//                mMessageList = new ArrayList<Message>(Arrays.asList(messages));
                 MobileNavigationDirections.ActionGlobalNavViewChat directions;
                 directions = ViewChatFragmentDirections.actionGlobalNavViewChat(messages);
-//                directions.setEmail(mEmail);
                 directions.setMemberId(mMemberId);
                 directions.setJwt(mJwToken);
                 directions.setChatId(mChatId);
@@ -303,11 +293,8 @@ public class ChatFragment extends Fragment implements View.OnClickListener {
     private String convertTimeStampToDate(String timestamp) {
         Date date = new Date();
         String result = "";
-        //Date showTime = new Date();
-        //Date showDate = new Date();
         DateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
         DateFormat timeFormat = new SimpleDateFormat("HH:mm");
-        //DateFormat dateFormat = new SimpleDateFormat("MM-dd");
         try {
             date = format.parse(timestamp);
             result = timeFormat.format(date.getTime());

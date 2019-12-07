@@ -5,13 +5,19 @@ import android.os.Parcelable;
 
 import java.io.Serializable;
 
+/**
+ * This class contains the message object used to display all the messages and the information of sender.
+ * Created by Chinh Le on 11/1/2019.
+ *
+ * @author Chinh Le
+ * @version Nov 1 2019
+ */
 public class Message implements Serializable, Parcelable {
     private String mMessage;
     private int mMemberId;
     private String mUsername;
     private String mTimeStamp;
-//    private String mUserName;
-//    private long mCreatedAt;
+
     private String mProfileUri;
 
     protected Message(Parcel in) {

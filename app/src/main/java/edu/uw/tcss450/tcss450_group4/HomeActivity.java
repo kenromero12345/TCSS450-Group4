@@ -237,6 +237,7 @@ public class HomeActivity extends AppCompatActivity {
 
         Toolbar toolbar = findViewById(id.toolbar);
         setSupportActionBar(toolbar);
+
         DrawerLayout drawer = findViewById(drawer_layout);
         drawer.addDrawerListener(new DrawerLayout.DrawerListener() {
             @Override
@@ -518,8 +519,6 @@ public class HomeActivity extends AppCompatActivity {
                 directions.setMemberId(mMemberId);
                 Log.e("MESSAGE", "homeactivity " + mMemberId);
                 directions.setJwt(mJwToken);
-//                directions.setChats(chats);
-//                directions.setEmail(mEmail);
                 directions.setChatMessage(mChatMessage);
                 Navigation.findNavController(this, nav_host_fragment)
                         .navigate(directions);

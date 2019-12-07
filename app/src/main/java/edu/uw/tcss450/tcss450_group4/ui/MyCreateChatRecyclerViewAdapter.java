@@ -19,9 +19,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * {@link RecyclerView.Adapter} that can display a {@link ConnectionItem} and makes a call to the
- * specified {@link OnListFragmentInteractionListener}.
- * TODO: Replace the implementation with code for your data type.
+ * This class uses to display all the added friends of the user so they will be displayed in CreateChatFragment
+ * and user can select whoever they want to chat with.
+ *
+ * Created by Chinh Le on 11/1/2019.
+ *
+ * @author Chinh Le
+ * @version Nov 1 2019
  */
 public class MyCreateChatRecyclerViewAdapter extends RecyclerView.Adapter<MyCreateChatRecyclerViewAdapter.ViewHolder> {
 

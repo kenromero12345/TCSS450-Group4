@@ -82,7 +82,7 @@ public class CreateChatFragment extends Fragment implements View.OnClickListener
     private List<Chat> mChats;
     private ArrayList<Integer> mFriendIDList;
     private String mJwToken;
-//    private String mEmail;
+    private String mChatName;
     private String mChatId;
     private int mMemberId;
     /**
@@ -192,6 +192,7 @@ public class CreateChatFragment extends Fragment implements View.OnClickListener
                     editText_ChatName.setError("Field must not be empty.");
                 }
                 if(!hasError) {
+                    mChatName = editText_ChatName.getText().toString();
                     createNewChat();
                     addFriendToNewChat();
                     getNewestChatId();
@@ -303,6 +304,7 @@ public class CreateChatFragment extends Fragment implements View.OnClickListener
                 directions.setJwt(mJwToken);
                 directions.setChatId(mChatId);
                 directions.setMemberId(mMemberId);
+                directions.setChatName(mChatName);
                 Navigation.findNavController(getActivity(), nav_host_fragment).navigate(directions);
             }
         } catch (JSONException e) {

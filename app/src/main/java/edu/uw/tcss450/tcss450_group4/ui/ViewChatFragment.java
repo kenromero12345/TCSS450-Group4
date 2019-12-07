@@ -32,6 +32,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import edu.uw.tcss450.tcss450_group4.HomeActivity;
 import edu.uw.tcss450.tcss450_group4.R;
 import edu.uw.tcss450.tcss450_group4.model.Chat;
 import edu.uw.tcss450.tcss450_group4.model.Message;
@@ -39,7 +40,11 @@ import edu.uw.tcss450.tcss450_group4.utils.PushReceiver;
 import edu.uw.tcss450.tcss450_group4.utils.SendPostAsyncTask;
 
 /**
- * A simple {@link Fragment} subclass.
+ * This fragment is where the chatting message is implemented using Pushy server
+ * Created by Chinh Le on 11/1/2019.
+ *
+ * @author Chinh Le
+ * @version Nov 1 2019
  */
 public class ViewChatFragment extends Fragment {
     private static final String ARG_COLUMN_COUNT = "column-count";
@@ -48,11 +53,10 @@ public class ViewChatFragment extends Fragment {
     private int mMemberId;
     private EditText mMessageInputEditText;
     private String CHAT_ID = "";
-//    private String mEmail;
     private String mJwToken;
     private String mSendUrl;
+    private String mChatName;
     private PushMessageReceiver mPushMessageReciever;
-    private RecyclerView mMessageRecycler;
     private MyMessageListRecyclerViewAdapter mMessageAdapter;
     private List<Message> mMessageList;
     private int mMessageCount;
@@ -76,11 +80,6 @@ public class ViewChatFragment extends Fragment {
         //mEmail = args.getEmail();
 
         if(getArguments() != null) {
-//            Chat chat = (Chat) getArguments().getSerializable(getString(R.string.chat_object));
-//            mEmail = getArguments().getString("email");
-//            mJwToken = getArguments().getString("jwt");
-//            mMessageList = (List<Message>) getArguments().getSerializable("List");
-//            mEmail = args.getEmail();
             mMemberId = args.getMemberId();
             mJwToken = args.getJwt();
             mMessageList = new ArrayList<>(Arrays.asList(args.getMessageList()));
@@ -89,10 +88,8 @@ public class ViewChatFragment extends Fragment {
             if(CHAT_ID.equals("")) {
                 CHAT_ID = getArguments().getString("chatid");
             }
+            mChatName = args.getChatName();
         }
-//        mMessageRecycler = (RecyclerView) getActivity().findViewById(R.id.reyclerview_message_list);
-//        mMessageAdapter = new MessageListAdapter(this, messageList);
-//        mMessageRecycler.setLayoutManager(new RelativeLayout(this));
     }
 
     @Override
@@ -107,6 +104,7 @@ public class ViewChatFragment extends Fragment {
                 .appendPath(getString(R.string.ep_messaging_send))
                 .build()
                 .toString();
+        ((HomeActivity) getActivity()).getSupportActionBar().setTitle(mChatName);
 
     }
 
@@ -200,6 +198,7 @@ public class ViewChatFragment extends Fragment {
         }
         IntentFilter iFilter = new IntentFilter(PushReceiver.RECEIVED_NEW_MESSAGE);
         getActivity().registerReceiver(mPushMessageReciever, iFilter);
+
     }
 
     @Override
