@@ -254,6 +254,7 @@ public class ViewConnectionFragment extends Fragment implements View.OnClickList
             boolean success = resultJSON.getBoolean(getString(R.string.keys_json_success));
             if (success) {
                 mChatId = resultJSON.getString("chatid");
+                mChatName = resultJSON.getString("chatname");
                 displayChat();
 
             } else if (resultJSON.has("chatname")) {
@@ -327,6 +328,7 @@ public class ViewConnectionFragment extends Fragment implements View.OnClickList
                 directions.setMemberId(mMemberId);
                 directions.setJwt(mJwToken);
                 directions.setChatId(mChatId);
+                directions.setChatName(mChatName);
                 Navigation.findNavController(getActivity(), nav_host_fragment).navigate(directions);
 
             } else {

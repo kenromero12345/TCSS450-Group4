@@ -252,7 +252,7 @@ public class CreateChatFragment extends Fragment implements View.OnClickListener
             if (success) {
                 Log.e("ENTERED?", "IT HAS");
                 mChatId = resultJSON.getString("chatid");
-                Log.e("CHAT VALID?", mChatId);
+                mChatName = resultJSON.getString("chatname");
                 AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                 builder.setTitle("Private chat exists");
                 builder.setMessage("Redirecting you to existing chat");

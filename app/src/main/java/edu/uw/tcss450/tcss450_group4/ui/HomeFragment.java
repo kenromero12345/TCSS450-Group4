@@ -353,11 +353,19 @@ public class HomeFragment extends Fragment {
                 .build().execute();
     }
 
+    /**
+     * Handle errors when getting message fails in async task
+     * @param result
+     */
     private void handleMessageErrorsInTask(final String result) {
         getView().findViewById(layout_chatHome_wait).setVisibility(View.GONE);
         Log.e("ASYNC_TASK_ERROR", result);
     }
 
+    /**
+     * Handles getting messages when asynchronous task succeeds
+     * @param result
+     */
     private void handleMessageGetOnPostExecute(final String result) {
         try {
             JSONObject root = new JSONObject(result);
