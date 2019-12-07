@@ -110,21 +110,19 @@ public class CreateChatFragment extends Fragment implements View.OnClickListener
         return fragment;
     }
 
+    /**
+     * On Create
+     * @param savedInstanceState
+     */
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        //TODO: check for BUG
-//        mBundle = new Bundle();
-//        mFriendIDList = MyCreateChatRecyclerViewAdapter.getFriendIDList();
-//        CreateChatFragmentArgs args = CreateChatFragmentArgs.fromBundle(Objects.requireNonNull(getArguments()));
-//        mFriendList = new ArrayList<>(Arrays.asList(args.getFriendList()));
-//        mJwToken = getArguments().getString("jwt");
-//        mFriendIDList.add(args.getMemberId());
-//        mEmail = args.getEmail();
-
     }
 
+    /**
+     * On Resume. Reloads chat when a certain key event triggers it
+     */
     @Override
     public void onResume() {
         super.onResume();
@@ -145,6 +143,13 @@ public class CreateChatFragment extends Fragment implements View.OnClickListener
         });
     }
 
+    /**
+     * On Create View. Sets up arguments
+     * @param inflater
+     * @param container
+     * @param savedInstanceState
+     * @return
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -166,6 +171,11 @@ public class CreateChatFragment extends Fragment implements View.OnClickListener
     }
 
 
+    /**
+     * On View Created. Sets up connections to add to new chat
+     * @param view
+     * @param savedInstanceState
+     */
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -188,6 +198,11 @@ public class CreateChatFragment extends Fragment implements View.OnClickListener
         btn_create_new_chat.setOnClickListener(this::onClick);
     }
 
+    /**
+     * Decides what to do based on what user has clicked.
+     * Create button creates a new chat.
+     * @param view
+     */
     @Override
     public void onClick(View view) {
         boolean hasError = false;
@@ -220,6 +235,9 @@ public class CreateChatFragment extends Fragment implements View.OnClickListener
         }
     }
 
+    /**
+     * Checks if an individual chat exists
+     */
     private void checkIndividualChat(){
         Uri uriCheckChat = new Uri.Builder()
                 .scheme("https")
@@ -243,6 +261,10 @@ public class CreateChatFragment extends Fragment implements View.OnClickListener
         }
     }
 
+    /**
+     * Creates or redirects to private chat
+     * @param result
+     */
     private void createOrNot(final String result) {
         try {
             JSONObject resultJSON = new JSONObject(result);
@@ -270,13 +292,6 @@ public class CreateChatFragment extends Fragment implements View.OnClickListener
                 createNewChat();
                 addFriendToNewChat();
                 getNewestChatId();
-//                if (editText_ChatName.getText().length() != 0) {
-//                    InputMethodManager inputManager = (InputMethodManager)
-//                            getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-//
-//                    inputManager.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(),
-//                            InputMethodManager.HIDE_NOT_ALWAYS);
-//                }
             }
             MyCreateChatRecyclerViewAdapter.getFriendIDList().clear();
         } catch (JSONException e) {
@@ -284,9 +299,10 @@ public class CreateChatFragment extends Fragment implements View.OnClickListener
         }
     }
 
+    /**
+     * Redirect and display the new chat
+     */
     private void displayChat(){
-
-//        mChatId = chatId;
         JSONObject msgBody = new JSONObject();
         try {
             msgBody.put("chatId", mChatId);
@@ -304,15 +320,12 @@ public class CreateChatFragment extends Fragment implements View.OnClickListener
                 .addHeaderField("authorization", mJwToken)
                 .onCancelled(this::handleErrorsInTask)
                 .build().execute();
-
-//        final Bundle args = new Bundle();
-//        args.putSerializable(getString(R.string.chat_object), chat);
-//        args.putString("email", mEmail);
-//        args.putString("jwt", mJwToken);
-//        args.putSerializable("List", mMessageList);
-        //Navigation.findNavController(getView()).navigate(R.id.action_nav_chat_list_to_nav_view_chat, args);
     }
 
+    /**
+     * Handles messages gotten after asynchronous task succeeds
+     * @param result
+     */
     private void handleMessageGetOnPostExecute(final String result) {
         try {
             JSONObject root = new JSONObject(result);
@@ -352,6 +365,10 @@ public class CreateChatFragment extends Fragment implements View.OnClickListener
         }
     }
 
+
+    /**
+     * Create new chat room
+     */
     private void createNewChat() {
 
         EditText editText_ChatName = getActivity().findViewById(R.id.editText_chatName);
@@ -375,6 +392,10 @@ public class CreateChatFragment extends Fragment implements View.OnClickListener
             Log.wtf("chatName", "Error creating JSON: " + e.getMessage());
         }
     }
+
+    /**
+     * Add selected connections to new chat made
+     */
     private void addFriendToNewChat() {
         Uri uriCreateChat = new Uri.Builder()
                 .scheme("https")
@@ -421,6 +442,9 @@ public class CreateChatFragment extends Fragment implements View.OnClickListener
         }
     }
 
+    /**
+     * Retrieve chatId of new chat created
+     */
     private void getNewestChatId() {
         Uri uriGetNewestChatId = new Uri.Builder()
                 .scheme("https")
@@ -435,6 +459,10 @@ public class CreateChatFragment extends Fragment implements View.OnClickListener
                 .build().execute();
     }
 
+    /**
+     * Handle newest chat id received after successful asynchronous task
+     * @param result
+     */
     private void handleGetNewestChatIdOnPost(final String result) {
         try {
             JSONObject resultJSON = new JSONObject(result);
@@ -455,6 +483,9 @@ public class CreateChatFragment extends Fragment implements View.OnClickListener
         }
     }
 
+    /**
+     * Reload chat list
+     */
     private void reloadChatRecyclerView() {
         JSONObject memberId = new JSONObject();
         try {
@@ -474,6 +505,10 @@ public class CreateChatFragment extends Fragment implements View.OnClickListener
                 .build().execute();
     }
 
+    /**
+     * Handle chats list received after successful asynchronous task
+     * @param result
+     */
     private void handleChatsGetOnPostExecute(final String result) {
         try {
             JSONObject root = new JSONObject(result);
@@ -517,9 +552,19 @@ public class CreateChatFragment extends Fragment implements View.OnClickListener
         }
     }
 
+    /**
+     * Handle errors when async task fails
+     * @param result
+     */
     private void handleErrorsInTask(final String result) {
         Log.e("ASYNC_TASK_ERROR", result);
     }
+
+    /**
+     * Convert timestamp to human-readable format
+     * @param timestamp
+     * @return time
+     */
     private String convertTimeStampToDate(String timestamp) {
         Date date = new Date();
         String result = "";
