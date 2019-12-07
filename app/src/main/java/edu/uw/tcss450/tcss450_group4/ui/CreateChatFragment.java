@@ -1,6 +1,8 @@
 package edu.uw.tcss450.tcss450_group4.ui;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -59,12 +61,17 @@ import edu.uw.tcss450.tcss450_group4.R;
 import edu.uw.tcss450.tcss450_group4.model.ConnectionItem;
 import edu.uw.tcss450.tcss450_group4.utils.SendPostAsyncTask;
 
+import static edu.uw.tcss450.tcss450_group4.R.id.layout_homeActivity_wait;
 import static edu.uw.tcss450.tcss450_group4.R.id.nav_host_fragment;
 import static edu.uw.tcss450.tcss450_group4.R.string.ep_add_friend_to_new_chat;
 import static edu.uw.tcss450.tcss450_group4.R.string.ep_base_url;
 import static edu.uw.tcss450.tcss450_group4.R.string.ep_chats;
 import static edu.uw.tcss450.tcss450_group4.R.string.ep_create_chat;
+import static edu.uw.tcss450.tcss450_group4.R.string.ep_getIndividalChat;
+import static edu.uw.tcss450.tcss450_group4.R.string.ep_messaging_base;
+import static edu.uw.tcss450.tcss450_group4.R.string.ep_messaging_getAll;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_login_success;
+import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_messaging_success;
 
 /**
  * A fragment representing a list of Items.
@@ -85,6 +92,8 @@ public class CreateChatFragment extends Fragment implements View.OnClickListener
 //    private String mEmail;
     private String mChatId;
     private int mMemberId;
+    private String mChatName;
+
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
@@ -185,13 +194,15 @@ public class CreateChatFragment extends Fragment implements View.OnClickListener
         boolean hasError = false;
         switch (view.getId()) {
             case R.id.button_create_new_chat:
-
                 EditText editText_ChatName = getActivity().findViewById(R.id.editText_chatName);
-                if (editText_ChatName.getText().toString().isEmpty()){
-                    hasError = true;
+                if (mFriendIDList.size() == 2) {
+                    checkIndividualChat();
+                } else if (editText_ChatName.getText().toString().isEmpty()){
+//                    hasError = true;
                     editText_ChatName.setError("Field must not be empty.");
-                }
-                if(!hasError) {
+                } else {
+
+                    mChatName = editText_ChatName.getText().toString();
                     createNewChat();
                     addFriendToNewChat();
                     getNewestChatId();
@@ -204,8 +215,147 @@ public class CreateChatFragment extends Fragment implements View.OnClickListener
                                 InputMethodManager.HIDE_NOT_ALWAYS);
                     }
                     MyCreateChatRecyclerViewAdapter.getFriendIDList().clear();
-                    break;
+
                 }
+                break;
+        }
+    }
+
+    private void checkIndividualChat(){
+        Uri uriCheckChat = new Uri.Builder()
+                .scheme("https")
+                .appendPath(getString(ep_base_url))
+                .appendPath(getString(ep_chats))
+                .appendPath(getString(ep_getIndividalChat))
+                .build();
+        try {
+            JSONObject msgBody = new JSONObject();
+            msgBody.put("memberIdOne", mFriendIDList.get(0));
+            msgBody.put("memberIdTwo", mFriendIDList.get(1));
+            Log.e("MEMBERS", msgBody.toString());
+            new SendPostAsyncTask.Builder(uriCheckChat.toString(), msgBody)
+                    .onCancelled(error -> Log.e("CHECK INDIVIDUAL CHAT ERROR", error))
+                    .onPostExecute(this::createOrNot)
+                    .addHeaderField("authorization", mJwToken)
+                    .build().execute();
+        }
+        catch (JSONException e){
+            Log.wtf("chatName", "Error creating JSON: " + e.getMessage());
+        }
+    }
+
+    private void createOrNot(final String result) {
+        try {
+            JSONObject resultJSON = new JSONObject(result);
+            boolean success = resultJSON.getBoolean(getString(R.string.keys_json_success));
+            Log.e("CREATE?", resultJSON.toString());
+
+            if (success) {
+                Log.e("ENTERED?", "IT HAS");
+                mChatId = resultJSON.getString("chatid");
+                Log.e("CHAT VALID?", mChatId);
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                builder.setTitle("Private chat exists");
+                builder.setMessage("Redirecting you to existing chat");
+                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        displayChat();
+//                        Message[] message = new Message[0];
+//                        MobileNavigationDirections.ActionGlobalNavViewChat directions;
+//                        directions = ViewChatFragmentDirections.actionGlobalNavViewChat(message);
+//                        directions.setJwt(mJwToken);
+//                        directions.setChatId(mChatId);
+//                        directions.setMemberId(mMemberId);
+//                        Navigation.findNavController(getActivity(), nav_host_fragment).navigate(directions);
+                    }
+                });
+                AlertDialog dialog = builder.create();
+                dialog.show();
+
+            } else if (resultJSON.has("chatname")) {
+                mChatName = resultJSON.getString("chatname");
+                createNewChat();
+                addFriendToNewChat();
+                getNewestChatId();
+//                if (editText_ChatName.getText().length() != 0) {
+//                    InputMethodManager inputManager = (InputMethodManager)
+//                            getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+//
+//                    inputManager.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(),
+//                            InputMethodManager.HIDE_NOT_ALWAYS);
+//                }
+                MyCreateChatRecyclerViewAdapter.getFriendIDList().clear();
+            }
+        } catch (JSONException e) {
+            Log.wtf("JSON_PARSE_ERROR", "Error creating JSON: " + e.getMessage());
+        }
+    }
+
+    private void displayChat(){
+
+//        mChatId = chatId;
+        JSONObject msgBody = new JSONObject();
+        try {
+            msgBody.put("chatId", mChatId);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        Uri uriChats = new Uri.Builder()
+                .scheme("https")
+                .appendPath(getString(ep_base_url))
+                .appendPath(getString(ep_messaging_base))
+                .appendPath(getString(ep_messaging_getAll))
+                .build();
+        new SendPostAsyncTask.Builder(uriChats.toString(), msgBody)
+                .onPostExecute(this::handleMessageGetOnPostExecute)
+                .addHeaderField("authorization", mJwToken)
+                .onCancelled(this::handleErrorsInTask)
+                .build().execute();
+
+//        final Bundle args = new Bundle();
+//        args.putSerializable(getString(R.string.chat_object), chat);
+//        args.putString("email", mEmail);
+//        args.putString("jwt", mJwToken);
+//        args.putSerializable("List", mMessageList);
+        //Navigation.findNavController(getView()).navigate(R.id.action_nav_chat_list_to_nav_view_chat, args);
+    }
+
+    private void handleMessageGetOnPostExecute(final String result) {
+        try {
+            JSONObject root = new JSONObject(result);
+            if (root.has("success") && root.getBoolean(getString(keys_json_messaging_success))) {
+                JSONArray data = root.getJSONArray("messages");
+//                if (response.has(getString(R.string.keys_json_chats_data))) {
+//                    JSONArray data = response.getJSONArray(getString(R.string.keys_json_chats_data));
+                Message[] messages = new Message[data.length()];
+                for (int i = 0; i < data.length(); i++) {
+                    JSONObject jsonChatLists = data.getJSONObject(i);
+
+                    messages[i] = (new Message.Builder(jsonChatLists.getString("username"),
+                            jsonChatLists.getInt("memberid"),
+                            jsonChatLists.getString("message"),
+                            convertTimeStampToDate(jsonChatLists.getString("timestamp")),
+                            jsonChatLists.getString("profileuri"))
+                            .build());
+                }
+//                mMessageList = new ArrayList<Message>(Arrays.asList(messages));
+                MobileNavigationDirections.ActionGlobalNavViewChat directions;
+                directions = ViewChatFragmentDirections.actionGlobalNavViewChat(messages);
+//                directions.setEmail(mEmail);
+                directions.setMemberId(mMemberId);
+                directions.setJwt(mJwToken);
+                directions.setChatId(mChatId);
+                Navigation.findNavController(getActivity(), nav_host_fragment).navigate(directions);
+
+            } else {
+                Log.e("ERROR!", "No response");
+            }
+            getActivity().findViewById(layout_homeActivity_wait).setVisibility(View.GONE);
+        } catch (JSONException e) {
+            e.printStackTrace();
+            getActivity().findViewById(layout_homeActivity_wait).setVisibility(View.GONE);
+            Log.e("ERROR!", e.getMessage());
         }
     }
 
@@ -220,8 +370,9 @@ public class CreateChatFragment extends Fragment implements View.OnClickListener
                 .build();
         try{
             JSONObject msgBody = new JSONObject();
-                String chatName = editText_ChatName.getText().toString();
-                msgBody.put("chatName", chatName);
+
+
+                msgBody.put("chatName", mChatName);
 
                 new SendPostAsyncTask.Builder(uriCreateChat.toString(), msgBody)
                         .onCancelled(error -> Log.e("CREATE CHAT FRAG", error))

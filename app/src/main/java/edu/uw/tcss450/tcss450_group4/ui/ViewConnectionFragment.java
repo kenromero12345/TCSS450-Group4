@@ -19,6 +19,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -26,10 +27,28 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import edu.uw.tcss450.tcss450_group4.MobileNavigationDirections;
 import edu.uw.tcss450.tcss450_group4.R;
 import edu.uw.tcss450.tcss450_group4.model.ConnectionItem;
+import edu.uw.tcss450.tcss450_group4.model.Message;
+import edu.uw.tcss450.tcss450_group4.utils.GetAsyncTask;
 import edu.uw.tcss450.tcss450_group4.utils.SendPostAsyncTask;
+
+import static edu.uw.tcss450.tcss450_group4.R.id.layout_homeActivity_wait;
+import static edu.uw.tcss450.tcss450_group4.R.id.nav_host_fragment;
+import static edu.uw.tcss450.tcss450_group4.R.string.ep_add_friend_to_new_chat;
+import static edu.uw.tcss450.tcss450_group4.R.string.ep_base_url;
+import static edu.uw.tcss450.tcss450_group4.R.string.ep_chats;
+import static edu.uw.tcss450.tcss450_group4.R.string.ep_create_chat;
+import static edu.uw.tcss450.tcss450_group4.R.string.ep_getIndividalChat;
+import static edu.uw.tcss450.tcss450_group4.R.string.ep_messaging_base;
+import static edu.uw.tcss450.tcss450_group4.R.string.ep_messaging_getAll;
+import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_messaging_success;
 
 
 /**
@@ -45,6 +64,8 @@ public class ViewConnectionFragment extends Fragment implements View.OnClickList
     private int mMemberId;
     private ConnectionItem mConnectionItem;
     private int mVerified;
+    private String mChatId;
+    private String mChatName;
 
 
     /**
@@ -191,9 +212,232 @@ public class ViewConnectionFragment extends Fragment implements View.OnClickList
                 break;
 
             case R.id.fullChat:
+                checkIndividualChat();
                 break;
         }
 
+    }
+
+    private void checkIndividualChat(){
+        Uri uriCheckChat = new Uri.Builder()
+                .scheme("https")
+                .appendPath(getString(ep_base_url))
+                .appendPath(getString(ep_chats))
+                .appendPath(getString(ep_getIndividalChat))
+                .build();
+        try {
+            JSONObject msgBody = new JSONObject();
+            msgBody.put("memberIdOne", mMemberId);
+            msgBody.put("memberIdTwo", mConnectionItem.getContactId());
+            Log.e("MEMBERS", msgBody.toString());
+            new SendPostAsyncTask.Builder(uriCheckChat.toString(), msgBody)
+                    .onCancelled(error -> Log.e("CHECK INDIVIDUAL CHAT ERROR", error))
+                    .onPostExecute(this::createOrNot)
+                    .addHeaderField("authorization", mJwToken)
+                    .build().execute();
+        }
+        catch (JSONException e){
+            Log.wtf("chatName", "Error creating JSON: " + e.getMessage());
+        }
+    }
+
+    private void createOrNot(final String result) {
+        try {
+            JSONObject resultJSON = new JSONObject(result);
+            boolean success = resultJSON.getBoolean(getString(R.string.keys_json_success));
+            if (success) {
+                mChatId = resultJSON.getString("chatid");
+                displayChat();
+
+            } else if (resultJSON.has("chatname")) {
+                mChatName = resultJSON.getString("chatname");
+                createNewChat();
+                addFriendToNewChat();
+                getNewestChatId();
+//                if (editText_ChatName.getText().length() != 0) {
+//                    InputMethodManager inputManager = (InputMethodManager)
+//                            getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+//
+//                    inputManager.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(),
+//                            InputMethodManager.HIDE_NOT_ALWAYS);
+//                }
+                MyCreateChatRecyclerViewAdapter.getFriendIDList().clear();
+            }
+        } catch (JSONException e) {
+            Log.wtf("JSON_PARSE_ERROR", "Error creating JSON: " + e.getMessage());
+        }
+    }
+
+    private void displayChat(){
+
+//        mChatId = chatId;
+        JSONObject msgBody = new JSONObject();
+        try {
+            msgBody.put("chatId", mChatId);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        Uri uriChats = new Uri.Builder()
+                .scheme("https")
+                .appendPath(getString(ep_base_url))
+                .appendPath(getString(ep_messaging_base))
+                .appendPath(getString(ep_messaging_getAll))
+                .build();
+        new SendPostAsyncTask.Builder(uriChats.toString(), msgBody)
+                .onPostExecute(this::handleMessageGetOnPostExecute)
+                .addHeaderField("authorization", mJwToken)
+                .onCancelled(this::handleErrorsInTask)
+                .build().execute();
+
+//        final Bundle args = new Bundle();
+//        args.putSerializable(getString(R.string.chat_object), chat);
+//        args.putString("email", mEmail);
+//        args.putString("jwt", mJwToken);
+//        args.putSerializable("List", mMessageList);
+        //Navigation.findNavController(getView()).navigate(R.id.action_nav_chat_list_to_nav_view_chat, args);
+    }
+
+    private void handleMessageGetOnPostExecute(final String result) {
+        try {
+            JSONObject root = new JSONObject(result);
+            if (root.has("success") && root.getBoolean(getString(keys_json_messaging_success))) {
+                JSONArray data = root.getJSONArray("messages");
+//                if (response.has(getString(R.string.keys_json_chats_data))) {
+//                    JSONArray data = response.getJSONArray(getString(R.string.keys_json_chats_data));
+                Message[] messages = new Message[data.length()];
+                for (int i = 0; i < data.length(); i++) {
+                    JSONObject jsonChatLists = data.getJSONObject(i);
+
+                    messages[i] = (new Message.Builder(jsonChatLists.getString("username"),
+                            jsonChatLists.getInt("memberid"),
+                            jsonChatLists.getString("message"),
+                            convertTimeStampToDate(jsonChatLists.getString("timestamp")),
+                            jsonChatLists.getString("profileuri"))
+                            .build());
+                }
+//                mMessageList = new ArrayList<Message>(Arrays.asList(messages));
+                MobileNavigationDirections.ActionGlobalNavViewChat directions;
+                directions = ViewChatFragmentDirections.actionGlobalNavViewChat(messages);
+//                directions.setEmail(mEmail);
+                directions.setMemberId(mMemberId);
+                directions.setJwt(mJwToken);
+                directions.setChatId(mChatId);
+                Navigation.findNavController(getActivity(), nav_host_fragment).navigate(directions);
+
+            } else {
+                Log.e("ERROR!", "No response");
+            }
+            getActivity().findViewById(layout_homeActivity_wait).setVisibility(View.GONE);
+        } catch (JSONException e) {
+            e.printStackTrace();
+            getActivity().findViewById(layout_homeActivity_wait).setVisibility(View.GONE);
+            Log.e("ERROR!", e.getMessage());
+        }
+    }
+
+    private void handleErrorsInTask(final String result) {
+        Log.e("ASYNC_TASK_ERROR", result);
+    }
+
+    private String convertTimeStampToDate(String timestamp) {
+        Date date = new Date();
+        String result = "";
+        //Date showTime = new Date();
+        //Date showDate = new Date();
+        DateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+        DateFormat timeFormat = new SimpleDateFormat("HH:mm");
+        //DateFormat dateFormat = new SimpleDateFormat("MM-dd");
+        try {
+            date = format.parse(timestamp);
+            result = timeFormat.format(date.getTime());
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        return result;
+    }
+
+    private void createNewChat() {
+
+        EditText editText_ChatName = getActivity().findViewById(R.id.editText_chatName);
+        Uri uriCreateChat = new Uri.Builder()
+                .scheme("https")
+                .appendPath(getString(ep_base_url))
+                .appendPath(getString(ep_chats))
+                .appendPath(getString(ep_create_chat))
+                .build();
+        try{
+            JSONObject msgBody = new JSONObject();
+
+
+            msgBody.put("chatName", mChatName);
+
+            new SendPostAsyncTask.Builder(uriCreateChat.toString(), msgBody)
+                    .onCancelled(error -> Log.e("CREATE CHAT FRAG", error))
+                    .addHeaderField("authorization", mJwToken)
+                    .build().execute();
+        } catch (JSONException e){
+            Log.wtf("chatName", "Error creating JSON: " + e.getMessage());
+        }
+    }
+    private void addFriendToNewChat() {
+        Uri uriCreateChat = new Uri.Builder()
+                .scheme("https")
+                .appendPath(getString(ep_base_url))
+                .appendPath(getString(ep_chats))
+                .appendPath(getString(ep_add_friend_to_new_chat))
+                .build();
+        try {
+                JSONObject msgBody = new JSONObject();
+                msgBody.put("contactID", mMemberId);
+                new SendPostAsyncTask.Builder(uriCreateChat.toString(), msgBody)
+                        .onCancelled(error -> Log.e("ADD FRIEND TO NEW CHAT FRAG", error))
+                        .addHeaderField("authorization", mJwToken)
+                        .build().execute();
+            msgBody = new JSONObject();
+            msgBody.put("contactID", mConnectionItem.getContactId());
+            new SendPostAsyncTask.Builder(uriCreateChat.toString(), msgBody)
+                    .onCancelled(error -> Log.e("ADD FRIEND TO NEW CHAT FRAG", error))
+                    .addHeaderField("authorization", mJwToken)
+                    .build().execute();
+                Log.wtf("Message", "created successful: " + msgBody.get("contactID"));
+        } catch (JSONException e){
+            Log.wtf("chatName", "Error creating JSON: " + e.getMessage());
+        }
+
+    }
+
+    private void getNewestChatId() {
+        Uri uriGetNewestChatId = new Uri.Builder()
+                .scheme("https")
+                .appendPath(getString(ep_base_url))
+                .appendPath(getString(ep_chats))
+                .appendPath(getString(R.string.ep_chats_get_newest_chatId))
+                .build();
+        new GetAsyncTask.Builder(uriGetNewestChatId.toString())
+                .onPostExecute(this::handleGetNewestChatIdOnPost)
+                .onCancelled(error -> Log.e("GET NEWEST CHAT ID TO VIEW CHAT FRAG", error))
+                .addHeaderField("authorization", mJwToken)
+                .build().execute();
+    }
+
+    private void handleGetNewestChatIdOnPost(final String result) {
+        try {
+            JSONObject resultJSON = new JSONObject(result);
+            boolean success = resultJSON.getBoolean("success");
+            if (success) {
+                mChatId = resultJSON.getString("chatid");
+                Message[] message = new Message[0];
+                MobileNavigationDirections.ActionGlobalNavViewChat directions;
+                directions = ViewChatFragmentDirections.actionGlobalNavViewChat(message);
+                directions.setJwt(mJwToken);
+                directions.setChatId(mChatId);
+                directions.setMemberId(mMemberId);
+                Navigation.findNavController(getActivity(), nav_host_fragment).navigate(directions);
+            }
+        } catch (JSONException e) {
+            Log.wtf("JSON_PARSE_ERROR", "Error creating JSON: " + e.getMessage());
+        }
     }
 
     /**
