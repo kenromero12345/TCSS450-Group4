@@ -218,6 +218,9 @@ public class ViewConnectionFragment extends Fragment implements View.OnClickList
 
     }
 
+    /**
+     * Webservice call to get the chats.
+     */
     private void checkIndividualChat(){
         Uri uriCheckChat = new Uri.Builder()
                 .scheme("https")
@@ -241,6 +244,10 @@ public class ViewConnectionFragment extends Fragment implements View.OnClickList
         }
     }
 
+    /**
+     * This method is to check if we should create a new chat or go to existing
+     * @param result json response from web service.
+     */
     private void createOrNot(final String result) {
         try {
             JSONObject resultJSON = new JSONObject(result);
@@ -261,6 +268,9 @@ public class ViewConnectionFragment extends Fragment implements View.OnClickList
         }
     }
 
+    /**
+     * Web service call to display the chat.
+     */
     private void displayChat(){
         JSONObject msgBody = new JSONObject();
         try {
@@ -288,6 +298,10 @@ public class ViewConnectionFragment extends Fragment implements View.OnClickList
         //Navigation.findNavController(getView()).navigate(R.id.action_nav_chat_list_to_nav_view_chat, args);
     }
 
+    /**
+     * Handling the messages on post execute
+     * @param result the json response from the server.
+     */
     private void handleMessageGetOnPostExecute(final String result) {
         try {
             JSONObject root = new JSONObject(result);
@@ -326,10 +340,19 @@ public class ViewConnectionFragment extends Fragment implements View.OnClickList
         }
     }
 
+    /**
+     * Handle errors in the async task.
+     * @param result
+     */
     private void handleErrorsInTask(final String result) {
         Log.e("ASYNC_TASK_ERROR", result);
     }
 
+    /**
+     * Method to do the timestamp correctly.
+     * @param timestamp the timestamp.
+     * @return the correct timestamp result.
+     */
     private String convertTimeStampToDate(String timestamp) {
         Date date = new Date();
         String result = "";
@@ -348,6 +371,9 @@ public class ViewConnectionFragment extends Fragment implements View.OnClickList
         return result;
     }
 
+    /**
+     * Web service call to make a new chat.
+     */
     private void createNewChat() {
 
         EditText editText_ChatName = getActivity().findViewById(R.id.editText_chatName);
@@ -371,6 +397,10 @@ public class ViewConnectionFragment extends Fragment implements View.OnClickList
             Log.wtf("chatName", "Error creating JSON: " + e.getMessage());
         }
     }
+
+    /**
+     * Web service call to add a friend to a new chat.
+     */
     private void addFriendToNewChat() {
         Uri uriCreateChat = new Uri.Builder()
                 .scheme("https")
@@ -398,6 +428,9 @@ public class ViewConnectionFragment extends Fragment implements View.OnClickList
 
     }
 
+    /**
+     * Web service call to get the newest chat id's.
+     */
     private void getNewestChatId() {
         Uri uriGetNewestChatId = new Uri.Builder()
                 .scheme("https")
@@ -412,6 +445,10 @@ public class ViewConnectionFragment extends Fragment implements View.OnClickList
                 .build().execute();
     }
 
+    /**
+     * This method handles what to do after the webservice call for the id.
+     * @param result json response from server.
+     */
     private void handleGetNewestChatIdOnPost(final String result) {
         try {
             JSONObject resultJSON = new JSONObject(result);
