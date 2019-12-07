@@ -86,6 +86,7 @@ public class ChatFragment extends Fragment implements View.OnClickListener {
     private Chat mChat;
     private ChatMessageNotification mChatMessage;
     private String mChatId;
+    private String mChatName;
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
@@ -269,11 +270,13 @@ public class ChatFragment extends Fragment implements View.OnClickListener {
                             jsonChatLists.getString("profileuri"))
                                 .build());
                 }
+                mChatName = root.getString("chatname");
                 MobileNavigationDirections.ActionGlobalNavViewChat directions;
                 directions = ViewChatFragmentDirections.actionGlobalNavViewChat(messages);
                 directions.setMemberId(mMemberId);
                 directions.setJwt(mJwToken);
                 directions.setChatId(mChatId);
+                directions.setChatName(mChatName);
                 Navigation.findNavController(getActivity(), nav_host_fragment).navigate(directions);
 
             } else {
