@@ -53,6 +53,7 @@
         android:layout_marginEnd="30dp"
         android:backgroundTint="@color/colorPrimaryDark"
         android:text="@string/menu_chat"
+        android:textColor="#FFFFFF"
         app:layout_constraintEnd_toStartOf="@+id/layout_viewConnection_dummy"
         app:layout_constraintTop_toBottomOf="@+id/fullUsername" />
 
