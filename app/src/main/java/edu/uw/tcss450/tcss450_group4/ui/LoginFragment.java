@@ -395,7 +395,6 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
 
                 JSONObject resultsJSON = new JSONObject(result);
                 boolean success = resultsJSON.getBoolean("success");
-                Log.d("Member ID",String.valueOf(resultsJSON.getInt(getString(R.string.keys_json_login_memberId))));
 
                 if (success) {
                     mCrendentials = new Credentials.Builder(
@@ -439,10 +438,18 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
 
                     getActivity().finish();
                     return;
+                } else if (resultsJSON.getString("error").equals("not verified")) {
+                    Log.d("ENTERED", "VERIFY");
+                    getActivity().findViewById(R.id.layout_login_wait).setVisibility(View.GONE);
+                    LoginFragmentDirections.ActionNavLoginToNavVerify verifyFragment =
+                            LoginFragmentDirections.actionNavLoginToNavVerify(mCrendentials);
+                    verifyFragment.setJwt(resultsJSON.getString(getString(R.string.keys_json_login_jwt)));
+                    Navigation.findNavController(getView()).navigate(verifyFragment);
                 } else {
                     //Saving the token wrong. Don’t switch fragments and inform the user
                     ((TextView) getView().findViewById(R.id.editText_email))
                             .setError("Login Unsuccessful");
+                    getActivity().findViewById(R.id.layout_login_wait).setVisibility(View.GONE);
                 }
             } catch (JSONException e) {
                 //It appears that the web service didn’t return a JSON formatted String
