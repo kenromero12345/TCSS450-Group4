@@ -100,14 +100,14 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
      */
     private Weather[] mWeathers10d;
 //    private static final String TAG = "WEATHER_FRAG";
-    /**
-     * stores the latitude that was clicked
-     */
-    private double mLat;
-    /**
-     * stores the longitude that was clicked
-     */
-    private double mLon;
+//    /**
+//     * stores the latitude that was clicked
+//     */
+//    private double mLat;
+//    /**
+//     * stores the longitude that was clicked
+//     */
+//    private double mLon;
 
 //    public MapFragment() {
 //        // Required empty public constructor
@@ -115,10 +115,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 
     /**
      *
-     * @param inflater
-     * @param container
-     * @param savedInstanceState
-     * @return
+     * @param inflater the inflater for the view
+     * @param container the contaier for the view
+     * @param savedInstanceState the saved instance state
+     * @return the view
      */
     @Nullable
     @Override
@@ -128,7 +128,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 
     /**
      * initialization of some fields
-     * @param savedInstanceState
+     * @param savedInstanceState the saved instance state
      */
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -143,8 +143,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 
     /**
      * sync map
-     * @param view
-     * @param savedInstanceState
+     * @param view the view created
+     * @param savedInstanceState the saved instance state
      */
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
@@ -159,7 +159,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 
     /**
      * when map is ready
-     * @param googleMap
+     * @param googleMap the map
      */
     @Override
     public void onMapReady(GoogleMap googleMap) {
@@ -196,7 +196,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 
     /**
      * when the map is clicked
-     * @param latLng
+     * @param latLng the latlng clicked
      */
     @Override
     public void onMapClick(LatLng latLng) {
@@ -235,13 +235,13 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 
     /**
      * display weather after clicking the map
-     * @param tLat
-     * @param tLon
+     * @param tLat latitude to be displayed for weather
+     * @param tLon longitude to be dislayed for weather
      */
     private void displayWeather(double tLat, double tLon) {
-        mLat = tLat;
-        mLon = tLon;
-        Uri uri = getUriWeatherCurrentLatLon(getContext());
+//        mLat = tLat;
+//        mLon = tLon;
+        Uri uri = getUriWeatherCurrentLatLon(Objects.requireNonNull(getContext()));
 
         Uri uri2 = getUriWeather10dLatLon(getContext());
 
@@ -295,7 +295,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 
     /**
      * at post execute for getting 24 hour forecast
-     * @param result
+     * @param result the result provided for weather
      */
     private void handleWeather24hGetOnPostExecute(final String result) {
         try {
@@ -331,7 +331,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
                 }
                 MobileNavigationDirections.ActionGlobalNavWeather directions
                         = WeatherFragmentDirections.actionGlobalNavWeather(mJwToken, mEmail
-                        , mWeather, mWeathers10d, weathers, args.getWeatherHome()
+                        , mWeather, mWeathers10d, weathers, Objects.requireNonNull(args).getWeatherHome()
                         , args.getWeathersHome10d(), args.getWeathersHome24h());
 
                 Navigation.findNavController(Objects.requireNonNull(getView()))
@@ -352,7 +352,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 
     /**
      * at post execute for getting 10 day forecast
-     * @param result
+     * @param result the result provided
      */
     private void handleWeather10dGetOnPostExecute(final String result) {
         try {
@@ -397,7 +397,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 
     /**
      * at post execute for getting current weather condition
-     * @param result
+     * @param result the result provided
      */
     private void handleWeatherGetOnPostExecute(final String result) {
         try {

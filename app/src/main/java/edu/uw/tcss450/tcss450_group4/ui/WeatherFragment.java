@@ -95,14 +95,11 @@ import static edu.uw.tcss450.tcss450_group4.model.WeatherHelper.sendPostAsyncTas
 import static edu.uw.tcss450.tcss450_group4.model.WeatherHelper.tempFromKelvinToCelsiusString;
 import static edu.uw.tcss450.tcss450_group4.model.WeatherHelper.tempFromKelvinToFahrenheitString;
 
-///**
-// * A simple {@link Fragment} subclass.
-// * Activities that contain this fragment must implement the
-// * {@link WeatherFragment.OnFragmentInteractionListener} interface
-// * to handle interaction events.
-// * Use the {@link WeatherFragment#newInstance} factory method to
-// * create an instance of this fragment.
-// */
+/**
+ * A simple {@link Fragment} subclass.
+ * Activities that contain this fragment must implement the
+ * @author Ken Gil Romero kgmr
+ */
 public class WeatherFragment extends Fragment {
 
     // the tag for weather
@@ -152,9 +149,6 @@ public class WeatherFragment extends Fragment {
     //the temp location count
     private int mTempLocationsCount;
 
-    //the location count
-    private int mLocationsCount;
-
     // check if rows is updated
     private boolean mRowsUpdated;
 
@@ -193,7 +187,7 @@ public class WeatherFragment extends Fragment {
 
     /**
      * initialization of the fields
-     * @param view
+     * @param view the view of the  weather
      */
     private void initialization(@NonNull View view) {
 
@@ -808,7 +802,8 @@ public class WeatherFragment extends Fragment {
             Log.d(TAG, result);
             JSONObject root = new JSONObject(result);
 
-            mLocationsCount = root.getInt(getString(keys_json_count));
+            //the location count
+            int mLocationsCount = root.getInt(getString(keys_json_count));
             if (!mRowsUpdated) {
                 mTempLocationsCount = mLocationsCount;
                 mRowsUpdated = true;
@@ -1197,6 +1192,13 @@ public class WeatherFragment extends Fragment {
 //        getRowsWeather();
     }
 
+    /**
+     * when the view is created
+     * @param inflater the inflater for the view
+     * @param container the container for the view
+     * @param savedInstanceState the saved instance state
+     * @return the view
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {

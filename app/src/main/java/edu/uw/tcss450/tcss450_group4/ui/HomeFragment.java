@@ -94,7 +94,7 @@ import static edu.uw.tcss450.tcss450_group4.model.WeatherHelper.tempFromKelvinTo
  * @author Ken Gil Romero kgmr@uw.edu
  */
 public class HomeFragment extends Fragment {
-    // the view of the fragmen
+    // the view of the fragment
     private View mView;
     //the  weather of the fragment
     private Weather mWeather;
@@ -106,10 +106,10 @@ public class HomeFragment extends Fragment {
     private String mJwToken;
     private int mMemberId;
     private String mChatId;
-    private String mEmail;
+//    private String mEmail;
     private ChatMessageNotification mChatMessage;
     private ConnectionRequestNotification mConnectionRequest;
-    private boolean mConnectionDone, mChatDone, mWeatherDone;
+//    private boolean mConnectionDone, mChatDone, mWeatherDone;
 
     private int mConnectionCount = 0;
 
