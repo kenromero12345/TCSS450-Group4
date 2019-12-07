@@ -20,12 +20,22 @@ import me.pushy.sdk.Pushy;
 import static android.app.ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND;
 import static android.app.ActivityManager.RunningAppProcessInfo.IMPORTANCE_VISIBLE;
 
+/**
+ * Class that receives broadcasts from Pushy and handles and displays to user device
+ *
+ * @author Charles Bryan, Abraham Lee
+ */
 public class PushReceiver extends BroadcastReceiver {
 
     public static final String RECEIVED_NEW_MESSAGE = "new message from pushy";
 
     private static final String CHANNEL_ID = "1";
 
+    /**
+     * Determines if what is received is a chat or connections notification and notifies accordingly
+     * @param context
+     * @param intent
+     */
     @Override
     public void onReceive(Context context, Intent intent) {
 

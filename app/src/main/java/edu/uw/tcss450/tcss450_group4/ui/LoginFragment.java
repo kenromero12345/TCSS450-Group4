@@ -37,12 +37,8 @@ import edu.uw.tcss450.tcss450_group4.utils.SendPostAsyncTask;
 import me.pushy.sdk.Pushy;
 
 /**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link LoginFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link LoginFragment#newInstance} factory method to
- * create an instance of this fragment.
+ * Login page for user to sign in and use service upon success
+ * @author Abraham Lee abe2016@uw.edu
  */
 public class LoginFragment extends Fragment implements View.OnClickListener {
     // TODO: Rename parameter arguments, choose names that match
@@ -55,7 +51,9 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
     private String mParam2;
 
     private OnFragmentInteractionListener mListener;
+
     Credentials mCrendentials;
+
     public LoginFragment() {
         // Required empty public constructor
     }
@@ -78,6 +76,9 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
         return fragment;
     }
 
+    /**
+     * Starts up the Login page and checks for saved credentials to automatically login
+     */
     @Override
     public void onStart() {
         super.onStart();
@@ -98,12 +99,6 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
             EditText passwordEdit = getActivity().findViewById(R.id.editText_password);
             passwordEdit.setText(password);
 
-//            InputMethodManager inputManager = (InputMethodManager)
-//                    getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-//
-//            inputManager.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(),
-//                    InputMethodManager.HIDE_NOT_ALWAYS);
-
             doLogin(new Credentials.Builder(
                     emailEdit.getText().toString(),
                     passwordEdit.getText().toString())
@@ -113,6 +108,10 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
     }
 
 
+    /**
+     * On Create of Login page
+     * @param savedInstanceState
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -122,21 +121,26 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
         }
     }
 
+    /**
+     * On Create View of Login page
+     * @param inflater
+     * @param container
+     * @param savedInstanceState
+     * @return
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_login, container, false);
-//        DisplayMetrics displayMetrics = new DisplayMetrics();
-//        ((Activity) getContext()).getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
-//        int height = displayMetrics.heightPixels;
-//        int width = displayMetrics.widthPixels;
-//        int uwPurple = Color.rgb(51, 0, 111);
-//        Fragment loginFragment = (Fragment) getFragmentManager().findFragmentById(R.id.loginFragment);
-//        loginFragment.getView().setBackgroundColor(Color.RED);
         return view;
     }
 
+    /**
+     * On View Created of Login page
+     * @param view
+     * @param savedInstanceState
+     */
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -147,13 +151,14 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
         button_login.setOnClickListener(this::onClick);
     }
 
+    /**
+     * Determines what each button is to do when clicked
+     * Sign in redirects to Home upon success
+     * Register redirects to Register page
+     * @param v
+     */
     @Override
     public void onClick(View v) {
-//        InputMethodManager inputManager = (InputMethodManager)
-//                getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-//
-//        inputManager.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(),
-//                InputMethodManager.HIDE_NOT_ALWAYS);
         switch (v.getId()) {
             case R.id.button_signin:
                 attemptLogin(v.findViewById(R.id.button_signin));
@@ -166,6 +171,11 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
         }
     }
 
+    /**
+     * Attempts login with user provided credentials.
+     * If success, redirects to Home Page
+     * @param theButton
+     */
     private void attemptLogin(final View theButton) {
         EditText editTxtEmail = getActivity().findViewById(R.id.editText_email);
         EditText editTxtPasword = getActivity().findViewById(R.id.editText_password);
@@ -187,28 +197,6 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
                     editTxtEmail.getText().toString(),
                     editTxtPasword.getText().toString())
                     .build());
-
-//            Credentials credentials = new Credentials.Builder(editTxtEmail.getText().toString(),
-//                    editTxtPasword.getText().toString())
-//                    .build();
-//            //build the web service URL
-//            Uri uri = new Uri.Builder()
-//                    .scheme("https")
-//                    .appendPath(getString(R.string.ep_base_url))
-//                    .appendPath(getString(R.string.ep_login))
-//                    .build();
-//
-//            //build the JSONObject
-//            JSONObject msg = credentials.asJSONObject();
-//
-//            mCrendentials = credentials;
-//
-//            //instantiate and execute the AsyncTask.
-//            new SendPostAsyncTask.Builder(uri.toString(), msg)
-//                    .onPreExecute(this::handleLoginOnPre)
-//                    .onPostExecute(this::handleLoginOnPost)
-//                    .onCancelled(this::handleErrorsInTask)
-//                    .build().execute();
         }
     }
 
@@ -232,7 +220,6 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
      * a JSON formatted String. Parse it for success or failure.
      * @param result the JSON formatted String response from the web service
      */
-
     private void handleLoginOnPost(String result) {
         try {
             JSONObject resultsJSON = new JSONObject(result);
@@ -257,8 +244,6 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
                             LoginFragmentDirections.actionNavLoginToNavVerify(mCrendentials);
                     verifyFragment.setJwt(resultsJSON.getString(getString(R.string.keys_json_login_jwt)));
                     Navigation.findNavController(getView()).navigate(verifyFragment);
-                    //Remove this Activity from the back stack. Do not allow back navigation to login
-//                    getActivity().finish();
                 } else {
                     //Logiin was unsuccessful. Don't switch fragments and
                     //inform the user
@@ -266,8 +251,6 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
                             .setError("Login Unsuccessful");
                 }
             }
-//            getActivity().findViewById(R.id.layout_login_wait)
-//                    .setVisibility(View.GONE);
         } catch (JSONException e) {
             //It appears that the web service did not return a JSON formatted
             //String or it did not have what we expected in it.
@@ -303,6 +286,10 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
         prefs.edit().putString(getString(R.string.keys_prefs_password), credentials.getPassword()).apply();
     }
 
+    /**
+     * Sends to server to login user
+     * @param credentials
+     */
     private void doLogin(Credentials credentials) {
         //build the web service URL
         Uri uri = new Uri.Builder()
@@ -312,22 +299,14 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
                 .appendPath(getString(R.string.ep_pushy))
                 .build();
 
-//        build the JSONObject
-//        JSONObject msg = credentials.asJSONObject();
-
         mCrendentials = credentials;
 
         new AttemptLoginTask().execute(uri.toString());
-        //instantiate and execute the AsyncTask.
-        //Feel free to add a handler for onPreExecution so that a progress bar
-        //is displayed or maybe disable buttons.
-//        new SendPostAsyncTask.Builder(uri.toString(), msg)
-//                .onPreExecute(this::handleLoginOnPre)
-//                .onPostExecute(this::handleLoginOnPost)
-//                .onCancelled(this::handleErrorsInTask)
-//                .build().execute();
     }
 
+    /**
+     * Inner class that does asynchronous tasks to login user to the service
+     */
     class AttemptLoginTask extends AsyncTask<String, Void, String> {
 
         @Override

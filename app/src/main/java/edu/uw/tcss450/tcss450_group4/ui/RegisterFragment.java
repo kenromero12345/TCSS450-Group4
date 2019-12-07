@@ -20,8 +20,10 @@ import edu.uw.tcss450.tcss450_group4.R;
 import edu.uw.tcss450.tcss450_group4.model.Credentials;
 import edu.uw.tcss450.tcss450_group4.utils.SendPostAsyncTask;
 
-/*
-    Register page that allows users to create an account.
+/**
+ * Register page that allows users to create an account.
+ *
+ * @author Abraham Lee abe2016@uw.edu
  */
 public class RegisterFragment extends Fragment {
 
@@ -31,6 +33,13 @@ public class RegisterFragment extends Fragment {
         // Required empty public constructor
     }
 
+    /**
+     * On Create View of Register page
+     * @param inflater
+     * @param container
+     * @param savedInstanceState
+     * @return view
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -43,8 +52,9 @@ public class RegisterFragment extends Fragment {
         return v;
     }
 
-    /*
-        Helper method that checks if registration information is all valid before proceeding.
+    /**
+     * Helper method that checks if registration information is all valid before proceeding.
+     * @param v View
      */
     private void validRegister(View v) {
         EditText firstName = v.findViewById(R.id.register_firstName);
@@ -90,7 +100,6 @@ public class RegisterFragment extends Fragment {
             nicknameError = true;
         }
 
-        // TODO: Connect to server to check if email even exists
         // Checks if email is valid
         if (emailStr.length() == 0) {
             email.setError("Choose an email address");
@@ -113,7 +122,6 @@ public class RegisterFragment extends Fragment {
             passwordError = true;
         }
 
-        // TODO: Implement transition to verify page
         // If valid go to Verify page
         if (firstNameError && lastNameError && nicknameError && emailError && passwordError) {
             Credentials credentials = new Credentials.Builder(emailStr, passwordStr)
@@ -135,8 +143,6 @@ public class RegisterFragment extends Fragment {
                     .onPostExecute(this::handleRegisterOnPost)
                     .onCancelled(this::handleErrorsInTask)
                     .build().execute();
-
-
 
         }
     }
@@ -173,9 +179,6 @@ public class RegisterFragment extends Fragment {
                 String jwt = resultsJSON.getString(getString(R.string.keys_json_login_jwt));
                 homeActivity.setJwt(jwt);
                 Navigation.findNavController(getView()).navigate(homeActivity);
-                //Remove this Activity from the back stack. Do not allow back navigation to login
-//                getActivity().finish();
-//                return;
             } else {
                 //Login was unsuccessful. Don’t switch fragments and
                 // inform the user

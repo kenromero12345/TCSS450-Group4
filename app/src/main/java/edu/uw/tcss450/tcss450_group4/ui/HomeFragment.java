@@ -90,8 +90,10 @@ import static edu.uw.tcss450.tcss450_group4.model.WeatherHelper.tempFromKelvinTo
 import static edu.uw.tcss450.tcss450_group4.model.WeatherHelper.tempFromKelvinToFahrenheitString;
 
 /**
- * A simple {@link Fragment} subclass.
- * @author Ken Gil Romero kgmr@uw.edu
+ * Home page that dynamically displays connection request notifications,
+ * current weather, and 3 of the most recent chats
+ *
+ * @author Ken Gil Romero kgmr@uw.edu, Abraham Lee abe2016@uw.edu
  */
 public class HomeFragment extends Fragment {
     // the view of the fragment
@@ -101,15 +103,14 @@ public class HomeFragment extends Fragment {
     // the char degree of the fragment
     private static final char DEGREE = (char) 0x00B0;
     private ConnectionItem[] mConnectionItems;
-    private ConnectionItem mConItem;
     private Chat[] mChats;
     private String mJwToken;
     private int mMemberId;
     private String mChatId;
-//    private String mEmail;
+
+    // notification objects
     private ChatMessageNotification mChatMessage;
     private ConnectionRequestNotification mConnectionRequest;
-//    private boolean mConnectionDone, mChatDone, mWeatherDone;
 
     private int mConnectionCount = 0;
 
@@ -119,28 +120,25 @@ public class HomeFragment extends Fragment {
         // Required empty public constructor
     }
 
+    /**
+     * When view is being created
+     * @param inflater
+     * @param container
+     * @param savedInstanceState
+     * @return
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-//        HomeActivityArgs args = HomeActivityArgs.fromBundle(getArguments());
-//        mJwToken = args.getJwt();
-//        mEmail = args.getCredentials().getEmail();
-//        mMemberId = args.getMemberId();
-//        mConnectionItem = new ArrayList<>(Arrays.asList(args.getConnectionitems()));
         View view = inflater.inflate(R.layout.fragment_home, container, false);
         view.setClipToOutline(true);
-//        Log.e("CHECK ChatMessage", getArguments() + "");
-//        if (getArguments().containsKey("type")) {
-//            mChatMessage = (ChatMessageNotification) getArguments().getSerializable("type");
-//            Log.e("ayye", "welcome");
-//        }
-
         view.findViewById(button_home_requests).setOnClickListener(this::requestConnection);
         return view;
     }
 
     /**
-     * when view is created
+     * When view is created. Sets arguments values received and initializes async tasks
+     * to display information on Home page
      * @param view  the view
      * @param savedInstanceState the saved instance state
      */
@@ -161,13 +159,13 @@ public class HomeFragment extends Fragment {
         view.findViewById(layout_connectionHome_wait).setVisibility(View.VISIBLE);
         view.findViewById(layout_chatHome_wait).setVisibility(View.VISIBLE);
         initialization(view);
-
-
-
-//        mConnectionItem = new ArrayList<>(Arrays.asList(args.getConnectionItems()));
     }
 
 
+    /**
+     * Looks for all requests received for the current user
+     * @param view
+     */
     private void requestConnection(View view) {
 
         Uri uriConnection = new Uri.Builder()
@@ -191,6 +189,10 @@ public class HomeFragment extends Fragment {
 
     }
 
+    /**
+     * Handles received list of connection requests
+     * @param result
+     */
     private void handleReceivedOnPostExecute(String result) {
         //parse JSON
         try {
@@ -257,6 +259,10 @@ public class HomeFragment extends Fragment {
                 .build().execute();
     }
 
+    /**
+     * Handles received most recent chats
+     * @param result
+     */
     private void handleChatsGetFewOnPostExecute(final String result) {
         try {
             JSONObject root = new JSONObject(result);
@@ -297,7 +303,6 @@ public class HomeFragment extends Fragment {
                 getView().findViewById(layout_chatHome_wait).setVisibility(View.GONE);
                 if (mChatMessage != null) {
                     gotoChat();
-//                    mChatMessage = null;
                 } else if (mConnectionRequest != null) {
                     gotoConnection();
                 }
@@ -312,11 +317,19 @@ public class HomeFragment extends Fragment {
         }
     }
 
+    /**
+     * Handles error when async task for getting chats fails
+     * @param result
+     */
     private void handleChatErrorsInTask(final String result) {
         getView().findViewById(layout_chatHome_wait).setVisibility(View.INVISIBLE);
         Log.e("ASYNC_TASK_ERROR", result);
     }
 
+    /**
+     * Display chat information on Home page
+     * @param chatId
+     */
     private void displayChat(final String chatId){
 
         mChatId = chatId;
@@ -337,13 +350,6 @@ public class HomeFragment extends Fragment {
                 .addHeaderField("authorization", mJwToken)
                 .onCancelled(this::handleMessageErrorsInTask)
                 .build().execute();
-
-//        final Bundle args = new Bundle();
-//        args.putSerializable(getString(R.string.chat_object), chat);
-//        args.putString("email", mEmail);
-//        args.putString("jwt", mJwToken);
-//        args.putSerializable("List", mMessageList);
-        //Navigation.findNavController(getView()).navigate(R.id.action_nav_chat_list_to_nav_view_chat, args);
     }
 
     private void handleMessageErrorsInTask(final String result) {
@@ -356,8 +362,6 @@ public class HomeFragment extends Fragment {
             JSONObject root = new JSONObject(result);
             if (root.has("success") && root.getBoolean(getString(keys_json_messaging_success))) {
                 JSONArray data = root.getJSONArray("messages");
-//                if (response.has(getString(R.string.keys_json_chats_data))) {
-//                    JSONArray data = response.getJSONArray(getString(R.string.keys_json_chats_data));
                 Message[] messages = new Message[data.length()];
                 for (int i = 0; i < data.length(); i++) {
                     JSONObject jsonChatLists = data.getJSONObject(i);
@@ -369,7 +373,6 @@ public class HomeFragment extends Fragment {
                             jsonChatLists.getString("profileuri"))
                             .build());
                 }
-//                mMessageList = new ArrayList<Message>(Arrays.asList(messages));
                 MobileNavigationDirections.ActionGlobalNavViewChat directions;
                 directions = ViewChatFragmentDirections.actionGlobalNavViewChat(messages);
 //                directions.setEmail(mEmail);
@@ -386,6 +389,11 @@ public class HomeFragment extends Fragment {
         }
     }
 
+    /**
+     * Converts timestamp information to human-readable information
+     * @param timestamp
+     * @return parsed timestamp
+     */
     private String convertTimeStampToDate(String timestamp) {
         Date date = new Date();
         String a = "";
@@ -432,7 +440,7 @@ public class HomeFragment extends Fragment {
     }
 
     /**
-     * Helper method that handles errors when getting connection count fails
+     * Handles errors when getting connection count fails
      * @param result
      */
     private void handleConnectionRequestCountErrorsInTask(final String result) {
@@ -442,7 +450,7 @@ public class HomeFragment extends Fragment {
     }
 
     /**
-     * Helper method that handles post execution when connection count
+     * Handles post execution when connection count
      * has been successfully retrieved
      * @param result
      */
@@ -475,7 +483,7 @@ public class HomeFragment extends Fragment {
     }
 
     /**
-     * initialize all fields
+     * Initialize all fields for weather portion of Home page
      * @param view the view given
      */
     private void initialization(@NonNull View view) {
@@ -492,7 +500,7 @@ public class HomeFragment extends Fragment {
     }
 
     /**
-     * set components and their action
+     * Set weather components and their action
      */
     private void setComponents() {
         setWeather();
@@ -500,7 +508,7 @@ public class HomeFragment extends Fragment {
     }
 
     /**
-     * set's the weather of the view
+     * Sets the view of the weather portion of Home page
      */
     private void setWeather() {
         Geocoder geocoder;
@@ -553,13 +561,7 @@ public class HomeFragment extends Fragment {
                         mView.findViewById(layout_weatherHome_wait).setVisibility(View.GONE);
                         mView.findViewById(weather_temperatureSwitch).setVisibility(View.VISIBLE);
                         getConnectionRequestCount();
-//                        mWeatherDone = true;
-//                        if (mChatMessage != null && mWeatherDone && mConnectionDone && mChatDone) {
-//                            getActivity().findViewById(layout_homeActivity_wait).setVisibility(View.VISIBLE);
-//                            gotoChat();
-//                        }
 
-//        }
                     }
 
                     @Override
@@ -573,7 +575,7 @@ public class HomeFragment extends Fragment {
     }
 
     /**
-     * switch the temperature of the weather
+     * Switches the temperature of the weather when switch is flicked
      */
     private void switchTemperature() {
         if (((Switch) mView.findViewById(weather_temperatureSwitch)).isChecked()) {
@@ -588,6 +590,9 @@ public class HomeFragment extends Fragment {
         }
     }
 
+    /**
+     * When user clicks on chat, redirects to chosen chat.
+     */
     private void gotoChat() {
         JSONObject memberId = new JSONObject();
         try {
@@ -607,11 +612,19 @@ public class HomeFragment extends Fragment {
                 .build().execute();
     }
 
+    /**
+     * Handles error when getting chat fails during asynchronous task
+     * @param result
+     */
     private void handleChatsGetErrorsInTask(final String result) {
         getView().findViewById(layout_home_wait).setVisibility(View.GONE);
         Log.e("ASYNC_TASK_ERROR", result);
     }
 
+    /**
+     * Handles Chat redirection when asynchronous task succeeds
+     * @param result
+     */
     private void handleChatsGetOnPostExecute(final String result) {
         try {
             JSONObject root = new JSONObject(result);
@@ -655,6 +668,9 @@ public class HomeFragment extends Fragment {
         }
     }
 
+    /**
+     * When user clicks on connection request portion, redirects to connection requests
+     */
     private void gotoConnection() {
         Uri uriConnection = new Uri.Builder()
                 .scheme("https")
@@ -674,9 +690,12 @@ public class HomeFragment extends Fragment {
                 .onCancelled(error -> Log.e("CONNECTION FRAG", error))
                 .addHeaderField("authorization", mJwToken)  //add the JWT as header
                 .build().execute();
-
     }
 
+    /**
+     * Handles redirecting to Requests page when asynchronous task succeeds
+     * @param result
+     */
     private void handleConnectionOnPostExecute(final String result) {
         //parse JSON
         try {
@@ -692,7 +711,6 @@ public class HomeFragment extends Fragment {
             if (hasConnection){
                 JSONArray connectionJArray = root.getJSONArray(
                         getString(keys_json_connection_connections));
-//                ConnectionItem[] conItem = new ConnectionItem[connectionJArray.length()];
                 mConnectionItems = new ConnectionItem[connectionJArray.length()];
                 for(int i = 0; i < connectionJArray.length(); i++){
                     JSONObject jsonConnection = connectionJArray.getJSONObject(i);
@@ -718,8 +736,6 @@ public class HomeFragment extends Fragment {
                 mConnectionRequest = null;
                 getView().findViewById(layout_home_wait).setVisibility(View.GONE);
             }
-
-
         } catch (JSONException e) {
             e.printStackTrace();
         }
