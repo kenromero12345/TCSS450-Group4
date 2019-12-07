@@ -79,4 +79,16 @@
             app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
+    <TextView
+        android:id="@+id/textView_message"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textSize="20dp"
+        android:text="A verification email has been sent to you, please go to your email to retrieve the code and type it in above box so you can start using our app."
+        app:layout_constraintBottom_toTopOf="@+id/verify_textView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
