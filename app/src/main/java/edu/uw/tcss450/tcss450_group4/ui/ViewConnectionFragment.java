@@ -254,13 +254,6 @@ public class ViewConnectionFragment extends Fragment implements View.OnClickList
                 createNewChat();
                 addFriendToNewChat();
                 getNewestChatId();
-//                if (editText_ChatName.getText().length() != 0) {
-//                    InputMethodManager inputManager = (InputMethodManager)
-//                            getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-//
-//                    inputManager.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(),
-//                            InputMethodManager.HIDE_NOT_ALWAYS);
-//                }
                 MyCreateChatRecyclerViewAdapter.getFriendIDList().clear();
             }
         } catch (JSONException e) {
@@ -269,8 +262,6 @@ public class ViewConnectionFragment extends Fragment implements View.OnClickList
     }
 
     private void displayChat(){
-
-//        mChatId = chatId;
         JSONObject msgBody = new JSONObject();
         try {
             msgBody.put("chatId", mChatId);
