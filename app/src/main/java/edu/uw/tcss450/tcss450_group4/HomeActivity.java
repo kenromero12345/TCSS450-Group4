@@ -262,6 +262,7 @@ public class HomeActivity extends AppCompatActivity {
 
         Toolbar toolbar = findViewById(id.toolbar);
         setSupportActionBar(toolbar);
+
         DrawerLayout drawer = findViewById(drawer_layout);
         drawer.addDrawerListener(new DrawerLayout.DrawerListener() {
             @Override

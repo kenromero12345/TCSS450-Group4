@@ -17,11 +17,19 @@ import java.util.List;
 
 import edu.uw.tcss450.tcss450_group4.R;
 import edu.uw.tcss450.tcss450_group4.model.Message;
+
+/**
+ * This class is a recycler which receive the data from server and pass each record of the data into this recycler view.
+ * When we binding the data which is message to every item, we also check this message is sent or received using the senderId.
+ * which is passed from ViewChatFragment.
+ * Created by Chinh Le on 11/1/2019.
+ *
+ * @author Chinh Le
+ * @version Nov 1 2019
+ */
 public class MyMessageListRecyclerViewAdapter extends RecyclerView.Adapter<MyMessageListRecyclerViewAdapter.ViewHolder> {
     private List<Message> mValues;
     private final ChatFragment.OnListFragmentInteractionListener mListener;
-    private static final int VIEW_TYPE_MESSAGE_SENT = 1;
-    private static final int VIEW_TYPE_MESSAGE_RECEIVED = 2;
     private int mMemberId;
     private int mViewType;
     public MyMessageListRecyclerViewAdapter(List<Message> messageList, int memberId, ChatFragment.OnListFragmentInteractionListener listener) {
@@ -78,8 +86,10 @@ public class MyMessageListRecyclerViewAdapter extends RecyclerView.Adapter<MyMes
         return mValues.size();
     }
 
+
     public void addMessage(String userName, int memberId, String message, String timeStamp, String profileUri) {
         Message newMess = new Message.Builder(userName, memberId, message, timeStamp, profileUri).build();
+
         mValues.add(newMess);
     }
     // Determines the appropriate ViewType according to the sender of the message.

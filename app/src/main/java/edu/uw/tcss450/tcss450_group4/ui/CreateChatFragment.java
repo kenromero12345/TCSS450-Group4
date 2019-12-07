@@ -89,10 +89,9 @@ public class CreateChatFragment extends Fragment implements View.OnClickListener
     private List<Chat> mChats;
     private ArrayList<Integer> mFriendIDList;
     private String mJwToken;
-//    private String mEmail;
+    private String mChatName;
     private String mChatId;
     private int mMemberId;
-    private String mChatName;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -261,13 +260,6 @@ public class CreateChatFragment extends Fragment implements View.OnClickListener
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         displayChat();
-//                        Message[] message = new Message[0];
-//                        MobileNavigationDirections.ActionGlobalNavViewChat directions;
-//                        directions = ViewChatFragmentDirections.actionGlobalNavViewChat(message);
-//                        directions.setJwt(mJwToken);
-//                        directions.setChatId(mChatId);
-//                        directions.setMemberId(mMemberId);
-//                        Navigation.findNavController(getActivity(), nav_host_fragment).navigate(directions);
                     }
                 });
                 AlertDialog dialog = builder.create();
@@ -285,8 +277,8 @@ public class CreateChatFragment extends Fragment implements View.OnClickListener
 //                    inputManager.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(),
 //                            InputMethodManager.HIDE_NOT_ALWAYS);
 //                }
-                MyCreateChatRecyclerViewAdapter.getFriendIDList().clear();
             }
+            MyCreateChatRecyclerViewAdapter.getFriendIDList().clear();
         } catch (JSONException e) {
             Log.wtf("JSON_PARSE_ERROR", "Error creating JSON: " + e.getMessage());
         }
@@ -346,6 +338,7 @@ public class CreateChatFragment extends Fragment implements View.OnClickListener
                 directions.setMemberId(mMemberId);
                 directions.setJwt(mJwToken);
                 directions.setChatId(mChatId);
+                directions.setChatName(mChatName);
                 Navigation.findNavController(getActivity(), nav_host_fragment).navigate(directions);
 
             } else {
@@ -454,6 +447,7 @@ public class CreateChatFragment extends Fragment implements View.OnClickListener
                 directions.setJwt(mJwToken);
                 directions.setChatId(mChatId);
                 directions.setMemberId(mMemberId);
+                directions.setChatName(mChatName);
                 Navigation.findNavController(getActivity(), nav_host_fragment).navigate(directions);
             }
         } catch (JSONException e) {

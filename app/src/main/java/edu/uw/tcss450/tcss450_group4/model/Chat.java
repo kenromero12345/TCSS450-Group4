@@ -1,11 +1,20 @@
 package edu.uw.tcss450.tcss450_group4.model;
 
-import android.os.Build;
+
 import android.os.Parcel;
 import android.os.Parcelable;
 
 import java.io.Serializable;
 
+/**
+ * This class contains the data from Chats table and Messages table
+ * We use SQL query to get display all the chats and the most recent message, its timestamp of that chat
+ *
+ * Created by Chinh Le on 11/1/2019.
+ *
+ * @author Chinh Le
+ * @version Nov 1 2019
+ */
 public class Chat implements Serializable, Parcelable {
     private final String mChatId;
     private final String mChatName;

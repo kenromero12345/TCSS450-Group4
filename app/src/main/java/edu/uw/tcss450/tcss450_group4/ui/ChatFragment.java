@@ -67,10 +67,10 @@ import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_login_success;
 import static edu.uw.tcss450.tcss450_group4.R.string.keys_json_messaging_success;
 
 /**
- * A fragment representing a list of Items.
- * <p/>
- * Activities containing this fragment MUST implement the {@link OnListFragmentInteractionListener}
- * interface.
+ * This class used to display all the chats and the most recent message of that chat.
+ *
+ * @author Chinh Le
+ * @version Nov 1 2019
  */
 public class ChatFragment extends Fragment implements View.OnClickListener {
 
@@ -86,6 +86,7 @@ public class ChatFragment extends Fragment implements View.OnClickListener {
     private Chat mChat;
     private ChatMessageNotification mChatMessage;
     private String mChatId;
+    private String mChatName;
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
@@ -255,12 +256,6 @@ public class ChatFragment extends Fragment implements View.OnClickListener {
                 .onCancelled(this::handleErrorsInTask)
                 .build().execute();
 
-//        final Bundle args = new Bundle();
-//        args.putSerializable(getString(R.string.chat_object), chat);
-//        args.putString("email", mEmail);
-//        args.putString("jwt", mJwToken);
-//        args.putSerializable("List", mMessageList);
-        //Navigation.findNavController(getView()).navigate(R.id.action_nav_chat_list_to_nav_view_chat, args);
     }
 
     private void handleMessageGetOnPostExecute(final String result) {
@@ -268,8 +263,6 @@ public class ChatFragment extends Fragment implements View.OnClickListener {
             JSONObject root = new JSONObject(result);
             if (root.has("success") && root.getBoolean(getString(keys_json_messaging_success))) {
                 JSONArray data = root.getJSONArray("messages");
-//                if (response.has(getString(R.string.keys_json_chats_data))) {
-//                    JSONArray data = response.getJSONArray(getString(R.string.keys_json_chats_data));
                 Message[] messages = new Message[data.length()];
                 for (int i = 0; i < data.length(); i++) {
                     JSONObject jsonChatLists = data.getJSONObject(i);
@@ -281,13 +274,13 @@ public class ChatFragment extends Fragment implements View.OnClickListener {
                             jsonChatLists.getString("profileuri"))
                                 .build());
                 }
-//                mMessageList = new ArrayList<Message>(Arrays.asList(messages));
+                mChatName = root.getString("chatname");
                 MobileNavigationDirections.ActionGlobalNavViewChat directions;
                 directions = ViewChatFragmentDirections.actionGlobalNavViewChat(messages);
-//                directions.setEmail(mEmail);
                 directions.setMemberId(mMemberId);
                 directions.setJwt(mJwToken);
                 directions.setChatId(mChatId);
+                directions.setChatName(mChatName);
                 Navigation.findNavController(getActivity(), nav_host_fragment).navigate(directions);
 
             } else {

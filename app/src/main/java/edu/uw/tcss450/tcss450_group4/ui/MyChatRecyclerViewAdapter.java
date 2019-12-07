@@ -14,9 +14,12 @@ import edu.uw.tcss450.tcss450_group4.ui.ChatFragment.OnListFragmentInteractionLi
 import java.util.List;
 
 /**
- * {@link RecyclerView.Adapter} that can display a {@link Chat} and makes a call to the
- * specified {@link OnListFragmentInteractionListener}.
- * TODO: Replace the implementation with code for your data type.
+ * This class is a recycler which receive the data from server and pass each record of the data into this recycler view.
+ * When we binding the data which is chat to every item.
+ * Created by Chinh Le on 11/1/2019.
+ *
+ * @author Chinh Le
+ * @version Nov 1 2019
  */
 public class MyChatRecyclerViewAdapter extends RecyclerView.Adapter<MyChatRecyclerViewAdapter.ViewHolder> {
 

@@ -107,6 +107,7 @@ public class HomeFragment extends Fragment {
     private String mJwToken;
     private int mMemberId;
     private String mChatId;
+    private String mChat;
 
     // notification objects
     private ChatMessageNotification mChatMessage;
@@ -373,12 +374,15 @@ public class HomeFragment extends Fragment {
                             jsonChatLists.getString("profileuri"))
                             .build());
                 }
+
+                mChat = root.getString("chatname");
                 MobileNavigationDirections.ActionGlobalNavViewChat directions;
                 directions = ViewChatFragmentDirections.actionGlobalNavViewChat(messages);
 //                directions.setEmail(mEmail);
                 directions.setMemberId(mMemberId);
                 directions.setJwt(mJwToken);
                 directions.setChatId(mChatId);
+                directions.setChatName(mChat);
                 Navigation.findNavController(getActivity(), nav_host_fragment).navigate(directions);
             } else {
                 Log.e("ERROR!", "No response");
